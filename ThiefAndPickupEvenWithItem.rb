@@ -5,6 +5,10 @@ class PokeBattle_Move_0F1 < PokeBattle_Move
   end
 
   def pbEffect(attacker,opponent,hitnum=0,alltargets=nil,showanimation=true)
+    if !@battle.pbIsWild?
+      return evenWithItem_old_pbEffect(attacker,opponent,hitnum,alltargets,showanimation)
+    end
+
   	initialItem = attacker.pokemon.itemInitial
   	veryInitialItem = attacker.pokemon.itemReallyInitialHonestlyIMeanItThisTime
   	currItem = attacker.item
@@ -28,6 +32,49 @@ class PokeBattle_Move_0F1 < PokeBattle_Move
   	return ret
   end
 end
+
+class PokeBattle_Battler
+  if !defined?(evenWithItem_old_pbEffectsOnDealingDamage)
+    alias :evenWithItem_old_pbEffectsOnDealingDamage :pbEffectsOnDealingDamage
+  end
+
+  def pbEffectsOnDealingDamage(move,user,target,damage,innards)
+    if !@battle.pbIsWild? || target.nil?
+      return evenWithItem_old_pbEffectsOnDealingDamage(move,user,target,damage,innards)
+    end
+
+    tochange = nil
+    if user.ability == :MAGICIAN
+      tochange = user
+    elsif target.ability == :PICKPOCKET && !@battle.opponent && !@battle.pbIsOpposing?(target.index)
+      tochange = target
+    end
+
+    return evenWithItem_old_pbEffectsOnDealingDamage(move,user,target,damage,innards) if tochange.nil?
+
+    initialItem = tochange.pokemon.itemInitial
+    veryInitialItem = tochange.pokemon.itemReallyInitialHonestlyIMeanItThisTime
+    currItem = tochange.item
+    tochange.pokemon.itemInitial = nil
+    tochange.pokemon.itemReallyInitialHonestlyIMeanItThisTime = nil
+    tochange.item = nil
+
+    ret = evenWithItem_old_pbEffectsOnDealingDamage(move,user,target,damage,innards)
+
+    if tochange.pokemon.itemInitial
+      if $PokemonBag.pbCanStore?(tochange.pokemon.itemInitial)
+        $PokemonBag.pbStoreItem(tochange.pokemon.itemInitial)
+      end
+    end
+
+    tochange.pokemon.itemInitial = initialItem
+    tochange.pokemon.itemReallyInitialHonestlyIMeanItThisTime = veryInitialItem
+    tochange.item = currItem if currItem
+
+    return ret
+  end
+end
+  
 
 class Event
   attr_accessor :callbacks

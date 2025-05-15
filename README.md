@@ -67,7 +67,7 @@ Individual mods:
 - TextureOverriding.rb  
   Various texture overrides: most of them are for the character Ana.
 - ThiefAndPickupEvenWithItem.rb  
-  Thief and Pickup work even if the user is holding an item.
+  Thief/Covet, Pickup, Pickpocket, and Magician work even if the user is holding an item in wild battles, and items stolen by these effects are deposited directly into the bag at the end of those battles.
 - XOverRun.rb  
   Hitting the "back" button when selecting a command in battle will move your cursor over "Run".
 - ZygardeCaffeine.rb  
