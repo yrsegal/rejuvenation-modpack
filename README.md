@@ -4,9 +4,11 @@ Rejuvenation Modpack
 Libraries:
 - 0000.injection.rb  
   Supports code injection mods.
+- 0000.textures.rb  
+  Various texture overrides: most of them are for the character Ana. Some mods expect these overrides to be present.
 
 Individual mods:
-- AnaFixes.rb  
+- AnaFixes.rb (depends on 0000.injection.rb)  
   Fixes some issues with the character Ana's sprites.
 - AutoFish.rb  
   Fishing requires no timing, and always succeeds if possible.
@@ -22,7 +24,7 @@ Individual mods:
   Fixes a field interaction with Silvally.
 - FixSuperLuck.rb  
   Super Luck increases held item chances on wild pokemon, as it's supposed to.
-- FullOutfitOptions.rb  
+- FullOutfitOptions.rb (depends on 0000.injection.rb)  
   You get full options for outfits, and they're supported a little more in cutscenes. This does not add sprites for them, and the only character given spritework currently for this is Ana.
 - HiddenPowerInSummary.rb  
   Hidden Power, Revelation Dance, and such all display their correct type in summaries and move listings.
@@ -60,12 +62,10 @@ Individual mods:
   Oricorio hold their Nectar in the wild, as in gen 9, allowing you to get Pink and Yellow Nectars (otherwise unobtainable).
 - PartialDebugMode.rb  
   Enables debug mode without enabling the use of HMs without their badges and prerequisites.
-- SelectFromBoxes.rb *(experimental)*  
+- SelectFromBoxes.rb *(experimental)* (depends on 0000.injection.rb)  
   Makes all instances of choosing a pokemon from your party use your boxes and party instead.
 - ShiftToScent.rb  
   Holding shift overrides your spice scent with 0200.
-- TextureOverriding.rb  
-  Various texture overrides: most of them are for the character Ana.
 - ThiefAndPickupEvenWithItem.rb  
   Thief/Covet, Pickup, Pickpocket, and Magician work even if the user is holding an item in wild battles, and items stolen by these effects are deposited directly into the bag at the end of those battles.
 - XOverRun.rb  
