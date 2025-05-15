@@ -11,6 +11,7 @@ end
 
 class ItemData < DataObject
   attr_accessor :flags
+  attr_accessor :desc
 end
 
 ItemHandlers::UseFromBag.add(:MAGNETICLURE,proc{|item| next 1 })

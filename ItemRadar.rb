@@ -7,6 +7,10 @@ ItemHandlers::UseInField.add(:ITEMFINDER,proc{|item|
   $game_screen.itemRadar_toggleRadar
 })
 
+class ItemData < DataObject
+  attr_accessor :desc
+end
+
 $cache.items[:ITEMFINDER].desc = "A device used for finding items. Makes hidden items visible when activated."
 
 ### /MODDED
@@ -42,11 +46,10 @@ class Game_Screen
     if foundz && itemRadar_checkIsItemRadarOn?
       rawev = RPG::Event.new(0, 0)
       rawev.id = biggestid + 1
-      rawev.pages[0].list = [
-        RPG::EventCommand.new(250, 0, ['MiningPing',80,60]), # Make ping sound
-        RPG::EventCommand.new(116, 0, []), # delete event
-        RPG::EventCommand.new(0, 0, []) # end block
-      ]
+      rawev.pages[0].list = InjectionHelper.parseEventCommands(
+        [:PlaySoundEvent, 'MiningPing', 80, 60],
+        :EraseEvent,
+        :Done)
       rawev.pages[0].trigger = 3 # as soon as map is loaded
 
       newevent = Game_Event.new($game_map.map_id, rawev, $game_map)

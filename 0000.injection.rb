@@ -247,11 +247,11 @@ module InjectionHelper
   }
 
   class InsnMatcher
-    def initialize(code, params=[]) # Param does partial matches - nil is ignored
+    def initialize(code, mapper, params=[]) # Param does partial matches - nil is ignored
       @code = code
       @params = params
-      @mappedCode = InjectionHelper::EVENT_INSNS[code]
-      @mappedParams = InjectionHelper.handleComplexParameters(code, params)
+      @mappedCode = mapper[code]
+      @mappedParams = InjectionHelper.handleComplexParameters(code, params, true)
     end
 
     def matches?(insn)
@@ -265,6 +265,14 @@ module InjectionHelper
             return false if !against.match?(param)
           elsif against.is_a?(Proc)
             return false if !against.call(param)
+          elsif against.is_a?(InsnMatcher)
+            return false if !against.matches?(param)
+          elsif against.is_a?(Array) && against.size > 0 && against[0].is_a?(InsnMatcher)
+            return false if !param.is_a?(RPG::Event::Page) && !param.is_a?(RPG::MoveRoute)
+            return false if against.size != param.list.size
+            against.each_with_index { |matcher,matcherIdx|
+              return false if !matcher.matches?(param.list[matcherIdx])
+            }
           else
             return false if against != param
           end
@@ -303,11 +311,15 @@ module InjectionHelper
     end
   end
 
-  def self.parseMatcher(matcher) 
+  def self.routeMatcher(matchers) 
+    return matchers.map { |matcher| parseMatcher(matcher, InjectionHelper::MOVE_INSNS) }
+  end
+
+  def self.parseMatcher(matcher, mapper=InjectionHelper::EVENT_INSNS) 
     if matcher.is_a?(Array)
-      return InjectionHelper::InsnMatcher.new(matcher[0], matcher[1..])
+      return InjectionHelper::InsnMatcher.new(matcher[0], mapper, matcher[1..])
     elsif matcher.is_a?(Symbol)
-      return InjectionHelper::InsnMatcher.new(matcher)
+      return InjectionHelper::InsnMatcher.new(matcher, mapper)
     else
       return matcher
     end
@@ -368,13 +380,13 @@ module InjectionHelper
     if param.is_a?(Symbol) || [true,false].include?(param)
       params[idx] = mapper[param] if !mapper[param].nil?
     elsif param.is_a?(Numeric)
-      ret = mapper.reverse_each.to_h[param]
+      ret = mapper.invert[param]
     end
 
     return ret
   end
 
-  def self.handleComplexParameters(sym, params)
+  def self.handleComplexParameters(sym, params, matcher=false)
     case sym
       when :SetSwitch, :UnsetSwitch
         mapValue(params, 0, Switches)
@@ -401,7 +413,11 @@ module InjectionHelper
         mapValue(params, 0, InjectionHelper::SPECIAL_EVENT_IDS)
       when :SetMoveRoute
         mapValue(params, 0, InjectionHelper::SPECIAL_EVENT_IDS)
-        params[1] = parseMoveRoute(*params[1][1..], repeat: params[1][0]) if !params[1].nil?
+        if matcher
+          params[1] = routeMatcher(params[1][1..]) if !params[1].nil? && params[1].is_a?(Array)
+        else
+          params[1] = parseMoveRoute(*params[1][1..], repeat: params[1][0]) if !params[1].nil? && params[1].is_a?(Array)
+        end
       when :ControlSwitch, :ControlSwitches
         params.unshift(params[0]) if sym == :ControlSwitch
         mapValue(params, 0, Switches)
@@ -488,6 +504,9 @@ module InjectionHelper
       elsif insn.is_a?(Array)
         sym = insn[0]
         params = insn[1..]
+      elsif insn.is_a?(RPG::EventCommand)
+        sym = InjectionHelper::EVENT_INSNS.invert[insn.code]
+        params = insn.parameters
       end
 
 

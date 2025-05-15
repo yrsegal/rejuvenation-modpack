@@ -533,8 +533,8 @@ class Cache_Game
         if !matched.nil?
           insns.delete_at(insns.index(matched[0]))
           insns.insert(insns.index(matched[1]) + 1, matched[0])
-          next true
         end
+        next !matched.nil?
       }
 
       

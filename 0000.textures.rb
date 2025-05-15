@@ -49,7 +49,9 @@ $DECLARED_OVERRIDES = {
   $CHARS + 'BattyFriends_Ana_4' => $MOD + 'Ana/Darchlight/BattyFriends',
 
   # Desolate Ana
-  $CHARS + 'BGirlWalk_5' => $MOD + 'Ana/Dark/LegacyAna',
+  $CHARS + 'BGirlWalk_5' => $MOD + 'Ana/Dark/Ana',
+  $CHARS + 'BGirlWalk_66' => $MOD + 'Ana/Dark/LegacyAna',
+
 
   # Darchlight Sprites
   $CHARS + 'trBack144' => $MOD + 'Darch/FlorinBack', # Only time Florin is a battle partner, so can replace the base sprite

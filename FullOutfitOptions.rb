@@ -128,8 +128,8 @@ def outfitoptions_wake_up(page)
       insns.insert(elseidx + 1, *InjectionHelper.parseEventCommands(*payload, 
         baseIndent: matched[1].indent + 1)) 
 
-      next true
     end
+    next matched
   }
 end
 
@@ -146,8 +146,8 @@ def outfitoptions_injectBeforeOutfit0(subevent, event_id, nums, running)
 
       insns.insert(insns.index(matched), *InjectionHelper.parseEventCommands(newinsns, baseIndent: matched.indent))
 
-      next true
     end
+    next matched
   }
 end
 
@@ -185,8 +185,8 @@ def outfitoptions_patch_outfit_management(event)
           [:ControlVariable, :Outfit, :Set, :Constant, 4],
           [:Script, '$Trainer.outfit=4'],
           baseIndent: matched.indent))
-      next true
     end
+    next matched
   }
 end
 
