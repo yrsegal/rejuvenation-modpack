@@ -2,45 +2,45 @@ Rejuvenation Modpack
 ====================
 
 Libraries:
-- 0000.injection.rb
+- 0000.injection.rb  
   Supports code injection mods.
 
 Individual mods:
-- AnaFixes.rb
+- AnaFixes.rb  
   Fixes some issues with the character Ana's sprites.
-- AutoFish.rb
+- AutoFish.rb  
   Fishing requires no timing, and always succeeds if possible.
-- BetterBattleUI.rb
+- BetterBattleUI.rb  
   Show types and stat boosts visually in battle.
-- CleanerPrismPower.rb
+- CleanerPrismPower.rb  
   Makes a Rejuvenation-exclusive ability cleaner.
-- FixBasculegionForms.rb
+- FixBasculegionForms.rb  
   Fixes Basculegion's forms on evolution. (Currently, female basculegion does not recieve the proper icon or stats.)
-- FixCdAName.rb
+- FixCdAName.rb  
   Fixes an area name being displayed incorrectly.
-- FixNWSilvally.rb
+- FixNWSilvally.rb  
   Fixes a field interaction with Silvally.
-- FixSuperLuck.rb
+- FixSuperLuck.rb  
   Super Luck increases held item chances on wild pokemon, as it's supposed to.
-- FullOutfitOptions.rb
+- FullOutfitOptions.rb  
   You get full options for outfits, and they're supported a little more in cutscenes. This does not add sprites for them, and the only character given spritework currently for this is Ana.
-- HiddenPowerInSummary.rb
+- HiddenPowerInSummary.rb  
   Hidden Power, Revelation Dance, and such all display their correct type in summaries and move listings.
-- ItemRadar.rb
+- ItemRadar.rb  
   The Itemfinder becomes a toggleable overlay rather than an item you have to use repeatedly. Also pings you when entering a map with a Zygarde Cell you haven't collected.
-- KingleriteHotfix.rb
+- KingleriteHotfix.rb  
   The Kinglerite crashes the game to pick up. This fixes that.
-- LabyrinthPuzzleFix.rb
+- LabyrinthPuzzleFix.rb  
   A typo in a puzzle causes it to not select the proper type of pokemon.
-- LearnPrevolutionAndEggMoves.rb
+- LearnPrevolutionAndEggMoves.rb  
   Allows relearning anywhere for free, and also adds egg moves to that pool. Fixes a few alternate forms' egg move pools.
-- MiningOverhaul.rb
+- LureRework.rb  
+  The Mirror Lure lets you run always, like it says it does. The Magnetic Lure becomes a toggleable key item.
+- MiningOverhaul.rb  
   More items for mining! Nicer sprites, too. Also, you can keep mining after you've fully cracked the bar by spending money.
-- MirrorLureRuns.rb
-  The Mirror Lure lets you run always, like it says it does.
-- MoreSpecificGatherCube.rb
+- MoreSpecificGatherCube.rb  
   The Gather Cube tells you how many Cells you've picked up from each region of Aevium.
-- MoveTweak.rb
+- MoveTweak.rb  
   A few tweaks to moves. Specifically:
   - Splintered Stormshards destroys terrain, replacing it with temporary Rocky Field.
   - Cut becomes a 65/100 Steel move with high crit rate.
@@ -52,23 +52,23 @@ Individual mods:
   - Play Rough becomes 100% accurate.
   - Air Slash becomes 100% accurate.
   - Fly becomes a 100/100 move.
-- MrLuckIsBlind.rb
+- MrLuckIsBlind.rb  
   Mr. Luck can no longer tell if you cheat.
-- NoTMXAnimations.rb
+- NoTMXAnimations.rb  
   Pokemon don't appear in the splash screen when using an HM or similar move.
-- OricorioHoldNectar.rb
+- OricorioHoldNectar.rb  
   Oricorio hold their Nectar in the wild, as in gen 9, allowing you to get Pink and Yellow Nectars (otherwise unobtainable).
-- PartialDebugMode.rb
+- PartialDebugMode.rb  
   Enables debug mode without enabling the use of HMs without their badges and prerequisites.
-- SelectFromBoxes.rb *(experimental)*
+- SelectFromBoxes.rb *(experimental)*  
   Makes all instances of choosing a pokemon from your party use your boxes and party instead.
-- ShiftToScent.rb
+- ShiftToScent.rb  
   Holding shift overrides your spice scent with 0200.
-- TextureOverriding.rb
+- TextureOverriding.rb  
   Various texture overrides: most of them are for the character Ana.
-- ThiefAndPickupEvenWithItem.rb
+- ThiefAndPickupEvenWithItem.rb  
   Thief and Pickup work even if the user is holding an item.
-- XOverRun.rb
+- XOverRun.rb  
   Hitting the "back" button when selecting a command in battle will move your cursor over "Run".
-- ZygardeCaffeine.rb
+- ZygardeCaffeine.rb  
   Zygarde Cells become indifferent to time of day.

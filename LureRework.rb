@@ -1,3 +1,66 @@
+class PokemonEncounters
+
+  def pbShouldFilterKnownPkmnFromEncounter?
+    ### MODDED/
+    return false if $Trainer.party[0].item == :MIRRORLURE
+    return true if $game_screen.lurerework_checkIsMagneticLureOn?
+    return false
+    ### /MODDED
+  end
+end
+
+class ItemData < DataObject
+  attr_accessor :flags
+end
+
+ItemHandlers::UseFromBag.add(:MAGNETICLURE,proc{|item| next 1 })
+
+ItemHandlers::UseInField.add(:MAGNETICLURE,proc{|item|
+  $game_screen.lurerework_toggleLure
+})
+
+$cache.items[:MAGNETICLURE].flags[:keyitem] = true
+$cache.items[:MAGNETICLURE].flags[:noUse] = false
+$cache.items[:MAGNETICLURE].flags[:utilityhold] = false
+$cache.items[:MAGNETICLURE].desc = "A strange device. Draws in uncaught species when activated."
+
+class PokemonBag_Scene
+  if !defined?(lurerework_old_pbStartScene)
+    alias :lurerework_old_pbStartScene :pbStartScene
+  end
+
+  def pbStartScene(bag)
+    # Pocket 1 is default items
+    if bag.pockets[1].include?(:MAGNETICLURE)
+      bag.pockets[1].delete(:MAGNETICLURE)
+
+      bag.pockets[pbGetPocket(:MAGNETICLURE)].push(:MAGNETICLURE) 
+    end
+
+    return lurerework_old_pbStartScene(bag)
+  end
+end
+
+class Game_Screen
+
+  attr_accessor   :lurerework_lureIsOn
+
+  def lurerework_checkIsMagneticLureOn?
+    return false if Rejuv && $game_switches[:NotPlayerCharacter] && !$game_switches[:InterceptorsWish]
+    @lurerework_lureIsOn=false if !defined?(@lurerework_lureIsOn)
+    return @lurerework_lureIsOn
+  end
+
+  def lurerework_toggleLure
+    @lurerework_lureIsOn=!@lurerework_lureIsOn
+    if lurerework_checkIsMagneticLureOn?
+      Kernel.pbMessage(_INTL('The Magnetic Lure is now ON.'))
+    else
+      Kernel.pbMessage(_INTL('The Magnetic Lure is now OFF.'))
+    end
+  end
+end
+
 class PokeBattle_Battle
   def pbRun(idxPokemon,duringBattle=false)
     thispkmn=@battlers[idxPokemon]

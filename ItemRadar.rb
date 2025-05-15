@@ -7,6 +7,8 @@ ItemHandlers::UseInField.add(:ITEMFINDER,proc{|item|
   $game_screen.itemRadar_toggleRadar
 })
 
+$cache.items[:ITEMFINDER].desc = "A device used for finding items. Makes hidden items visible when activated."
+
 ### /MODDED
 
 class Game_Screen
