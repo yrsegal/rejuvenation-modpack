@@ -1,0 +1,358 @@
+##########################################################
+##					Mining Overhaul	v2					##
+##					by AiedailEclipsed					##
+##			Ported to Rejuv v13.5 by AsNKrysis			##
+##########################################################
+# All code edits made will be noted in comments.		 #
+# Unless otherwise denoted by a comment, all code		 #
+# within is from the original Mining minigame script	 #
+# by Maruno or has been edited by the individual		 #
+# developer or user.									 #
+##########################################################
+# Spreadsheet with probability formulas:				 #
+#	https://bit.ly/miningoverhaulprob					 #
+##########################################################
+##				THANK YOU AND PLEASE ENJOY!				##
+##########################################################
+# ADDED BY WIRE: RELICS, SWM MINEFORRICH
+# Sprites largely sourced from Screen Lady at https://eeveeexpo.com/resources/1274/
+#####MODDED
+if defined?($hitsRemoved)
+  $hitsRemoved=0
+end
+
+def swm_getDrawnTextWOutline(outline, text, fontSize)
+  height=fontSize
+  bitmap=Bitmap.new(Graphics.width, height)
+  bitmap.font.name='Arial Black' # $VersionStyles[$PokemonSystem.font]
+  bitmap.font.size=fontSize
+  bitmap.font.color.set(0, 0, 0)
+  bitmap.draw_text(0, 0, bitmap.width, bitmap.height, text, 0)
+  
+  bitmap2=Bitmap.new(Graphics.width, height)
+  for i in 0...(outline*2+1)
+    bitmap2.blt(0, i, bitmap, bitmap.rect)
+  end
+  
+  bitmap3 = Bitmap.new(Graphics.width, height)
+  bitmap3.blt(0, 0, bitmap2, bitmap2.rect)
+  
+  for i in 0...(outline*2+1)
+    bitmap2.blt(i, 0, bitmap3, bitmap3.rect)
+  end
+  
+  bitmap.font.color.set(255, 255, 255)
+  bitmap.draw_text(outline, outline, bitmap.width, bitmap.height, text, 0)
+  bitmap2.blt(0, 0, bitmap, bitmap.rect)
+  
+  return bitmap2
+end
+
+def swm_getHitCost(hitsToRemove, registerNewCount)
+  baseCost=125
+  count=swm_getHitsCount(hitsToRemove, registerNewCount)
+  return count*baseCost
+end
+
+def swm_getHitsCount(hitsToRemove, registerNewCount)
+  if defined?($hitsRemoved)
+    count=$hitsRemoved
+  else
+    count=0
+  end
+  count+=hitsToRemove
+  $hitsRemoved=count if registerNewCount
+  return count
+end
+#####/MODDED
+
+class MiningGameCounter < BitmapSprite
+  #####MODDED
+  def swm_resetMiningCounters
+    @swm_oldCost=nil
+    $hitsRemoved=0
+  end
+
+  def swm_notifyNextHit
+    bmps=swm_getMiningBmps
+    self.bitmap.blt(5, 0, bmps[0], bmps[0].rect)
+    self.bitmap.blt(5, 25, bmps[1], bmps[1].rect)
+  end
+
+  def swm_getMiningBmps
+    return @swm_miningBmps if !swm_shouldResetMiningBmps?
+    lines=swm_getMiningCostLines
+    bmps=[
+    ]
+    @swm_miningBmps=bmps
+    return @swm_miningBmps
+  end
+
+  def swm_shouldResetMiningBmps?
+    return true if swm_checkCostChanged?
+    return true if !defined?(@swm_miningBmps)
+    return true if @swm_miningBmps[0].disposed?
+    return true if @swm_miningBmps[1].disposed?
+    return false
+  end
+
+  def swm_checkCostChanged?
+    cost=swm_getHitCost(0, false)
+    return false if defined?(@swm_oldCost) && @swm_oldCost == cost
+    @swm_oldCost=cost
+    return true
+  end
+
+  def swm_getMiningCostLines
+    hitsRemoved=swm_getHitsCount(0, false)
+    return [] if hitsRemoved <= 0
+    textA=_INTL(
+      'Next hit: ${1} (pick), ${2} (hammer)',
+      pickaxeCost,
+      hammerCost
+    )
+    return [textA]
+  end
+
+  if !defined?(swm_miningForRich_oldInitialize)
+    alias :swm_miningForRich_oldInitialize :initialize
+  end
+  #####/MODDED
+
+  def initialize(*args, **kwargs)
+    result=swm_miningForRich_oldInitialize(*args, **kwargs)
+    swm_resetMiningCounters
+    return result
+  end
+end
+
+class MiningGameScene
+  BOARDWIDTH  = 13
+  BOARDHEIGHT = 10
+  ITEMS = [ # Item, probability, graphic x, graphic y, width, height, pattern
+        [:HELIXFOSSIL,2, 5,3, 4,4,[0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0]],
+     [:HELIXFOSSIL,2, 9,3, 4,4,[1,1,1,0,1,1,1,1,1,1,1,1,0,1,1,1]],
+     [:HELIXFOSSIL,1, 13,3, 4,4,[0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0]],
+     [:HELIXFOSSIL,1, 17,3, 4,4,[1,1,1,0,1,1,1,1,1,1,1,1,0,1,1,1]],
+     [:ROOTFOSSIL,1, 0,7, 5,5,[1,1,1,1,0,1,1,1,1,1,1,1,0,1,1,0,0,0,1,1,0,0,1,1,0]],
+     [:ROOTFOSSIL,1, 5,7, 5,5,[0,0,1,1,1,0,0,1,1,1,1,0,0,1,1,1,1,1,1,1,0,1,1,1,0]],
+     [:ROOTFOSSIL,1, 10,7, 5,5,[0,1,1,0,0,1,1,0,0,0,1,1,0,1,1,1,1,1,1,1,0,1,1,1,1]],
+     [:ROOTFOSSIL,1, 15,7, 5,5,[0,1,1,1,0,1,1,1,1,1,1,1,0,0,1,1,1,1,0,0,1,1,1,0,0]],
+     [:CLAWFOSSIL,1, 0,12, 4,5,[0,0,1,1,0,1,1,1,0,1,1,1,1,1,1,0,1,1,0,0]],
+     [:CLAWFOSSIL,1, 4,12, 5,4,[1,1,0,0,0,1,1,1,1,0,0,1,1,1,1,0,0,1,1,1]],
+     [:CLAWFOSSIL,1, 9,12, 4,5,[0,0,1,1,0,1,1,1,1,1,1,0,1,1,1,0,1,1,0,0]],
+     [:CLAWFOSSIL,1, 13,12, 5,4,[1,1,1,0,0,1,1,1,1,0,0,1,1,1,1,0,0,0,1,1]],
+     [:DOMEFOSSIL,4, 0,3, 5,4,[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,1,0]],
+     [:SKULLFOSSIL,4, 20,7, 4,4,[1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0]],
+     [:ARMORFOSSIL,4, 24,7, 5,4,[0,1,1,1,0,0,1,1,1,0,1,1,1,1,1,0,1,1,1,0]],
+     [:SUNSTONE,16, 21,17, 3,3,[0,1,0,1,1,1,1,1,1]],
+     [:SHINYSTONE,16, 26,29, 3,3,[0,1,1,1,1,1,1,1,0]],
+     [:DAWNSTONE,16, 26,32, 3,3,[1,1,1,1,1,1,1,1,1]],
+     [:ICESTONE,3, 10,24, 4,2,[1,1,1,0,0,1,1,1]],
+     [:ICESTONE,3, 24,26, 2,4,[0,1,1,1,1,1,1,0]],
+   [:BLKPRISM,10, 23,33, 3,2,[1,1,1,0,1,1]],
+     [:BLKPRISM,10, 24,30, 2,3,[1,1,1,1,1,0]],
+     [:DUSKSTONE,16, 14,23, 3,3,[1,1,1,1,1,1,1,1,0]],
+     [:THUNDERSTONE,16, 26,11, 3,3,[0,1,1,1,1,1,1,1,0]],
+     [:FIRESTONE,16, 20,11, 3,3,[1,1,1,1,1,1,1,1,1]],
+     [:WATERSTONE,16, 23,11, 3,3,[1,1,1,1,1,1,1,1,0]],
+     [:LEAFSTONE,8, 18,14, 3,4,[0,1,0,1,1,1,1,1,1,0,1,0]],
+     [:LEAFSTONE,8, 21,14, 4,3,[0,1,1,0,1,1,1,1,0,1,1,0]],
+     [:MOONSTONE,8, 25,14, 4,2,[0,1,1,1,1,1,1,0]],
+     [:MOONSTONE,8, 27,16, 2,4,[1,0,1,1,1,1,0,1]],
+     [:OVALSTONE,24, 24,17, 3,3,[1,1,1,1,1,1,1,1,1]],
+     [:EVERSTONE,24, 21,20, 4,2,[1,1,1,1,1,1,1,1]],
+     [:STARPIECE,20, 0,17, 3,3,[0,1,0,1,1,1,0,1,0]],
+     [:RAREBONE,10, 3,17, 6,3,[1,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,1]],
+     [:RAREBONE,10, 3,20, 3,6,[1,1,1,0,1,0,0,1,0,0,1,0,0,1,0,1,1,1]],
+     [:REVIVE,20, 0,20, 3,3,[0,1,0,1,1,1,0,1,0]],
+     [:MAXREVIVE,12, 0,23, 3,3,[1,1,1,1,1,1,1,1,1]],
+     [:LIGHTCLAY,24, 6,20, 4,4,[1,0,1,0,1,1,1,0,1,1,1,1,0,1,0,1]],
+     [:HARDSTONE,24, 6,24, 2,2,[1,1,1,1]],
+     [:HEARTSCALE,56, 8,24, 2,2,[1,0,1,1]],
+     [:IRONBALL,24, 9,17, 3,3,[1,1,1,1,1,1,1,1,1]],
+     [:ODDKEYSTONE,12, 10,20, 4,4,[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]],
+     [:HEATROCK,20, 12,17, 4,3,[1,0,1,0,1,1,1,1,1,1,1,1]],
+     [:DAMPROCK,20, 14,20, 3,3,[1,1,1,1,1,1,1,0,1]],
+     [:SMOOTHROCK,20, 17,18, 4,4,[0,0,1,0,1,1,1,0,0,1,1,1,0,1,0,0]],
+     [:ICYROCK,20, 17,22, 4,4,[0,1,1,0,1,1,1,1,1,1,1,1,1,0,0,1]],
+     [:AMPLIFIELDROCK,12, 25,0, 4,3,[1,1,0,1,1,1,1,1,1,1,1,1]],
+     [:REDSHARD,56, 21,22, 3,3,[1,1,1,1,1,0,1,1,1]],
+     [:GREENSHARD,56, 25,20, 4,3,[1,1,1,1,1,1,1,1,1,1,0,1]],
+     [:YELLOWSHARD,56, 25,23, 4,3,[1,0,1,0,1,1,1,0,1,1,1,1]],
+     [:BLUESHARD,56, 26,26, 3,3,[1,1,1,1,1,1,1,1,0]],
+     [:INSECTPLATE,8, 0,26, 4,3,[1,1,1,1,1,1,1,1,1,1,1,1]],
+     [:DREADPLATE,8, 4,26, 4,3,[1,1,1,1,1,1,1,1,1,1,1,1]],
+     [:DRACOPLATE,8, 8,26, 4,3,[1,1,1,1,1,1,1,1,1,1,1,1]],
+     [:ZAPPLATE,8, 12,26, 4,3,[1,1,1,1,1,1,1,1,1,1,1,1]],
+     [:FISTPLATE,8, 16,26, 4,3,[1,1,1,1,1,1,1,1,1,1,1,1]],
+     [:FLAMEPLATE,8, 20,26, 4,3,[1,1,1,1,1,1,1,1,1,1,1,1]],
+     [:MEADOWPLATE,8, 0,29, 4,3,[1,1,1,1,1,1,1,1,1,1,1,1]],
+     [:EARTHPLATE,8, 4,29, 4,3,[1,1,1,1,1,1,1,1,1,1,1,1]],
+     [:ICICLEPLATE,8, 8,29, 4,3,[1,1,1,1,1,1,1,1,1,1,1,1]],
+     [:TOXICPLATE,8, 12,29, 4,3,[1,1,1,1,1,1,1,1,1,1,1,1]],
+     [:MINDPLATE,8, 16,29, 4,3,[1,1,1,1,1,1,1,1,1,1,1,1]],
+     [:STONEPLATE,8, 20,29, 4,3,[1,1,1,1,1,1,1,1,1,1,1,1]],
+     [:SKYPLATE,8, 0,32, 4,3,[1,1,1,1,1,1,1,1,1,1,1,1]],
+     [:SPOOKYPLATE,8, 4,32, 4,3,[1,1,1,1,1,1,1,1,1,1,1,1]],
+     [:IRONPLATE,8, 8,32, 4,3,[1,1,1,1,1,1,1,1,1,1,1,1]],
+     [:SPLASHPLATE,8, 12,32, 4,3,[1,1,1,1,1,1,1,1,1,1,1,1]],
+     [:PIXIEPLATE,8, 16,32, 4,3,[1,1,1,1,1,1,1,1,1,1,1,1]],
+   ##       MODDED          ##
+     [:OLDAMBER,2, 21,3, 4,4,[0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0]],
+     [:OLDAMBER,2, 25,3, 4,4,[1,1,1,0,1,1,1,1,1,1,1,1,0,1,1,1]],
+   [:NUGGET,20, 19,35, 2,2,[1,1,1,1]],
+   [:BIGNUGGET,12, 16,35, 3,3,[1,1,1,1,1,1,1,1,1]],
+   [:COMETSHARD,12, 21,35, 3,3,[0,1,0,1,1,1,0,1,0]],
+   [:COVERFOSSIL,4, 12,35, 4,4,[1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0]],
+   [:PLUMEFOSSIL,4, 5,35, 4,4,[0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0]],
+   [:JAWFOSSIL,4, 0,35, 4,4,[0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0]],
+   [:SAILFOSSIL,4, 8,35, 4,4,[0,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1]],
+   [:RELICGOLD,6,20,32,2,1,[1,1]],
+   [:RELICSILVER,10,20,33,2,1,[1,1]],
+   [:RELICCOPPER,16,20,34,2,1,[1,1]]
+   ##       MODDED          ##
+  ] 
+  
+  def pbStartScene
+    @sprites={}
+    @viewport=Viewport.new(0,0,Graphics.width,Graphics.height)
+    @viewport.z=99999
+    # mod
+    @viewport2=Viewport.new(0,0,Graphics.width,Graphics.height)
+    @viewport2.z=100000
+    #/mod
+    addBackgroundPlane(@sprites,"bg","Mining/miningbg",@viewport)
+    @sprites["itemlayer"]=BitmapSprite.new(Graphics.width,Graphics.height,@viewport)
+    ##				MODDED					##
+	@itembitmap=AnimatedBitmap.new("Data/Mods/MiningItems")
+	## 				MODDED 					##
+    @ironbitmap=AnimatedBitmap.new(_INTL("Graphics/Pictures/Mining/irons"))
+    @items=[]
+    @itemswon=[]
+    @iron=[]
+    pbDistributeItems
+    pbDistributeIron
+    for i in 0...BOARDHEIGHT
+      for j in 0...BOARDWIDTH
+        @sprites["tile#{j+i*BOARDWIDTH}"]=MiningGameTile.new(32*j,64+32*i)
+      end
+    end
+    @sprites["crack"]=MiningGameCounter.new(0,4)
+    @sprites["cursor"]=MiningGameCursor.new(58,0) # central position, pick
+    @sprites["tool"]=IconSprite.new(434,254,@viewport)
+    @sprites["tool"].setBitmap(sprintf("Graphics/Pictures/Mining/toolicons"))
+    @sprites["tool"].src_rect.set(0,0,68,100)
+
+    #modded
+    @sprites["moneywindow"]=Window_AdvancedTextPokemon.new("")
+    @sprites["moneywindow"].letterbyletter = false
+    @sprites["moneywindow"].visible=false
+    @sprites["moneywindow"].viewport=@viewport2
+    @sprites["moneywindow"].x=0
+    @sprites["moneywindow"].y=0
+    @sprites["moneywindow"].width=190
+    @sprites["moneywindow"].height=96
+    @sprites["moneywindow"].baseColor=Color.new(88,88,80)
+    @sprites["moneywindow"].shadowColor=Color.new(168,184,184)
+
+    @sprites["costwindow"]=Window_AdvancedTextPokemon.new("")
+    @sprites["costwindow"].letterbyletter = false
+    @sprites["costwindow"].visible=false
+    @sprites["costwindow"].viewport=@viewport2
+    @sprites["costwindow"].x=Graphics.width - 210
+    @sprites["costwindow"].y=0
+    @sprites["costwindow"].width=210
+    @sprites["costwindow"].height=96
+    @sprites["costwindow"].baseColor=Color.new(88,88,80)
+    @sprites["costwindow"].shadowColor=Color.new(168,184,184)
+    overhaul_displaymoney
+    ###/modded
+    update
+    pbFadeInAndShow(@sprites)
+  end
+
+#mod
+  def overhaul_displaymoney 
+    hits = swm_getHitsCount(0, false)
+    pickaxeHits=1
+    hammerHits=2
+    pickaxeCost=swm_getHitCost(pickaxeHits, false)
+    hammerCost=swm_getHitCost(hammerHits, false)
+
+    @sprites["moneywindow"].visible = hits > 0
+    @sprites["costwindow"].visible = hits > 0
+    @sprites["moneywindow"].text=_INTL("Money:\n<r>${1}",$Trainer.money)
+    @sprites["costwindow"].text=_INTL("Pick:<r>${1}\nHammer:<r>${2}",pickaxeCost,hammerCost)
+  end
+  #/mod
+
+  def pbNoDuplicateItems(newitem)
+    return true if newitem==:HEARTSCALE   # Allow multiple Heart Scales
+  ##        MODDED          ##
+    return true if newitem==:RELICCOPPER   # Allow multiple relics
+    return true if newitem==:RELICSILVER   # Allow multiple relics
+    return true if newitem==:RELICGOLD   # Allow multiple relics
+    fossils=[:DOMEFOSSIL,:HELIXFOSSIL,:OLDAMBER,:ROOTFOSSIL,
+             :SKULLFOSSIL,:ARMORFOSSIL,:CLAWFOSSIL,:COVERFOSSIL,
+			 :PLUMEFOSSIL,:SAILFOSSIL,:JAWFOSSIL]
+    plates=[:INSECTPLATE,:DREADPLATE,:DRACOPLATE,:ZAPPLATE,:FISTPLATE,
+            :FLAMEPLATE,:MEADOWPLATE,:EARTHPLATE,:ICICLEPLATE,:TOXICPLATE,
+            :MINDPLATE,:STONEPLATE,:SKYPLATE,:SPOOKYPLATE,:IRONPLATE,:SPLASHPLATE]
+	raremisc=[:MAXREVIVE,:AMPLIFIELDROCK,:BIGNUGGET,
+			  :COMETSHARD,:ODDKEYSTONE]
+	evostones=[:FIRESTONE,:WATERSTONE,:THUNDERSTONE,
+			   :LEAFSTONE,:MOONSTONE,:SUNSTONE,:DAWNSTONE,
+			   :DUSKSTONE,:SHINYSTONE,:ICESTONE]
+    for i in @items
+      preitem=ITEMS[i[0]][0]
+      return false if preitem==newitem   # No duplicate items
+      return false if fossils.include?(preitem) && fossils.include?(newitem)
+      return false if plates.include?(preitem) && plates.include?(newitem)
+	  return false if raremisc.include?(preitem) && raremisc.include?(newitem)
+	  return false if evostones.include?(preitem) && evostones.include?(newitem)
+	##				MODDED					##
+    end
+    return true
+  end
+
+  ## MODDED
+
+  def swm_payToMine
+    hitsToRemove=swm_getHitsToRemove
+    return nil if hitsToRemove <= 0
+    cost=swm_getHitCost(hitsToRemove, true)
+    if $Trainer.money < cost
+      Kernel.pbMessage(_INTL('You can\'t afford to mine any more!'))
+      return nil
+    end
+    @sprites["crack"].hits-=hitsToRemove
+    $Trainer.money-=cost
+  end
+
+  def swm_getHitsToRemove
+    return @sprites["crack"].hits-48
+  end
+
+  if !defined?(swm_miningForRich_oldPbHit)
+    alias :swm_miningForRich_oldPbHit :pbHit
+  end
+
+  def pbHit(*args, **kwargs)
+    result=swm_miningForRich_oldPbHit(*args, **kwargs)
+    swm_payToMine
+    overhaul_displaymoney
+    return result
+  end
+
+  if !defined?(swm_miningForRich_oldPbEndScene)
+    alias :swm_miningForRich_oldPbEndScene :pbEndScene
+  end
+  def pbEndScene(*args, **kwargs)
+    result = swm_miningForRich_oldPbEndScene(*args, **kwargs)
+    @viewport2.dispose
+    return result
+  end
+
+  ### / MODDED
+end

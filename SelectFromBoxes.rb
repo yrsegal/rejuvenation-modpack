@@ -1,0 +1,564 @@
+###### SHADOW POKEMON
+
+def selectfromboxes_purifiableInfo()
+  for mon in $Trainer.party
+    return [true, -1] if pbIsPurifiable?(mon)
+  end
+  for box in 0...$PokemonStorage.maxBoxes
+    for idx in 0...$PokemonStorage[box].length
+      mon = $PokemonStorage[box, idx]
+      return [true, box] if mon && pbIsPurifiable?(mon)
+    end
+  end
+  return [false]
+end
+
+def pbRelicStone()
+  ### MODDED/
+  purifiableInfo = selectfromboxes_purifiableInfo()
+  if purifiableInfo[0]
+  ### /MODDED
+    Kernel.pbMessage(_INTL("There's a Pokemon that may open the door to its heart!"))
+    # Choose a purifiable Pokemon
+    ### MODDED/
+    pbChoosePokemon(1,2,proc {|poke|
+       !poke.isEgg? && poke.hp>0 && poke.isShadow? && poke.heartgauge==0
+    },false,false, selectfromboxes_commandText: "Purify", selectfromboxes_partyOpen: purifiableInfo[1] == -1)
+    ### /MODDED
+    if $game_variables[1]>=0
+      pbRelicStoneScreen($Trainer.party[$game_variables[1]])
+    end
+  else
+    Kernel.pbMessage(_INTL("You have no Pokemon that can be purified."))
+  end
+end
+
+######
+
+###### REPLACING SELECTION WINDOW
+if !defined?(selectfromboxes_old_pbChoosePokemon)
+  alias :selectfromboxes_old_pbChoosePokemon :pbChoosePokemon
+end
+
+def pbChoosePokemon(variableNumber,nameVarNumber,ableProc=nil,allowIneligible=false,giveAway=false,*args,
+  ### MODDED/
+  selectfromboxes_commandText: "Select", selectfromboxes_partyOpen: false, 
+  selectfromboxes_tutorPartialAble: nil, selectfromboxes_tutorMove: nil, **kwargs)
+
+  if Rejuv && $game_switches[:NotPlayerCharacter] && !$game_switches[:InterceptorsWish]
+    return selectfromboxes_old_pbChoosePokemon(variableNumber,nameVarNumber,ableProc,allowIneligible,giveAway,*args,**kwargs)
+  end
+  ### /MODDED
+
+  chosen=-1
+  pbFadeOutIn(99999){
+      scene=Selectfromboxes_PokemonStorageScene.new(giveAway, ableProc, selectfromboxes_tutorPartialAble, selectfromboxes_partyOpen)
+      screen=Selectfromboxes_PokemonStorageScreen.new(scene,$PokemonStorage,selectfromboxes_commandText, selectfromboxes_tutorMove)
+
+      chosen = screen.pbChoosePokemon()
+      if chosen.nil?
+       chosen = -1
+      end
+  }  
+  ### /MODDED
+  pbSet(variableNumber, chosen)
+  if chosen != -1
+    pbSet(nameVarNumber, $Trainer.party[chosen].name)
+  else
+    pbSet(nameVarNumber,"")
+  end
+end
+
+######
+
+###### REPLACING MOVE TUTOR WINDOW
+
+if !defined?(selectfromboxes_old_pbMoveTutorChoose)
+  alias :selectfromboxes_old_pbMoveTutorChoose :pbMoveTutorChoose
+end
+
+def pbMoveTutorChoose(move,movelist=nil,bymachine=false,bytutor=false,*args,**kwargs)
+  ret=false
+
+  ### MODDED/
+
+  if Rejuv && $game_switches[:NotPlayerCharacter] && !$game_switches[:InterceptorsWish]
+    return selectfromboxes_old_pbMoveTutorChoose(move, movelist, bymachine, bytutor,*args,**kwargs)
+  end
+
+  if $Trainer.tutorlist.length>0 && ($Trainer.tutorlist.include?(move)) && bytutor==false
+    Kernel.pbMessage('(' + _INTL("You've already bought {1}. Check out the app on the Cybernav!",getMoveName(move)) + ')')
+  else
+    pbChoosePokemon(1, 2, proc {|pkmn| 
+      !pkmn.isEgg? && 
+      !(pkmn.isShadow? rescue false) && 
+      !(movelist && !movelist.any?{|j| j==pkmn.species }) && 
+      pkmn.SpeciesCompatible?(move)
+    }, 
+    selectfromboxes_commandText: "Teach",
+    selectfromboxes_partyOpen: PokemonBag.pbPartyCanLearnThisMove?(move),
+    selectfromboxes_tutorPartialAble: proc {|pkmn|
+      pkmn.moves.any? { |pkmnMove| pkmnMove.move == move }
+    },
+    selectfromboxes_tutorMove: move)
+
+    result = pbGet(1)
+    if result != -1
+      pokemon = $Trainer.party[result]
+      if pbLearnMove(pokemon,move,false,bymachine)
+        pbMoveTutorListAdd(move) if bymachine==false
+        ret=true
+      end
+    end
+  end
+  ### /MODDED
+  return ret # Returns whether the move was learned by a Pokemon
+end
+
+######
+
+###### ALLOW SCRIPTS TO DELETE POKEMON IN BOXES
+
+if !defined?(selectfromboxes_old_pbRemovePokemonAt)
+  alias :selectfromboxes_old_pbRemovePokemonAt :pbRemovePokemonAt
+end
+
+def pbRemovePokemonAt(idx)
+  if idx.is_a?(Array)
+    if i[0] != -1
+      $PokemonStorage.pbDelete(i[0], i[1])
+      return true
+    else
+      idx = idx[1]
+    end
+  end
+  return selectfromboxes_old_pbRemovePokemonAt(idx)
+end
+
+###### SELECTION WINDOW
+
+class Selectfromboxes_PokemonStorageScreen < PokemonStorageScreen
+
+  attr_accessor :command_text
+  attr_accessor :tutor_move
+
+  def initialize(scene,storage,command_text,tutor_move)
+    super(scene, storage)
+    @command_text = command_text
+    @tutor_move = tutor_move
+    @choseFromParty = scene.partyOpen
+  end
+
+  def pbChoosePokemon(party=nil)
+    @heldpkmn=nil
+    @scene.pbStartBox(self,2)
+    retval=-1
+    loop do
+      selected=@scene.pbSelectBox(@storage.party)
+      if selected && selected[0]==-3 # Close box
+        if pbConfirm(_INTL("Exit from the Box?"))
+          break
+        else
+          next
+        end
+      end
+      if selected==nil
+        if pbConfirm(_INTL("Continue Box operations?"))
+          next
+        else
+          break
+        end
+      elsif selected[0]==-4 # Box name
+        pbBoxCommands
+      else
+        pokemon=@storage[selected[0],selected[1]]
+        ### MODDED/
+        next if !pokemon
+        next if @scene.ableProc && !@scene.ableProc.call(pokemon)
+
+        if @tutor_move && @scene.tutorPartialAble && @scene.tutorPartialAble.call(pokemon)
+          pbDisplay(_INTL("{1} already knows\r\n{2}.",pokemon.name,getMoveName(@tutor_move)))
+          next
+        end
+
+        commands=[
+           _INTL(@command_text),
+           _INTL("Summary"),
+           _INTL("Cancel")
+        ]
+        helptext=_INTL("{1} is selected.",pokemon.name)
+        command=pbShowCommands(helptext,commands)
+        case command
+          when 0 # Move/Shift/Place
+            if pokemon
+
+              if @scene.giveAway && 
+               selected[0] == -1 && # Party
+               $Trainer.ablePokemonCount == 1 &&
+               $Trainer.ablePokemonParty.include?(pokemon)
+                pbDisplay(_INTL("You can't give away your last non-fainted Pokémon."))
+              else
+                retval=selected
+                break
+              end
+            end
+          when 1 # Summary
+            pbSummary(selected,nil)
+        end
+        ### /MODDED
+      end
+    end
+    @scene.pbCloseBox
+    return retval
+  end
+end
+
+def selectfromboxes_tone(pokemon, ableProc, tutorPartialAble)
+  if tutorPartialAble && tutorPartialAble.call(pokemon)
+    return Tone.new(0, 0, -128)
+  elsif ableProc && !ableProc.call(pokemon)
+    return Tone.new(0, 0, 0, 255)
+  else
+    return Tone.new(0, 0, 0)
+  end
+end
+
+class Selectfromboxes_PokemonStorageScene < PokemonStorageScene
+  attr_accessor :ableProc
+  attr_accessor :tutorPartialAble
+  attr_accessor :giveAway
+  attr_accessor :partyOpen
+
+  def initialize(giveAway, ableProc, tutorPartialAble, partyOpen)
+    super()
+    @giveAway = giveAway
+    @ableProc = ableProc
+    @tutorPartialAble = tutorPartialAble
+    @partyOpen = partyOpen
+  end
+
+  def pbSelectBox(party)
+    ### MODDED/ (treat as if allowed to choose from party)
+    ret=nil
+    loop do
+      if !@choseFromParty
+        ret=pbSelectBoxInternal(party)
+      end
+      if @choseFromParty || (ret && ret[0]==-2) # Party Pokémon
+        if !@choseFromParty
+          pbDropDownPartyTab
+          @selection=0
+        end
+        ret=pbSelectPartyInternal(party,false)
+        if ret<0
+          pbHidePartyTab
+          @selection=0
+          @choseFromParty=false
+        else
+          @choseFromParty=true
+          return Selectfromboxes_SelectionArray.new([-1,ret])
+        end
+      else
+        if ret.is_a?(Array)
+          return Selectfromboxes_SelectionArray.new(ret)
+        else
+          return ret
+        end
+      end
+    end
+    ### /MODDED
+  end
+
+  def pbStartBox(screen,command)
+    @screen=screen
+    @storage=screen.storage
+    @bgviewport=Viewport.new(0,0,Graphics.width,Graphics.height)
+    @bgviewport.z=99999
+    @boxviewport=Viewport.new(0,0,Graphics.width,Graphics.height)
+    @boxviewport.z=99999
+    @boxsidesviewport=Viewport.new(0,0,Graphics.width,Graphics.height)
+    @boxsidesviewport.z=99999
+    @arrowviewport=Viewport.new(0,0,Graphics.width,Graphics.height)
+    @arrowviewport.z=99999
+    @viewport=Viewport.new(0,0,Graphics.width,Graphics.height)
+    @viewport.z=99999
+    @selection=0
+    @quickswap = false
+    @sprites={}
+    @choseFromParty=false
+    @command=command
+    addBackgroundPlane(@sprites,"background","Storage/boxbg",@bgviewport)
+    ### MODDED/
+    @sprites["box"]=Selectfromboxes_PokemonBoxSprite.new(@ableProc,@tutorPartialAble,@storage,@storage.currentBox,@boxviewport)
+    ### /MODDED
+    @sprites["boxsides"]=IconSprite.new(0,0,@boxsidesviewport)
+    @sprites["boxsides"].setBitmap("Graphics/Pictures/Storage/boxsides")
+    @sprites["overlay"]=BitmapSprite.new(Graphics.width,Graphics.height,@boxsidesviewport)
+    @sprites["pokemon"]=AutoMosaicPokemonSprite.new(@boxsidesviewport)
+    pbSetSystemFont(@sprites["overlay"].bitmap)
+    ### MODDED/
+    @sprites["boxparty"]=Selectfromboxes_PokemonBoxPartySprite.new(@ableProc,@tutorPartialAble,@storage.party,@boxsidesviewport)
+    # if command!=1 # Drop down tab only on Deposit
+    @choseFromParty = @partyOpen
+    if !@partyOpen
+    ### /MODDED
+      @sprites["boxparty"].x=182
+      @sprites["boxparty"].y=Graphics.height
+    end
+    @sprites["arrow"]=PokemonBoxArrow.new(@arrowviewport)
+    @sprites["arrow"].z+=1
+    ### MODDED/
+    # if command!=1
+    if !@partyOpen
+    ### /MODDED
+      pbSetArrow(@sprites["arrow"],@selection)
+      pbUpdateOverlay(@selection)
+      pbSetMosaic(@selection)
+    else
+      pbPartySetArrow(@sprites["arrow"],@selection)
+      pbUpdateOverlay(@selection,@storage.party)
+      pbSetMosaic(@selection)
+    end
+    pbFadeInAndShow(@sprites)
+  end
+
+  def pbHardRefresh
+    oldPartyY=@sprites["boxparty"].y
+    @sprites["box"].dispose
+    @sprites["boxparty"].dispose
+    ### MODDED/
+    @sprites["box"]=Selectfromboxes_PokemonBoxSprite.new(@ableProc,@tutorPartialAble,@storage,@storage.currentBox,@boxviewport)
+    @sprites["boxparty"]=PokemonBoxPartySprite.new(@ableProc,@tutorPartialAble,@storage.party,@boxsidesviewport)
+    ### /MODDED
+    @sprites["boxparty"].y=oldPartyY
+  end
+
+  def pbSwitchBoxToRight(newbox)
+    iNewBox = newbox # Multi-Select
+    
+    ### MODDED/
+    newbox=Selectfromboxes_PokemonBoxSprite.new(@ableProc,@tutorPartialAble,@storage,newbox,@boxviewport)
+    ### /MODDED
+    newbox.x=520
+    Graphics.frame_reset
+    begin
+      Graphics.update
+      Input.update
+      @sprites["box"].x-=32
+      newbox.x-=32
+      pbUpdateSpriteHash(@sprites)
+    end until newbox.x<=184
+    diff=newbox.x-184
+    newbox.x=184; @sprites["box"].x-=diff
+    @sprites["box"].dispose
+    @sprites["box"]=newbox
+    
+    aUpdateMultiSelectOverlay(iNewBox) # Multi-Select
+  end
+
+  def pbSwitchBoxToLeft(newbox)
+    iNewBox = newbox # Multi-Select
+    
+    ### MODDED/
+    newbox=Selectfromboxes_PokemonBoxSprite.new(@ableProc,@tutorPartialAble,@storage,newbox,@boxviewport)
+    ### /MODDED
+    newbox.x=-152
+    Graphics.frame_reset
+    begin
+      Graphics.update
+      Input.update
+      @sprites["box"].x+=32
+      newbox.x+=32
+      pbUpdateSpriteHash(@sprites)
+    end until newbox.x>=184
+    diff=newbox.x-184
+    newbox.x=184; @sprites["box"].x-=diff
+    @sprites["box"].dispose
+    @sprites["box"]=newbox
+    
+    aUpdateMultiSelectOverlay(iNewBox) # Multi-Select
+  end
+end
+
+######
+
+###### SPRITES
+
+class Selectfromboxes_PokemonBoxPartySprite < PokemonBoxPartySprite
+  attr_accessor :ableProc
+  attr_accessor :tutorPartialAble
+
+  def initialize(ableProc,tutorPartialAble,party,viewport=nil)
+    super(party,viewport)
+    @ableProc = ableProc
+    @tutorPartialAble = tutorPartialAble
+    updateTone
+  end
+
+  def update
+    super
+    updateTone
+  end
+
+  def updateTone
+    if ableProc || tutorPartialAble
+      for i in 0...6
+        if @pokemonsprites[i] && !@pokemonsprites[i].disposed?
+          pokemon = @party[i]
+          if pokemon
+            @pokemonsprites[i].tone = selectfromboxes_tone(pokemon, ableProc, tutorPartialAble)
+          end
+        end
+      end
+    end
+  end
+end
+
+class Selectfromboxes_PokemonBoxSprite < PokemonBoxSprite
+  attr_accessor :ableProc
+  attr_accessor :tutorPartialAble
+
+  def initialize(ableProc,tutorPartialAble,storage,boxnumber,viewport=nil)
+    super(storage,boxnumber,viewport)
+    @ableProc = ableProc
+    @tutorPartialAble = tutorPartialAble
+    updateTone
+  end
+
+  def update
+    super
+    updateTone
+  end
+
+  def updateTone
+    if ableProc || tutorPartialAble
+      for i in 0...30
+        if @pokemonsprites[i] && !@pokemonsprites[i].disposed?
+          pokemon = @storage[@boxnumber,i]
+          if pokemon
+            @pokemonsprites[i].tone = selectfromboxes_tone(pokemon, ableProc, tutorPartialAble)
+          end
+        end
+      end
+    end
+  end
+end
+
+######
+
+
+###### FOLLOWING CODE IS TO ENABLE COMPARISON
+
+class PokeBattle_Trainer
+  if !defined?(selectfromboxes_old_party)
+    alias :selectfromboxes_old_party :party
+  end
+
+  def party
+    ret = selectfromboxes_old_party
+    ret.extend(Selectfromboxes_PartyArray)
+    return ret
+  end
+end
+
+module Selectfromboxes_PartyArray
+  def [](i)
+    if i.is_a?(Array)
+      return $PokemonStorage[i[0], i[1]]
+    end
+    return super(i)
+  end
+
+  def []=(i,val)
+    if i.is_a?(Array)
+      return $PokemonStorage[i[0], i[1]] = val
+    end
+    return super(i,val)
+  end
+end
+
+class Selectfromboxes_SelectionArray < Array
+  def >=(other)
+    return 1 >= other
+  end
+
+  def >(other)
+    return 1 > other
+  end
+
+  def <=(other)
+    return 1 <= other
+  end
+
+  def <(other)
+    return 1 < other
+  end
+end
+
+######
+
+###### PATCHING DAY CARE
+
+class Cache_Game
+  if !defined?(selectfromboxes_old_map_load)
+    alias :selectfromboxes_old_map_load :map_load
+  end
+
+  def selectfromboxes_patch_partycheck(event) 
+    for page in event.pages      
+      insns = page.list
+      InjectionHelper.patch(insns, :selectfromboxes_patch_partycheck) {
+        matched = InjectionHelper.lookForAll(insns,
+          [:ConditionalBranch, :Script, proc{|script| script == '$Trainer.pokemonCount<=1' || script == '$Trainer.party.length>=6'}])
+
+        for insn in matched
+          insn.parameters[0] = 'false'
+        end
+
+        next matched.length > 0
+      }
+    end
+  end
+
+  def selectfromboxes_patch_daycarelady(event)
+    selectfromboxes_patch_partycheck(event)
+
+    for page in event.pages
+      insns = page.list
+      InjectionHelper.patch(insns, :selectfromboxes_patch_daycarelady) {
+        matched = InjectionHelper.lookForSequence(insns, 
+          [:Script, 'pbDayCareWithdraw(pbGet(1))'],
+          [:ShowText, "\\GExcellent\\nHere's your Pokémon."])
+
+        if !matched.nil?
+          insns.delete_at(insns.index(matched[0]))
+          insns.insert(insns.index(matched[1]) + 1, matched[0])
+          next true
+        end
+      }
+
+      
+    end
+  end
+
+  def map_load(mapid)
+    if @cachedmaps && @cachedmaps[mapid]
+      return selectfromboxes_old_map_load(mapid)
+    end
+
+    ret = selectfromboxes_old_map_load(mapid)
+
+    if mapid == 425 # Sheridan Village (Interior)
+      selectfromboxes_patch_daycarelady(ret.events[1]) # Day Care Lady
+      selectfromboxes_patch_partycheck(ret.events[59]) # Day Care Man
+    elsif mapid == 9 # Dream District
+      selectfromboxes_patch_partycheck(ret.events[14]) # pseudo-Day Care Man
+    elsif mapid == 282 # Dream District (Interior)
+      selectfromboxes_patch_daycarelady(ret.events[13]) # pseudo-Day Care Lady
+    end
+
+    return ret
+  end
+end
+
+######
