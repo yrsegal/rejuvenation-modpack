@@ -8,7 +8,7 @@ Libraries:
   Various texture overrides: most of them are for the character Ana. Some mods expect these overrides to be present.
 
 Individual mods:
-- AnaFixes.rb (depends on 0000.injection.rb)  
+- AnaFixes.rb (depends on 0000.injection.rb, 0000.textures.rb)  
   Fixes some issues with the character Ana's sprites.
 - AutoFish.rb  
   Fishing requires no timing, and always succeeds if possible.
