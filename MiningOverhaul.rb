@@ -14,8 +14,9 @@
 ##########################################################
 ##				THANK YOU AND PLEASE ENJOY!				##
 ##########################################################
-# ADDED BY WIRE: RELICS, SWM MINEFORRICH
+# ADDED BY WIRE: RELICS, GEMS, SWM MINEFORRICH
 # Sprites largely sourced from Screen Lady at https://eeveeexpo.com/resources/1274/
+# Gem sprites made by wire based on Screen Lady's Diamond Sphere (small)
 #####MODDED
 if defined?($hitsRemoved)
   $hitsRemoved=0
@@ -210,7 +211,25 @@ class MiningGameScene
    [:SAILFOSSIL,4, 8,35, 4,4,[0,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1]],
    [:RELICGOLD,6,20,32,2,1,[1,1]],
    [:RELICSILVER,10,20,33,2,1,[1,1]],
-   [:RELICCOPPER,16,20,34,2,1,[1,1]]
+   [:RELICCOPPER,16,20,34,2,1,[1,1]],
+     [:BUGGEM,20, 0,39, 2,2,[1,1,1,1]],
+     [:DARKGEM,20, 2,39, 2,2,[1,1,1,1]],
+     [:DRAGONGEM,20, 4,39, 2,2,[1,1,1,1]],
+     [:ELECTRICGEM,20, 6,39, 2,2,[1,1,1,1]],
+     [:FIGHTINGGEM,20, 8,39, 2,2,[1,1,1,1]],
+     [:FIREGEM,20, 10,39, 2,2,[1,1,1,1]],
+     [:GRASSGEM,20, 12,39, 2,2,[1,1,1,1]],
+     [:GROUNDGEM,20, 14,39, 2,2,[1,1,1,1]],
+     [:ICEGEM,20, 16,39, 2,2,[1,1,1,1]],
+     [:POISONGEM,20, 0,41, 2,2,[1,1,1,1]],
+     [:PSYCHICGEM,20, 2,41, 2,2,[1,1,1,1]],
+     [:ROCKGEM,20, 4,41, 2,2,[1,1,1,1]],
+     [:FLYINGGEM,20, 6,41, 2,2,[1,1,1,1]],
+     [:GHOSTGEM,20, 8,41, 2,2,[1,1,1,1]],
+     [:STEELGEM,20, 10,41, 2,2,[1,1,1,1]],
+     [:WATERGEM,20, 12,41, 2,2,[1,1,1,1]],
+     [:FAIRYGEM,10, 14,41, 2,2,[1,1,1,1]], # Canonically rarer
+     [:NORMALGEM,20, 16,41, 2,2,[1,1,1,1]]
    ##       MODDED          ##
   ] 
   
