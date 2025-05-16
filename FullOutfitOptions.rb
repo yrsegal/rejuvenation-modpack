@@ -180,11 +180,11 @@ def outfitoptions_patch_outfit_management(event)
       [:ConditionalBranch, :Variable, :Outfit, :Constant, 4, :Equals])
 
     if matched
-      insns.insert(insns.index(matched), 
+      insns.insert(insns.index(matched) + 1, 
         *InjectionHelper.parseEventCommands(
           [:ControlVariable, :Outfit, :Set, :Constant, 4],
           [:Script, '$Trainer.outfit=4'],
-          baseIndent: matched.indent))
+          baseIndent: matched.indent + 1))
     end
     next matched
   }
