@@ -38,9 +38,11 @@ def anafixes_fix_darchsprite(event)
     matched = InjectionHelper.lookForAll(insns,
       [:SetMoveRoute, nil, nil])
 
+    submatcher = InjectionHelper.parseMatcher([:SetCharacter, 'BGirlwalk', nil, nil, nil])
+
     for insn in matched
       insn.parameters[1].list.each { |movecommand|
-        movecommand.parameters[0] = 'BGirlwalk_4' if movecommand.parameters[0] == 'BGirlwalk'
+        movecommand.parameters[0] = 'BGirlwalk_4' if submatcher.matches?(movecommand)
       }
     end
 

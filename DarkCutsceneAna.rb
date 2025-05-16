@@ -124,14 +124,8 @@ module DarkAnaCutscene
       0 => ["ANA: The door might close up again if I leave, and then we'll be separated forever...",
         "I can't let that happen."]
     },
-    21 => {
-      0 => ["ANA: The door might close up again if I leave, and then we'll be separated forever...",
-        "I can't let that happen."]
-    },
-    22 => {
-      0 => ["ANA: The door might close up again if I leave, and then we'll be separated forever...",
-        "I can't let that happen."]
-    },
+    21 => 20,
+    22 => 20,
     24 => {
       0 => ["ANA: An elevator? I could take it...",
         "But I can't risk leaving Melia behind."]
@@ -431,7 +425,7 @@ module DarkAnaCutscene
         "ANA: ...",
         "If we go back, what will happen to us?",
         "Overlapping, Melia. I'm the same unit, the same drive, and I can't change that.",
-        "My soul will clash, as will yours, and we'll... ",
+        "My soul will clash, as will yours, and we'll...",
         "...Overtake them.",
         "MELIA: ...It's a possibility.",
         "ANA: ...",
@@ -469,8 +463,189 @@ module DarkAnaCutscene
     }
   }
 
+  MAP_243_DIALOGUE = {
+    10 => {
+      1 => ["HOODED GIRL: ...",
+        "Did you find anything?",
+        "???: ...",
+        "HOODED GIRL: Of course you didn't.",
+        "You never do.",
+        "???: I've been trying my best... But nothing is ever the same.",
+        "And I'm afraid to move too far, or else...",
+        "HOODED GIRL: So you're holding back then?",
+        "???: It's not that... I just think we need to work together.",
+        "HOODED GIRL: \"Work together\"? Work... Together?!",
+        "Why would I work with someone who has the face of someone I hate?!",
+        "???: ...I'm not them, though.",
+        "HOODED GIRL: You're not. They used you until you were worth nothing.",
+        "And then they dumped you.",
+        "\\c[6]\\v[701].",
+        "ANA: ...",
+        "HOODED GIRL: This goddamn city...",
+        "It's all worthless. All of it!",
+        "ANA: Staying here isn't going to do us any good.",
+        "We need to keep moving.",
+        "HOODED GIRL: Lead the way."]
+    },
+    12 => {
+      2 => ["HOODED GIRL: What?",
+        "ANA: ...Hey, once we leave this place we probably won't be able to come back.",
+        "HOODED GIRL: Good riddance. I hated it down here anyway.",
+        "ANA: ..."]
+    },
+    13 => {
+      3 => ["ANA: The path we took here is gone.",
+        "HOODED GIRL: It always does that... eventually...",
+        "I don't know why you're so surprised by this.",
+        "ANA: I am not surprised.",
+        "Just... noting it."]
+    }, 
+    # 4, for some reason, already has ana text
+    16 => {
+      5 => ["ANA: Railnet tracks.",
+        "HOODED GIRL: This wasn't here before.",
+        "But these tracks won't do us any good by just being here.",
+        "ANA: We can walk along them, and look for-",
+        "HOODED GIRL: Are you fucking stupid? And what happens if we fall?",
+        "Who knows what would even happen to us.",
+        "ANA: What else should we do?",
+        "HOODED GIRL: I don't give a shit about that!",
+        "ANA: That isn't a course of action.",
+        "HOODED GIRL: We wait.",
+        "Look over there.",
+        "ANA: ...A train.",
+        "HOODED GIRL: Why do you <i>needlessly</i> say things that are blatantly obvious?",
+        "It'd be better if you JUST stayed quiet.",
+        "ANA: ...Hope.",
+        "HOODED GIRL: Just get on the train.",
+        "ANA: Another new place.",
+        "HOODED GIRL: Of course it is? What did you expect?",
+        "The train to loop around and take us back to the start?",
+        "Idiot."]
+    },
+    36 => 16,
+    37 => 16,
+    38 => 16,
+    39 => 16,
+    17 => {
+      0 => ["ANA: This statue!",
+        "HOODED GIRL: Looks to be another artifact.",
+        "Where is this one from then?",
+        "ANA: Ah. I believe it was...",
+        "$\%\(\)\#@$ Town... That's where R%& was from...",
+        "HOODED GIRL: It seems like that place doesn't exist anymore either.",
+        "This world is nothing more than a disgusting trash heap.",
+        "ANA: You're in it. Don't call yourself trash.",
+        "HOODED GIRL: Don't try to be cute."]
+    },
+    19 => {
+      6 => ["ANA: We found our way into another subway station...",
+        "Gran# Dr@#m C@*( is starting to reconverge.",
+        "I can even say its name now, and I can remember little details about it.",
+        "HOODED GIRL: And what is that supposed to do for us?",
+        "This is pointless too.",
+        "ANA: It's not pointless.",
+        "If things about the city starts returning, that means that--",
+        "HOODED GIRL: It doesn't MEAN ANYTHING! Why are you being so stubborn?!",
+        "ANA: Why are you so hell-bent on foregoing hope?",
+        "HOODED GIRL: ...",
+        "HOODED GIRL: Another train.",
+        "ANA: Let's get on.",
+        "HOODED GIRL: Nah, I just felt like standing here forever."]
+    },
+    22 => {
+      7 => ["HOODED GIRL: You are fucking kidding me, right?",
+        "ANA: Apparently you were correct.",
+        "HOODED GIRL: I'm losing my fucking mind here.",
+        "What was even the point of all that then? Huh? Looping around?",
+        "ANA: I still haven't figured out the rules this world follows.",
+        "HOODED GIRL: No, it doesn't follow anything, There's no rhyme or reason!",
+        "And that's what makes it even more infuriating.",
+        "So what now then? Do we huddle back in our corner in that station?",
+        "ANA: No.",
+        "It may look the same, but it isn't.",
+        "There is something different, in a way I can't explain.",
+        "HOODED GIRL: If you can't explain it then don't say anything at all.",
+        "ANA: Just follow me.",
+        "HOODED GIRL: There's nothing else to do anyway."]
+    },
+    25 => {
+      8 => ["ANA: Something has changed after all...",
+        "HOODED GIRL: Oh shit... It was in the same spot as last time, though.",
+        "What if we're really stuck in a loop forever and ever?",
+        "ANA: I must believe that isn't the case."]
+    },
+    26 => 25,
+    27 => 25,
+    28 => {
+      9 => ["ANA: This is the Centra# Bui#ding!",
+        "Another artifact from our old world!",
+        "But it looks like... We've hit a dead end again.",
+        "That should be okay. Things are changing rapidly now.",
+        "ANA: Let's retrace our steps, see if the train--",
+        "\\shHOODED GIRL: Aauuuuuughhh!!!!!!!",
+        "ANA: What? Are you in pain?",
+        "\\shHOODED GIRL: I'M DONE!",
+        "I can't take this anymore! Day in and day out we walk around in circles!",
+        "There's no light at the end of the tunnel, there's never any hope!",
+        "What is the point of continuing further?!",
+        "ANA: What is the point of not looking for a way back?",
+        "HOODED GIRL: THERE IS NO WAY BACK, \\vU[701]!",
+        "THIS WORLD THAT WE ARE IN IS IT. THIS IS IT!",
+        "Do you even realize how long we've been here?!",
+        "Don't you realize that no matter what we do, nothing ever progresses?!",
+        "How long have we been here for, \\v[701]?! Huh? How long!?",
+        "ANA: I... I'm not certain.",
+        "HOODED GIRL: \\|SIX.\\| YEARS!",
+        "SIX!",
+        "FOR SIX YEARS YOU HAVE BEEN DRAGGING ME ALONG!",
+        "YOU DON'T EVEN REALIZE THAT THIS \"HOPE\" HAS SHOWED UP TIME AND TIME AGAIN.",
+        "WE FOUND AKUWA TOWN.",
+        "WE FOUND THE BADLANDS!",
+        "WE FOUND OBLITUS TOWN!",
+        "AND FINALLY, WE'VE FOUND GRAND DRE#M C$TY!",
+        "BUT EVERY TIME WE DO IT NEVER PROGRESSES PAST WHAT THIS IS RIGHT NOW!",
+        "ANA: I... am aware.",
+        "HOODED GIRL: But that's not all!",
+        "Not ONCE have we needed to eat. Not ONCE have we needed to sleep!",
+        "NOTHING progresses, NOTHING reverses. We are in a constant PRESENT.",
+        "We will roam, and roam, and ROAM, AND ROAM FOR ALL ETERNITY!",
+        "\\shOPEN YOUR EYES!",
+        "HOODED GIRL: We're here because \\PN threw us away.",
+        "\\PN...",
+        "Because of them... Everything is...",
+        "...",
+        "HOODED GIRL: Hahaha.",
+        "Hahahahahahaha!",
+        "ANA: Please. I don't like seeing you like this.",
+        "HOODED GIRL: Perhaps we can't die here just by existing.",
+        "And existing is what \\PN would want, right? For us to suffer in our own hell?",
+        "Fuck that.",
+        "You see, for everything to end we have to die, \\v[701].",
+        "ANA: Absolutely not!",
+        "HOODED GIRL: We can change the fate forced upon us, don't you see??",
+        "You and I...",
+        "ANA: Please!",
+        "ANA: Oh, no.",
+        "HOODED GIRL: Run, if you'd like.",
+        "By all means...",
+        "If that what makes you <i>happy</i>.",
+        "But I just hope you know...",
+        "That it is all in vain."]
+    },
+    45 => 28,
+    46 => 28,
+    47 => 28,
+    48 => 28,
+    29 => {
+      -14 => ["ANA: Please...!",
+        "ANA: Stop...",
+        "ANA: Melia!!"]
+    }
+  }
+
   KARMA_GOOD = 731
-  KARMA_BAD = -1 # temp
+  KARMA_BAD = 756
 
   CHAR_SWITCHES = [
     Switches[:Aevis],
@@ -487,6 +662,22 @@ module DarkAnaCutscene
       [:SetCharacter, graphic, 0, direction, 0],
       :Done
     ]
+  end
+
+  def self.mapMoveRouteToAna(spriteMatcher, moveRoute, sprite)
+    ret = RPG::MoveRoute.new
+
+    ret.repeat = moveRoute.repeat
+    ret.skippable = moveRoute.skippable
+
+    ret.list = moveRoute.list.map { |movecommand|
+      if spriteMatcher.matches?(movecommand)
+        next InjectionHelper.parseMoveCommand(:SetCharacter, sprite, *movecommand.parameters[1..])
+      else
+        next movecommand
+      end
+    }
+    return ret
   end
 
   def self.copyPageDetails(page, originalPage)
@@ -521,8 +712,10 @@ module DarkAnaCutscene
   end
 
   def self.makeSingleDialoguePage(originalPage, dialogue)
-    page = RPG::Event::Page.new
+    playerMatcher = InjectionHelper.parseMatcher([:ConditionalBranch, :Switch, proc {|switch| DarkAnaCutscene::CHAR_SWITCHES.include?(switch) }, true])
+    spriteMatcher = InjectionHelper.parseMatcher([:SetCharacter, /trChar001_5/i, nil, nil, nil], mapper=InjectionHelper::MOVE_INSNS)
 
+    page = RPG::Event::Page.new
 
     copyPageDetails(page, originalPage)
     page.condition.switch1_valid = true
@@ -532,25 +725,28 @@ module DarkAnaCutscene
 
     page.list = []
     idx = 0
+    dialogueidx = 0
+
     until idx == originalPage.list.length
       insn = originalPage.list[idx]
 
-      if insn.code == InjectionHelper::EVENT_INSNS[:ConditionalBranch] && 
-          insn.parameters[0] == InjectionHelper::CONDITIONAL_BRANCH_TYPES[:Switch] &&
-          insn.parameters[2] == 0 &&
-          DarkAnaCutscene::CHAR_SWITCHES.include?(insn.parameters[1])
-
+      if playerMatcher.matches?(insn)
         nextinsn = originalPage.list[idx + 1]
-        until nextinsn.code == InjectionHelper::EVENT_INSNS[:BranchEndConditional] && nextinsn.indent == insn.indent
+        until nextinsn.indent == insn.indent &&
+            nextinsn.code != InjectionHelper::EVENT_INSNS[:BranchEndConditional] &&
+            !playerMatcher.matches?(nextinsn)
           idx += 1
           nextinsn = originalPage.list[idx + 1]
         end
 
-        if !pushedDialogue
-          page.list.push(
-            InjectionHelper.parseEventCommand(insn.indent, :ShowText, dialogue))
-          pushedDialogue = true
-        end
+        page.list.push(
+          InjectionHelper.parseEventCommand(insn.indent, :ShowText, dialogue[dialogueidx]))
+        dialogueidx += 1
+      elsif insn.code == InjectionHelper::EVENT_INSNS[:SetMoveRoute]
+        insn.parameters[1].list.each { |movecommand|
+          movecommand.parameters[0] = 'BGirlwalk_5' if spriteMatcher.matches?(movecommand)
+        }
+        page.list.push(insn)
       else
         page.list.push(insn)
       end
@@ -563,6 +759,7 @@ module DarkAnaCutscene
 
   def self.makeAnaPage(originalPage, dialogue, legacy=nil)
     outfitMatcher = InjectionHelper.parseMatcher([:SetMoveRoute, 2, makeMoveRoute(nil, :Up)])
+    spriteMatcher = InjectionHelper.parseMatcher([:SetCharacter, /trChar001_5/i, nil, nil, nil], mapper=InjectionHelper::MOVE_INSNS)
 
     page = RPG::Event::Page.new
 
@@ -606,6 +803,26 @@ module DarkAnaCutscene
             :Done,
           :Done,
           baseIndent: insn.indent))
+      elsif insn.code == InjectionHelper::EVENT_INSNS[:SetMoveRoute]
+        if insn.parameters[1].list.any? {|movecommand| spriteMatcher.matches?(movecommand) }
+
+          page.list.push(*InjectionHelper.parseEventCommands(
+            [:ConditionalBranch, :Variable, :Outfit, :Constant, 2, :Less],
+              [:ControlSwitch, :darkana_AnaLegacy, false],
+              [:SetMoveRoute, insn.parameters[0], mapMoveRouteToAna(spriteMatcher, insn.parameters[1], 'BGirlWalk_5')],
+            :Else,
+              [:ConditionalBranch, :Variable, :Outfit, :Constant, 6, :GreaterOrEquals],
+                [:ControlSwitch, :darkana_AnaLegacy, false],
+                [:SetMoveRoute, insn.parameters[0], mapMoveRouteToAna(spriteMatcher, insn.parameters[1], 'BGirlWalk_5')],
+              :Else,
+                [:ControlSwitch, :darkana_AnaLegacy, true],
+                [:SetMoveRoute, insn.parameters[0], mapMoveRouteToAna(spriteMatcher, insn.parameters[1], 'BGirlWalk_66')],
+              :Done,
+            :Done,
+            baseIndent: insn.indent))
+        else
+          page.list.push(insn)
+        end
       else
         page.list.push(insn)
       end
@@ -662,7 +879,7 @@ module DarkAnaCutscene
       event.pages[event.pages.index(blockToDelete)] = makeSingleDialoguePage(originalPage, dialogue[0])
     elsif idxToInsertAfter != -1
       event.pages.insert(idxToInsertAfter + 1, 
-        makeSingleDialoguePage(originalPage, dialogue[0]))
+        makeSingleDialoguePage(originalPage, dialogue))
     end
   end
 
@@ -694,7 +911,7 @@ module DarkAnaCutscene
     if blockToDelete
       event.pages[event.pages.index(blockToDelete)] = makeAnaPage(originalPage, dialogue)
     elsif idxToInsertAfter != -1
-      if originalPage.graphic.character_name == 'trChar001_5'
+      if originalPage.graphic.character_name[/trChar001_5/i]
         event.pages.insert(idxToInsertAfter + 1, 
           makeAnaPage(originalPage, dialogue, false), 
           makeAnaPage(originalPage, dialogue, true))
@@ -777,9 +994,6 @@ Events.onMapChanging+=proc {
 
 #### INJECTION
 
-
-
-
 class Cache_Game
   if !defined?(darkana_old_map_load)
     alias :darkana_old_map_load :map_load
@@ -804,6 +1018,9 @@ class Cache_Game
 
       DarkAnaCutscene::MAP_609_DIALOGUE.each_pair {|eventId,dialogues|
         event = ret.events[eventId]
+        if dialogues.is_a?(Numeric)
+          dialogues = DarkAnaCutscene::MAP_609_DIALOGUE[dialogues]
+        end
         dialogues.each_pair { |karmaValue,dialogue|
           if karmaValue < 0
             DarkAnaCutscene.addSingleDialoguePage(event, -karmaValue, DarkAnaCutscene::KARMA_GOOD, dialogue)
@@ -813,6 +1030,22 @@ class Cache_Game
         }
       }
     elsif mapid == 243 # Desolate Outside
+      DarkAnaCutscene.patchDesolateOutfit(ret.events[10]) # M conversation
+      DarkAnaCutscene.addGraphicPage(ret.events[30]) # Player Dupe
+
+      DarkAnaCutscene::MAP_243_DIALOGUE.each_pair {|eventId,dialogues|
+        event = ret.events[eventId]
+        if dialogues.is_a?(Numeric)
+          dialogues = DarkAnaCutscene::MAP_243_DIALOGUE[dialogues]
+        end
+        dialogues.each_pair { |karmaValue,dialogue|
+          if karmaValue < 0
+            DarkAnaCutscene.addSingleDialoguePage(event, -karmaValue, DarkAnaCutscene::KARMA_BAD, dialogue)
+          else
+            DarkAnaCutscene.addAnaPage(event, karmaValue, DarkAnaCutscene::KARMA_BAD, dialogue)
+          end
+        }
+      }
       # darkana_patch_desolateoutfit(ret.events[10]) # M Conversation
     end
     return ret
