@@ -14,7 +14,10 @@ class ItemData < DataObject
   attr_accessor :desc
 end
 
-ItemHandlers::UseFromBag.add(:MAGNETICLURE,proc{|item| next 1 })
+ItemHandlers::UseFromBag.add(:MAGNETICLURE,proc{|item| 
+  $game_screen.lurerework_toggleLure
+  next 1 
+})
 
 ItemHandlers::UseInField.add(:MAGNETICLURE,proc{|item|
   $game_screen.lurerework_toggleLure
