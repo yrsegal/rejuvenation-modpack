@@ -36,7 +36,7 @@ def outfitoptions_generateWindstormBranch(outfit, running, event_id)
       *outfitoptions_charSection(outfit, event_id, :Axel, running ? 'Boy_Run2' : 'trchar004'),
       *outfitoptions_charSection(outfit, event_id, :Aevia, running ? 'girl_run' : 'trchar001'),
       *outfitoptions_charSection(outfit, event_id, :Aevis, running ? 'boy_run' : 'trchar000'),
-    :Else
+    :Done
   ]
 end
 
