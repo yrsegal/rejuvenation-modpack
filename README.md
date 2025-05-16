@@ -16,6 +16,8 @@ Individual mods:
   Show types and stat boosts visually in battle.
 - CleanerPrismPower.rb  
   Makes a Rejuvenation-exclusive ability cleaner.
+- DarkCutsceneAna.rb  
+  Adds an Ana route to a specific cutscene.
 - FixBasculegionForms.rb  
   Fixes Basculegion's forms on evolution. (Currently, female basculegion does not recieve the proper icon or stats.)
 - FixCdAName.rb  
