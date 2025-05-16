@@ -144,8 +144,7 @@ def outfitoptions_injectBeforeOutfit0(subevent, event_id, nums, running)
       newinsns = []
       nums.each {|num| newinsns += outfitoptions_generateWindstormBranch(num,running,event_id) }
 
-      insns.insert(insns.index(matched), *InjectionHelper.parseEventCommands(newinsns, baseIndent: matched.indent))
-
+      insns.insert(insns.index(matched), *InjectionHelper.parseEventCommands(*newinsns, baseIndent: matched.indent))
     end
     next matched
   }
