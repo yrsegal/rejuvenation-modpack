@@ -78,6 +78,10 @@ module ServicePCList
     return false
   end
 
+  def self.nightmareCleansed?
+    return $game_variables[:V13Story] >= 100
+  end
+
   def self.darchlightCaves?
     return $game_variables[:Post9thBadge] >= 27 && $game_variables[:Post9thBadge] < 30
   end

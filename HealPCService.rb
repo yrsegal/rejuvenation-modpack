@@ -21,12 +21,17 @@ class HealPCService
 
   def access
     if ServicePCList.inNightmare?
-      Kernel.pbMessage(_INTL("\\se[SFX - Phone Call]SEC: Hi! You've reached SEC! Were you expecting someone else?"))
-      Kernel.pbMessage(_INTL("You know that putting your Pokemon into the PC will heal them, right?"))
-      pbWait(30)
-      lockOn
-      Kernel.pbMessage(_INTL("Oh, well. You're in my sights. Here's your easy and convenient heal. Enjoy."))
-      heal
+      if ServicePCList.nightmareCleansed?
+        Kernel.pbMessage(_INTL("The memory of an annoying voice passes you by..."))
+        heal
+      else
+        Kernel.pbMessage(_INTL("\\se[SFX - Phone Call]SEC: Hi! You've reached SEC! Were you expecting someone else?"))
+        Kernel.pbMessage(_INTL("You know that putting your Pokemon into the PC will heal them, right?"))
+        pbWait(30)
+        lockOn
+        Kernel.pbMessage(_INTL("Oh, well. You're in my sights. Here's your easy and convenient heal. Enjoy."))
+        heal
+      end
       return
     end
 
