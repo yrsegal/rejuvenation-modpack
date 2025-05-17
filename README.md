@@ -4,6 +4,8 @@ Rejuvenation Modpack
 Libraries:
 - 0000.injection.rb  
   Supports code injection mods.
+- 0000.pcservices.rb
+  Adds a "service directory" to the PC, which lets you call NPCs for various services. Also makes the Rotom Phone a Remote PC.
 - 0000.textures.rb  
   Various texture overrides: most of them are for the character Ana. Some mods expect these overrides to be present.
 
@@ -28,6 +30,8 @@ Individual mods:
   Super Luck increases held item chances on wild pokemon, as it's supposed to.
 - FullOutfitOptions.rb (depends on 0000.injection.rb)  
   You get full options for outfits, and they're supported a little more in cutscenes. This does not add sprites for them, and the only character given spritework currently for this is Ana.
+- HealPCService.rb (depends on 0000.pcservices.rb)
+  Adds a Field Healing service.
 - HiddenPowerInSummary.rb  
   Hidden Power, Revelation Dance, and such all display their correct type in summaries and move listings.
 - ItemRadar.rb  

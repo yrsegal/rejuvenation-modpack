@@ -4,6 +4,7 @@ Variables[:Karma] = 129
 
 class CallServicePC
   def shouldShow?
+    return false if ServicePCList.getCommandList().size == 0
     return false if ServicePCList.isNotPlayer?
     return true
   end
@@ -132,23 +133,46 @@ module ServicePCList
 end
 
 
+class ItemData < DataObject
+  attr_accessor :flags
+  attr_accessor :desc
+end
 
-    # ret = 10000
-    # while ret > 0
-    #   cmdwin=pbListWindow([],200)
-    #   commands = $cache.RXanimations[1..].map {|animation|
-    #     [animation.id, animation.name, animation.frame_max]
-    #   }
-    #   commands.sort! {|a,b| a[1]<=>b[1]}
-    #   realcommands=[]
-    #   for command in commands
-    #     realcommands.push(_ISPRINTF("{1:03d} {2:s}",command[0],command[1]))
-    #   end
-    #   ret=pbCommands2(cmdwin,realcommands,-1,ret==10000 ? 0 : ret,true)
-    #   cmdwin.dispose
+$cache.items[:ROTOMPHONE].flags[:noUse] = false
+$cache.items[:ROTOMPHONE].desc = "A smartphone that was enhanced with a Rotom! Can access the PC system remotely."
 
-    #   if ret > 0
-    #     $game_player.animation_id = commands[ret][0]
-    #     pbWait([20, commands[ret][2]].max * 2)
-    #   end
-    # end
+ItemHandlers::UseFromBag.add(:ROTOMPHONE,proc{|item|
+  if $game_variables[:E4_Tracker] > 0
+    Kernel.pbMessage(_INTL("The Rotom Phone's PC function is disabled here."))
+    next 0
+  end
+  if $game_switches[:NotPlayerCharacter] && !$game_switches[:InterceptorsWish]
+    Kernel.pbMessage(_INTL("The Rotom Phone's PC function isn't available now."))
+    next 0
+  end
+  if Rejuv && $game_variables[650] > 0
+    Kernel.pbMessage(_INTL("ERIN: {1}, can you get off your phone and get on with the battle?",$Trainer.name))
+    next 0
+  end
+
+  pbPokeCenterPC
+  next 1
+})
+
+ItemHandlers::UseInField.add(:ROTOMPHONE,proc{|item|
+  if $game_variables[:E4_Tracker] > 0
+    Kernel.pbMessage(_INTL("The Rotom Phone's PC function is disabled here."))
+    next 0
+  end
+  if $game_switches[:NotPlayerCharacter] && !$game_switches[:InterceptorsWish]
+    Kernel.pbMessage(_INTL("The Rotom Phone's PC function isn't available now."))
+    next 0
+  end
+  if Rejuv && $game_variables[650] > 0
+    Kernel.pbMessage(_INTL("ERIN: {1}, can you get off your phone and get on with the battle?",$Trainer.name))
+    next 0
+  end
+
+  pbPokeCenterPC
+  next 1
+})
