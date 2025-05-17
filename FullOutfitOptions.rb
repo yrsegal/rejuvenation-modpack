@@ -17,12 +17,12 @@ def outfitoptions_makeMoveRoute(base, outfit, direction = 8)
   ]
 end
 
-def outfitoptions_wakeup_section(outfit, indent)
+def outfitoptions_wakeup_section(outfit)
   return [
     [:ConditionalBranch, :Variable, :Outfit, :Constant, outfit, :Equals],
       [:Script, '$Trainer.outfit=' + outfit.to_s],
       [:JumpToLabel, 'outfitoptions-end'],
-    :Else
+    :Done
   ]
 end
 
@@ -125,7 +125,7 @@ def outfitoptions_wake_up(page)
         payload += outfitoptions_wakeup_section(outfit)
       end
 
-      insns.insert(elseidx + 1, *InjectionHelper.parseEventCommands(*payload, 
+      insns.insert(insns.index(matched[1]) + 1, *InjectionHelper.parseEventCommands(*payload, 
         baseIndent: matched[1].indent + 1)) 
 
     end
