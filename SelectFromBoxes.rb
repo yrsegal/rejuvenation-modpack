@@ -71,6 +71,49 @@ end
 
 ######
 
+###### CHECKS BOXES TOO
+if !defined?(selectfromboxes_old_pbHasSpecies?)
+  alias :selectfromboxes_old_pbHasSpecies? :pbHasSpecies?
+end
+
+def pbHasSpecies?(species)
+  return true if selectfromboxes_old_pbHasSpecies?(species)
+
+  for box in 0...$PokemonStorage.maxBoxes
+    for idx in 0...$PokemonStorage[box].length
+      mon = $PokemonStorage[box, idx]
+      next if !mon || mon.isEgg?
+      if mon.species==species
+        pbSet(1,[box, idx])
+        return true 
+      end
+    end
+  end
+
+  return false
+end
+
+if !defined?(selectfromboxes_old_pbHasFatefulSpecies?)
+  alias :selectfromboxes_old_pbHasFatefulSpecies? :pbHasFatefulSpecies?
+end
+
+def pbHasFatefulSpecies?(species)
+  return true if selectfromboxes_old_pbHasFatefulSpecies?(species)
+
+  for box in 0...$PokemonStorage.maxBoxes
+    for idx in 0...$PokemonStorage[box].length
+      mon = $PokemonStorage[box, idx]
+      next if !mon || mon.isEgg?
+      return true if mon.species==species && mon.obtainMode==4
+    end
+  end
+
+  return false
+
+end
+
+######
+
 ###### REPLACING MOVE TUTOR WINDOW
 
 if !defined?(selectfromboxes_old_pbMoveTutorChoose)

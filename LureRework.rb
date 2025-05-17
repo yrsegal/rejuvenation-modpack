@@ -58,9 +58,9 @@ class Game_Screen
   def lurerework_toggleLure
     @lurerework_lureIsOn=!@lurerework_lureIsOn
     if lurerework_checkIsMagneticLureOn?
-      Kernel.pbMessage(_INTL('The Magnetic Lure is now ON.'))
+      Kernel.pbMessage(_INTL('The Magnetic Lure is now \c[1]ON\c[0].'))
     else
-      Kernel.pbMessage(_INTL('The Magnetic Lure is now OFF.'))
+      Kernel.pbMessage(_INTL('The Magnetic Lure is now \c[2]OFF\c[0].'))
     end
   end
 end

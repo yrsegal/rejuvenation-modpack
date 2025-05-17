@@ -68,9 +68,9 @@ class Game_Screen
     @itemRadar_itemRadarIsOn=!@itemRadar_itemRadarIsOn
     itemRadar_updateItemRadar
     if itemRadar_checkIsItemRadarOn?
-      Kernel.pbMessage(_INTL('The ITEMFINDER is now ON.'))
+      Kernel.pbMessage(_INTL('The Itemfinder is now \c[1]ON\c[0].'))
     else
-      Kernel.pbMessage(_INTL('The ITEMFINDER is now OFF.'))
+      Kernel.pbMessage(_INTL('The Itemfinder is now \c[2]OFF\c[0].'))
     end
   end
   ### /MODDED
