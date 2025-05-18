@@ -109,16 +109,16 @@ class PokemonValuesPCService
       case command
         when 0
           anyChange = ivs(pkmn) || anyChange if $game_screen.pokemonvaluespc_unlocked_iv
-          pbSEPlay('buzzer', 80, 75) if !$game_screen.pokemonvaluespc_unlocked_iv
+          ServicePCList.buzzer if !$game_screen.pokemonvaluespc_unlocked_iv
         when 1
           anyChange = evs(pkmn) || anyChange if $game_screen.pokemonvaluespc_unlocked_ev
-          pbSEPlay('buzzer', 80, 75) if !$game_screen.pokemonvaluespc_unlocked_ev
+          ServicePCList.buzzer if !$game_screen.pokemonvaluespc_unlocked_ev
         when 2
           anyChange = natures(pkmn) || anyChange if $game_screen.pokemonvaluespc_unlocked_nature
-          pbSEPlay('buzzer', 80, 75) if !$game_screen.pokemonvaluespc_unlocked_nature
+          ServicePCList.buzzer if !$game_screen.pokemonvaluespc_unlocked_nature
         when 3
           anyChange = abilities(pkmn) || anyChange if $game_screen.pokemonvaluespc_unlocked_ability
-          pbSEPlay('buzzer', 80, 75) if !$game_screen.pokemonvaluespc_unlocked_ability
+          ServicePCList.buzzer if !$game_screen.pokemonvaluespc_unlocked_ability
       end
 
       if command < 0 && anyChange
@@ -180,7 +180,7 @@ class PokemonValuesPCService
         currentTotal, evTotalMax, colorForStat(currentTotal, evTotalMax)), commands, -1, nil, command)
       if command >= 0
         if !unlockedEvs[command]
-          pbSEPlay('buzzer', 80, 75)
+          ServicePCList.buzzer
           next
         end
 
@@ -271,13 +271,13 @@ class PokemonValuesPCService
     unlockedAny = false
 
     if !$game_screen.pokemonvaluespc_unlocked_iv && $PokemonBag.pbQuantity(:CELLIMPRINT) > 0
-      pbSEPlay('PRSFX- Trainer', 80, 100)
+      ServicePCList.exclaimSound
       wait(5)
       if (Kernel.pbConfirmMessage(lab("If I'm not mistaken, that's a Cell Imprint! If you want to hand one over, we can get you set up with IV Tweaking!"))) ||
         !Kernel.pbConfirmMessageSerious(lab("... Are you sure? I'm required to keep asking you every time you call..."))
         $PokemonBag.pbDeleteItem(:CELLIMPRINT)
         wait(25)
-        pbSEPlay('MiningAllFound', 100, 120)
+        ServicePCList.happySound
         Kernel.pbMessage(lab("Done! You're now registered for IV Tweaking."))
         $game_screen.pokemonvaluespc_unlocked_iv = true
         unlockedAny = true
@@ -295,20 +295,20 @@ class PokemonValuesPCService
       end
 
       if cards == 6
-        pbSEPlay('PRSFX- Trainer', 80, 100)
+        ServicePCList.exclaimSound
         wait(5)
         Kernel.pbMessage(lab("If I'm not mistaken, those are all of the EV Cards! Let me get you set up with EV Tweaking!"))
         wait(25)
-        pbSEPlay('MiningAllFound', 100, 120)
+        ServicePCList.happySound
         Kernel.pbMessage(lab("Done! You're now registered for EV Tweaking, in every stat!"))
         $game_screen.pokemonvaluespc_unlocked_ev = true
         unlockedAny = true
       elsif cards > 0
-        pbSEPlay('PRSFX- Trainer', 80, 100)
+        ServicePCList.exclaimSound
         wait(5)
         Kernel.pbMessage(lab("If I'm not mistaken, those are EV Cards! Let me get you set up with EV Tweaking!"))
         wait(25)
-        pbSEPlay('MiningAllFound', 100, 120)
+        ServicePCList.happySound
         Kernel.pbMessage(lab("Done! You're now registered for EV Tweaking. You can only tweak EVs you have the cards for, so get that AP!"))        
         $game_screen.pokemonvaluespc_unlocked_ev = true  
         unlockedAny = true
@@ -317,25 +317,25 @@ class PokemonValuesPCService
 
     naturePower = getTMFromMove(:NATUREPOWER)
     if !$game_screen.pokemonvaluespc_unlocked_nature && $PokemonBag.pbQuantity(naturePower.item) > 0
-      pbSEPlay('PRSFX- Trainer', 80, 100)
+      ServicePCList.exclaimSound
         wait(5)
       Kernel.pbMessage(lab("If I'm not mistaken, that's {1} \\c[6]{2}\\c[0]! Let me get you set up with Nature Tweaking!", 
       naturePower.name,getMoveName(:NATUREPOWER)))
       wait(25)
-      pbSEPlay('MiningAllFound', 100, 120)
+      ServicePCList.happySound
       Kernel.pbMessage(lab("Done! You're now registered for Nature Tweaking."))
       $game_screen.pokemonvaluespc_unlocked_nature = true
       unlockedAny = true
     end
 
     if !$game_screen.pokemonvaluespc_unlocked_ability && $PokemonBag.pbQuantity(:ABILITYCAPSULE) > 0
-      pbSEPlay('PRSFX- Trainer', 80, 100)
+      ServicePCList.exclaimSound
       wait(5)
       if (Kernel.pbConfirmMessage(lab("If I'm not mistaken, that's an Ability Capsule! If you want to hand one over, we can get you set up with Ability Tweaking!"))) ||
         !Kernel.pbConfirmMessageSerious(lab("... Are you sure? I'm required to keep asking you every time you call..."))
         $PokemonBag.pbDeleteItem(:ABILITYCAPSULE)
         wait(25)
-        pbSEPlay('MiningAllFound', 100, 120)
+        ServicePCList.happySound
         Kernel.pbMessage(lab("Done! You're now registered for Ability Tweaking."))
         $game_screen.pokemonvaluespc_unlocked_ability = true
         unlockedAny = true

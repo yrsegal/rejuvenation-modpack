@@ -174,6 +174,24 @@ module ServicePCList
     return false
   end
 
+  ### Commonly used sounds/events
+
+  def self.exclaimSound
+    pbSEPlay('PRSFX- Trainer', 80, 100)
+  end
+
+  def self.happySound
+    pbSEPlay('MiningAllFound', 100, 120)
+  end
+
+  def self.buzzer
+    pbSEPlay('buzzer', 80, 75)
+  end
+
+  def self.playerTalk
+    pbCommonEvent(97)
+  end
+
   ### Tools to check if a service should be enabled
 
   def self.distantTime?
@@ -297,24 +315,12 @@ $cache.items[:ROTOMPHONE].flags[:noUse] = false
 $cache.items[:ROTOMPHONE].desc = "A smartphone that was enhanced with a Rotom! Can access the PC system remotely."
 
 ItemHandlers::UseFromBag.add(:ROTOMPHONE,proc{|item|
-  if $game_variables[:E4_Tracker] > 0
-    Kernel.pbMessage(_INTL("The Rotom Phone's PC function is disabled here."))
-    next 0
-  end
-  if $game_switches[:NotPlayerCharacter] && !$game_switches[:InterceptorsWish]
-    Kernel.pbMessage(_INTL("The Rotom Phone's PC function isn't available now."))
-    next 0
-  end
-  if Rejuv && $game_variables[650] > 0
-    Kernel.pbMessage(_INTL("ERIN: {1}, can you get off your phone and get on with the battle?",$Trainer.name))
-    next 0
-  end
-
-  $pcservices_using_rotomphone = true
-  pbPokeCenterPC
-  $pcservices_using_rotomphone = false
-  next 1
+  next 2
 })
+ItemHandlers::UseFromBag.add(:REMOTEPC,proc{|item|
+  next 2
+})
+
 
 ItemHandlers::UseInField.add(:ROTOMPHONE,proc{|item|
   if $game_variables[:E4_Tracker] > 0

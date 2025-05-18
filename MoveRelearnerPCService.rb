@@ -119,11 +119,11 @@ class RelearnerPCService
     Kernel.pbMessage(_INTL("\\PN sent over one Heart Scale in exchange."))
     $game_screen.relearnerpc_scales += 1
     if $game_screen.relearnerpc_scales >= 10
-      pbSEPlay('PRSFX- Trainer', 80, 100)
+      ServicePCList.exclaimSound
       Kernel.pbMessage(relearner("BRIE: Oh! That's a lot of Heart Scales you've given me!"))
       Kernel.pbMessage(relearner("I can't justify the price for someone my sister speaks so fondly of."))
       Kernel.pbMessage(relearner("Tell you what. This service is free for you, now, and I won't take no for an answer!"))
-      pbSEPlay('MiningAllFound', 100, 120)
+      ServicePCList.happySound
       Kernel.pbMessage(sister("SAMANTHA: Wow! Thanks, sis! Enjoy, \\PN!"))
       return true
     end
@@ -131,7 +131,7 @@ class RelearnerPCService
   end
 
   def access
-    if ServicePCList.offMap? || ServicePCList.darchlightCaves?
+    if ServicePCList.offMap? || inPast? || ServicePCList.darchlightCaves?
       Kernel.pbMessage(_INTL("..."))
       Kernel.pbMessage(_INTL("There's no response..."))
       return

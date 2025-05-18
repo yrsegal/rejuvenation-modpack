@@ -50,11 +50,11 @@ class HealPCService
   end
 
   def secWait(length)
-    Kernel.pbMessage(secAnnoyed("\\wtnp[{1}]", length))
+    Kernel.pbMessage(sec("\\wtnp[{1}]", length))
   end
 
   def secAnnoyedWait(length)
-    Kernel.pbMessage(sec("\\wtnp[{1}]", length))
+    Kernel.pbMessage(secAnnoyed("\\wtnp[{1}]", length))
   end
 
   def access
@@ -65,7 +65,7 @@ class HealPCService
       else
         Kernel.pbMessage(sec("SEC: Hi! You've reached SEC! Were you expecting someone else?"))
         Kernel.pbMessage(secAnnoyed("You know that putting your Pokemon into the PC will heal them, right?"))
-        seAnnoyedcWait(30) 
+        secAnnoyedWait(30) 
         lockOn { |i| secAnnoyedWait(i) }
         Kernel.pbMessage(sec("Oh, well. You're in my sights. Here's your easy and convenient heal. Enjoy."))
         heal { |i| secWait(i) }
@@ -105,7 +105,7 @@ class HealPCService
           Kernel.pbMessage(bladestarJoy("Ok, Smeargle, ready, aim..."))
         end
         heal { |i| bladestarJoyWait(i)}
-        pbSEPlay('MiningAllFound', 100, 120) if !inPast?
+        ServicePCList.happySound
         Kernel.pbMessage(bladestarJoy("JOY: Thank you for waiting, \\PN."))
         Kernel.pbMessage(bladestarJoy("Your Pokemon have been healed. Go Bladestar!"))
       else
@@ -133,7 +133,7 @@ class HealPCService
       lockOn { |i| nurseJoyWait(i)}
       Kernel.pbMessage(nurseJoy("Our specially trained Smeargle have a bead on your location. Now, Heal Pulse!"))
       heal { |i| nurseJoyWait(i)}
-      pbSEPlay('MiningAllFound', 100, 120) if !inPast?
+      ServicePCList.happySound if !inPast?
       Kernel.pbMessage(nurseJoy("JOY: Thank you for waiting, \\PN!"))
       Kernel.pbMessage(nurseJoy("We've successfully restored your Pokemon to full health."))
     end

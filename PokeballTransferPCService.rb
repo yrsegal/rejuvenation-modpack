@@ -92,9 +92,11 @@ class PokeballTransferPCService
       Kernel.pbReceiveItem(originalBall)
       if !$game_screen.pokeballtransferpc_explainballfetch
         Kernel.pbMessage(matt("MATTHEW: ...?"))
+        ServicePCList.happySound
         Kernel.pbMessage(matt("Oh! Looks like it fetched the {1}! What a good {2}.", getItemName(originalBall), getMonName(pkmn.species)))
         $game_screen.pokeballtransferpc_explainballfetch = true
       else
+        ServicePCList.happySound
         Kernel.pbMessage(matt("MATTHEW: What a good {2}! It fetched the {1}.", getItemName(originalBall), getMonName(pkmn.species)))
       end
       explainShiny if shininessChanged
@@ -164,7 +166,7 @@ class PokeballTransferPCService
     if ServicePCList.inNightmare?
       Kernel.pbMessage(_INTL("..."))
       if $game_switches[:EizenKnows]
-        Kernel.pbMessage(_INTL("It was picked up?"))
+        Kernel.pbMessage(eizen("It was picked up?"))
         Kernel.pbMessage(eizen("EIZEN: <i>Some</i> of us are trying to sleep."))
         if $game_switches[:GreetingsEizen] && !$game_screen.pokeballtransferpc_eizen_prankcall
           Kernel.pbMessage(eizen("And please, stop prank calling me."))
@@ -176,13 +178,13 @@ class PokeballTransferPCService
       return
     end
 
-    if ServicePCList.inPast?
+    if inPast?
       Kernel.pbMessage(_INTL("..."))
       if $game_switches[:EizenKnows]
         Kernel.pbMessage(eizen("It was picked up?"))
         Kernel.pbMessage(eizen("EIZEN: This service isn't open yet."))
         if $game_switches[:GreetingsEizen] && !$game_screen.pokeballtransferpc_eizen_prankcall
-          Kernel.pbMessage(_INTL("And please, stop prank calling me."))
+          Kernel.pbMessage(eizen("And please, stop prank calling me."))
           $game_screen.pokeballtransferpc_eizen_prankcall = true
         end
       else
@@ -203,8 +205,8 @@ class PokeballTransferPCService
         Kernel.pbMessage(eizen("EIZEN: Matthew, \\PN would like a Pokemon transfered out of its Pokeball."))
         Kernel.pbMessage(matt("MATTHEW: Oh, sure! I can do that, no problem!"))
       else
-        pbCommonEvent(97) # Talk anim
-        pbSEPlay('PRSFX- Trainer', 80, 100)
+        ServicePCList.playerTalk
+        ServicePCList.exclaimSound
         Kernel.pbMessage(matt("MATTHEW: Ah! You want to transfer a Pokemon into a new ball? I can do that!"))
       end
       Kernel.pbMessage(matt("Just remember, you won't be able to get the original Pokeball back after the transfer."))
@@ -215,13 +217,13 @@ class PokeballTransferPCService
     pbChooseNonEggPokemon(1,3)
     result = pbGet(1)
     if result < 0
-        if $game_switches[:EizenKnows]
-          Kernel.pbMessage(matt("MATTHEW: Changed your mind? That's fine! I'll be here!"))
-          Kernel.pbMessage(eizen("EIZEN: Forever."))
-          Kernel.pbMessage(matt("MATTHEW: Arrow..."))
-        else
-          Kernel.pbMessage(matt("MATTHEW: Changed your mind? That's fine! I'll be here!\\wtnp[20"))
-        end
+      if $game_switches[:EizenKnows]
+        Kernel.pbMessage(matt("MATTHEW: Changed your mind? That's fine! I'll be here!"))
+        Kernel.pbMessage(eizen("EIZEN: Forever."))
+        Kernel.pbMessage(matt("MATTHEW: Arrow..."))
+      else
+        Kernel.pbMessage(matt("MATTHEW: Changed your mind? That's fine! I'll be here!"))
+      end
       return
     end
 
@@ -244,7 +246,7 @@ class PokeballTransferPCService
           Kernel.pbMessage(eizen("EIZEN: Forever."))
           Kernel.pbMessage(matt("MATTHEW: Arrow..."))
         else
-          Kernel.pbMessage(matt("MATTHEW: Changed your mind? That's fine! I'll be here!\\wtnp[20"))
+          Kernel.pbMessage(matt("MATTHEW: Changed your mind? That's fine! I'll be here!"))
         end
         return
       end

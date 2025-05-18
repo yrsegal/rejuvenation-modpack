@@ -65,7 +65,7 @@ class FriendshipPCService
         Kernel.pbMessage(teila("Okay, I'll give your \\v[3] the deluxe treatment!"))
         pkmn = $Trainer.party[result]
         pkmn.changeHappiness("groom3")
-        $game_screen.start_tone_change(Tone.new(-255,-255,-255,0),10)
+        $game_screen.start_tone_change(Tone.new(-255,-255,-255,0),20)
         pbWait(25)
         pbSEPlay('Refresh')
         pbWait(6)
@@ -73,9 +73,9 @@ class FriendshipPCService
         pbWait(6)
         pbSEPlay('Refresh')
         pbWait(40)
-        pbSEPlay('MiningAllFound', 100, 120)
+        ServicePCList.happySound
         pbWait(25)
-        $game_screen.start_tone_change(Tone.new(0,0,0,0),10)
+        $game_screen.start_tone_change(Tone.new(0,0,0,0),20)
         Kernel.pbMessage(teila("Your \\v[3] looks pleased to bits!"))
         Kernel.pbMessage(teila("Thank you, and call again soon!"))
         pbSetEventTime
@@ -94,7 +94,7 @@ class FriendshipPCService
 
       pkmn = $Trainer.party[result]
       if pkmn.happiness >= 250
-        pbSEPlay('MiningAllFound', 100, 120)
+        ServicePCList.happySound
         Kernel.pbMessage(teila("Wow, I can tell your \\v[3] is inseparable from you!"))
       elsif pkmn.happiness >= 220
         Kernel.pbMessage(teila("\\v[3] trusts you a lot. You must be a great trainer!"))

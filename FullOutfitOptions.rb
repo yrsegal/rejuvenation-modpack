@@ -234,7 +234,7 @@ def outfitoptions_handle_clothing_choices
 
   if $game_switches[:XGOutfitAvailable] # XG Outfit
     choices.push(_INTL("Xenogene outfit"))
-    outfits.push(5)
+    outfits.push(6)
   end
 
   default = outfits.find_index(currVal) || 0

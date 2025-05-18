@@ -68,7 +68,7 @@ class DayCarePCService
   end
 
   def access
-    if ServicePCList.offMap? || ServicePCList.darchlightCaves?
+    if ServicePCList.offMap? || inPast? || ServicePCList.darchlightCaves?
       Kernel.pbMessage(_INTL("..."))
       Kernel.pbMessage(_INTL("There's no response..."))
       return
@@ -100,7 +100,7 @@ class DayCarePCService
 
       if command == 0 # Deposit
         if Kernel.pbDayCareDeposited>=2
-          pbSEPlay('buzzer', 80, 75)
+          ServicePCList.buzzer
           next
         end
         Kernel.pbMessage(lady("Which Pokémon should we raise for you?"))
@@ -118,7 +118,7 @@ class DayCarePCService
         end
       elsif command == 1 # Withdraw
         if Kernel.pbDayCareDeposited==0
-          pbSEPlay('buzzer', 80, 75)
+          ServicePCList.buzzer
           next
         end
         loop do
@@ -144,7 +144,7 @@ class DayCarePCService
         end
       elsif command == 2 # Collect Egg
         if !Kernel.pbEggGenerated?
-          pbSEPlay('buzzer', 80, 75)
+          ServicePCList.buzzer
           next
         end
 
@@ -171,17 +171,17 @@ class DayCarePCService
         end
       elsif command == 3 # Wait for Egg
         if !incubator? || Kernel.pbEggGenerated? || pbDayCareDeposited < 2
-          pbSEPlay('buzzer', 80, 75)
+          ServicePCList.buzzer
           next
         end
         if pbDayCareGetCompat == 0
           Kernel.pbMessage(lady("Your pokemon don't seem to be paying that much attention to each other, dear."))
         else
-          $game_screen.start_tone_change(Tone.new(-255,-255,-255,0),10)
+          $game_screen.start_tone_change(Tone.new(-255,-255,-255,0),20)
           pbWait(10)
           pbMEPlay('Pokemon Healing', 100, 55)
           pbWait(50)
-          $game_screen.start_tone_change(Tone.new(0,0,0,0),10)
+          $game_screen.start_tone_change(Tone.new(0,0,0,0),20)
           $PokemonGlobal.daycareEgg=1
           Kernel.pbMessage(lady("Well, would you look at that!"))
           Kernel.pbMessage(lady("My husband will probably want to see you."))
@@ -190,15 +190,15 @@ class DayCarePCService
         end
       elsif command == 4 # Incubate Eggs
         if !incubator? || !hasEggNeedIncubating?
-          pbSEPlay('buzzer', 80, 75)
+          ServicePCList.buzzer
           next
         end
         Kernel.pbMessage(lady("Let me just take those Eggs, and..."))
-        $game_screen.start_tone_change(Tone.new(-255,-255,-255,0),10)
+        $game_screen.start_tone_change(Tone.new(-255,-255,-255,0),20)
         pbWait(10)
         pbMEPlay('Pokemon Healing', 100, 55)
         pbWait(50)
-        $game_screen.start_tone_change(Tone.new(0,0,0,0),10)
+        $game_screen.start_tone_change(Tone.new(0,0,0,0),20)
         for pokemon in $Trainer.party
           pokemon.eggsteps=1 if pokemon.isEgg?
         end

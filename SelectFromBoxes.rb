@@ -52,7 +52,7 @@ def pbChoosePokemon(variableNumber,nameVarNumber,ableProc=nil,allowIneligible=fa
 
   chosen=-1
   pbFadeOutIn(99999){
-      scene=Selectfromboxes_PokemonStorageScene.new(giveAway, ableProc, selectfromboxes_tutorPartialAble, selectfromboxes_partyOpen)
+      scene=Selectfromboxes_PokemonStorageScene.new(giveAway, ableProc, allowIneligible, selectfromboxes_tutorPartialAble, selectfromboxes_partyOpen)
       screen=Selectfromboxes_PokemonStorageScreen.new(scene,$PokemonStorage,selectfromboxes_commandText, selectfromboxes_tutorMove)
 
       chosen = screen.pbChoosePokemon()
@@ -217,7 +217,7 @@ class Selectfromboxes_PokemonStorageScreen < PokemonStorageScreen
         pokemon=@storage[selected[0],selected[1]]
         ### MODDED/
         next if !pokemon
-        next if @scene.ableProc && !@scene.ableProc.call(pokemon)
+        next if !@scene.allowIneligible && @scene.ableProc && !@scene.ableProc.call(pokemon)
 
         if @tutor_move && @scene.tutorPartialAble && @scene.tutorPartialAble.call(pokemon)
           pbDisplay(_INTL("{1} already knows\r\n{2}.",pokemon.name,getMoveName(@tutor_move)))
@@ -266,16 +266,18 @@ def selectfromboxes_tone(pokemon, ableProc, tutorPartialAble)
   end
 end
 
-class Selectfromboxes_PokemonStorageScene < PokemonStorageScene
+class Selectfromboxes_x < PokemonStorageScene
   attr_accessor :ableProc
   attr_accessor :tutorPartialAble
+  attr_accessor :allowIneligible
   attr_accessor :giveAway
   attr_accessor :partyOpen
 
-  def initialize(giveAway, ableProc, tutorPartialAble, partyOpen)
+  def initialize(giveAway, ableProc, allowIneligible, tutorPartialAble, partyOpen)
     super()
     @giveAway = giveAway
     @ableProc = ableProc
+    @allowIneligible = allowIneligible
     @tutorPartialAble = tutorPartialAble
     @partyOpen = partyOpen
   end
