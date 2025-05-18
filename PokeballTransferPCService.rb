@@ -98,12 +98,12 @@ class PokeballTransferPCService
         Kernel.pbMessage(matt("MATTHEW: What a good {2}! It fetched the {1}.", getItemName(originalBall), getMonName(pkmn.species)))
       end
       explainShiny if shininessChanged
-      Kernel.pbMessage(matt("Well, have a good day!\\wtnp[20]"))
+      Kernel.pbMessage(matt("Well, have a good day!"))
     elsif shininessChanged
       explainShiny(true)
-      Kernel.pbMessage(matt("Well, have a good day!\\wtnp[20]"))
+      Kernel.pbMessage(matt("Well, have a good day!"))
     else
-      Kernel.pbMessage(matt("Have a good day!\\wtnp[20]"))
+      Kernel.pbMessage(matt("Have a good day!"))
     end
   end
 
@@ -218,7 +218,7 @@ class PokeballTransferPCService
         if $game_switches[:EizenKnows]
           Kernel.pbMessage(matt("MATTHEW: Changed your mind? That's fine! I'll be here!"))
           Kernel.pbMessage(eizen("EIZEN: Forever."))
-          Kernel.pbMessage(matt("MATTHEW: Arrow...\\wtnp[20]"))
+          Kernel.pbMessage(matt("MATTHEW: Arrow..."))
         else
           Kernel.pbMessage(matt("MATTHEW: Changed your mind? That's fine! I'll be here!\\wtnp[20"))
         end
@@ -237,14 +237,16 @@ class PokeballTransferPCService
     loop do
       item=itemscene.pbChooseItem
       if item.nil?
+        itemscene.pbEndScene
+        $PokemonBag.lastpocket = oldlastpocket
         if $game_switches[:EizenKnows]
           Kernel.pbMessage(matt("MATTHEW: Changed your mind? That's fine! I'll be here!"))
           Kernel.pbMessage(eizen("EIZEN: Forever."))
-          Kernel.pbMessage(matt("MATTHEW: Arrow...\\wtnp[20]"))
+          Kernel.pbMessage(matt("MATTHEW: Arrow..."))
         else
           Kernel.pbMessage(matt("MATTHEW: Changed your mind? That's fine! I'll be here!\\wtnp[20"))
         end
-        break
+        return
       end
 
       if item == :SNOWBALL || item == :SMOKEBALL || item == :IRONBALL || item == :LIGHTBALL
@@ -252,26 +254,14 @@ class PokeballTransferPCService
       elsif !$cache.items[item].checkFlag?(:ball)
         Kernel.pbMessage(matt("MATTHEW: That's not a Pokeball!"))
       elsif pkmn.ballused == item
-        Kernel.pbMessage(matt("MATTHEW: {1} is already in a {2}!",getMonName(pkmn),getItemName(item)))
+        Kernel.pbMessage(matt("MATTHEW: {1} is already in a {2}!",pkmn.name,getItemName(item)))
       elsif Kernel.pbConfirmMessage(matt("MATTHEW: Okay, so we'll be moving {1} from a {2} into a {3}?", 
         pkmn.name,getItemName(pkmn.ballused || :POKEBALL),getItemName(item)))
         $PokemonBag.lastpocket = oldlastpocket
         transferBall(pkmn, item, itemscene)
         return
-      else
-        if $game_switches[:EizenKnows]
-          Kernel.pbMessage(matt("MATTHEW: Changed your mind? That's fine! I'll be here!"))
-          Kernel.pbMessage(eizen("EIZEN: Forever."))
-          Kernel.pbMessage(matt("MATTHEW: Arrow...\\wtnp[20]"))
-        else
-          Kernel.pbMessage(matt("MATTHEW: Changed your mind? That's fine! I'll be here!\\wtnp[20"))
-        end
-        break
       end
     end
-
-    itemscene.pbEndScene
-    $PokemonBag.lastpocket = oldlastpocket
 
   end
 end

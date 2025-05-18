@@ -107,9 +107,9 @@ class HealPCService
         heal { |i| bladestarJoyWait(i)}
         pbSEPlay('MiningAllFound', 100, 120) if !inPast?
         Kernel.pbMessage(bladestarJoy("JOY: Thank you for waiting, \\PN."))
-        Kernel.pbMessage(bladestarJoy("Your Pokemon have been healed. Go Bladestar!\\wtnp[20]"))
+        Kernel.pbMessage(bladestarJoy("Your Pokemon have been healed. Go Bladestar!"))
       else
-        Kernel.pbMessage(bladestarJoy("Eh, whatever. Easier for me anyway.\\wtnp[20]"))
+        Kernel.pbMessage(bladestarJoy("Eh, whatever. Easier for me anyway."))
       end
       return
     end
@@ -137,7 +137,7 @@ class HealPCService
       Kernel.pbMessage(nurseJoy("JOY: Thank you for waiting, \\PN!"))
       Kernel.pbMessage(nurseJoy("We've successfully restored your Pokemon to full health."))
     end
-    Kernel.pbMessage(nurseJoy("We look forward to your next call!\\wtnp[20]"))
+    Kernel.pbMessage(nurseJoy("We look forward to your next call!"))
   end
 
   def lockOn

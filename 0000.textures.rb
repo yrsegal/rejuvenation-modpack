@@ -3,6 +3,7 @@ $MOD = 'Data/Mods/TextureOverrides/'
 $SERVICE = 'Data/Mods/ServiceIcons/'
 $NPCICONS = 'Graphics/Pictures/'
 $MAP = 'Graphics/Pictures/RegionMap/'
+$SUMMARY = 'Graphics/Pictures/Summary/'
 $CHARS = 'Graphics/Characters/'
 $VS = 'Graphics/Transitions/'
 $ICONS = 'Graphics/Icons/'
@@ -54,16 +55,20 @@ $DECLARED_OVERRIDES = {
   $CHARS + 'BGirlWalk_5' => $MOD + 'Ana/Dark/Ana',
   $CHARS + 'BGirlWalk_66' => $MOD + 'Ana/Dark/LegacyAna',
 
-
   # Darchlight Sprites
   $CHARS + 'trBack144' => $MOD + 'Darch/FlorinBack', # Only time Florin is a battle partner, so can replace the base sprite
 
   # Steel Diamond for better readability
   $ICONS + 'bosstypeSTEEL' => $MOD + 'SteelDiamond',
 
+  # Missing Summary ball
+  $SUMMARY + 'summaryballDREAMBALL' => $MOD + 'DreamBallSummary',
+  # Fix Lure Ball colors
+  $SUMMARY + 'summaryballLUREBALL' => $MOD + 'LureBallSummary',
+
   # For pc services
   $NPCICONS + 'service_BladestarJoy' => $SERVICE + 'BladestarJoy',
-  $NPCICONS + 'service_DayCare' => $SERVICE + 'DayCare',
+  $NPCICONS + 'service_DayCareLady' => $SERVICE + 'DayCareLady',
   $NPCICONS + 'service_DayCareMan' => $SERVICE + 'DayCareMan',
   $NPCICONS + 'service_Eizen' => $SERVICE + 'Eizen',
   $NPCICONS + 'service_GDCCentral' => $SERVICE + 'GDCCentral',

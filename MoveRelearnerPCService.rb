@@ -124,7 +124,7 @@ class RelearnerPCService
       Kernel.pbMessage(relearner("I can't justify the price for someone my sister speaks so fondly of."))
       Kernel.pbMessage(relearner("Tell you what. This service is free for you, now, and I won't take no for an answer!"))
       pbSEPlay('MiningAllFound', 100, 120)
-      Kernel.pbMessage(sister("SAMANTHA: Wow! Thanks, sis! Enjoy, \\PN!\\wtnp[20]"))
+      Kernel.pbMessage(sister("SAMANTHA: Wow! Thanks, sis! Enjoy, \\PN!"))
       return true
     end
     return false
@@ -161,7 +161,7 @@ class RelearnerPCService
 
     choice = Kernel.pbMessage(sister("So, what'll it be?"), [_INTL("Move Relearner"),_INTL("Move Deleter"),_INTL("Rare Moves")], -1)
     if choice < 0
-      Kernel.pbMessage(sister("SAMANTHA: Oh, just calling to catch up? I appreciate it! Talk to you later!\\wtnp[20]"))
+      Kernel.pbMessage(sister("SAMANTHA: Oh, just calling to catch up? I appreciate it! Talk to you later!"))
       return
     elsif choice == 0
       Kernel.pbMessage(_INTL("\\sh\\c[7]SAMANTHA: HEY, BRIE! CUSTOMER! IT'S \\PNUpper!\\wtnp[50]"))
@@ -171,7 +171,7 @@ class RelearnerPCService
           Kernel.pbMessage(relearner("You've got a Heart Scale, so I can teach a Pokemon."))
         elsif 
           Kernel.pbMessage(relearner("... Actually, sorry, you need to come back with a Heart Scale."))
-          Kernel.pbMessage(sister("SAMANTHA: Oh well! Talk to you later!\\wtnp[20]"))
+          Kernel.pbMessage(sister("SAMANTHA: Oh well! Talk to you later!"))
           return
         end
       end
@@ -182,7 +182,7 @@ class RelearnerPCService
         result = pbGet(1)
         if result < 0
           Kernel.pbMessage(relearner("BRIE: Ah, okay. Changed your mind?"))
-          Kernel.pbMessage(sister("SAMANTHA: Always nice to hear from you, though! Bye!\\wtnp[20]"))
+          Kernel.pbMessage(sister("SAMANTHA: Always nice to hear from you, though! Bye!"))
           return
         end
 
@@ -212,10 +212,10 @@ class RelearnerPCService
           pkmn.relearner = [true, 3]
           if couldRelearnAll && $game_screen.relearnerpc_scales < 10
             return if takeScale
-            Kernel.pbMessage(sister("SAMANTHA: Thanks for doing business with us, \\PN! Call soon!\\wtnp[20]"))
+            Kernel.pbMessage(sister("SAMANTHA: Thanks for doing business with us, \\PN! Call soon!"))
             return
           else
-            Kernel.pbMessage(sister("SAMANTHA: Thanks for calling, \\PN! Talk to you soon!\\wtnp[20]"))
+            Kernel.pbMessage(sister("SAMANTHA: Thanks for calling, \\PN! Talk to you soon!"))
             return
           end
         else
@@ -230,7 +230,7 @@ class RelearnerPCService
         result = pbGet(1)
         if result < 0
           Kernel.pbMessage(sister("SAMANTHA: Changed your mind? That's fine."))
-          Kernel.pbMessage(sister("Always nice to hear from you, though! Bye!\\wtnp[20]"))
+          Kernel.pbMessage(sister("Always nice to hear from you, though! Bye!"))
           return
         end
 
@@ -251,7 +251,7 @@ class RelearnerPCService
           elsif Kernel.pbConfirmMessage(sister("SAMANTHA: \\v[3]'s \\v[4]? No problem!"))
             pbDeleteMove(pkmn, moveresult)
             Kernel.pbMessage(sister("And...\\| done! \\v[3] has forgotten \\v[4]!"))
-            Kernel.pbMessage(sister("Thanks for calling, \\PN! Talk to you soon!\\wtnp[20]"))
+            Kernel.pbMessage(sister("Thanks for calling, \\PN! Talk to you soon!"))
             return
           end
         end
@@ -264,7 +264,7 @@ class RelearnerPCService
           Kernel.pbMessage(relearner("You've got a Heart Scale, so I can teach a Pokemon."))
         elsif 
           Kernel.pbMessage(relearner("... Actually, sorry, you need to come back with a Heart Scale."))
-          Kernel.pbMessage(sister("SAMANTHA: Oh well! Talk to you later!\\wtnp[20]"))
+          Kernel.pbMessage(sister("SAMANTHA: Oh well! Talk to you later!"))
           return
         end
       end
@@ -275,7 +275,7 @@ class RelearnerPCService
         result = pbGet(1)
         if result < 0
           Kernel.pbMessage(relearner("BRIE: Ah, okay. Changed your mind?"))
-          Kernel.pbMessage(sister("SAMANTHA: Always nice to hear from you, though! Bye!\\wtnp[20]"))
+          Kernel.pbMessage(sister("SAMANTHA: Always nice to hear from you, though! Bye!"))
           return
         end
 
@@ -292,10 +292,10 @@ class RelearnerPCService
           pkmn.relearner = [true, 3]
           if $game_screen.relearnerpc_scales < 10
             return if takeScale
-            Kernel.pbMessage(sister("SAMANTHA: Thanks for doing business with us, \\PN! Call soon!\\wtnp[20]"))
+            Kernel.pbMessage(sister("SAMANTHA: Thanks for doing business with us, \\PN! Call soon!"))
             return
           else
-            Kernel.pbMessage(sister("SAMANTHA: Thanks for calling, \\PN! Talk to you soon!\\wtnp[20]"))
+            Kernel.pbMessage(sister("SAMANTHA: Thanks for calling, \\PN! Talk to you soon!"))
             return
           end
         else

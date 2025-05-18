@@ -76,12 +76,12 @@ class HiddenPowerPCService
     end
 
     if $PokemonBag.pbQuantity(:HEARTSCALE)<=0
-      Kernel.pbMessage(nerta("Don't got the goods? Then don't expect the looks. Those are the rules kid.\\wtnp[20]"))
+      Kernel.pbMessage(nerta("Don't got the goods? Then don't expect the looks. Those are the rules kid."))
       return
     end
 
     if Kernel.pbMessage(nerta("Let's spiffen them up, shall we?"),[_INTL("Yes"),_INTL("No")], 2, nil, 0) != 0
-      Kernel.pbMessage(nerta("Well, call back when you're feeling more decisive.\\wtnp[20]"))
+      Kernel.pbMessage(nerta("Well, call back when you're feeling more decisive."))
     else
       selected = false
       while !selected
@@ -90,7 +90,7 @@ class HiddenPowerPCService
         result = pbGet(1)
         if result < 0
           Kernel.pbMessage(nerta("NERTA: Change your mind huh?"))
-          Kernel.pbMessage(nerta("Well, call back when you're feeling more decisive.\\wtnp[20]"))
+          Kernel.pbMessage(nerta("Well, call back when you're feeling more decisive."))
           selected = true
         else
           pkmn = $Trainer.party[result]
@@ -104,10 +104,10 @@ class HiddenPowerPCService
               Kernel.pbMessage(nerta("Bada bing, bada boom."))
               pbSEPlay("itemlevel")
               Kernel.pbMessage(nerta("Your \\v[3] should be feeling new power surging through them right about now!"))
-              Kernel.pbMessage(nerta("Thanks for the Heart Scale. Call again!\\wtnp[20]"))
+              Kernel.pbMessage(nerta("Thanks for the Heart Scale. Call again!"))
               selected = true
             else
-              Kernel.pbMessage(nerta("Well, come back when you're feeling more decisive.\\wtnp[20]"))
+              Kernel.pbMessage(nerta("Well, come back when you're feeling more decisive."))
               selected = true
             end
           end

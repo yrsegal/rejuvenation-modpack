@@ -20,7 +20,7 @@ class CallServicePC
   end
 
   def access
-    Kernel.pbMessage(_INTL("\\se[accesspc]Accessed the Service Directory.\\wtnp[10]"))
+    Kernel.pbMessage(_INTL("\\se[accesspc]Accessed the Service Directory."))
     command=ServicePCList.prevCommand
     loop do
       commands=ServicePCList.getCommandList
@@ -124,7 +124,7 @@ module ServicePCList
     i=0
     for pc in cmdList
       if pc.shouldShow?
-        return i if lastCommand == pc
+        return i if lastCommand == pc.name
         i += 1
       end
     end
@@ -158,9 +158,9 @@ module ServicePCList
 
           if subList
             $game_screen.pcservices_lastCommandsCategories = {} if !$game_screen.pcservices_lastCommandsCategories
-            $game_screen.pcservices_lastCommandsCategories[subList] = pc
+            $game_screen.pcservices_lastCommandsCategories[subList] = pc.name
           else
-            $game_screen.pcservices_lastCommand = pc
+            $game_screen.pcservices_lastCommand = pc.name
           end
 
 

@@ -39,12 +39,12 @@ class FashionPCService
     if $game_variables[:LuckQuest] > 0 && $game_variables[:LuckQuest] < 6
       Kernel.pbMessage(xatu("... I'm sorry, there's some sort of Teleport interference around you."))
       Kernel.pbMessage(xatu("Someone seems quite invested in keeping your clothing how it is."))
-      Kernel.pbMessage(xatu("Please figure out what's up with that, then call back.\\wtnp[20]"))
+      Kernel.pbMessage(xatu("Please figure out what's up with that, then call back."))
       return
     end
 
     pbCommonEvent(133) # Change clothes
-    Kernel.pbMessage(xatu("Have a good day!\\wtnp[20]"))
+    Kernel.pbMessage(xatu("Have a good day!"))
   end
 end
 

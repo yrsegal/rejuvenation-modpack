@@ -52,16 +52,20 @@ class PokemonValuesPCService
     return getSkinColor(nil, num, true)
   end
 
+  def disabledIfNot(text, condition)
+    if condition
+      return _INTL(text)
+    else
+      return grayColor + _INTL(text)
+    end
+  end
+
   def makeOptions
     options = []
-    options.push(_INTL("IVs")) if $game_screen.pokemonvaluespc_unlocked_iv
-    options.push(grayColor + _INTL("IVs")) if !$game_screen.pokemonvaluespc_unlocked_iv
-    options.push(_INTL("EVs")) if $game_screen.pokemonvaluespc_unlocked_ev
-    options.push(grayColor + _INTL("EVs")) if !$game_screen.pokemonvaluespc_unlocked_ev
-    options.push(_INTL("Natures")) if $game_screen.pokemonvaluespc_unlocked_nature
-    options.push(grayColor + _INTL("Natures")) if !$game_screen.pokemonvaluespc_unlocked_nature
-    options.push(_INTL("Abilities")) if $game_screen.pokemonvaluespc_unlocked_ability
-    options.push(grayColor + _INTL("Abilities")) if !$game_screen.pokemonvaluespc_unlocked_ability
+    options.push(disabledIfNot("IVs", $game_screen.pokemonvaluespc_unlocked_iv))
+    options.push(disabledIfNot("EVs", $game_screen.pokemonvaluespc_unlocked_ev))
+    options.push(disabledIfNot("Natures", $game_screen.pokemonvaluespc_unlocked_nature))
+    options.push(disabledIfNot("Abilities", $game_screen.pokemonvaluespc_unlocked_ability))
     return options
   end
 
@@ -105,16 +109,16 @@ class PokemonValuesPCService
       case command
         when 0
           anyChange = ivs(pkmn) || anyChange if $game_screen.pokemonvaluespc_unlocked_iv
-          pbSEPlay('buzzer', 50, 75) if !$game_screen.pokemonvaluespc_unlocked_iv
+          pbSEPlay('buzzer', 80, 75) if !$game_screen.pokemonvaluespc_unlocked_iv
         when 1
           anyChange = evs(pkmn) || anyChange if $game_screen.pokemonvaluespc_unlocked_ev
-          pbSEPlay('buzzer', 50, 75) if !$game_screen.pokemonvaluespc_unlocked_ev
+          pbSEPlay('buzzer', 80, 75) if !$game_screen.pokemonvaluespc_unlocked_ev
         when 2
           anyChange = natures(pkmn) || anyChange if $game_screen.pokemonvaluespc_unlocked_nature
-          pbSEPlay('buzzer', 50, 75) if !$game_screen.pokemonvaluespc_unlocked_nature
+          pbSEPlay('buzzer', 80, 75) if !$game_screen.pokemonvaluespc_unlocked_nature
         when 3
           anyChange = abilities(pkmn) || anyChange if $game_screen.pokemonvaluespc_unlocked_ability
-          pbSEPlay('buzzer', 50, 75) if !$game_screen.pokemonvaluespc_unlocked_ability
+          pbSEPlay('buzzer', 80, 75) if !$game_screen.pokemonvaluespc_unlocked_ability
       end
 
       if command < 0 && anyChange
@@ -167,12 +171,19 @@ class PokemonValuesPCService
       end
     end
 
+    unlockedEvs = EV_CARDS.map { |item| $PokemonBag.pbQuantity(item) > 0 }
+
     while command >= 0
       commands=makeStatOptions(true, pkmn.ev, evMax)
       currentTotal = pkmn.ev.sum
       command=Kernel.advanced_pbMessage(_INTL("Change which EV? (Total: {1}, max. {3}{2}</c3>)", 
         currentTotal, evTotalMax, colorForStat(currentTotal, evTotalMax)), commands, -1, nil, command)
       if command >= 0
+        if !unlockedEvs[command]
+          pbSEPlay('buzzer', 80, 75)
+          next
+        end
+
         currentMax = [evMax, evTotalMax - currentTotal + pkmn.ev[command]].min
         params=ChooseNumberParams.new
         params.setRange(0,999)
@@ -393,12 +404,12 @@ class PokemonValuesPCService
 
     if !checkUnlocks
       wait(40)
-      Kernel.pbMessage(lab("It doesn't seem like you have any of our services unlocked. Try finding items related to IVs, EVs, Nature, or Abilities!\\wtnp[20]"))
+      Kernel.pbMessage(lab("It doesn't seem like you have any of our services unlocked. Try finding items related to IVs, EVs, Nature, or Abilities!"))
       return
     end
 
     if $PokemonBag.pbQuantity(:HEARTSCALE) <= 0
-      Kernel.pbMessage(lab("Pokemon Tweaking? Sorry, but we need a Heart Scale to make the process work. Please come back with one!\\wtnp[20]"))
+      Kernel.pbMessage(lab("Pokemon Tweaking? Sorry, but we need a Heart Scale to make the process work. Please come back with one!"))
       return
     end
 
@@ -406,7 +417,7 @@ class PokemonValuesPCService
     pbChooseNonEggPokemon(1,3)
     result = pbGet(1)
     if result < 0
-      Kernel.pbMessage(lab("Changed your mind then? Have a nice day!\\wtnp[20]"))
+      Kernel.pbMessage(lab("Changed your mind then? Have a nice day!"))
       return
     end
 
@@ -414,12 +425,12 @@ class PokemonValuesPCService
     if Kernel.pbConfirmMessage("And you'd like to spend a Heart Scale to tweak \\v[3]?")
       if tweaking(pkmn)
         $PokemonBag.pbDeleteItem(:HEARTSCALE)
-        Kernel.pbMessage(lab("And...\\| Done! Thank you for your business! Have a nice day!\\wtnp[20]"))
+        Kernel.pbMessage(lab("And...\\| Done! Thank you for your business! Have a nice day!"))
       else
-        Kernel.pbMessage(lab("Changed your mind then? Have a nice day!\\wtnp[20]"))
+        Kernel.pbMessage(lab("Changed your mind then? Have a nice day!"))
       end
     else
-      Kernel.pbMessage(lab("Changed your mind then? Have a nice day!\\wtnp[20]"))
+      Kernel.pbMessage(lab("Changed your mind then? Have a nice day!"))
     end
   end
 end

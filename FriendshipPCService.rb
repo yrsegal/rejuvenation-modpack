@@ -56,7 +56,7 @@ class FriendshipPCService
         pbChooseNonEggPokemon(1,3)
         result = pbGet(1)
         if result < 0
-          Kernel.pbMessage(teila("Call back any time!\\wtnp[20]"))
+          Kernel.pbMessage(teila("Call back any time!"))
           return
         end
 
@@ -77,18 +77,18 @@ class FriendshipPCService
         pbWait(25)
         $game_screen.start_tone_change(Tone.new(0,0,0,0),10)
         Kernel.pbMessage(teila("Your \\v[3] looks pleased to bits!"))
-        Kernel.pbMessage(teila("Thank you, and call again soon!\\wtnp[20]"))
+        Kernel.pbMessage(teila("Thank you, and call again soon!"))
         pbSetEventTime
       else
         Kernel.pbMessage(teila("Oh, that's unfortunate. You don't have enough money for this."))
-        Kernel.pbMessage(teila("Do call back later!\\wtnp[20]"))
+        Kernel.pbMessage(teila("Do call back later!"))
       end
     else
       Kernel.pbMessage(teila("We provide this service for free! Which Pokemon would you like to know about?"))
       pbChooseNonEggPokemon(1,3)
       result = pbGet(1)
       if result < 0
-        Kernel.pbMessage(teila("Oh, you're busy? No worries! Call again soon!\\wtnp[20]"))
+        Kernel.pbMessage(teila("Oh, you're busy? No worries! Call again soon!"))
         return
       end
 
@@ -109,7 +109,7 @@ class FriendshipPCService
       else
         Kernel.pbMessage(teila("\\v[3] is terrified, poor thing! You need to cheer it up!"))
       end
-      Kernel.pbMessage(teila("Call back any time!\\wtnp[20]"))
+      Kernel.pbMessage(teila("Call back any time!"))
     end
   end
 
