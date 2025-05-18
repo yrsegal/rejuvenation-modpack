@@ -1,10 +1,11 @@
 Variables[:Post11thBadge] = 456
-Variables[:Post9thBadge] = 293
 Variables[:Karma] = 129
+
+$pcservices_using_rotomphone = false
 
 class CallServicePC
   def shouldShow?
-    return false if ServicePCList.getCommandList().size == 0
+    return false if ServicePCList.getCommandList()[0].size == 0
     return false if ServicePCList.isNotPlayer?
     return true
   end
@@ -14,49 +15,120 @@ class CallServicePC
   end
 
   def access
-    Kernel.pbMessage(_INTL("\\se[computeropen]Accessed the Service Directory."))
+    Kernel.pbMessage(_INTL("\\se[accesspc]Accessed the Service Directory.\\wtnp[10]"))
     loop do
       commands=ServicePCList.getCommandList()
-      command=Kernel.pbMessage(_INTL("Which Service should be called?"),
-         commands,commands.length)
+      command=Kernel.pbShowCommandsWithHelp(nil, commands[0], commands[1], -1)
       if !ServicePCList.callCommand(command)
         break
       end
     end
-    pbSEPlay("computerclose")
   end
 end
 
-PokemonPCList.registerPC(CallServicePC.new)
+class SubCategoryPCService
+
+  attr_reader :help
+
+  def initialize(categoryKey, categoryName, help=nil)
+    @categoryKey = categoryKey
+    @categoryName = categoryName
+    @help = help
+  end
+
+  def shouldShow?
+    return false if ServicePCList.getCommandList(@categoryKey)[0].size == 0
+    return true
+  end
+
+  def name
+    return "- " + _INTL(@categoryName)
+  end
+
+  def access
+    loop do
+      commands=ServicePCList.getCommandList(@categoryKey)
+      command=Kernel.pbShowCommandsWithHelp(nil, commands[0], commands[1], -1)
+      if !ServicePCList.callCommand(command, @categoryKey)
+        break
+      end
+    end
+  end
+end
 
 module ServicePCList
+  @@pclisttop=[]
+  @@pclistsub={}
+  @@pclistcategories=[]
   @@pclist=[]
+
 
   def self.registerService(pc)
     @@pclist.push(pc)
   end
 
-  def self.getCommandList()
-    commands=[]
-    for pc in @@pclist
-      if pc.shouldShow?
-        commands.push(pc.name)
-      end
-    end
-    commands.push(_INTL("Cancel"))
-    return commands
+  # Heh.
+  def self.registerServiceTop(pc)
+    @@pclisttop.push(pc)
   end
 
-  def self.callCommand(cmd)
-    if cmd<0 || cmd>=@@pclist.length
+  def self.registerSubCategory(categoryKey, categoryName, help=nil)
+    if !@@pclistsub[categoryKey]
+      @@pclistsub[categoryKey] = []
+      @@pclistcategories.push(SubCategoryPCService.new(categoryKey, categoryName, help))
+    end
+  end
+
+  # Jokes just write themselves.
+  def self.registerSubService(category, pc)
+    @@pclistsub[category].push(pc)
+  end
+
+  def self.getCommandList(subList=nil)
+    commands=[]
+    help=[]
+    if subList
+      cmdList = @@pclistsub[subList]
+    else
+      cmdList = @@pclisttop + @@pclistcategories + @@pclist
+    end
+
+    for pc in cmdList
+      if pc.shouldShow?
+        commands.push(pc.name)
+        help.push(pc.help)
+      end
+    end
+    return [commands, help]
+  end
+
+  def self.callCommand(cmd, subList=nil)
+    if subList
+      cmdList = @@pclistsub[subList]
+    else
+      cmdList = @@pclisttop + @@pclistcategories + @@pclist
+    end
+
+    if cmd<0 || cmd>=cmdList.length
       return false
     end
     i=0
-    for pc in @@pclist
+    for pc in cmdList
       if pc.shouldShow?
         if i==cmd
-           pc.access()
-           return true
+          if !pc.is_a?(SubCategoryPCService)
+            if $pcservices_using_rotomphone
+              pbSEPlay('SFX - RotomPhone_1')
+            else
+              pbSEPlay('SFX - Phone Call')
+            end
+          else
+            pbSEPlay('dexselect', 100, 120)
+          end
+
+          pc.access()
+          pbSEPlay('dexselect')
+          return true
         end
         i+=1
       end
@@ -83,8 +155,22 @@ module ServicePCList
     return $game_variables[:V13Story] >= 100
   end
 
+  def self.bladestarTerritory?
+    mapid = $game_map.map_id
+    while mapid != 0
+      return true if [371,384,387,466,494].include?(mapid)
+      mapid = $cache.mapinfos[mapid].parent_id
+    end
+    return false
+  end
+
   def self.darchlightCaves?
-    return $game_variables[:Post9thBadge] >= 27 && $game_variables[:Post9thBadge] < 30
+    mapid = $game_map.map_id
+    while mapid != 0
+      return true if mapid == 494
+      mapid = $cache.mapinfos[mapid].parent_id
+    end
+    return false
   end
 
   def self.dreadDream?
@@ -132,6 +218,37 @@ module ServicePCList
   end
 end
 
+$pcservices_in_readymenu = false
+
+class PokemonReadyMenu_Scene
+
+  if !defined?(pcservices_old_pbStartScene)
+    alias :pcservices_old_pbStartScene :pbStartScene
+  end
+
+  def pbStartScene(*args, **kwargs)
+    $pcservices_in_readymenu = true
+    return pcservices_old_pbStartScene(*args, **kwargs)
+  end
+
+  if !defined?(pcservices_old_pbEndScene)
+    alias :pcservices_old_pbEndScene :pbEndScene
+  end
+
+  def pbEndScene(*args, **kwargs)
+    $pcservices_in_readymenu = false
+    return pcservices_old_pbEndScene(*args, **kwargs)
+  end
+end
+
+if !defined?(pcservices_old_pbMapInterpreterRunning?)
+  alias :pcservices_old_pbMapInterpreterRunning? :pbMapInterpreterRunning?
+end
+
+def pbMapInterpreterRunning?
+  return pcservices_old_pbMapInterpreterRunning? || $pcservices_in_readymenu
+end
+
 
 class ItemData < DataObject
   attr_accessor :flags
@@ -155,7 +272,9 @@ ItemHandlers::UseFromBag.add(:ROTOMPHONE,proc{|item|
     next 0
   end
 
+  $pcservices_using_rotomphone = true
   pbPokeCenterPC
+  $pcservices_using_rotomphone = false
   next 1
 })
 
@@ -173,6 +292,14 @@ ItemHandlers::UseInField.add(:ROTOMPHONE,proc{|item|
     next 0
   end
 
+  $pcservices_using_rotomphone = true
   pbPokeCenterPC
+  $pcservices_using_rotomphone = false
   next 1
 })
+
+
+
+PokemonPCList.registerPC(CallServicePC.new)
+ServicePCList.registerSubCategory(:Consultants, "Pokemon Consultants", "Services which can tweak basic values of your Pokemon.")
+

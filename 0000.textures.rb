@@ -1,5 +1,7 @@
 
 $MOD = 'Data/Mods/TextureOverrides/'
+$SERVICE = 'Data/Mods/ServiceIcons/'
+$NPCICONS = 'Graphics/Pictures/'
 $MAP = 'Graphics/Pictures/RegionMap/'
 $CHARS = 'Graphics/Characters/'
 $VS = 'Graphics/Transitions/'
@@ -57,7 +59,27 @@ $DECLARED_OVERRIDES = {
   $CHARS + 'trBack144' => $MOD + 'Darch/FlorinBack', # Only time Florin is a battle partner, so can replace the base sprite
 
   # Steel Diamond for better readability
-  $ICONS + 'bosstypeSTEEL' => $MOD + 'SteelDiamond'
+  $ICONS + 'bosstypeSTEEL' => $MOD + 'SteelDiamond',
+
+  # For pc services
+  $NPCICONS + 'service_BladestarJoy' => $SERVICE + 'BladestarJoy',
+  $NPCICONS + 'service_DayCare' => $SERVICE + 'DayCare',
+  $NPCICONS + 'service_DayCareMan' => $SERVICE + 'DayCareMan',
+  $NPCICONS + 'service_Eizen' => $SERVICE + 'Eizen',
+  $NPCICONS + 'service_GDCCentral' => $SERVICE + 'GDCCentral',
+  $NPCICONS + 'service_GearenLabs' => $SERVICE + 'GearenLabs',
+  $NPCICONS + 'service_Matthew' => $SERVICE + 'Matthew',
+  $NPCICONS + 'service_MoveRelearner' => $SERVICE + 'MoveRelearner',
+  $NPCICONS + 'service_Nerta' => $SERVICE + 'Nerta',
+  $NPCICONS + 'service_NurseJoy' => $SERVICE + 'NurseJoy',
+  $NPCICONS + 'service_Odessa' => $SERVICE + 'Odessa',
+  $NPCICONS + 'service_OdessaBlush' => $SERVICE + 'OdessaBlush',
+  $NPCICONS + 'service_OdessaConfused' => $SERVICE + 'OdessaConfused',
+  $NPCICONS + 'service_RelearnerSister' => $SERVICE + 'RelearnerSister',
+  $NPCICONS + 'service_SEC' => $SERVICE + 'SEC',
+  $NPCICONS + 'service_SECAnnoyed' => $SERVICE + 'SECAnnoyed',
+  $NPCICONS + 'service_TeilaStaff' => $SERVICE + 'TeilaStaff',
+  $NPCICONS + 'service_XatuFashion' => $SERVICE + 'XatuFashion'
 }
 
 
