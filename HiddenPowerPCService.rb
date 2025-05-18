@@ -19,8 +19,49 @@ class HiddenPowerPCService
     return _INTL("\\f[service_Nerta]" + text, *args)
   end
 
+  def hpChange(mon)
+    pbHiddenPower(mon) if !mon.hptype
+    oldtype=mon.hptype
+    typechoices = [_INTL("Bug"),_INTL("Dark"),_INTL("Dragon"),_INTL("Electric"),_INTL("Fairy"),_INTL("Fighting"),_INTL("Fire"),_INTL("Flying"),_INTL("Ghost"),_INTL("Grass"),_INTL("Ground"),_INTL("Ice"),_INTL("Poison"),_INTL("Psychic"),_INTL("Rock"),_INTL("Steel"),_INTL("Water"),_INTL("Cancel")]
+    choosetype = Kernel.pbMessage(nerta("Which type should its move become?"),typechoices,18)
+    case choosetype
+      when 0 then newtype=:BUG
+      when 1 then newtype=:DARK
+      when 2 then newtype=:DRAGON
+      when 3 then newtype=:ELECTRIC
+      when 4 then newtype=:FAIRY
+      when 5 then newtype=:FIGHTING
+      when 6 then newtype=:FIRE
+      when 7 then newtype=:FLYING
+      when 8 then newtype=:GHOST
+      when 9 then newtype=:GRASS
+      when 10 then newtype=:GROUND
+      when 11 then newtype=:ICE
+      when 12 then newtype=:POISON
+      when 13 then newtype=:PSYCHIC
+      when 14 then newtype=:ROCK
+      when 15 then newtype=:STEEL
+      when 16 then newtype=:WATER
+      else newtype=-1
+    end
+    if newtype == -1
+      Kernel.pbMessage(nerta("Changed your mind?"))
+      return false
+    end
+    if (choosetype >= 0) && (choosetype < 17) && newtype!=oldtype
+      mon.hptype=newtype
+      return true
+    end
+    if newtype==oldtype
+      Kernel.pbMessage(nerta("It's already that type!"))
+    else
+      Kernel.pbMessage(nerta("Changed your mind?"))
+    end
+    return false
+  end
+
   def access
-    if ServicePCList.offMap?
+    if ServicePCList.offMap? || ServicePCList.darchlightCaves?
       Kernel.pbMessage(_INTL("..."))
       Kernel.pbMessage(_INTL("There's no response..."))
       return
@@ -57,7 +98,7 @@ class HiddenPowerPCService
             Kernel.pbMessage(nerta("All that's inside here is an uncooked omelette."))
           else
             Kernel.pbMessage(nerta("Okay, {1}\'s Hidden Power is {2}.",pkmn.name,getTypeName(pbHiddenPower(pkmn))))
-            if HiddenPowerChanger(pkmn)
+            if hpChange(pkmn)
               Kernel.pbMessage(nerta("NERTA: Okay, send over that Heart Scale, and..."))
               $PokemonBag.pbDeleteItem(:HEARTSCALE)
               Kernel.pbMessage(nerta("Bada bing, bada boom."))

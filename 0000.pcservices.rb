@@ -3,6 +3,11 @@ Variables[:Karma] = 129
 
 $pcservices_using_rotomphone = false
 
+class Game_Screen
+  attr_accessor :pcservices_lastCommand
+  attr_accessor :pcservices_lastCommandsCategories
+end
+
 class CallServicePC
   def shouldShow?
     return false if ServicePCList.getCommandList()[0].size == 0
@@ -16,9 +21,10 @@ class CallServicePC
 
   def access
     Kernel.pbMessage(_INTL("\\se[accesspc]Accessed the Service Directory.\\wtnp[10]"))
+    command=ServicePCList.prevCommand
     loop do
-      commands=ServicePCList.getCommandList()
-      command=Kernel.pbShowCommandsWithHelp(nil, commands[0], commands[1], -1)
+      commands=ServicePCList.getCommandList
+      command=Kernel.pbShowCommandsWithHelp(nil, commands[0], commands[1], -1, command)
       if !ServicePCList.callCommand(command)
         break
       end
@@ -46,9 +52,10 @@ class SubCategoryPCService
   end
 
   def access
+    command=ServicePCList.prevCommand(@categoryKey)
     loop do
       commands=ServicePCList.getCommandList(@categoryKey)
-      command=Kernel.pbShowCommandsWithHelp(nil, commands[0], commands[1], -1)
+      command=Kernel.pbShowCommandsWithHelp(nil, commands[0], commands[1], -1, command)
       if !ServicePCList.callCommand(command, @categoryKey)
         break
       end
@@ -102,6 +109,29 @@ module ServicePCList
     return [commands, help]
   end
 
+  def self.prevCommand(subList=nil)
+    if subList
+      $game_screen.pcservices_lastCommandsCategories = {} if !$game_screen.pcservices_lastCommandsCategories
+      return 0 if !$game_screen.pcservices_lastCommandsCategories[subList]
+      lastCommand = $game_screen.pcservices_lastCommandsCategories[subList]
+      cmdList = @@pclistsub[subList]
+    else
+      return 0 if !$game_screen.pcservices_lastCommand
+      lastCommand = $game_screen.pcservices_lastCommand
+      cmdList = @@pclisttop + @@pclistcategories + @@pclist
+    end
+
+    i=0
+    for pc in cmdList
+      if pc.shouldShow?
+        return i if lastCommand == pc
+        i += 1
+      end
+    end
+    return 0
+  end
+
+
   def self.callCommand(cmd, subList=nil)
     if subList
       cmdList = @@pclistsub[subList]
@@ -125,6 +155,14 @@ module ServicePCList
           else
             pbSEPlay('dexselect', 100, 120)
           end
+
+          if subList
+            $game_screen.pcservices_lastCommandsCategories = {} if !$game_screen.pcservices_lastCommandsCategories
+            $game_screen.pcservices_lastCommandsCategories[subList] = pc
+          else
+            $game_screen.pcservices_lastCommand = pc
+          end
+
 
           pc.access()
           pbSEPlay('dexselect')

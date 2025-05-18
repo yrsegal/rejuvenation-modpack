@@ -75,6 +75,7 @@ $DECLARED_OVERRIDES = {
   $NPCICONS + 'service_Odessa' => $SERVICE + 'Odessa',
   $NPCICONS + 'service_OdessaBlush' => $SERVICE + 'OdessaBlush',
   $NPCICONS + 'service_OdessaConfused' => $SERVICE + 'OdessaConfused',
+  $NPCICONS + 'service_PastJoy' => $SERVICE + 'PastJoy',
   $NPCICONS + 'service_RelearnerSister' => $SERVICE + 'RelearnerSister',
   $NPCICONS + 'service_SEC' => $SERVICE + 'SEC',
   $NPCICONS + 'service_SECAnnoyed' => $SERVICE + 'SECAnnoyed',

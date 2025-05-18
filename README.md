@@ -20,6 +20,9 @@ Libraries:
   Adds a Field Healing service.
 - HiddenPowerPCService.rb (depends on 0000.pcservices.rb, 0000.textures.rb)
   Adds a Hidden Power Changer/checker service. Unlocked by speaking to the relevant NPC in Kristiline.
+- MoveRelearnerPCService.rb (depends on 0000.pcservices.rb, 0000.textures.rb)  
+  Adds a service which allows relearning, teaching egg moves, and move deletion (always free). Free after 10 Heart Scales.  
+  Also fixes missing Egg Move pools and allows evolutions to learn preevo moves.
 - PokeballTransferPCService.rb (depends on 0000.pcservices.rb, 0000.textures.rb)  
   Adds a Pokeball Transfer service, unlocked after The Inconsistency.
 - PokemonValuesPCService.rb (depends on 0000.formattedchoices.rb, 0000.pcservices.rb, 0000.textures.rb)  
@@ -75,8 +78,6 @@ Other mods:
   Adds an Ana route to a specific cutscene.
 - FullOutfitOptions.rb (depends on 0000.injection.rb)  
   You get full options for outfits, and they're supported a little more in cutscenes. This does not add sprites for them, and the only character given spritework currently for this is Ana.
-- LearnPrevolutionAndEggMoves.rb (Rework into Service pending)  
-  Allows relearning anywhere for free, and also adds egg moves to that pool. Fixes a few alternate forms' egg move pools.
 - MiningOverhaul.rb  
   More items for mining! Nicer sprites, too. Also, you can keep mining after you've fully cracked the bar by spending money.
 - MoveTweak.rb  

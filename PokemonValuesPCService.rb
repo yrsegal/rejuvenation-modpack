@@ -340,6 +340,12 @@ class PokemonValuesPCService
   end
 
   def access
+    if ServicePCList.offMap? || ServicePCList.darchlightCaves?
+      Kernel.pbMessage(_INTL("..."))
+      Kernel.pbMessage(_INTL("There's no response..."))
+      return
+    end
+
     if $game_variables[:QuestCrossover] >= 1 
       if $game_screen.pokemonvaluespc_use_gdc
         Kernel.pbMessage(_INTL("(Since Gearen Labs is back up and running, you call them instead!)"))

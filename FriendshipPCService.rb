@@ -23,7 +23,7 @@ class FriendshipPCService
   end
 
   def access
-    if ServicePCList.offMap?
+    if ServicePCList.offMap? || ServicePCList.darchlightCaves?
       Kernel.pbMessage(_INTL("..."))
       Kernel.pbMessage(_INTL("There's no response..."))
       return

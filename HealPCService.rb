@@ -29,6 +29,7 @@ class HealPCService
   end
 
   def nurseJoy(text, *args) 
+    return _INTL("\\f[service_PastJoy]" + text, *args) if inPast? 
     return _INTL("\\f[service_NurseJoy]" + text, *args)
   end
 
@@ -113,7 +114,7 @@ class HealPCService
       return
     end
 
-    if ServicePCList.offMap? || ServicePCList.distantTime?
+    if (!inPast? && ServicePCList.offMap?) || ServicePCList.distantTime?
       Kernel.pbMessage(_INTL("..."))
       Kernel.pbMessage(_INTL("There's no response..."))
       return
@@ -125,8 +126,8 @@ class HealPCService
       Kernel.pbMessage(nurseJoy("Our Smeargle are powerful enough to Lock On to you from anywhere in the region!")) 
       $game_screen.healpc_used = true
     end
-    
-    if Kernel.pbConfirmMessage(bladestarJoy("Would you like me to heal your Pokemon?"))
+
+    if Kernel.pbConfirmMessage(nurseJoy("Would you like me to heal your Pokemon?"))
       Kernel.pbMessage(nurseJoy("We'll restore your Pokemon to full health! Just wait a few seconds..."))
       nurseJoyWait(30)
       lockOn { |i| nurseJoyWait(i)}
