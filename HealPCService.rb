@@ -6,6 +6,8 @@ PINK_FLASH_ANIMATION_ID = 83
 KARMA_HEAL_ANIMATION_ID = 132
 KARMA_HURT_ANIMATION_ID = 133
 
+TextureOverrides.registerServiceSprites('BladestarJoy', 'PastJoy', 'NurseJoy', 'SEC', 'SECAnnoyed')
+
 class Game_Screen
   attr_accessor :healpc_used
 end

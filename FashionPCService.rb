@@ -1,5 +1,7 @@
 Variables[:LuckQuest] = 780
 
+TextureOverrides.registerServiceSprites('XatuFashion')
+
 class Game_Screen
   attr_accessor :fashionpc_used
 end

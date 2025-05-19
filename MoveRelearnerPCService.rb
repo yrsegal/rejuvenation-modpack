@@ -1,5 +1,7 @@
 Switches[:MoveRelearner] = 1444
 
+TextureOverrides.registerServiceSprites('MoveRelearner', 'RelearnerSister')
+
 def pbEachNaturalMove(pokemon)
   movesFound=[]
 

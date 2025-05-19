@@ -10,6 +10,8 @@ HEART_SWAP_ANIMATION_ID = 138
 ELIPSES_ANIMATION_ID = 16
 PINK_FLASH_ANIMATION_ID = 83
 
+TextureOverrides.registerServiceSprites('Odessa', 'OdessaBlush', 'OdessaAngry', 'OdessaConfused', 'Manaphy')
+
 class Game_Screen
   attr_accessor :genderpc_used
   attr_accessor :genderpc_askedForSwap

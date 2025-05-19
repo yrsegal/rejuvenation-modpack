@@ -1,5 +1,7 @@
 Variables[:TerajumaStory] = 96
 
+TextureOverrides.registerServiceSprites('TeilaStaff')
+
 class Game_Screen
   attr_accessor :friendshippc_used
 end

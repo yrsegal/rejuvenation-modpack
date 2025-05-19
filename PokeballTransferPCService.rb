@@ -2,6 +2,8 @@ Switches[:GreetingsEizen] = 1763
 Switches[:EizenKnows] = 1138
 Variables[:TheInconsistency] = 431
 
+TextureOverrides.registerServiceSprites('Eizen', 'Matthew')
+
 class Game_Screen
   attr_accessor :pokeballtransferpc_used
   attr_accessor :pokeballtransferpc_eizen_prankcall

@@ -1,6 +1,8 @@
 Variables[:V2Story] = 359
 Switches[:EarlyIncubator] = 1776 
 
+TextureOverrides.registerServiceSprites('DayCareLady', 'DayCareMan')
+
 class Game_Screen
   attr_accessor :daycarepc_used
   attr_accessor :daycarepc_lastCommand

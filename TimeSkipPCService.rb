@@ -1,6 +1,8 @@
 
 Variables[:PostCarotosQuest] = 373
 
+TextureOverrides.registerServiceSprites('Celebi')
+
 class Game_Screen
   attr_accessor :timeskippc_used
   attr_accessor :timeskippc_darchlight

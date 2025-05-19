@@ -3,6 +3,8 @@ Variables[:StarterChoice] = 7
 Variables[:Post10thBadge] = 353
 Variables[:QuestCrossover] = 573
 
+TextureOverrides.registerServiceSprites('GearenLabs', 'GDCCentral')
+
 class Game_Screen
   attr_accessor :pokemonvaluespc_used
   attr_accessor :pokemonvaluespc_called_gearen_in_gdc

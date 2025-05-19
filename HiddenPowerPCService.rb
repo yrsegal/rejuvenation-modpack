@@ -1,3 +1,6 @@
+
+TextureOverrides.registerServiceSprites('Nerta')
+
 class Game_Screen
   attr_accessor :hiddenpowerpc_used
 end

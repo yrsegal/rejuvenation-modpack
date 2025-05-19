@@ -1,6 +1,9 @@
 Variables[:Post11thBadge] = 456
 Variables[:Karma] = 129
 
+# Based on Caruban's gen 9 compilation
+TextureOverrides.registerTextureOverride(TextureOverrides::ICONS + 'rotomphone', TextureOverrides::MOD + 'RotomPhone')
+
 $pcservices_using_rotomphone = false
 
 class Game_Screen
