@@ -4,6 +4,7 @@ module TextureOverrides
   NPCICONS = 'Graphics/Pictures/'
   MAP = 'Graphics/Pictures/RegionMap/'
   SUMMARY = 'Graphics/Pictures/Summary/'
+  BATTLEICON = 'Graphics/Pictures/Battle/'
   CHARS = 'Graphics/Characters/'
   VS = 'Graphics/Transitions/'
   ICONS = 'Graphics/Icons/'
@@ -16,11 +17,15 @@ module TextureOverrides
     TextureOverrides::ICONS + 'bosstypeSTEEL' => TextureOverrides::MOD + 'SteelDiamond',
 
     # Missing Summary ball
-    TextureOverrides::SUMMARY + 'summaryballDREAMBALL' => TextureOverrides::MOD + 'DreamBallSummary',
+    TextureOverrides::SUMMARY + 'summaryballDREAMBALL' => TextureOverrides::MOD + 'Pokeballs/DreamBallSummary',
     # Fix Lure Ball colors
-    TextureOverrides::SUMMARY + 'summaryballLUREBALL' => TextureOverrides::MOD + 'LureBallSummary',
-    # Fix the misshappen Beast Ball summary (sprite from Caruban's gen 9 compilation)
-    TextureOverrides::SUMMARY + 'summaryballBEASTBALL' => TextureOverrides::MOD + 'BeastBallSummary'
+    TextureOverrides::SUMMARY + 'summaryballLUREBALL' => TextureOverrides::MOD + 'Pokeballs/LureBallSummary',
+    TextureOverrides::BATTLEICON + 'LUREBALL' => TextureOverrides::MOD + 'Pokeballs/LureBallThrow',
+    TextureOverrides::BATTLEICON + 'LUREBALL_open' => TextureOverrides::MOD + 'Pokeballs/LureBallOpen',
+    # Fix the misshappen Beast Ball sprites (sprite from Caruban's gen 9 compilation)
+    TextureOverrides::SUMMARY + 'summaryballBEASTBALL' => TextureOverrides::MOD + 'Pokeballs/BeastBallSummary',
+    TextureOverrides::BATTLEICON + 'BEASTBALL' => TextureOverrides::MOD + 'Pokeballs/BeastBallThrow',
+    TextureOverrides::BATTLEICON + 'BEASTBALL_open' => TextureOverrides::MOD + 'Pokeballs/BeastBallOpen'
   }
 
 
