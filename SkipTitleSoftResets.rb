@@ -9,7 +9,7 @@ end
 def pbCallTitle(*args, **kwargs)
   if !$skiptitle_skippedfirst
     $skiptitle_skippedfirst = true
-    return partialdebug_old_pbCallTitle(*args, **kwargs)
+    return skiptitle_old_pbCallTitle(*args, **kwargs)
   end
   return Scene_DebugIntro.new
 end
