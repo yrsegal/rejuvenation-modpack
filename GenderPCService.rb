@@ -102,7 +102,7 @@ class GenderPCService
   end
 
   def access
-    if ServicePCList.offMap? || inPast? || ServicePCList.darchlightCaves?
+    if ServicePCList.offMap? || ServicePCList.inRift? || inPast? || ServicePCList.darchlightCaves?
       Kernel.pbMessage(_INTL("..."))
       Kernel.pbMessage(_INTL("There's no response..."))
       return
@@ -322,13 +322,14 @@ class GenderPCService
         if $PokemonBag.pbQuantity(:GOURMETTREAT) > 0
           manaphySound
           if $Settings.photosensitive==0
-            $game_screen.start_flash(Color.new(255,120,100,200),40)
+            $game_screen.start_flash(Color.new(255,120,100,200),80)
           else
             pbExclaim($game_player, PINK_FLASH_ANIMATION_ID)
           end
           pbSEPlay('PRSFX- Teleport')
           $PokemonBag.pbDeleteItem(:GOURMETTREAT)
           pbWait(20)
+          pbHealAll()
           pbSEPlay('PRSFX- Healing Pulse')
           pbExclaim($game_player)
 

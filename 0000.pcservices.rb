@@ -256,6 +256,15 @@ module ServicePCList
     return false
   end
 
+  def self.inRift?
+    mapid = $game_map.map_id
+    while mapid != 0
+      return true if [346,62,78,572,559,96,474,434,390,392,72].include?(mapid)
+      mapid = $cache.mapinfos[mapid].parent_id
+    end
+    return false
+  end
+
   def self.offMap?
     if $cache.mapdata[$game_map.map_id].MapPosition.is_a?(Hash)
       region = pbUnpackMapHash[0]

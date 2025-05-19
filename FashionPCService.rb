@@ -22,7 +22,7 @@ class FashionPCService
   end
 
   def access
-    if ServicePCList.offMap? || inPast? || ServicePCList.darchlightCaves?
+    if ServicePCList.offMap? || ServicePCList.inRift? || inPast? || ServicePCList.darchlightCaves?
       Kernel.pbMessage(_INTL("..."))
       Kernel.pbMessage(_INTL("There's no response..."))
       return

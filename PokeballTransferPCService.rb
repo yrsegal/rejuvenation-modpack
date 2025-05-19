@@ -151,7 +151,7 @@ class PokeballTransferPCService
   end
 
   def access
-    if ServicePCList.inZeight?
+    if ServicePCList.inZeight? || ServicePCList.inRift?
       Kernel.pbMessage(_INTL("..."))
       Kernel.pbMessage(_INTL("The phone was answered, but immediately hung up..."))
       return

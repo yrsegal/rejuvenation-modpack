@@ -69,7 +69,7 @@ class TimeSkipPCService
   end
 
   def access
-    if ServicePCList.inNightmare? || ServicePCList.inZeight?
+    if ServicePCList.inNightmare? || ServicePCList.inZeight? || ServicePCList.inRift?
       Kernel.pbMessage(_INTL("..."))
       Kernel.pbMessage(_INTL("There's no response..."))
       return
@@ -132,10 +132,20 @@ class TimeSkipPCService
       return
     elsif choice < 4
       celebiSound(80, 100)
-      Kernel.pbMessage(celebi("CELEBI: Cel... EBI! (Here we GO!)\n<fn=Garufan>O' flow of time...</fn>"))
+      Kernel.pbMessage(celebi("CELEBI: Cel... EBI! (Here we GO!)"))
+      $game_system.message_position = 1 # Middle
+      $game_system.message_frame = 1 # Hide
+
+      $game_screen.start_tone_change(Tone.new(-51,-51,-51,0), 40)
+      pbWait(20)
+
       celebiSound(200, 60)
-      Kernel.pbMessage(celebi("<fn=Garufan>The Interceptor bids you move!</fn>"))
+      Kernel.pbMessage(_INTL("\\c[3]<ac><fn=Garufan>-! O' flow of time... !-</fn></ac>"))
       celebiSound(200, 120)
+      Kernel.pbMessage(_INTL("\\c[3]<ac><fn=Garufan>-! The Interceptor bids you move! !-</fn></ac>"))
+
+      pbWait(20)
+      pbBGMPlay('citamginE - gnileeF', 100, 130)
 
       theGearsShift
 
@@ -158,7 +168,20 @@ class TimeSkipPCService
       pbWait(100)
 
       pbCommonEvent(104) # TimeGone
+
+      pbBGMFade(1)
+      $game_screen.start_flash(Color.new(255,255,255,255), 60)
+      pbSEPlay('Exit Door', 100, 50)
+      pbWait(30)
+
+      $game_screen.start_tone_change(Tone.new(-51,-51,-51, 0), 40)
+      pbWait(20)
+
       Kernel.pbMessage(_INTL("<ac>\\c[3]THE FLOW OF TIME HAS SHIFTED.</ac>"))
+
+      $game_screen.start_tone_change(Tone.new(0,0,0,0), 40)
+      $game_system.message_position = 2 # Bottom
+      $game_system.message_frame = 0 # Show
       celebiSound(80, 100)
       Kernel.pbMessage(celebi("CELEBI: Precel. (That's probably fine. Bye!)"))
     end

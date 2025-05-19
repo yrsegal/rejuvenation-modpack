@@ -351,7 +351,7 @@ class PokemonValuesPCService
   end
 
   def access
-    if ServicePCList.offMap? || inPast? || ServicePCList.darchlightCaves?
+    if ServicePCList.offMap? || ServicePCList.inRift? || inPast? || ServicePCList.darchlightCaves?
       Kernel.pbMessage(_INTL("..."))
       Kernel.pbMessage(_INTL("There's no response..."))
       return
@@ -425,7 +425,7 @@ class PokemonValuesPCService
     if Kernel.pbConfirmMessage("And you'd like to spend a Heart Scale to tweak \\v[3]?")
       if tweaking(pkmn)
         $PokemonBag.pbDeleteItem(:HEARTSCALE)
-        Kernel.pbMessage(lab("And...\\| Done! Thank you for your business! Have a nice day!"))
+        Kernel.pbMessage(lab("And...\\| \\se[balldrop]Done! Thank you for your business! Have a nice day!"))
       else
         Kernel.pbMessage(lab("Changed your mind then? Have a nice day!"))
       end
