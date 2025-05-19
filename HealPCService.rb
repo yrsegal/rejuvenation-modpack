@@ -114,7 +114,7 @@ class HealPCService
       return
     end
 
-    if (!inPast? && ServicePCList.offMap?) || ServicePCList.distantTime?
+    if (!inPast? && ServicePCList.offMap?) || ServicePCList.inRift? || ServicePCList.distantTime?
       Kernel.pbMessage(_INTL("..."))
       Kernel.pbMessage(_INTL("There's no response..."))
       return
