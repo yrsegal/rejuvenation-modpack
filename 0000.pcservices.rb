@@ -214,7 +214,7 @@ module ServicePCList
   def self.bladestarTerritory?
     mapid = $game_map.map_id
     while mapid != 0
-      return true if [371,384,387,466,494].include?(mapid)
+      return true if [371,384,387,466,494,40].include?(mapid)
       mapid = $cache.mapinfos[mapid].parent_id
     end
     return false

@@ -12,10 +12,14 @@ Libraries:
   Various texture overrides: most of them are for the character Ana. Some mods expect these overrides to be present.
 
 "Service" mods (0000.pcservices.rb)
+- DayCarePCService.rb (depends on 0000.formattedchoices.rb, 0000.pcservices.rb, 0000.textures.rb)  
+  Adds a service for accessing the Day-Care remotely.
 - FashionPCService.rb (depends on 0000.pcservices.rb, 0000.textures.rb)  
   Adds a clothing-swapping service.
 - FriendshipPCService.rb (depends on 0000.pcservices.rb, 0000.textures.rb)  
   Adds a Spa service, which lets you instantly max out or check a pokemon's friendship. Unlocked by entering Teila Resort.
+- GenderPCService.rb (depends on 0000.formattedchoices.rb, 00000.pcservices.rb, 0000.textures.rb)  
+  Adds a Genderswapping service, for setting Pokemon (and player) gender. Unlocked through Tale of Two Hearts.
 - HealPCService.rb (depends on 0000.pcservices.rb, 0000.textures.rb)  
   Adds a Field Healing service.
 - HiddenPowerPCService.rb (depends on 0000.pcservices.rb, 0000.textures.rb)
@@ -27,6 +31,8 @@ Libraries:
   Adds a Pokeball Transfer service, unlocked after The Inconsistency.
 - PokemonValuesPCService.rb (depends on 0000.formattedchoices.rb, 0000.pcservices.rb, 0000.textures.rb)  
   Adds a Lab service for tweaking your pokemon's IVs, EVs, Nature, and Ability. Each component has its own unlock requirements.
+- TimeSkipPCService.rb (depends on 0000.pcservices.rb, 0000.textures.rb)  
+  Adds a Celebi service for advancing to different times if Unreal Time is on.
 
 Fix/hotfix mods:
 - AnaFixes.rb (depends on 0000.injection.rb, 0000.textures.rb)  
