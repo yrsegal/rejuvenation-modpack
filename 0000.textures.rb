@@ -68,6 +68,7 @@ $DECLARED_OVERRIDES = {
 
   # For pc services
   $NPCICONS + 'service_BladestarJoy' => $SERVICE + 'BladestarJoy',
+  $NPCICONS + 'service_Celebi' => $SERVICE + 'Celebi',
   $NPCICONS + 'service_DayCareLady' => $SERVICE + 'DayCareLady',
   $NPCICONS + 'service_DayCareMan' => $SERVICE + 'DayCareMan',
   $NPCICONS + 'service_Eizen' => $SERVICE + 'Eizen',

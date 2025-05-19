@@ -266,7 +266,7 @@ def selectfromboxes_tone(pokemon, ableProc, tutorPartialAble)
   end
 end
 
-class Selectfromboxes_x < PokemonStorageScene
+class Selectfromboxes_PokemonStorageScene < PokemonStorageScene
   attr_accessor :ableProc
   attr_accessor :tutorPartialAble
   attr_accessor :allowIneligible

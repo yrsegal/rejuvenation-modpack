@@ -1,0 +1,168 @@
+
+Variables[:PostCarotosQuest] = 373
+
+class Game_Screen
+  attr_accessor :timeskippc_used
+  attr_accessor :timeskippc_darchlight
+  attr_accessor :timeskippc_past
+  attr_accessor :timeskippc_distant
+  attr_accessor :timeskippc_denofsouls
+end
+
+class TimeSkipPCService
+  
+  def shouldShow?
+    return false if $game_variables[:PostCarotosQuest] < 3
+    return false if !$game_switches[:Unreal_Time]
+    return $Settings.unrealTimeDiverge != 0
+  end
+
+  def name
+    return _INTL("???") if !$game_screen.timeskippc_used
+    return _INTL("Voice of the Forest")
+  end
+
+  def help
+    return _INTL("When did this get added to your services?") if !$game_screen.timeskippc_used
+    return _INTL("Invoke Celebi to advance the flow of time.")
+  end
+
+  def celebi(text, *args) 
+    return _INTL("\\f[service_Celebi]" + text, *args)
+  end
+
+  def celebiSound(volume=100, pitch=100)
+    pbSEPlay('251Cry', volume, pitch)
+  end
+
+  def theGearsShift # Largely copied from common event ForwardTime
+    pbSEPlay('PRSFX- Final Gambit1', 100, 150)
+    $game_screen.start_tone_change(Tone.new(-34,-34,-34,221), 40)
+    $game_screen.pictures[1].show('TimeGear1', 1, 485, 375, 10, 10, 50, 0)
+    $game_screen.pictures[2].show('TimeGear2', 1, 30, 30, 10, 10, 50, 0)
+    $game_screen.pictures[3].show('TimeGear3', 1, 480, 230, 10, 10, 50, 0)
+    $game_screen.pictures[4].show('TimeGear4', 1, 320, 270, 10, 10, 50, 0)
+    $game_screen.pictures[5].show('TimeGear1', 1, 30, 30, 10, 10, 50, 0)
+    $game_screen.pictures[6].show('TimeGear1', 1, 255, 188, 100, 100, 50, 0)
+
+    for i in 1..6
+      $game_screen.pictures[i].start_tone_change(Tone.new(-255,255,-255,0),0)
+    end
+
+    $game_screen.pictures[1].move(20, 1, 485, 375, 100, 100, 255, 0)
+    $game_screen.pictures[2].move(20, 1, 30, 30, 100, 100, 255, 0)
+    $game_screen.pictures[3].move(20, 1, 480, 230, 100, 100, 255, 0)
+    $game_screen.pictures[4].move(20, 1, 320, 270, 100, 100, 255, 0)
+    $game_screen.pictures[5].move(20, 1, 30, 30, 150, 150, 50, 1)
+    $game_screen.pictures[6].move(20, 1, 255, 188, 200, 200, 50, 1)
+
+    pbWait(20)
+
+    $game_screen.pictures[1].rotate(-5)
+    $game_screen.pictures[2].rotate(-5)
+    $game_screen.pictures[3].rotate(-8)
+    $game_screen.pictures[4].rotate(-3)
+    $game_screen.pictures[5].rotate(+3)
+    $game_screen.pictures[6].rotate(-6)
+
+    pbWait(10)
+  end
+
+  def access
+    if ServicePCList.inNightmare? || ServicePCList.inZeight?
+      Kernel.pbMessage(_INTL("..."))
+      Kernel.pbMessage(_INTL("There's no response..."))
+      return
+    end
+
+    if ServicePCList.denOfSouls?
+      Kernel.pbMessage(_INTL("..."))
+      if !$game_screen.timeskippc_used
+        Kernel.pbMessage(_INTL("(Someone picked up, but...)"))
+        celebiSound(40, 50)
+        Kernel.pbMessage(_INTL("(They sighed sadly and hung up.)"))
+      else
+        Kernel.pbMessage(_INTL("(Celebi picked up, but...)"))
+        celebiSound(40, 50)
+        Kernel.pbMessage(_INTL("(It sighed sadly and hung up.)"))
+      end
+      return
+    end
+
+    celebiSound(80, 100)
+    Kernel.pbMessage(celebi("CELEBI: Cele bii! (Hello!)"))
+
+    if ServicePCList.darchlightCaves? && !$game_screen.timeskippc_darchlight
+      Kernel.pbMessage(_INTL("(\\..\\..\\..\\. Isn't there supposed to be some kind of interference in Darchlight Caves?)"))
+      $game_screen.timeskippc_darchlight = true
+    end
+
+    if ServicePCList.distantTime? && !$game_screen.timeskippc_distant
+      Kernel.pbMessage(celebi("Bicel cel <i>cel!</i> (Oh, this is a poor timeline...)"))
+      celebiSound(40, 50)
+      $game_screen.timeskippc_distant = true
+    elsif inPast? && !$game_screen.timeskippc_past
+      Kernel.pbMessage(_INTL("(It makes sense that Celebi would answer even in the past...)"))
+      $game_screen.timeskippc_past = true
+    end
+
+    if !$game_screen.timeskippc_used
+      celebiSound(80, 100)
+      Kernel.pbMessage(celebi("Bici lee cel ebi. (I can help you control the flow of time.)"))
+      celebiSound(80, 100)
+      Kernel.pbMessage(celebi("Ceeeeeeeeeeeeeeel. (Call me anytime! Time travelers have got all the time in the world.)"))
+      Kernel.pbMessage(_INTL("(\\..\\..\\..\\.Wait.\\| You understood that?!)"))
+      $game_screen.timeskippc_used = true
+    end
+
+    if $game_switches[:Forced_Time_of_Day]
+      celebiSound(80, 80)
+      Kernel.pbMessage(celebi("Bipri... (Looks like time's been locked in place for a bit. That happens sometimes!)"))
+      celebiSound(80, 100)
+      Kernel.pbMessage(celebi("Cece prici! (So I can't do much about that. I'll be off, then!)"))
+      return
+    end
+
+
+    celebiSound(80, 100)
+    choice = Kernel.pbMessage(celebi("Pribi! (When do you want to jump forwards to?)"), [_INTL("Morning"), _INTL("Midday"), _INTL("Nightfall"), _INTL("Midnight")], -1, nil, 0)
+    if choice == -1
+      celebiSound(80, 100)
+      Kernel.pbMessage(celebi("CELEBI: Priiil. (If you don't need me, I'll be off then!)"))
+      return
+    elsif choice < 4
+      celebiSound(80, 100)
+      Kernel.pbMessage(celebi("CELEBI: Cel... EBI! (Here we GO!)\n<fn=Garufan>O' flow of time...</fn>"))
+      celebiSound(200, 60)
+      Kernel.pbMessage(celebi("<fn=Garufan>The Interceptor bids you move!</fn>"))
+      celebiSound(200, 120)
+
+      theGearsShift
+
+      now=$game_screen.getTimeCurrent()
+      # Morning is 6 AM
+      # Midday is Noon
+      # Nightfall is 8 PM
+      # Midnight is... yeah
+      targetHour = [6, 12, 8, 0][choice]
+
+      deltaTime = (targetHour - now.hour) * 60 * 60
+      deltaTime -= now.min * 60
+      deltaTime -= now.sec
+
+      deltaTime += (24 * 60 * 60) if deltaTime < 0
+
+      deltaTime = deltaTime / $game_screen.getTimeScale().to_f
+      $gameTimeLastCheck-=deltaTime
+      $game_screen.getTimeCurrent() # Will update the time
+      pbWait(100)
+
+      pbCommonEvent(104) # TimeGone
+      Kernel.pbMessage(_INTL("<ac>\\c[3]THE FLOW OF TIME HAS SHIFTED.</ac>"))
+      celebiSound(80, 100)
+      Kernel.pbMessage(celebi("CELEBI: Precel. (That's probably fine. Bye!)"))
+    end
+  end
+end
+
+ServicePCList.registerService(TimeSkipPCService.new)

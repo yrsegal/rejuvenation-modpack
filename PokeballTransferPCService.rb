@@ -20,7 +20,7 @@ class PokemonTradeScene
     pbPlayCry(@pokemon)
     speciesname=getMonName(@pokemon.species)
     Kernel.pbMessageDisplay(@sprites["msgwindow"],
-       _ISPRINTF("{1:s}\r\nSpecies: {2:s}    Ball: {3:s}\\wtnp[0]",
+       _ISPRINTF("{1:s}\r\nSpecies: {2:s}<r>Ball: {3:s}\\wtnp[0]",
        @pokemon.name,getMonName(@pokemon.species),getItemName(@pokemon.ballused)))
     Kernel.pbMessageWaitForInput(@sprites["msgwindow"],100,true)
     pbPlayDecisionSE()
@@ -30,7 +30,7 @@ class PokemonTradeScene
        _INTL("Matthew tinkers with {1}'s Pokeball.", @pokemon.name))
     pbScene2
     Kernel.pbMessageDisplay(@sprites["msgwindow"],
-       _ISPRINTF("{1:s}\r\nSpecies: {2:s}   Ball: {3:s}\1",
+       _ISPRINTF("{1:s}\r\nSpecies: {2:s}<r>Ball: {3:s}\1",
        @pokemon2.name,getMonName(@pokemon.species),getItemName(@pokemon2.ballused)))
     Kernel.pbMessageDisplay(@sprites["msgwindow"],
        _INTL("{1} is snug in its new {2}!", @pokemon2.name, getItemName(@pokemon2.ballused)))

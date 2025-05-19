@@ -102,7 +102,7 @@ class GenderPCService
   end
 
   def access
-    if ServicePCList.offMap? || ServicePCList.darchlightCaves?
+    if ServicePCList.offMap? || inPast? || ServicePCList.darchlightCaves?
       Kernel.pbMessage(_INTL("..."))
       Kernel.pbMessage(_INTL("There's no response..."))
       return
