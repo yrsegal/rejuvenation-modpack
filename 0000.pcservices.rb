@@ -259,7 +259,7 @@ module ServicePCList
   def self.inRift?
     mapid = $game_map.map_id
     while mapid != 0
-      return true if [346,62,78,572,559,96,474,434,390,392,72].include?(mapid)
+      return true if [346,62,78,572,559,96,474,434,390,392,72,393].include?(mapid)
       mapid = $cache.mapinfos[mapid].parent_id
     end
     return false
