@@ -141,13 +141,14 @@ class TimeSkipPCService
       $game_screen.start_tone_change(Tone.new(-51,-51,-51,0), 40)
       pbWait(20)
 
+      $game_system.bgm_memorize
+      pbBGMPlay('citamginE - gnileeF', 100, 130)
       celebiSound(200, 60)
       Kernel.pbMessage(_INTL("\\c[3]<ac><fn=Garufan>-! O' flow of time... !-</fn></ac>"))
       celebiSound(200, 120)
       Kernel.pbMessage(_INTL("\\c[3]<ac><fn=Garufan>-! The Interceptor bids you move! !-</fn></ac>"))
 
       pbWait(20)
-      pbBGMPlay('citamginE - gnileeF', 100, 130)
 
       theGearsShift
 
@@ -156,7 +157,7 @@ class TimeSkipPCService
       # Midday is Noon
       # Nightfall is 8 PM
       # Midnight is... yeah
-      targetHour = [6, 12, 8, 0][choice]
+      targetHour = [6, 12, 20, 0][choice]
 
       deltaTime = (targetHour - now.hour) * 60 * 60
       deltaTime -= now.min * 60
@@ -167,7 +168,7 @@ class TimeSkipPCService
       deltaTime = deltaTime / $game_screen.getTimeScale().to_f
       $gameTimeLastCheck-=deltaTime
       $game_screen.getTimeCurrent() # Will update the time
-      pbWait(100)
+      pbWait(250)
 
       pbCommonEvent(104) # TimeGone
 
@@ -186,6 +187,7 @@ class TimeSkipPCService
       $game_system.message_frame = 0 # Show
       celebiSound(80, 100)
       Kernel.pbMessage(celebi("CELEBI: Precel. (That's probably fine. Bye!)"))
+      $game_system.bgm_restore
     end
   end
 end
