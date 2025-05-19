@@ -18,11 +18,11 @@
 # Sprites largely sourced from Screen Lady at https://eeveeexpo.com/resources/1274/
 # Gem sprites made by wire based on Screen Lady's Diamond Sphere (small)
 #####MODDED
-if defined?($hitsRemoved)
-  $hitsRemoved=0
+if defined?($miningoverhaul_hitsRemoved)
+  $miningoverhaul_hitsRemoved=0
 end
 
-def swm_getDrawnTextWOutline(outline, text, fontSize)
+def miningoverhaul_getDrawnTextWOutline(outline, text, fontSize)
   height=fontSize
   bitmap=Bitmap.new(Graphics.width, height)
   bitmap.font.name='Arial Black' # $VersionStyles[$PokemonSystem.font]
@@ -49,64 +49,64 @@ def swm_getDrawnTextWOutline(outline, text, fontSize)
   return bitmap2
 end
 
-def swm_getHitCost(hitsToRemove, registerNewCount)
+def miningoverhaul_getHitCost(hitsToRemove, registerNewCount)
   baseCost=125
-  count=swm_getHitsCount(hitsToRemove, registerNewCount)
+  count=miningoverhaul_getHitsCount(hitsToRemove, registerNewCount)
   return count*baseCost
 end
 
-def swm_getHitsCount(hitsToRemove, registerNewCount)
-  if defined?($hitsRemoved)
-    count=$hitsRemoved
+def miningoverhaul_getHitsCount(hitsToRemove, registerNewCount)
+  if defined?($miningoverhaul_hitsRemoved)
+    count=$miningoverhaul_hitsRemoved
   else
     count=0
   end
   count+=hitsToRemove
-  $hitsRemoved=count if registerNewCount
+  $miningoverhaul_hitsRemoved=count if registerNewCount
   return count
 end
 #####/MODDED
 
 class MiningGameCounter < BitmapSprite
   #####MODDED
-  def swm_resetMiningCounters
-    @swm_oldCost=nil
-    $hitsRemoved=0
+  def miningoverhaul_resetMiningCounters
+    @miningoverhaul_oldCost=nil
+    $miningoverhaul_hitsRemoved=0
   end
 
-  def swm_notifyNextHit
-    bmps=swm_getMiningBmps
+  def miningoverhaul_notifyNextHit
+    bmps=miningoverhaul_getMiningBmps
     self.bitmap.blt(5, 0, bmps[0], bmps[0].rect)
     self.bitmap.blt(5, 25, bmps[1], bmps[1].rect)
   end
 
-  def swm_getMiningBmps
-    return @swm_miningBmps if !swm_shouldResetMiningBmps?
-    lines=swm_getMiningCostLines
+  def miningoverhaul_getMiningBmps
+    return @miningoverhaul_miningBmps if !miningoverhaul_shouldResetMiningBmps?
+    lines=miningoverhaul_getMiningCostLines
     bmps=[
     ]
-    @swm_miningBmps=bmps
-    return @swm_miningBmps
+    @miningoverhaul_miningBmps=bmps
+    return @miningoverhaul_miningBmps
   end
 
-  def swm_shouldResetMiningBmps?
-    return true if swm_checkCostChanged?
-    return true if !defined?(@swm_miningBmps)
-    return true if @swm_miningBmps[0].disposed?
-    return true if @swm_miningBmps[1].disposed?
+  def miningoverhaul_shouldResetMiningBmps?
+    return true if miningoverhaul_checkCostChanged?
+    return true if !defined?(@miningoverhaul_miningBmps)
+    return true if @miningoverhaul_miningBmps[0].disposed?
+    return true if @miningoverhaul_miningBmps[1].disposed?
     return false
   end
 
-  def swm_checkCostChanged?
-    cost=swm_getHitCost(0, false)
-    return false if defined?(@swm_oldCost) && @swm_oldCost == cost
-    @swm_oldCost=cost
+  def miningoverhaul_checkCostChanged?
+    cost=miningoverhaul_getHitCost(0, false)
+    return false if defined?(@miningoverhaul_oldCost) && @miningoverhaul_oldCost == cost
+    @miningoverhaul_oldCost=cost
     return true
   end
 
-  def swm_getMiningCostLines
-    hitsRemoved=swm_getHitsCount(0, false)
-    return [] if hitsRemoved <= 0
+  def miningoverhaul_getMiningCostLines
+    miningoverhaul_hitsRemoved=miningoverhaul_getHitsCount(0, false)
+    return [] if miningoverhaul_hitsRemoved <= 0
     textA=_INTL(
       'Next hit: ${1} (pick), ${2} (hammer)',
       pickaxeCost,
@@ -115,14 +115,14 @@ class MiningGameCounter < BitmapSprite
     return [textA]
   end
 
-  if !defined?(swm_miningForRich_oldInitialize)
-    alias :swm_miningForRich_oldInitialize :initialize
+  if !defined?(miningoverhaul_miningForRich_oldInitialize)
+    alias :miningoverhaul_miningForRich_oldInitialize :initialize
   end
   #####/MODDED
 
   def initialize(*args, **kwargs)
-    result=swm_miningForRich_oldInitialize(*args, **kwargs)
-    swm_resetMiningCounters
+    result=miningoverhaul_miningForRich_oldInitialize(*args, **kwargs)
+    miningoverhaul_resetMiningCounters
     return result
   end
 end
@@ -293,11 +293,11 @@ class MiningGameScene
 
 #mod
   def overhaul_displaymoney 
-    hits = swm_getHitsCount(0, false)
+    hits = miningoverhaul_getHitsCount(0, false)
     pickaxeHits=1
     hammerHits=2
-    pickaxeCost=swm_getHitCost(pickaxeHits, false)
-    hammerCost=swm_getHitCost(hammerHits, false)
+    pickaxeCost=miningoverhaul_getHitCost(pickaxeHits, false)
+    hammerCost=miningoverhaul_getHitCost(hammerHits, false)
 
     @sprites["moneywindow"].visible = hits > 0
     @sprites["costwindow"].visible = hits > 0
@@ -337,10 +337,10 @@ class MiningGameScene
 
   ## MODDED
 
-  def swm_payToMine
-    hitsToRemove=swm_getHitsToRemove
+  def miningoverhaul_payToMine
+    hitsToRemove=miningoverhaul_getHitsToRemove
     return nil if hitsToRemove <= 0
-    cost=swm_getHitCost(hitsToRemove, true)
+    cost=miningoverhaul_getHitCost(hitsToRemove, true)
     if $Trainer.money < cost
       Kernel.pbMessage(_INTL('You can\'t afford to mine any more!'))
       return nil
@@ -349,26 +349,26 @@ class MiningGameScene
     $Trainer.money-=cost
   end
 
-  def swm_getHitsToRemove
+  def miningoverhaul_getHitsToRemove
     return @sprites["crack"].hits-48
   end
 
-  if !defined?(swm_miningForRich_oldPbHit)
-    alias :swm_miningForRich_oldPbHit :pbHit
+  if !defined?(miningoverhaul_miningForRich_oldPbHit)
+    alias :miningoverhaul_miningForRich_oldPbHit :pbHit
   end
 
   def pbHit(*args, **kwargs)
-    result=swm_miningForRich_oldPbHit(*args, **kwargs)
-    swm_payToMine
+    result=miningoverhaul_miningForRich_oldPbHit(*args, **kwargs)
+    miningoverhaul_payToMine
     overhaul_displaymoney
     return result
   end
 
-  if !defined?(swm_miningForRich_oldPbEndScene)
-    alias :swm_miningForRich_oldPbEndScene :pbEndScene
+  if !defined?(miningoverhaul_miningForRich_oldPbEndScene)
+    alias :miningoverhaul_miningForRich_oldPbEndScene :pbEndScene
   end
   def pbEndScene(*args, **kwargs)
-    result = swm_miningForRich_oldPbEndScene(*args, **kwargs)
+    result = miningoverhaul_miningForRich_oldPbEndScene(*args, **kwargs)
     @viewport2.dispose
     return result
   end

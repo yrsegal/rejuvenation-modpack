@@ -12,7 +12,7 @@ def pbEachNaturalMove(pokemon)
   end
 
   #####MODDED
-  prevo1 = preevo_producePreEvolution(pokemon)
+  prevo1 = moverelearnerpc_producePreEvolution(pokemon)
   if !prevo1.nil?
     movelist = prevo1.getMoveList
     for i in movelist
@@ -22,7 +22,7 @@ def pbEachNaturalMove(pokemon)
       end
     end
 
-    prevo2 = preevo_producePreEvolution(prevo1)
+    prevo2 = moverelearnerpc_producePreEvolution(prevo1)
     if !prevo2.nil?
       movelist = prevo2.getMoveList
       for i in movelist
@@ -36,7 +36,7 @@ def pbEachNaturalMove(pokemon)
   #####/MODDED
 end
 
-def preevo_producePreEvolution(pokemon) 
+def moverelearnerpc_producePreEvolution(pokemon) 
   prevoSpecies = pbGetPreviousForm(pokemon.species,pokemon.form)
   if prevoSpecies[0] == pokemon.species and prevoSpecies[1] == pokemon.form
     return nil
@@ -45,13 +45,13 @@ def preevo_producePreEvolution(pokemon)
   return prevo
 end
 
-class Eggmove_EggMoveLearnerScreen
+class MoveRelearnerPC_EggMoveLearnerScreen
   def initialize(scene)
     @scene = scene
   end
 
   def pbStartScreen(pokemon)
-    moves=eggmove_getEggMoveList(pokemon)
+    moves=moverelearnerpc_getEggMoveList(pokemon)
     @scene.pbStartScene(pokemon,moves)
     loop do
       move=@scene.pbChooseMove
@@ -73,15 +73,36 @@ class Eggmove_EggMoveLearnerScreen
   end
 end
 
-def eggmove_getEggMoveList(pokemon)
+if !defined?(moverelearnerpc_old_pbGetRelearnableMoves)
+  alias :moverelearnerpc_old_pbGetRelearnableMoves :pbGetRelearnableMoves
+end
+
+if !defined?(moverelearnerpc_old_pbRelearnMoveScreen)
+  alias :moverelearnerpc_old_pbRelearnMoveScreen :pbRelearnMoveScreen
+end
+
+def pbRelearnMoveScreen(pokemon)
+  if !pbHasRelearnableMove?(pokemon) # In some circumstances, this can happen
+    Kernel.pbMessage(_INTL("{1} has no moves it can relearn.", pokemon.name))
+    return false
+  end
+  return moverelearnerpc_old_pbRelearnMoveScreen(pokemon)
+end
+
+
+def pbGetRelearnableMoves(pokemon)
+  return moverelearnerpc_old_pbGetRelearnableMoves(pokemon).select { |mv| !pokemon.knowsMove?(mv) }
+end
+
+def moverelearnerpc_getEggMoveList(pokemon)
   return pokemon.getEggMoveList(false).select{|i| !pokemon.knowsMove?(i) }
 end
 
-def eggmove_pbRelearnMoveScreen(pokemon)
+def moverelearnerpc_pbEggMoveScreen(pokemon)
   retval=true
   pbFadeOutIn(99999){
      scene=MoveRelearnerScene.new
-     screen=Eggmove_EggMoveLearnerScreen.new(scene)
+     screen=MoveRelearnerPC_EggMoveLearnerScreen.new(scene)
      retval=screen.pbStartScreen(pokemon)
   }
   return retval
@@ -271,7 +292,7 @@ class RelearnerPCService
       Kernel.pbMessage(relearner("Which Pokemon needs tutoring?"))
 
       loop do
-        pbChoosePokemon(1,3,proc{|p| eggmove_getEggMoveList(p).size > 0},true)
+        pbChoosePokemon(1,3,proc{|p| moverelearnerpc_getEggMoveList(p).size > 0},true)
         result = pbGet(1)
         if result < 0
           Kernel.pbMessage(relearner("BRIE: Ah, okay. Changed your mind?"))
@@ -286,9 +307,9 @@ class RelearnerPCService
           Kernel.pbMessage(relearner("Unless you want me to teach your Pokémon scrambled, or sunny-side..."))
         elsif (pkmn.isShadow? rescue false)
           Kernel.pbMessage(relearner("BRIE: What is this thing?! It isn't natural, get it out of here!"))
-        elsif eggmove_getEggMoveList(pkmn).size == 0
+        elsif moverelearnerpc_getEggMoveList(pkmn).size == 0
           Kernel.pbMessage(relearner("BRIE: This Pokémon doesn't have any rare moves to learn. Sorry, \\v[3]."))
-        elsif eggmove_pbRelearnMoveScreen(pkmn)
+        elsif moverelearnerpc_pbEggMoveScreen(pkmn)
           pkmn.relearner = [true, 3]
           if $game_screen.relearnerpc_scales < 10
             return if takeScale
