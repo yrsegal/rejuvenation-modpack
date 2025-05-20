@@ -11,6 +11,18 @@ def anafixes_makeMoveRoute(graphic, direction = :Up)
   ]
 end
 
+def anafixes_transmuteMoveRoute(prevRoute, replaceGraphic)
+  newRoute = RPG::MoveRoute.new
+  newRoute.repeat = prevRoute.repeat
+  newRoute.skippable = prevRoute.skippable
+  newRoute.list = prevRoute.list.map { |cmd|
+    RPG::MoveCommand.new(cmd.code, cmd.parameters.map { |it|
+      it.is_a?(String) ? replaceGraphic : it
+    })
+  }
+  return newRoute
+end
+
 def anafixes_batty_section(outfit)
   return [
     [:ConditionalBranch, :Variable, :Outfit, :Constant, outfit, :Equals],
@@ -66,6 +78,37 @@ def anafixes_inject_special_sprite(event, special)
   }
 end
 
+def anafixes_addLegacyRedCarpet(event)
+  for page in event.pages
+    insns = page.list
+    InjectionHelper.patch(insns, :anafixes_addLegacyRedCarpet) {
+      matched = InjectionHelper.lookForSequence(insns,
+        [:SetMoveRoute, 93, [ false,
+          :FaceUp,
+          [:SetCharacter, 'xgene_ana_redcarpet', nil, nil, nil],
+          :Done
+        ]])
+
+
+      if matched
+        targetIdx = insns.index(matched)
+        insns[targetIdx..targetIdx] = InjectionHelper.parseEventCommands(
+          [:ConditionalBranch, :Variable, :Outfit, :Constant, 2, :GreaterOrEquals],
+            [:ConditionalBranch, :Variable, :Outfit, :Constant, 5, :Less],
+              [:SetMoveRoute, matched.parameters[0], anafixes_transmuteMoveRoute(matched.parameters[1], 'xgene_legacyana_redcarpet')],
+            :Else,
+              matched,
+            :Done,
+          :Else,
+            matched,
+          :Done,
+          baseIndent: matched.indent)
+      end
+      next matched
+    }
+  end
+end
+
 def anafixes_hotfix_battyfriends(event)
   insns = event.list
   InjectionHelper.patch(insns, :anafixes_hotfix_battyfriends) {
@@ -112,6 +155,7 @@ TextureOverrides.registerTextureOverrides({
     TextureOverrides::CHARS + 'BGirlDiveDrive_2' => TextureOverrides::MOD + 'Ana/Legacy/Diving',
     TextureOverrides::MAP + 'mapPlayer007_2' => TextureOverrides::MOD + 'Ana/Legacy/MapHead',
     TextureOverrides::CHARS + 'Trainer007_2' => TextureOverrides::MOD + 'Ana/Legacy/Trainer',
+    TextureOverrides::CHARS + 'xgene_legacyana_redcarpet' => TextureOverrides::MOD + 'Ana/Legacy/RedCarpet',
 
     # Star of Hope
     TextureOverrides::CHARS + 'BGirlAerialDrive_3' => TextureOverrides::MOD + 'Ana/Star/Flying',
@@ -143,11 +187,7 @@ TextureOverrides.registerTextureOverrides({
     TextureOverrides::VS + 'vsTrainer7_4' => TextureOverrides::MOD + 'Ana/Darchlight/VS',
     TextureOverrides::CHARS + 'PlayerHeadache_8_4' => TextureOverrides::MOD + 'Ana/Darchlight/Headache',
     TextureOverrides::CHARS + 'PlayerKnockedOut_8_4' => TextureOverrides::MOD + 'Ana/Darchlight/KO',
-    TextureOverrides::CHARS + 'BattyFriends_Ana_4' => TextureOverrides::MOD + 'Ana/Darchlight/BattyFriends',
-
-    # Desolate Ana
-    TextureOverrides::CHARS + 'BGirlWalk_5' => TextureOverrides::MOD + 'Ana/Dark/Ana',
-    TextureOverrides::CHARS + 'BGirlWalk_66' => TextureOverrides::MOD + 'Ana/Dark/LegacyAna',
+    TextureOverrides::CHARS + 'BattyFriends_Ana_4' => TextureOverrides::MOD + 'Ana/Darchlight/BattyFriends'
 })
 
 
@@ -183,6 +223,8 @@ class Cache_Game
       # Swap them so Ana always runs last, displaying properly
       aevdupe.pages[1] = alainpage
       aevdupe.pages[7] = anapage
+    elsif mapid == 291 # Pokestar Studios
+      anafixes_addLegacyRedCarpet(ret.events[72]) # Red Carpet Event
     end
     return ret
   end

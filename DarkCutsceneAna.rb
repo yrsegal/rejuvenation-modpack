@@ -75,6 +75,11 @@ $DARKANA_SWITCH_ANA_LEGACY = 1990
 
 Switches[:darkana_AnaLegacy] = $DARKANA_SWITCH_ANA_LEGACY
 
+TextureOverrides.registerTextureOverrides({
+    TextureOverrides::CHARS + 'BGirlWalk_5' => TextureOverrides::MOD + 'Ana/Dark/Ana',
+    TextureOverrides::CHARS + 'BGirlWalk_66' => TextureOverrides::MOD + 'Ana/Dark/LegacyAna'
+})
+
 module DarkAnaCutscene
 
   MAP_609_DIALOGUE = {
