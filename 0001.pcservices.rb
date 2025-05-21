@@ -5,6 +5,8 @@ Variables[:Karma] = 129
 TextureOverrides.registerTextureOverride(TextureOverrides::ICONS + 'rotomphone', TextureOverrides::MOD + 'RotomPhone')
 
 $pcservices_using_rotomphone = false
+$game_temp.menu_calling = false if defined?($pcservices_in_menu) && $pcservices_in_menu
+$pcservices_in_menu = false
 
 class Game_Screen
   attr_accessor :pcservices_lastCommand
@@ -192,7 +194,9 @@ module ServicePCList
   end
 
   def self.playerTalk
-    pbCommonEvent(97)
+    $game_player.step_anime = true
+    pbWait(17)
+    $game_player.step_anime = false
   end
 
   ### Tools to check if a service should be enabled
@@ -286,7 +290,17 @@ module ServicePCList
   end
 end
 
-$pcservices_in_readymenu = false
+if !defined?(pcservices_old_shouldShowClock?)
+  alias :pcservices_old_shouldShowClock? :shouldShowClock?
+end
+
+def shouldShowClock?
+  if defined?($Settings.unrealTimeClock)
+    setting=$Settings.unrealTimeClock
+    return false if setting == 1 && $pcservices_in_menu
+  end
+  return pcservices_old_shouldShowClock?
+end
 
 class PokemonReadyMenu_Scene
 
@@ -295,7 +309,8 @@ class PokemonReadyMenu_Scene
   end
 
   def pbStartScene(*args, **kwargs)
-    $pcservices_in_readymenu = true
+    $pcservices_in_menu = true
+    $game_temp.menu_calling = true
     return pcservices_old_pbStartScene(*args, **kwargs)
   end
 
@@ -304,17 +319,10 @@ class PokemonReadyMenu_Scene
   end
 
   def pbEndScene(*args, **kwargs)
-    $pcservices_in_readymenu = false
+    $pcservices_in_menu = false
+    $game_temp.menu_calling = false
     return pcservices_old_pbEndScene(*args, **kwargs)
   end
-end
-
-if !defined?(pcservices_old_pbMapInterpreterRunning?)
-  alias :pcservices_old_pbMapInterpreterRunning? :pbMapInterpreterRunning?
-end
-
-def pbMapInterpreterRunning?
-  return pcservices_old_pbMapInterpreterRunning? || $pcservices_in_readymenu
 end
 
 

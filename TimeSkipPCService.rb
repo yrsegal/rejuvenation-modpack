@@ -70,6 +70,23 @@ class TimeSkipPCService
     pbWait(10)
   end
 
+  def theGearsStop # Largely copied from common event TimeGone
+    $game_screen.pictures[1].move(20, 1, 485, 375, 10, 100, 0, 0)
+    $game_screen.pictures[2].move(20, 1, 30, 30, 10, 10, 0, 0)
+    $game_screen.pictures[3].move(20, 1, 480, 230, 10, 10, 0, 0)
+    $game_screen.pictures[4].move(20, 1, 320, 270, 10, 10, 0, 0)
+    $game_screen.pictures[5].move(20, 1, 30, 30, 10, 10, 0, 1)
+    $game_screen.pictures[6].move(20, 1, 255, 188, 10, 10, 0, 1)
+    pbWait(10)
+    $game_screen.pictures[3].erase
+    $game_screen.pictures[1].erase
+    $game_screen.pictures[2].erase
+    $game_screen.pictures[4].erase
+    $game_screen.pictures[5].erase
+    $game_screen.pictures[6].erase
+    $game_screen.start_tone_change(Tone.new(0,0,0,0), 2)
+  end
+
   def access
     if ServicePCList.inNightmare? || ServicePCList.inZeight? || ServicePCList.inRift?
       Kernel.pbMessage(_INTL("..."))
@@ -144,9 +161,9 @@ class TimeSkipPCService
       $game_system.bgm_memorize
       pbBGMPlay('citamginE - gnileeF', 100, 130)
       celebiSound(200, 60)
-      Kernel.pbMessage(_INTL("\\c[3]<ac><fn=Garufan>-! O' flow of time... !-</fn></ac>"))
+      Kernel.pbMessage(_INTL("\\c[3]<ac><fn=Garufan>O' flow of time...</fn></ac>"))
       celebiSound(200, 120)
-      Kernel.pbMessage(_INTL("\\c[3]<ac><fn=Garufan>-! The Interceptor bids you move! !-</fn></ac>"))
+      Kernel.pbMessage(_INTL("\\c[3]<ac><fn=Garufan>The Interceptor bids you move!</fn></ac>"))
 
       pbWait(20)
 
@@ -166,11 +183,16 @@ class TimeSkipPCService
       deltaTime += (24 * 60 * 60) if deltaTime < 0
 
       deltaTime = deltaTime / $game_screen.getTimeScale().to_f
-      $gameTimeLastCheck-=deltaTime
+      finalValue = $gameTimeLastCheck - deltaTime
+      
       $game_screen.getTimeCurrent() # Will update the time
-      pbWait(250)
+      for i in 0...25
+        $gameTimeLastCheck -= deltaTime / 25
+        pbWait(10)
+      end
+      $gameTimeLastCheck = finalValue
 
-      pbCommonEvent(104) # TimeGone
+      theGearsStop
 
       pbBGMFade(1)
       $game_screen.start_flash(Color.new(255,255,255,255), 60)

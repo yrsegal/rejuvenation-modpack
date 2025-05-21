@@ -4,6 +4,7 @@ $OUTFITOPTIONS_SWITCH_ICEPTOUTFIT = 1991
 
 Variables[:Outfit] = 259
 Switches[:DarchOutfit] = 1666
+Switches[:LegacyOutfit] = 1052
 Switches[:XGOutfitAvailable] = 1645
 Switches[:outfitoptions_IceptOutfit] = $OUTFITOPTIONS_SWITCH_ICEPTOUTFIT
 
@@ -213,7 +214,7 @@ def outfitoptions_handle_clothing_choices
 
   choices = ["Default outfit", "Secondary outfit"]
   outfits = [0, 1]
-  if $game_switches[1052] # Legacy outtfit
+  if $game_switches[:LegacyOutfit] # Legacy outtfit
     choices.push(_INTL("Legacy outfit"))
     outfits.push(2)
   end

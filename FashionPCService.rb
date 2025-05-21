@@ -1,4 +1,8 @@
 Variables[:LuckQuest] = 780
+Variables[:Outfit] = 259
+
+Switches[:LegacyOutfit] = 1052
+Switches[:XGOutfitAvailable] = 1645
 
 TextureOverrides.registerServiceSprites('XatuFashion')
 
@@ -45,8 +49,51 @@ class FashionPCService
       return
     end
 
-    pbCommonEvent(133) # Change clothes
+    if Kernel.pbConfirmMessage("Would you like to change clothes?")
+      if defined?(outfitoptions_handle_clothing_choices)
+        outfitoptions_handle_clothing_choices # Mod compat!
+      else
+        handle_clothing_choices
+      end
+    end
     Kernel.pbMessage(xatu("Have a good day!"))
+  end
+
+  def handle_clothing_choices
+    currVal = $game_variables[:Outfit]
+
+    choices = ["Default outfit", "Secondary outfit"]
+    outfits = [0, 1]
+    if $game_switches[:LegacyOutfit] # Legacy outtfit
+      choices.push(_INTL("Legacy outfit"))
+      outfits.push(2)
+    end
+
+    if $game_switches[:XGOutfitAvailable] # XG Outfit
+      choices.push(_INTL("Xenogene outfit"))
+      outfits.push(6)
+    end
+
+    default = outfits.find_index(currVal) || 0
+
+    caveat = _INTL('(Outfits marked with * might act strangely outside intended locations.)')
+    msgwindow=Kernel.pbCreateMessageWindow(nil,nil)
+    ret = Kernel.pbMessageDisplay(msgwindow,caveat,false,
+       proc { next Kernel.pbShowCommands(nil,choices,default+1,default) })
+    Kernel.pbDisposeMessageWindow(msgwindow)
+    Input.update
+
+    newOutfit = outfits[ret]
+    if newOutfit != -1
+      $game_screen.start_tone_change(Tone.new(-255,-255,-255,0), 14 * 2)
+      pbWait(20)
+      pbSEPlay('Fire1', 80, 80)
+      $game_variables[:Outfit] = newOutfit # Outfit
+      $Trainer.outfit = newOutfit
+      Kernel.pbMessage(_INTL('\\PN changed clothes!'))
+      pbWait(10)
+      $game_screen.start_tone_change(Tone.new(0,0,0,0), 10 * 2)
+    end
   end
 end
 
