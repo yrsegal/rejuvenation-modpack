@@ -1,6 +1,8 @@
 $betterBattleUI_typeIcons_bitmaps = nil # Force the reloading of disposed graphics on soft resetting
 $betterBattleUI_statBoosts_data = nil
 
+TextureOverrides.registerTextureOverride(TextureOverrides::BATTLEICON + "battleFightButtonsFighting", "Data/Mods/BetterBattleUI/FightingButton") if defined?(TextureOverrides)
+
 module BBUIConsts 
   X_PAD = 50
   Y_PAD = 10
@@ -726,23 +728,16 @@ class FightMenuButtons < BitmapSprite
     alias :betterBattleUI_old_initialize :initialize
   end
   def initialize(*args,**kwargs)
-    @betterBattleUI_fieldboostmove=AnimatedBitmap.new(_INTL("Data/Mods/BetterBattleUI/FieldBoost"))
-    @betterBattleUI_fieldweakenmove=AnimatedBitmap.new(_INTL("Data/Mods/BetterBattleUI/FieldMalus"))
     @betterBattleUI_fieldnullmove=AnimatedBitmap.new(_INTL("Data/Mods/BetterBattleUI/FieldNulled"))
 
-    @betterBattleUI_movenoeffect=AnimatedBitmap.new(_INTL("Data/Mods/BetterBattleUI/NoEffect"))
     @betterBattleUI_movenoeffect_left=AnimatedBitmap.new(_INTL("Data/Mods/BetterBattleUI/NoEffectLeft"))
     @betterBattleUI_movenoeffect_right=AnimatedBitmap.new(_INTL("Data/Mods/BetterBattleUI/NoEffectRight"))
-    @betterBattleUI_movedoubleresisted=AnimatedBitmap.new(_INTL("Data/Mods/BetterBattleUI/ResistedDouble"))
     @betterBattleUI_movedoubleresisted_left=AnimatedBitmap.new(_INTL("Data/Mods/BetterBattleUI/ResistedDoubleLeft"))
     @betterBattleUI_movedoubleresisted_right=AnimatedBitmap.new(_INTL("Data/Mods/BetterBattleUI/ResistedDoubleRight"))
-    @betterBattleUI_moveresisted=AnimatedBitmap.new(_INTL("Data/Mods/BetterBattleUI/Resisted"))
     @betterBattleUI_moveresisted_left=AnimatedBitmap.new(_INTL("Data/Mods/BetterBattleUI/ResistedLeft"))
     @betterBattleUI_moveresisted_right=AnimatedBitmap.new(_INTL("Data/Mods/BetterBattleUI/ResistedRight"))
-    @betterBattleUI_movesupereffective=AnimatedBitmap.new(_INTL("Data/Mods/BetterBattleUI/SuperEffective"))
     @betterBattleUI_movesupereffective_left=AnimatedBitmap.new(_INTL("Data/Mods/BetterBattleUI/SuperEffectiveLeft"))
     @betterBattleUI_movesupereffective_right=AnimatedBitmap.new(_INTL("Data/Mods/BetterBattleUI/SuperEffectiveRight"))
-    @betterBattleUI_movedoublesuper=AnimatedBitmap.new(_INTL("Data/Mods/BetterBattleUI/SuperEffectiveDouble"))
     @betterBattleUI_movedoublesuper_left=AnimatedBitmap.new(_INTL("Data/Mods/BetterBattleUI/SuperEffectiveDoubleLeft"))
     @betterBattleUI_movedoublesuper_right=AnimatedBitmap.new(_INTL("Data/Mods/BetterBattleUI/SuperEffectiveDoubleRight"))
     
@@ -754,34 +749,19 @@ class FightMenuButtons < BitmapSprite
     alias :betterBattleUI_old_dispose :dispose
   end
   def dispose
-    @betterBattleUI_fieldboostmove.dispose
-    @betterBattleUI_fieldweakenmove.dispose
     @betterBattleUI_fieldnullmove.dispose
 
-    @betterBattleUI_movenoeffect.dispose
     @betterBattleUI_movenoeffect_left.dispose
     @betterBattleUI_movenoeffect_right.dispose
-    @betterBattleUI_movedoubleresisted.dispose
     @betterBattleUI_movedoubleresisted_left.dispose
     @betterBattleUI_movedoubleresisted_right.dispose
-    @betterBattleUI_moveresisted.dispose
     @betterBattleUI_moveresisted_left.dispose
     @betterBattleUI_moveresisted_right.dispose
-    @betterBattleUI_movesupereffective.dispose
     @betterBattleUI_movesupereffective_left.dispose
     @betterBattleUI_movesupereffective_right.dispose
-    @betterBattleUI_movedoublesuper.dispose
     @betterBattleUI_movedoublesuper_left.dispose
     @betterBattleUI_movedoublesuper_right.dispose
     return betterBattleUI_old_dispose
-  end
-
-  def betterBattleUI_moveButton(movetype)
-    if movetype == :FIGHTING
-      return "Data/Mods/BetterBattleUI/FightingButton"
-    else
-      return sprintf("Graphics/Pictures/Battle/battleFightButtons%s",movetype)
-    end
   end
 
   def refresh(index,battler,megaButton,zButton,ultraButton)
@@ -810,9 +790,7 @@ class FightMenuButtons < BitmapSprite
       y+=UPPERGAP
       imagepos=[]
       movetype = moves[i].pbType(battler,moves[i].type)
-      ### MODDED/
-      imagepos.push([betterBattleUI_moveButton(movetype),x,y,0,0,192,46])
-      ### /MODDED
+      imagepos.push([sprintf("Graphics/Pictures/Battle/battleFightButtons%s",movetype),x,y,0,0,192,46])
       pbDrawImagePositions(self.bitmap,imagepos)
       textpos.push([_INTL("{1}",moves[i].name),x+96,y+12,2,
           PBScene::MENUBASE,PBScene::MENUSHADOW])
@@ -843,9 +821,7 @@ class FightMenuButtons < BitmapSprite
         imagepos.push([sprintf("Graphics/Icons/minitype%s",secondtype[0]),432,20+UPPERGAP,0,0,28,28])
         imagepos.push([sprintf("Graphics/Icons/minitype%s",secondtype[1]),460,20+UPPERGAP,0,0,28,28])
       end
-      ### MODDED/
-      imagepos.push([betterBattleUI_moveButton(movetype),x,y,192,0,192,46])
-      ### /MODDED
+      imagepos.push([sprintf("Graphics/Pictures/Battle/battleFightButtons%s",movetype),x,y,192,0,192,46])
       textpos.push([_INTL("{1}",moves[i].name),x+96,y+12,2,
           PBScene::MENUBASE,PBScene::MENUSHADOW])
       if moves[i].totalpp>0
@@ -892,7 +868,7 @@ class FightMenuButtons < BitmapSprite
           typemod1 = moves[i].betterBattleUI_showMoveEffectiveness(movetype, battler, battler.pbOpposing1, zorovar1)
           typemod2 = moves[i].betterBattleUI_showMoveEffectiveness(movetype, battler, battler.pbOpposing2, zorovar2)
         else
-          typemod = moves[i].betterBattleUI_showMoveEffectiveness(movetype, battler, opponent, zorovar)
+          typemod1 = moves[i].betterBattleUI_showMoveEffectiveness(movetype, battler, opponent, zorovar)
         end
       else
         if battler.effects[:Taunt] > 0 ||
@@ -903,24 +879,12 @@ class FightMenuButtons < BitmapSprite
             typemod1 = betterBattleUI_showMoveEffectivenessStatus(moves[i], battler, battler.pbOpposing1, movetype, typemod, zorovar1)
             typemod2 = betterBattleUI_showMoveEffectivenessStatus(moves[i], battler, battler.pbOpposing2, movetype, typemod, zorovar2)
           else
-            typemod = betterBattleUI_showMoveEffectivenessStatus(moves[i], battler, opponent, movetype, typemod, zorovar)
+            typemod1 = betterBattleUI_showMoveEffectivenessStatus(moves[i], battler, opponent, movetype, typemod, zorovar)
           end
         end
       end
-      case typemod
-        when 0 # Innefective
-          self.bitmap.blt(x + 2, y + 2, @betterBattleUI_movenoeffect.bitmap, Rect.new(0, 0, @betterBattleUI_movenoeffect.bitmap.width, @betterBattleUI_movenoeffect.bitmap.height))
-        when 1 # 1/4
-          self.bitmap.blt(x + 2, y + 2, @betterBattleUI_movedoubleresisted.bitmap, Rect.new(0, 0, @betterBattleUI_movedoubleresisted.bitmap.width, @betterBattleUI_movedoubleresisted.bitmap.height))
-        when 2 # 1/2
-          self.bitmap.blt(x + 2, y + 2, @betterBattleUI_moveresisted.bitmap, Rect.new(0, 0, @betterBattleUI_moveresisted.bitmap.width, @betterBattleUI_moveresisted.bitmap.height))
-        when 8 # x2
-          self.bitmap.blt(x + 2, y + 2, @betterBattleUI_movesupereffective.bitmap, Rect.new(0, 0, @betterBattleUI_movesupereffective.bitmap.width, @betterBattleUI_movesupereffective.bitmap.height))
-        when 16 # x4
-          self.bitmap.blt(x + 2, y + 2, @betterBattleUI_movedoublesuper.bitmap, Rect.new(0, 0, @betterBattleUI_movedoublesuper.bitmap.width, @betterBattleUI_movedoublesuper.bitmap.height))
-      end
       case typemod1
-        when 0 # Innefective
+        when 0 # Ineffective
           self.bitmap.blt(x + 2, y + 2, @betterBattleUI_movenoeffect_right.bitmap, Rect.new(0, 0, @betterBattleUI_movenoeffect_right.bitmap.width, @betterBattleUI_movenoeffect_right.bitmap.height))
         when 1 # 1/4
           self.bitmap.blt(x + 2, y + 2, @betterBattleUI_movedoubleresisted_right.bitmap, Rect.new(0, 0, @betterBattleUI_movedoubleresisted_right.bitmap.width, @betterBattleUI_movedoubleresisted_right.bitmap.height))
@@ -932,7 +896,7 @@ class FightMenuButtons < BitmapSprite
           self.bitmap.blt(x + 2, y + 2, @betterBattleUI_movedoublesuper_right.bitmap, Rect.new(0, 0, @betterBattleUI_movedoublesuper_right.bitmap.width, @betterBattleUI_movedoublesuper_right.bitmap.height))
       end
       case typemod2
-        when 0 # Innefective
+        when 0 # Ineffective
           self.bitmap.blt(x + 2, y + 2, @betterBattleUI_movenoeffect_left.bitmap, Rect.new(0, 0, @betterBattleUI_movenoeffect_left.bitmap.width, @betterBattleUI_movenoeffect_left.bitmap.height))
         when 1 # 1/4
           self.bitmap.blt(x + 2, y + 2, @betterBattleUI_movedoubleresisted_left.bitmap, Rect.new(0, 0, @betterBattleUI_movedoubleresisted_left.bitmap.width, @betterBattleUI_movedoubleresisted_left.bitmap.height))
@@ -944,8 +908,8 @@ class FightMenuButtons < BitmapSprite
           self.bitmap.blt(x + 2, y + 2, @betterBattleUI_movedoublesuper_left.bitmap, Rect.new(0, 0, @betterBattleUI_movedoublesuper_left.bitmap.width, @betterBattleUI_movedoublesuper_left.bitmap.height))
       end
       case pbFieldNotesBattle(moves[i])
-        when 1 then self.bitmap.blt(x + 2, y + 2, @betterBattleUI_fieldboostmove.bitmap, Rect.new(0, 0, @betterBattleUI_fieldboostmove.bitmap.width, @betterBattleUI_fieldboostmove.bitmap.height))
-        when 2 then self.bitmap.blt(x + 2, y + 2, @betterBattleUI_fieldweakenmove.bitmap, Rect.new(0, 0, @betterBattleUI_fieldweakenmove.bitmap.width, @betterBattleUI_fieldweakenmove.bitmap.height))
+        when 1 then self.bitmap.blt(x + 2, y + 2, @goodmovebitmap.bitmap, Rect.new(0, 0, @goodmovebitmap.bitmap.width, @goodmovebitmap.bitmap.height))
+        when 2 then self.bitmap.blt(x + 2, y + 2, @badmovebitmap.bitmap, Rect.new(0, 0, @badmovebitmap.bitmap.width, @badmovebitmap.bitmap.height))
         when 3 then self.bitmap.blt(x + 2, y + 2, @betterBattleUI_fieldnullmove.bitmap, Rect.new(0, 0, @betterBattleUI_fieldnullmove.bitmap.width, @betterBattleUI_fieldnullmove.bitmap.height))
       end
     end
