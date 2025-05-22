@@ -49,7 +49,7 @@ class FashionPCService
       return
     end
 
-    if Kernel.pbConfirmMessage("Would you like to change clothes?")
+    if Kernel.pbConfirmMessage(xatu("Would you like to change clothes?"))
       if defined?(outfitoptions_handle_clothing_choices)
         outfitoptions_handle_clothing_choices # Mod compat!
       else
@@ -76,11 +76,7 @@ class FashionPCService
 
     default = outfits.find_index(currVal) || 0
 
-    caveat = _INTL('(Outfits marked with * might act strangely outside intended locations.)')
-    msgwindow=Kernel.pbCreateMessageWindow(nil,nil)
-    ret = Kernel.pbMessageDisplay(msgwindow,caveat,false,
-       proc { next Kernel.pbShowCommands(nil,choices,default+1,default) })
-    Kernel.pbDisposeMessageWindow(msgwindow)
+    ret = Kernel.pbShowCommands(nil, choices,default+1,-1)
     Input.update
 
     newOutfit = outfits[ret]

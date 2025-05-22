@@ -214,6 +214,7 @@ def outfitoptions_handle_clothing_choices
 
   choices = ["Default outfit", "Secondary outfit"]
   outfits = [0, 1]
+  needsCaveat = false
   if $game_switches[:LegacyOutfit] # Legacy outtfit
     choices.push(_INTL("Legacy outfit"))
     outfits.push(2)
@@ -226,11 +227,13 @@ def outfitoptions_handle_clothing_choices
   if $game_switches[:outfitoptions_IceptOutfit]
     choices.push(_INTL("Interceptor outfit *"))
     outfits.push(3)
+    needsCaveat = true
   end
 
   if $game_switches[:DarchOutfit] # Darch Outfit
     choices.push(_INTL("Darchlight form *"))
     outfits.push(4)
+    needsCaveat = true
   end
 
   if $game_switches[:XGOutfitAvailable] # XG Outfit
@@ -240,12 +243,17 @@ def outfitoptions_handle_clothing_choices
 
   default = outfits.find_index(currVal) || 0
 
-  caveat = _INTL('(Outfits marked with * might act strangely outside intended locations.)')
-  msgwindow=Kernel.pbCreateMessageWindow(nil,nil)
-  ret = Kernel.pbMessageDisplay(msgwindow,caveat,false,
-     proc { next Kernel.pbShowCommands(nil,choices,default+1,default) })
-  Kernel.pbDisposeMessageWindow(msgwindow)
-  Input.update
+  if needsCaveat
+
+    caveat = _INTL('(Outfits marked with * might act strangely outside intended locations.)')
+    msgwindow=Kernel.pbCreateMessageWindow(nil,nil)
+    ret = Kernel.pbMessageDisplay(msgwindow,caveat,false,
+       proc { next Kernel.pbShowCommands(nil,choices,default+1,-1) })
+    Kernel.pbDisposeMessageWindow(msgwindow)
+    Input.update
+  else
+    Kernel.pbShowCommands(nil,choices,default+1,-1)
+  end
 
   newOutfit = outfits[ret]
   if newOutfit != -1
