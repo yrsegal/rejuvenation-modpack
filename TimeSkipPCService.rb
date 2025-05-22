@@ -129,7 +129,7 @@ class TimeSkipPCService
       celebiSound(80, 100)
       Kernel.pbMessage(celebi("Bici lee cel ebi. (I can help you control the flow of time.)"))
       celebiSound(80, 100)
-      Kernel.pbMessage(celebi("Ceeeeeeeeeeeeeeel. (Call me anytime! Time travelers have got all the time in the world.)"))
+      Kernel.pbMessage(celebi("Ceeeeeeeeeeeeeeel. (Call me anytime! Time travelers have all the time in the world.)"))
       Kernel.pbMessage(_INTL("(\\..\\..\\..\\.Wait.\\| You understood that?!)"))
       $game_screen.timeskippc_used = true
     end
