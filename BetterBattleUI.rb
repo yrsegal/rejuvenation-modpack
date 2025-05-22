@@ -751,7 +751,7 @@ class FightMenuButtons < BitmapSprite
     
 
   if !defined?(betterBattleUI_old_dispose)
-    alias :betterBattleUI_old_dispose :idispose
+    alias :betterBattleUI_old_dispose :dispose
   end
   def dispose
     @betterBattleUI_fieldboostmove.dispose
