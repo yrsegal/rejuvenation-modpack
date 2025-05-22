@@ -273,6 +273,11 @@ move_tweak(:FLY,
   power: 100,
   accuracy: 100)
 
+# These are mostly cosmetic
+move_tweak(:MIRRORBEAM, type: :QMARKS)
+move_tweak(:REVELATIONDANCE, type: :QMARKS)
+move_tweak(:HIDDENPOWER, type: :QMARKS)
+
 
 
 

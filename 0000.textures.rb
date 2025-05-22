@@ -25,7 +25,14 @@ module TextureOverrides
     # Fix the misshappen Beast Ball sprites (sprite from Caruban's gen 9 compilation)
     TextureOverrides::SUMMARY + 'summaryballBEASTBALL' => TextureOverrides::MOD + 'Pokeballs/BeastBallSummary',
     TextureOverrides::BATTLEICON + 'BEASTBALL' => TextureOverrides::MOD + 'Pokeballs/BeastBallThrow',
-    TextureOverrides::BATTLEICON + 'BEASTBALL_open' => TextureOverrides::MOD + 'Pokeballs/BeastBallOpen'
+    TextureOverrides::BATTLEICON + 'BEASTBALL_open' => TextureOverrides::MOD + 'Pokeballs/BeastBallOpen',
+
+    # Fix typos
+    TextureOverrides::ICONS + "datachip" => TextureOverrides::ICONS + "datad",
+    TextureOverrides::ICONS + "jynnobikey" => TextureOverrides::ICONS + "lightkey",
+    TextureOverrides::ICONS + "blackshard2" => TextureOverrides::ICONS + "blackshard",
+    TextureOverrides::ICONS + "blkapricorn" => TextureOverrides::ICONS + "blackapricorn"
+
   }
 
 

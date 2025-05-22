@@ -40,50 +40,50 @@ class TimeSkipPCService
   def theGearsShift # Largely copied from common event ForwardTime
     pbSEPlay('PRSFX- Final Gambit1', 100, 150)
     $game_screen.start_tone_change(Tone.new(-34,-34,-34,221), 40)
-    $game_screen.pictures[1].show('TimeGear1', 1, 485, 375, 10, 10, 50, 0)
-    $game_screen.pictures[2].show('TimeGear2', 1, 30, 30, 10, 10, 50, 0)
-    $game_screen.pictures[3].show('TimeGear3', 1, 480, 230, 10, 10, 50, 0)
-    $game_screen.pictures[4].show('TimeGear4', 1, 320, 270, 10, 10, 50, 0)
-    $game_screen.pictures[5].show('TimeGear1', 1, 30, 30, 10, 10, 50, 0)
-    $game_screen.pictures[6].show('TimeGear1', 1, 255, 188, 100, 100, 50, 0)
+    $game_screen.pictures[2].show('TimeGear1', 1, 485, 375, 10, 10, 50, 0)
+    $game_screen.pictures[3].show('TimeGear2', 1, 30, 30, 10, 10, 50, 0)
+    $game_screen.pictures[4].show('TimeGear3', 1, 480, 230, 10, 10, 50, 0)
+    $game_screen.pictures[5].show('TimeGear4', 1, 320, 270, 10, 10, 50, 0)
+    $game_screen.pictures[6].show('TimeGear1', 1, 30, 30, 10, 10, 50, 0)
+    $game_screen.pictures[7].show('TimeGear1', 1, 255, 188, 100, 100, 50, 0)
 
-    for i in 1..6
-      $game_screen.pictures[i].start_tone_change(Tone.new(-255,255,-255,0),0)
+    for i in 0...6
+      $game_screen.pictures[i + 2].start_tone_change(Tone.new(-255,255,-255,0),0)
     end
 
-    $game_screen.pictures[1].move(20, 1, 485, 375, 100, 100, 255, 0)
-    $game_screen.pictures[2].move(20, 1, 30, 30, 100, 100, 255, 0)
-    $game_screen.pictures[3].move(20, 1, 480, 230, 100, 100, 255, 0)
-    $game_screen.pictures[4].move(20, 1, 320, 270, 100, 100, 255, 0)
-    $game_screen.pictures[5].move(20, 1, 30, 30, 150, 150, 50, 1)
-    $game_screen.pictures[6].move(20, 1, 255, 188, 200, 200, 50, 1)
+    $game_screen.pictures[2].move(20, 1, 485, 375, 100, 100, 255, 0)
+    $game_screen.pictures[3].move(20, 1, 30, 30, 100, 100, 255, 0)
+    $game_screen.pictures[4].move(20, 1, 480, 230, 100, 100, 255, 0)
+    $game_screen.pictures[5].move(20, 1, 320, 270, 100, 100, 255, 0)
+    $game_screen.pictures[6].move(20, 1, 30, 30, 150, 150, 50, 1)
+    $game_screen.pictures[7].move(20, 1, 255, 188, 200, 200, 50, 1)
 
     pbWait(20)
 
-    $game_screen.pictures[1].rotate(-5)
     $game_screen.pictures[2].rotate(-5)
-    $game_screen.pictures[3].rotate(-8)
-    $game_screen.pictures[4].rotate(-3)
-    $game_screen.pictures[5].rotate(+3)
-    $game_screen.pictures[6].rotate(-6)
+    $game_screen.pictures[3].rotate(-5)
+    $game_screen.pictures[4].rotate(-8)
+    $game_screen.pictures[5].rotate(-3)
+    $game_screen.pictures[6].rotate(+3)
+    $game_screen.pictures[7].rotate(-6)
 
     pbWait(10)
   end
 
   def theGearsStop # Largely copied from common event TimeGone
-    $game_screen.pictures[1].move(20, 1, 485, 375, 10, 100, 0, 0)
-    $game_screen.pictures[2].move(20, 1, 30, 30, 10, 10, 0, 0)
-    $game_screen.pictures[3].move(20, 1, 480, 230, 10, 10, 0, 0)
-    $game_screen.pictures[4].move(20, 1, 320, 270, 10, 10, 0, 0)
-    $game_screen.pictures[5].move(20, 1, 30, 30, 10, 10, 0, 1)
-    $game_screen.pictures[6].move(20, 1, 255, 188, 10, 10, 0, 1)
+    $game_screen.pictures[2].move(20, 1, 485, 375, 10, 100, 0, 0)
+    $game_screen.pictures[3].move(20, 1, 30, 30, 10, 10, 0, 0)
+    $game_screen.pictures[4].move(20, 1, 480, 230, 10, 10, 0, 0)
+    $game_screen.pictures[5].move(20, 1, 320, 270, 10, 10, 0, 0)
+    $game_screen.pictures[6].move(20, 1, 30, 30, 10, 10, 0, 1)
+    $game_screen.pictures[7].move(20, 1, 255, 188, 10, 10, 0, 1)
     pbWait(10)
-    $game_screen.pictures[3].erase
-    $game_screen.pictures[1].erase
-    $game_screen.pictures[2].erase
     $game_screen.pictures[4].erase
+    $game_screen.pictures[2].erase
+    $game_screen.pictures[3].erase
     $game_screen.pictures[5].erase
     $game_screen.pictures[6].erase
+    $game_screen.pictures[7].erase
     $game_screen.start_tone_change(Tone.new(0,0,0,0), 2)
   end
 
@@ -168,6 +168,7 @@ class TimeSkipPCService
       pbWait(20)
 
       theGearsShift
+      pbWait(250)
 
       now=$game_screen.getTimeCurrent()
       # Morning is 6 AM
@@ -183,14 +184,8 @@ class TimeSkipPCService
       deltaTime += (24 * 60 * 60) if deltaTime < 0
 
       deltaTime = deltaTime / $game_screen.getTimeScale().to_f
-      finalValue = $gameTimeLastCheck - deltaTime
-      
+      $gameTimeLastCheck -= deltaTime
       $game_screen.getTimeCurrent() # Will update the time
-      for i in 0...25
-        $gameTimeLastCheck -= deltaTime / 25
-        pbWait(10)
-      end
-      $gameTimeLastCheck = finalValue
 
       theGearsStop
 

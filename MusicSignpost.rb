@@ -2,6 +2,7 @@
 $musicSignpost_lastTrackDisplayed = nil
 $musicSignpost_signpostWaiting = nil
 $musicSignpost_transitioning = false
+$musicSignpost_storedInfo = nil
 
 class Scene_Map
   attr_reader :spritesets
@@ -88,7 +89,7 @@ MUSIC_SIGNPOST_MAPPING = {
   "Feeling - Frozen" => "[Music] Feeling - Frozen",
   "Feeling - Futile" => "[Music] Feeling - Futile",
   "Feeling - Genetic" => "[Music] Feeling - Genetic",
-  "Feeling - Hopeful_2" => "[Music] Feeling - Hopeful_2",
+  "Feeling - Hopeful_2" => "[Music] Feeling - Hopeful 2",
   "Feeling - Hopeful" => "[Music] Feeling - Hopeful",
   "Feeling - Hotheaded" => "[Music] Feeling - Hotheaded",
   "Feeling - Immediate Danger" => "[Music] Feeling - Immediate Danger",
@@ -98,17 +99,17 @@ MUSIC_SIGNPOST_MAPPING = {
   "Feeling - Lost" => "[Music] Feeling - Lost",
   "Feeling - Magical" => "[Music] Feeling - Magical",
   "Feeling - Magma" => "[Music] Feeling - Magma",
-  "Feeling - Miracle_1" => "[Music] Feeling - Miracle_1",
+  "Feeling - Miracle_1" => "[Music] Feeling - Miracle 2",
   "Feeling - Miracle" => "[Music] Feeling - Miracle",
   "Feeling - Mysterious" => "[Music] Feeling - Mysterious",
   "Feeling - Mysterious2" => "[Music] Feeling - Mysterious2",
   "Feeling - New Beginning" => "[Music] Feeling - New Beginning",
   "Feeling - Nostalgic" => "[Music] Feeling - Nostalgic",
-  "Feeling - Ominous_2" => "[Music] Feeling - Ominous_2",
+  "Feeling - Ominous_2" => "[Music] Feeling - Ominous 2",
   "Feeling - Ominous" => "[Music] Feeling - Ominous",
   "Feeling - Onslaught" => "[Music] Feeling - Onslaught",
   "Feeling - Ragged" => "[Music] Feeling - Ragged",
-  "Feeling - Rebellious_2" => "[Music] Feeling - Rebellious_2",
+  "Feeling - Rebellious_2" => "[Music] Feeling - Rebellious 2",
   "Feeling - Rebellious" => "[Music] Feeling - Rebellious",
   "Feeling - Reflective" => "[Music] Feeling - Reflective",
   "Feeling - Sadness" => "[Music] Feeling - Sadness",
@@ -146,7 +147,7 @@ MUSIC_SIGNPOST_MAPPING = {
   "Mood - Carnival" => "[Music] Mood - Carnival",
   "Mood - Chaos" => "[Music] Mood - Chaos",
   "Mood - Coffee" => "[Music] Mood - Coffee",
-  "Mood - Comeback_1" => "[Music] Mood - Comeback_1",
+  "Mood - Comeback_1" => "[Music] Mood - Comeback 2",
   "Mood - Comeback" => "[Music] Mood - Comeback",
   "Mood - Conniving" => "[Music] Mood - Conniving",
   "Mood - Craggy" => "[Music] Mood - Craggy",
@@ -155,7 +156,7 @@ MUSIC_SIGNPOST_MAPPING = {
   "Mood - Departure" => "[Music] Mood - Departure",
   "Mood - Desert Chamber" => "[Music] Mood - Desert Chamber",
   "Mood - Determination!" => "[Music] Mood - Determination!",
-  "Mood - Disaster_1" => "[Music] Mood - Disaster 1",
+  "Mood - Disaster_1" => "[Music] Mood - Disaster 2",
   "Mood - Disaster" => "[Music] Mood - Disaster",
   "Mood - Distressed" => "[Music] Mood - Distressed",
   "Mood - Encounter" => "[Music] Mood - Encounter",
@@ -176,7 +177,7 @@ MUSIC_SIGNPOST_MAPPING = {
   "Mood - Ritual" => "[Music] Mood - Ritual",
   "Mood - Rivalry" => "[Music] Mood - Rivalry",
   "Mood - Royal" => "[Music] Mood - Royal",
-  "Mood - Ruins_1" => "[Music] Mood - Ruins 1",
+  "Mood - Ruins_1" => "[Music] Mood - Ruins 2",
   "Mood - Ruins" => "[Music] Mood - Ruins",
   "Mood - Sanctuary" => "[Music] Mood - Sanctuary",
   "Mood - Sandy" => "[Music] Mood - Sandy",
@@ -185,27 +186,27 @@ MUSIC_SIGNPOST_MAPPING = {
   "Mood - Shopaholic" => "[Music] Mood - Shopaholic",
   "Mood - Sinister" => "[Music] Mood - Sinister",
   "Mood - Stardom" => "[Music] Mood - Stardom",
-  "Mood - Teamwork_1" => "[Music] Mood - Teamwork 1",
-  "Mood - Teamwork_2" => "[Music] Mood - Teamwork 2",
+  "Mood - Teamwork_1" => "[Music] Mood - Teamwork 2",
+  "Mood - Teamwork_2" => "[Music] Mood - Teamwork 3",
   "Mood - Teamwork" => "[Music] Mood - Teamwork",
-  "Mood - Technical_1" => "[Music] Mood - Technical 1",
+  "Mood - Technical_1" => "[Music] Mood - Technical",
   "Mood - That's right" => "[Music] Mood - That's right",
   "Mood - The Bog" => "[Music] Mood - The Bog",
   "Mood - Tower" => "[Music] Mood - Tower",
   "Mood - Triumphant" => "[Music] Mood - Triumphant",
   "Mood - Tropical" => "[Music] Mood - Tropical",
   "Mood - Truth" => "[Music] Mood - Truth",
-  "Mood - Village_1" => "[Music] Mood - Village 1",
+  "Mood - Village_1" => "[Music] Mood - Village 2",
   "Mood - Village" => "[Music] Mood - Village",
   "Music - 3rd Heaven" => "[Awakening] ARCHETYPE (Third Heaven)",
   "Music - 3rd HQ" => "[Awakening] ARCHETYPE (Third Layer HQ)",
-  "Music - Akuwa Town_1" => "[Music] Akuwa Town 1",
+  "Music - Akuwa Town_1" => "[Music] Akuwa Town 2",
   "Music - Akuwa Town" => "[Music] Akuwa Town",
   "Music - Alamissa Urben" => "[Music] Alamissa Urben",
   "Music - Angie's Manor" => "[Music] Angie's Manor",
-  "Music - AtebitWorld_1" => "\\gsc[GSCMusic] AtebitWorld 1",
+  "Music - AtebitWorld_1" => "\\gsc[GSCMusic] AtebitWorld 2",
   "Music - AtebitWorld" => "\\gsc[GSCMusic] AtebitWorld",
-  "Music - BestieBeatdown_1" => "[Music] BestieBeatdown 1",
+  "Music - BestieBeatdown_1" => "[Music] BestieBeatdown 2",
   "Music - BestieBeatdown" => "[Music] BestieBeatdown",
   "Music - Bike" => "[Music] Bike",
   "Music - Bladestar Base" => "[Music] Bladestar Base",
@@ -226,12 +227,12 @@ MUSIC_SIGNPOST_MAPPING = {
   "Music - Gates" => "[Music] Gates",
   "Music - Goldenleaf" => "[Music] Goldenleaf",
   "Music - Guitar" => "[Music] Guitar",
-  "Music - Hang Out_1" => "[Music] Hang Out 1",
+  "Music - Hang Out_1" => "[Music] Hang Out 2",
   "Music - Hang Out" => "[Music] Hang Out",
   "Music - I'm Aelita" => "[Music] I'm Aelita",
   "Music - Investigative" => "[Music] Investigative",
-  "Music - Jungle_1" => "[Music] Jungle 1",
-  "Music - Jungle_2" => "[Music] Jungle 2",
+  "Music - Jungle_1" => "[Music] Jungle 2",
+  "Music - Jungle_2" => "[Music] Jungle 3",
   "Music - Jungle" => "[Music] Jungle",
   "Music - Jynnobi" => "[Music] Jynnobi",
   "Music - Kakori Village" => "[Music] Kakori Village",
@@ -264,7 +265,7 @@ MUSIC_SIGNPOST_MAPPING = {
   "Music - Space-Time Distortion" => "[Music] Space-Time Distortion",
   "Music - Story of The Ancients_1" => "[Awakening] Story of The Ancients 2",
   "Music - Story of The Ancients" => "[Awakening] Story of The Ancients",
-  "Music - Struggle_1" => "[Music] Struggle 1",
+  "Music - Struggle_1" => "[Music] Struggle 2",
   "Music - Struggle" => "[Music] Struggle",
   "Music - Surf" => "[Music] Surf",
   "Music - Taelia" => "[Music] Taelia",
@@ -272,7 +273,7 @@ MUSIC_SIGNPOST_MAPPING = {
   "Music - Teila Resort" => "[Music] Teila Resort",
   "Music - Temple" => "[Music] Temple",
   "Music - Terajuma Jungle" => "[Music] Terajuma Jungle",
-  "Music - The Lounge_1" => "[Music] The Lounge 1",
+  "Music - The Lounge_1" => "[Music] The Lounge 2",
   "Music - The Lounge" => "[Music] The Lounge",
   "Music - The Play's Right" => "[Music] The Play's Right",
   "Music - The Under" => "[Music] The Under",
@@ -321,40 +322,44 @@ MUSIC_SIGNPOST_MAPPING = {
   "Wild Battle - Gen 2" => "\\gsc[GSCMusic] Battle Wild",
   "Wild Battle - Regular" => "[Battle] Wild",
   "Wild Battle - RSE" => "[Battle] Wild - RSE",
-  "Wild Battle - Terajuma" => "[Battle] Wild - Badlands",
-  "Wild Battle - Terrial" => "[Battle] Wild - Badlands",
+  "Wild Battle - Terajuma" => "[Battle] Wild - Terajuma",
+  "Wild Battle - Terrial" => "[Battle] Wild - Terrial",
   "WMute" => nil
 }
 
 class MusicLocationWindow
-  def initialize(name, spriteset)
-    calcName = name.strip
+  def initialize(track, name, spriteset)
+    @track = track
     gsc = name.start_with?("\\gsc")
     name = name.gsub(/^\\gsc/, '') if gsc
     name = '<c3=4F4E4E,979797>' + name if gsc
     @window=Window_AdvancedTextPokemon.new(name)
     @window.setSkin("Graphics/Windowskins/speech hgss 34") if gsc
-    @window.resizeToFit(calcName,Graphics.width)
+    @window.resizeToFit(name,Graphics.width)
 
-    setxyz = false
-    if spriteset.is_a?(Spriteset_Map)
-      syncWith = spriteset.usersprites.select { |it| it.is_a?(LocationWindow) && !it.disposed? }.first
-      if syncWith
-        setxyz = true
-        @window.setXYZ(0,syncWith.window.y+syncWith.window.height - @window.height,999999) # Higher than transitions
-        @frames=syncWith.frames
-        @syncWith = syncWith
-        @synclength = syncWith.window.height - 6
+    if !$musicSignpost_storedInfo.nil?
+      @window.setXYZ(0, $musicSignpost_storedInfo[0], 999999) # Higher than transitions
+      @frames=$musicSignpost_storedInfo[1]
+      @synclength = $musicSignpost_storedInfo[2]
+      $musicSignpost_storedInfo = nil
+    else
+      setxyz = false
+      if spriteset.is_a?(Spriteset_Map)
+        syncWith = spriteset.usersprites.select { |it| it.is_a?(LocationWindow) && !it.disposed? }.first
+        if syncWith
+          setxyz = true
+          @window.setXYZ(0,syncWith.window.y+syncWith.window.height - @window.height,999999) # Higher than transitions
+          @frames=syncWith.frames
+          @synclength = syncWith.window.height - 6
+        end
+      end
+
+      if !setxyz
+        @window.setXYZ(0,-@window.height,999999) # Higher than transitions
+        @frames=0
+        @synclength = 0
       end
     end
-
-    if !setxyz
-      @window.setXYZ(0,-@window.height,999999) # Higher than transitions
-      @frames=0
-      @synclength = 0
-    end
-
-    @currenttrack=$musicSignpost_lastTrackDisplayed
   end
 
   def disposed?
@@ -362,13 +367,17 @@ class MusicLocationWindow
   end
 
   def dispose
+    if !disposed?
+      $musicSignpost_storedInfo = [@window.y, @frames, @synclength]
+      $musicSignpost_signpostWaiting = @track
+    end
     @window.dispose
   end
 
   def update
     return if @window.disposed?
     @window.update
-    if (@syncWith && @syncWith.disposed?) || @currenttrack!=$musicSignpost_lastTrackDisplayed
+    if $musicSignpost_lastTrackDisplayed && @track.name !=$musicSignpost_lastTrackDisplayed.name
       @window.dispose
       return
     end
@@ -407,7 +416,7 @@ def musicSignpost_createSignpost(scene, track)
   if scene.is_a?(Scene_Map) && scene.spritesets && scene.spriteset
     displayName = musicSignpost_msg(track)
     if !displayName.nil?
-      scene.spriteset.addUserSprite(MusicLocationWindow.new(displayName, scene.spriteset))
+      scene.spriteset.addUserSprite(MusicLocationWindow.new(track, displayName, scene.spriteset))
     end
     $musicSignpost_signpostWaiting = nil
   end

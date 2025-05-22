@@ -1,9 +1,6 @@
 Variables[:Post11thBadge] = 456
 Variables[:Karma] = 129
 
-# Based on Caruban's gen 9 compilation
-TextureOverrides.registerTextureOverride(TextureOverrides::ICONS + 'rotomphone', TextureOverrides::MOD + 'RotomPhone')
-
 $pcservices_using_rotomphone = false
 $game_temp.menu_calling = false if defined?($pcservices_in_menu) && $pcservices_in_menu
 $pcservices_in_menu = false
@@ -332,6 +329,7 @@ class ItemData < DataObject
 end
 
 $cache.items[:ROTOMPHONE].flags[:noUse] = false
+$cache.items[:ROTOMPHONE].flags[:general] = true
 $cache.items[:ROTOMPHONE].desc = "A smartphone that was enhanced with a Rotom! Can access the PC system remotely."
 
 ItemHandlers::UseFromBag.add(:ROTOMPHONE,proc{|item|
