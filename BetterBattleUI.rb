@@ -839,9 +839,8 @@ class FightMenuButtons < BitmapSprite
       y-=2 if Rejuv
       ### MODDED/
       movetype = moves[i].pbType(battler,moves[i].type)
-      typemod = 4
-      typemod1 = typemod
-      typemod2 = typemod
+      typemodR = 4
+      typemodL = 4
       twoOpponents = false
       if battler.battle.doublebattle && !(battler.pbOpposing1.isFainted? || battler.pbOpposing2.isFainted?)
         twoOpponents = true
@@ -865,10 +864,10 @@ class FightMenuButtons < BitmapSprite
           else
             zorovar2 = false
           end
-          typemod1 = moves[i].betterBattleUI_showMoveEffectiveness(movetype, battler, battler.pbOpposing1, zorovar1)
-          typemod2 = moves[i].betterBattleUI_showMoveEffectiveness(movetype, battler, battler.pbOpposing2, zorovar2)
+          typemodR = moves[i].betterBattleUI_showMoveEffectiveness(movetype, battler, battler.pbOpposing1, zorovar1)
+          typemodL = moves[i].betterBattleUI_showMoveEffectiveness(movetype, battler, battler.pbOpposing2, zorovar2)
         else
-          typemod1 = moves[i].betterBattleUI_showMoveEffectiveness(movetype, battler, opponent, zorovar)
+          typemodL = moves[i].betterBattleUI_showMoveEffectiveness(movetype, battler, opponent, zorovar)
         end
       else
         if battler.effects[:Taunt] > 0 ||
@@ -876,14 +875,21 @@ class FightMenuButtons < BitmapSprite
           typemod = 0
         elsif moves[i].target != :User && moves[i].target != :Partner
           if twoOpponents
-            typemod1 = betterBattleUI_showMoveEffectivenessStatus(moves[i], battler, battler.pbOpposing1, movetype, typemod, zorovar1)
-            typemod2 = betterBattleUI_showMoveEffectivenessStatus(moves[i], battler, battler.pbOpposing2, movetype, typemod, zorovar2)
+            typemodR = betterBattleUI_showMoveEffectivenessStatus(moves[i], battler, battler.pbOpposing1, movetype, typemodR, zorovar1)
+            typemodL = betterBattleUI_showMoveEffectivenessStatus(moves[i], battler, battler.pbOpposing2, movetype, typemodL, zorovar2)
           else
-            typemod1 = betterBattleUI_showMoveEffectivenessStatus(moves[i], battler, opponent, movetype, typemod, zorovar)
+            typemodL = betterBattleUI_showMoveEffectivenessStatus(moves[i], battler, opponent, movetype, typemodL, zorovar)
           end
         end
       end
-      case typemod1
+      typemodL = typemodL.clamp(1,16) if typemodL != 0 
+      typemodR = typemodR.clamp(1,16) if typemodR != 0 
+      case pbFieldNotesBattle(moves[i])
+        when 1 then self.bitmap.blt(x + 2, y + 2, @goodmovebitmap.bitmap, Rect.new(0, 0, @goodmovebitmap.bitmap.width, @goodmovebitmap.bitmap.height))
+        when 2 then self.bitmap.blt(x + 2, y + 2, @badmovebitmap.bitmap, Rect.new(0, 0, @badmovebitmap.bitmap.width, @badmovebitmap.bitmap.height))
+        when 3 then self.bitmap.blt(x + 2, y + 2, @betterBattleUI_fieldnullmove.bitmap, Rect.new(0, 0, @betterBattleUI_fieldnullmove.bitmap.width, @betterBattleUI_fieldnullmove.bitmap.height))
+      end
+      case typemodR
         when 0 # Ineffective
           self.bitmap.blt(x + 2, y + 2, @betterBattleUI_movenoeffect_right.bitmap, Rect.new(0, 0, @betterBattleUI_movenoeffect_right.bitmap.width, @betterBattleUI_movenoeffect_right.bitmap.height))
         when 1 # 1/4
@@ -895,7 +901,7 @@ class FightMenuButtons < BitmapSprite
         when 16 # x4
           self.bitmap.blt(x + 2, y + 2, @betterBattleUI_movedoublesuper_right.bitmap, Rect.new(0, 0, @betterBattleUI_movedoublesuper_right.bitmap.width, @betterBattleUI_movedoublesuper_right.bitmap.height))
       end
-      case typemod2
+      case typemodL
         when 0 # Ineffective
           self.bitmap.blt(x + 2, y + 2, @betterBattleUI_movenoeffect_left.bitmap, Rect.new(0, 0, @betterBattleUI_movenoeffect_left.bitmap.width, @betterBattleUI_movenoeffect_left.bitmap.height))
         when 1 # 1/4
@@ -906,11 +912,6 @@ class FightMenuButtons < BitmapSprite
           self.bitmap.blt(x + 2, y + 2, @betterBattleUI_movesupereffective_left.bitmap, Rect.new(0, 0, @betterBattleUI_movesupereffective_left.bitmap.width, @betterBattleUI_movesupereffective_left.bitmap.height))
         when 16 # x4
           self.bitmap.blt(x + 2, y + 2, @betterBattleUI_movedoublesuper_left.bitmap, Rect.new(0, 0, @betterBattleUI_movedoublesuper_left.bitmap.width, @betterBattleUI_movedoublesuper_left.bitmap.height))
-      end
-      case pbFieldNotesBattle(moves[i])
-        when 1 then self.bitmap.blt(x + 2, y + 2, @goodmovebitmap.bitmap, Rect.new(0, 0, @goodmovebitmap.bitmap.width, @goodmovebitmap.bitmap.height))
-        when 2 then self.bitmap.blt(x + 2, y + 2, @badmovebitmap.bitmap, Rect.new(0, 0, @badmovebitmap.bitmap.width, @badmovebitmap.bitmap.height))
-        when 3 then self.bitmap.blt(x + 2, y + 2, @betterBattleUI_fieldnullmove.bitmap, Rect.new(0, 0, @betterBattleUI_fieldnullmove.bitmap.width, @betterBattleUI_fieldnullmove.bitmap.height))
       end
     end
     ### /MODDED
@@ -1056,7 +1057,7 @@ class PokeBattle_Move
     end
     # UPDATE Implementing Flying Press + Freeze Dry
     typemod=pbTypeModifier(type,attacker,opponent, zorovar)
-    typemod2= nil
+    typemodL= nil
     typemod3= nil
     if type == :FIRE && opponent.effects[:TarShot]
       typemod*=2
@@ -1100,8 +1101,8 @@ class PokeBattle_Move
           typemod*=2
         end
       else
-        typemod2=pbTypeModifier(:FLYING,attacker,opponent)
-        typemod3= ((typemod*typemod2)/4)
+        typemodL=pbTypeModifier(:FLYING,attacker,opponent)
+        typemod3= ((typemod*typemodL)/4)
         typemod=typemod3
       end
     end
