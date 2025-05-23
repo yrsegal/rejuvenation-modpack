@@ -37,12 +37,12 @@ Libraries:
 Fix/hotfix mods:
 - AnaFixes.rb (depends on 0000.injection.rb, 0000.textures.rb)  
   Fixes some issues with the character Ana's sprites.
+- BagReclassification.rb  
+  Reclassifies some items that are improperly classified.
 - FixBasculegionForms.rb  
   Fixes Basculegion's forms on evolution. (Currently, female basculegion does not recieve the proper icon or stats.)
 - FixCdAName.rb  
   Fixes an area name being displayed incorrectly.
-- FixEvoStonesInBag.rb  
-  Reclassifies some items that should be classifed as evolution stones.
 - FixMissingItemTextures.rb (depends on 0000.textures.rb)  
   Fixes several missing items textures.
 - FixNWSilvally.rb  
