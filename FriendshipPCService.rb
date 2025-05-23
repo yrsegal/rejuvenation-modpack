@@ -116,6 +116,7 @@ class FriendshipPCService
   end
 
   def pbSetEventTime
+    $PokemonGlobal.eventvars={} if !$PokemonGlobal.eventvars
     time=pbGetTimeNow
     time=time.to_i
     $game_self_switches[[333,16,"A"]] = true
@@ -124,7 +125,6 @@ class FriendshipPCService
 
   def cooledDown?(seconds)
     if !(expired?(seconds) && !tsOn?("A"))
-      self.need_refresh=true
       return false
     else
       return true
@@ -136,6 +136,7 @@ class FriendshipPCService
     time=pbGetTimeNow
     return ontime && (time.to_i - ontime).abs > secs
   end
+  
   def tsOn?(c)
     return $game_self_switches[[333,16,c]]
   end
