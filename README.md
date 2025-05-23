@@ -8,7 +8,7 @@ Libraries:
   Supports code injection mods.
 - 0000.textures.rb  
   A framework for texture overrides, which also includes a couple misc overrides.
-- 0001.pcservices.rb (depends on 0000.textures.rb)
+- 0001.pcservices.rb (depends on 0000.textures.rb)  
   Adds a "service directory" to the PC, which lets you call NPCs for various services. Also makes the Rotom Phone a Remote PC.
 
 "Service" mods (0001.pcservices.rb)
@@ -22,7 +22,7 @@ Libraries:
   Adds a Genderswapping service, for setting Pokemon (and player) gender. Unlocked through Tale of Two Hearts.
 - HealPCService.rb (depends on 0001.pcservices.rb, 0000.textures.rb)  
   Adds a Field Healing service.
-- HiddenPowerPCService.rb (depends on 0001.pcservices.rb, 0000.textures.rb)
+- HiddenPowerPCService.rb (depends on 0001.pcservices.rb, 0000.textures.rb)  
   Adds a Hidden Power Changer/checker service. Unlocked by speaking to the relevant NPC in Kristiline.
 - MoveRelearnerPCService.rb (depends on 0001.pcservices.rb, 0000.textures.rb)  
   Adds a service which allows relearning, teaching egg moves, and move deletion (always free). Free after 10 Heart Scales.  
@@ -41,10 +41,16 @@ Fix/hotfix mods:
   Fixes Basculegion's forms on evolution. (Currently, female basculegion does not recieve the proper icon or stats.)
 - FixCdAName.rb  
   Fixes an area name being displayed incorrectly.
+- FixEvoStonesInBag.rb  
+  Reclassifies some items that should be classifed as evolution stones.
+- FixMissingItemTextures.rb (depends on 0000.textures.rb)  
+  Fixes several missing items textures.
 - FixNWSilvally.rb  
   Fixes a field interaction with Silvally.
 - FixSuperLuck.rb  
   Super Luck increases held item chances on wild pokemon, as it's supposed to.
+- Route4GlobalChange.rb  
+  Makes Route 4's reset trigger work in all areas as intended.
 - KingleriteHotfix.rb  
   The Kinglerite crashes the game to pick up. This fixes that.
 - LabyrinthPuzzleFix.rb  
@@ -59,7 +65,7 @@ QoL mods:
   Makes a Rejuvenation-exclusive ability cleaner.
 - HiddenPowerInSummary.rb  
   Hidden Power, Revelation Dance, and such all display their correct type in summaries and move listings.
-- ItemRadar.rb  
+- ItemRadar.rb (depends on 0000.injection.rb)  
   The Itemfinder becomes a toggleable overlay rather than an item you have to use repeatedly. Also pings you when entering a map with a Zygarde Cell you haven't collected.
 - LureRework.rb  
   The Mirror Lure lets you run always, like it says it does. The Magnetic Lure becomes a toggleable key item.

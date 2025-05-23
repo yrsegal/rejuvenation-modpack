@@ -1,22 +1,6 @@
 
 $MISSING_TEXTURE_FOLDER = TextureOverrides::MOD + "MissingTextures/"
 
-class ItemData < DataObject
-  attr_accessor :flags
-end
-
-EVOSTONES |= [:ANCIENTTEACH, :APOPHYLLPAN]
-
-for stone in EVOSTONES
-  $cache.items[stone].flags[:evoitem] = true if $cache.items[stone]
-end
-
-for item in $cache.items.values
-  if item.checkFlag?(:memory)
-    item.flags[:legendary] = true
-  end
-end
-
 # Based on Caruban's gen 9 compilation
 TextureOverrides.registerTextureOverrides({
   TextureOverrides::ICONS + 'rotomphone' => $MISSING_TEXTURE_FOLDER + 'RotomPhone',
