@@ -7,6 +7,7 @@ TextureOverrides.registerServiceSprites('GearenLabs', 'GDCCentral')
 
 class Game_Screen
   attr_accessor :pokemonvaluespc_used
+  attr_accessor :pokemonvaluespc_given_heartscale_gift
   attr_accessor :pokemonvaluespc_called_gearen_in_gdc
   attr_accessor :pokemonvaluespc_use_gdc
   attr_accessor :pokemonvaluespc_neo
@@ -402,6 +403,16 @@ class PokemonValuesPCService
       Kernel.pbMessage(lab("You can do all of these at once, but..."))
       Kernel.pbMessage(lab("You do have to get certain things to unlock each of those services."))
       $game_screen.pokemonvaluespc_used = true
+    end
+
+    if !$game_screen.pokemonvaluespc_given_heartscale_gift
+      Kernel.pbMessage(lab("We have a promotion for first-time users."))
+      if Kernel.pbReceiveItem(:HEARTSCALE, 15)
+        Kernel.pbMessage(lab("Enjoy!"))
+        $game_screen.pokemonvaluespc_given_heartscale_gift = true
+      else
+        Kernel.pbMessage(lab("Ah, well. We'll hold it until you've got room."))
+      end
     end
 
     if !checkUnlocks
