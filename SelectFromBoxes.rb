@@ -42,13 +42,22 @@ end
 
 def pbChoosePokemon(variableNumber,nameVarNumber,ableProc=nil,allowIneligible=false,giveAway=false,*args,
   ### MODDED/
-  selectfromboxes_commandText: "Select", selectfromboxes_partyOpen: true, 
+  selectfromboxes_commandText: "Select", selectfromboxes_partyOpen: false, 
   selectfromboxes_tutorPartialAble: nil, selectfromboxes_tutorMove: nil, **kwargs)
 
   if Rejuv && $game_switches[:NotPlayerCharacter] && !$game_switches[:InterceptorsWish]
     return selectfromboxes_old_pbChoosePokemon(variableNumber,nameVarNumber,ableProc,allowIneligible,giveAway,*args,**kwargs)
   end
   ### /MODDED
+
+  if !ableProc.nil?
+    for mon in $Trainer.party
+      if ableProc.call(mon)
+        selectfromboxes_partyOpen = true
+        break
+      end
+    end
+  end
 
   chosen=-1
   pbFadeOutIn(99999){

@@ -221,7 +221,7 @@ class PokemonValuesPCService
           $builtCommands.push(_INTL("{1}  {4}+{2}</c3> {5}-{3}</c3>", nature.name, STAT_NAMES_SHORT[nature.incStat], STAT_NAMES_SHORT[nature.decStat],
             positiveColor, negativeColor))
         end
-        $buildNatures.push(natureKey)
+        $builtNatures.push(natureKey)
       }
     else
       command = $builtNatures.index(pkmn.nature)
