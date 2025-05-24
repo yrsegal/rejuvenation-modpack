@@ -110,5 +110,7 @@ Other mods:
   Mr. Luck can no longer tell if you cheat.
 - OricorioHoldNectar.rb  
   Oricorio hold their Nectar in the wild, as in gen 9, allowing you to get Pink and Yellow Nectars (otherwise unobtainable).
+- PasswordAPRefund.rb  
+  If a password gives you an item you've already spent AP for, the AP gets refunded.
 - SkipTitleSoftResets.rb 
   Skips the intro scene for soft resets, making it easier to get back into the game.
