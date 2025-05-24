@@ -212,7 +212,7 @@ class PokemonValuesPCService
     anyChange = false
     if !$builtNatures || !$builtCommands
       $builtCommands = []
-      $buildNatures = []
+      $builtNatures = []
       $cache.natures.each_with_index { |(natureKey, nature), idx|
         command = idx if pkmn.nature == natureKey
         if !nature.incStat && !nature.decStat
