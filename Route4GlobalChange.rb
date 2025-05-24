@@ -11,6 +11,8 @@ Events.onMapChanging+=proc {
       end
     }
 
+    mostRecentReset = [Time.now.to_i, mostRecentReset].min
+
     RT4GLOBAL_ROUTE4EVENTS.each {|event| 
       $PokemonGlobal.eventvars[event] = mostRecentReset
       $game_self_switches[event + ['A']] = switchState
