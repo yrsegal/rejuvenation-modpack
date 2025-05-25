@@ -160,6 +160,11 @@ class RelearnerPCService
       return
     end
 
+    if $game_screen.relearnerpc_scales >= 10  
+      heartscalewindow = ServicePCList.quantityWindow(:HEARTSCALE)
+      heartscalewindow.visible = true
+    end
+
     Kernel.pbMessage(sister("SAMANTHA: Hello, you've reached the Sheridan Move Reminder..."))
     Kernel.pbMessage(sister("Oh, it's \\PN! How've you been?"))
     if !$game_screen.relearnerpc_used

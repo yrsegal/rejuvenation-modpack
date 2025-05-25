@@ -71,6 +71,7 @@ module ServicePCList
   @@pclistcategories=[]
   @@pclist=[]
 
+  @@cleanupSprites=[]
 
   def self.registerService(pc)
     @@pclist.push(pc)
@@ -133,7 +134,6 @@ module ServicePCList
     return 0
   end
 
-
   def self.callCommand(cmd, subList=nil)
     if subList
       cmdList = @@pclistsub[subList]
@@ -167,6 +167,7 @@ module ServicePCList
 
 
           pc.access()
+          cleanupLeftoverSprites
           pbSEPlay('dexselect')
           return true
         end
@@ -174,6 +175,13 @@ module ServicePCList
       end
     end
     return false
+  end
+
+  def self.cleanupLeftoverSprites
+    @@cleanupSprites.each { |sprite|
+      sprite.dispose if !sprite.disposed?
+    }
+    @@cleanupSprites = []
   end
 
   ### Commonly used sounds/events
@@ -194,6 +202,35 @@ module ServicePCList
     $game_player.step_anime = true
     pbWait(17)
     $game_player.step_anime = false
+  end
+
+  ### Utility functions for creating various kinds of windows
+
+  def self.quantityWindow(item, viewport=nil, z=99999, windowAbove: nil)
+    itemName = getItemName(item) + 's'
+    itemQuantity = $PokemonBag.pbQuantity(item)
+    quantityString = pbCommaNumber(itemQuantity)
+    return createCornerWindow(_INTL("{3}{1}</c3>\n<ar>{2}</ar>",itemName, quantityString, getSkinColor(nil, 1, true)), viewport, z, windowAbove: windowAbove)
+  end
+
+  def self.createCornerWindow(text, viewport=nil, z=99999, windowAbove: nil)
+    window=Window_AdvancedTextPokemon.new(text)
+    @@cleanupSprites.push(window)
+    window.resizeToFit(window.text,Graphics.width)
+    window.width=160 if window.width<=160
+    window.y=(windowAbove) ? windowAbove.y + windowAbove.height : 0
+    window.viewport=viewport
+    window.visible=true
+    window.z = z
+    return window
+  end
+
+  def self.updateWindow(window, text)
+    window.text=text
+    window.resizeToFit(window.text,Graphics.width)
+  end
+  def self.updateWindowHeirarchy(window, windowAbove)
+    window.y=(windowAbove) ? windowAbove.y + windowAbove.height : 0
   end
 
   ### Tools to check if a service should be enabled

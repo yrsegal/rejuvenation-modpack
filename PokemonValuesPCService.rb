@@ -103,11 +103,24 @@ class PokemonValuesPCService
     return color(7)
   end
 
+  def createSummaryText(pkmn)
+    buildNatures
+
+    ivs = _INTL("{1}   {2}   {3}   {4}   {5}   {6}", *pkmn.iv.map {|iv| colorForStat(iv, 31) + iv.to_s + "</c3>" })
+    evs = _INTL("{1}   {2}   {3}   {4}   {5}   {6}", *pkmn.ev.map {|ev| colorForStat(ev, 252) + ev.to_s + "</c3>" })
+    natureidx = $builtNatures.index(pkmn.nature)
+    natureidx = 0 if natureidx.nil?
+    nature = $builtCommands[natureidx]
+    ability = getAbilityName(pkmn.ability)
+    return _INTL("{5}IVs</c3>\n<ar>{1}</ar>\n{5}EVs</c3>\n<ar>{2}</ar>\n{5}Nature</c3>\n<ar>{3}</ar>\n{5}Ability</c3>\n<ar>{4}</ar>", ivs, evs, nature, ability )
+  end
+
   def tweaking(pkmn)
     command = 0
     anyChange = false
     while command >= 0
       commands=makeOptions
+      summarywindow = ServicePCList.createCornerWindow(createSummaryText(pkmn))
       command=Kernel.advanced_pbMessage(_INTL("Tweak which?"), commands, -1, nil, command)
       case command
         when 0
@@ -207,14 +220,11 @@ class PokemonValuesPCService
     $builtNatures = nil
   end
 
-  def natures(pkmn)
-    command = 0
-    anyChange = false
+  def buildNatures
     if !$builtNatures || !$builtCommands
       $builtCommands = []
       $builtNatures = []
       $cache.natures.each_with_index { |(natureKey, nature), idx|
-        command = idx if pkmn.nature == natureKey
         if !nature.incStat && !nature.decStat
           $builtCommands.push(_INTL("{1}  {3}±{2}", nature.name, STAT_NAMES_SHORT[FLAVORS_TO_STATS.index(nature.like)], grayColor))
         else
@@ -223,10 +233,17 @@ class PokemonValuesPCService
         end
         $builtNatures.push(natureKey)
       }
-    else
-      command = $builtNatures.index(pkmn.nature)
-      command = 0 if command.nil?
     end
+  end
+
+  def natures(pkmn)
+    command = 0
+    anyChange = false
+    
+    buildNatures
+
+    command = $builtNatures.index(pkmn.nature)
+    command = 0 if command.nil?
 
 
     while command >= 0
@@ -395,6 +412,7 @@ class PokemonValuesPCService
       end
     end
 
+
     Kernel.pbMessage(lab("This is {1}, how may I help you?", name))
 
     if !$game_screen.pokemonvaluespc_used
@@ -406,6 +424,7 @@ class PokemonValuesPCService
     end
 
     if !$game_screen.pokemonvaluespc_given_heartscale_gift
+      heartscalewindow = ServicePCList.quantityWindow(:HEARTSCALE)
       Kernel.pbMessage(lab("We have a promotion for first-time users."))
       if Kernel.pbReceiveItem(:HEARTSCALE, 15)
         Kernel.pbMessage(lab("Enjoy!"))
@@ -413,6 +432,7 @@ class PokemonValuesPCService
       else
         Kernel.pbMessage(lab("Ah, well. We'll hold it until you've got room."))
       end
+      heartscalewindow.dispose
     end
 
     if !checkUnlocks
@@ -434,9 +454,12 @@ class PokemonValuesPCService
       return
     end
 
+    heartscalewindow = ServicePCList.quantityWindow(:HEARTSCALE)
     pkmn = $Trainer.party[result]
     if Kernel.pbConfirmMessage("And you'd like to spend a Heart Scale to tweak \\v[3]?")
+      heartscalewindow.dispose
       if tweaking(pkmn)
+        heartscalewindow = ServicePCList.quantityWindow(:HEARTSCALE)
         $PokemonBag.pbDeleteItem(:HEARTSCALE)
         Kernel.pbMessage(lab("And...\\| \\se[balldrop]Done! Thank you for your business! Have a nice day!"))
       else

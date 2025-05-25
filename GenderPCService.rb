@@ -193,6 +193,7 @@ class GenderPCService
       if choice < 0
         Kernel.pbMessage(odessa("ODESSA: Talk to you soon."))
       elsif choice == 0
+        heartscalewindow = ServicePCList.quantityWindow(:HEARTSCALE)
         subChoice = Kernel.pbMessage(odessa("On who?"),[_INTL("A Pokemon"), _INTL("Me")], -1, nil, 0)
         if subChoice == 0
           result = 0
@@ -247,6 +248,7 @@ class GenderPCService
                 end
               end
             end
+            heartscalewindow.dispose
           end
         elsif subChoice == 1
           Kernel.pbMessage(blush("ODESSA: Y-you?"))
@@ -263,6 +265,7 @@ class GenderPCService
             $game_screen.genderpc_askedForSwap = true
           end
 
+          heartscalewindow = ServicePCList.quantityWindow(:HEARTSCALE)
           Kernel.pbMessage(odessa("I suppose I can do that... It will cost two Heart Scales as catalysts, though."))
           if $PokemonBag.pbQuantity(:HEARTSCALE) <= 0
             Kernel.pbMessage(odessa("Ah, you don't have any? I suppose that's not an option, then."))
@@ -310,8 +313,10 @@ class GenderPCService
               end
             end
           end
+          heartscalewindow.dispose
         end
       elsif choice == 1
+        gourmetwindow = ServicePCList.quantityWindow(:GOURMETTREAT)
         Kernel.pbMessage(confused("ODESSA: You want to..."))
         if !$game_screen.genderpc_triedToFeed
           Kernel.pbMessage(angry("\\sh\\c[7]Absolutely not!"))
@@ -387,6 +392,7 @@ class GenderPCService
           manaphySad
           Kernel.pbMessage(manaphy("MANAPHY: Manaaaaaa..."))
         end
+        gourmetwindow.dispose
       end
     end
 

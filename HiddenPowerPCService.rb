@@ -78,6 +78,8 @@ class HiddenPowerPCService
       Kernel.pbMessage(nerta("NERTA: Hey, kid."))
     end
 
+
+    ServicePCList.quantityWindow(:HEARTSCALE)
     if $PokemonBag.pbQuantity(:HEARTSCALE)<=0
       Kernel.pbMessage(nerta("Don't got the goods? Then don't expect the looks. Those are the rules kid."))
       return
