@@ -247,24 +247,26 @@ def outfitoptions_handle_clothing_choices
 
     caveat = _INTL('(Outfits marked with * might act strangely outside intended locations.)')
     msgwindow=Kernel.pbCreateMessageWindow(nil,nil)
-    ret = Kernel.pbMessageDisplay(msgwindow,caveat,false,
-       proc { next Kernel.pbShowCommands(nil,choices,-1,default) })
+    Kernel.pbMessageDisplay(msgwindow,caveat,false,
+       proc { ret = Kernel.pbShowCommands(nil,choices,-1,default) })
     Kernel.pbDisposeMessageWindow(msgwindow)
     Input.update
   else
     ret = Kernel.pbShowCommands(nil,choices,-1,default)
   end
 
-  newOutfit = outfits[ret]
-  if newOutfit != -1
-    $game_screen.start_tone_change(Tone.new(-255,-255,-255,0), 14 * 2)
-    pbWait(20)
-    pbSEPlay('Fire1', 80, 80)
-    $game_variables[:Outfit] = newOutfit # Outfit
-    $Trainer.outfit = newOutfit
-    Kernel.pbMessage(_INTL('\\PN changed clothes!'))
-    pbWait(10)
-    $game_screen.start_tone_change(Tone.new(0,0,0,0), 10 * 2)
+  if ret 
+    newOutfit = outfits[ret]
+    if newOutfit != -1
+      $game_screen.start_tone_change(Tone.new(-255,-255,-255,0), 14 * 2)
+      pbWait(20)
+      pbSEPlay('Fire1', 80, 80)
+      $game_variables[:Outfit] = newOutfit # Outfit
+      $Trainer.outfit = newOutfit
+      Kernel.pbMessage(_INTL('\\PN changed clothes!'))
+      pbWait(10)
+      $game_screen.start_tone_change(Tone.new(0,0,0,0), 10 * 2)
+    end
   end
 end
 
