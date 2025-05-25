@@ -108,6 +108,8 @@ Other mods:
   - Fly becomes a 100/100 move.
 - MrLuckIsBlind.rb  
   Mr. Luck can no longer tell if you cheat.
+- MusicSignpost.rb *(experimental)*  
+  Show music near the map signpost.
 - OricorioHoldNectar.rb  
   Oricorio hold their Nectar in the wild, as in gen 9, allowing you to get Pink and Yellow Nectars (otherwise unobtainable).
 - PasswordAPRefund.rb  

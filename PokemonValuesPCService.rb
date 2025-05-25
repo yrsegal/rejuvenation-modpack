@@ -112,7 +112,7 @@ class PokemonValuesPCService
     natureidx = 0 if natureidx.nil?
     nature = $builtCommands[natureidx]
     ability = getAbilityName(pkmn.ability)
-    return _INTL("{5}IVs</c3>\n<ar>{1}</ar>\n{5}EVs</c3>\n<ar>{2}</ar>\n{5}Nature</c3>\n<ar>{3}</ar>\n{5}Ability</c3>\n<ar>{4}</ar>", ivs, evs, nature, ability )
+    return _INTL("{5}IVs</c3>\n<ar>{1}</ar>\n{5}EVs</c3>\n<ar>{2}</ar>\n{5}Nature</c3>\n<ar>{3}</ar>\n{5}Ability</c3>\n<ar>{4}</ar>", ivs, evs, nature, ability, color(6))
   end
 
   def tweaking(pkmn)
@@ -122,6 +122,7 @@ class PokemonValuesPCService
       commands=makeOptions
       summarywindow = ServicePCList.createCornerWindow(createSummaryText(pkmn))
       command=Kernel.advanced_pbMessage(_INTL("Tweak which?"), commands, -1, nil, command)
+      summarywindow.dispose
       case command
         when 0
           anyChange = ivs(pkmn) || anyChange if $game_screen.pokemonvaluespc_unlocked_iv
