@@ -77,28 +77,38 @@ class Game_Screen
 end
 
 class Game_Event < Game_Character
-  def itemRadar_green_ball
-    @character_name = "Object ball_3"
-    @opacity = 128
-    @character_hue = -100
-    @through = false
+  def itemRadar_green_ball 
+    if @tile_id < 384 # Dunno why, but this is the threshold for "will override the sprite"
+      @character_name = "Object ball_3"
+      @opacity = 128
+      @character_hue = -100
+      @through = false
+    else  # This branch is only reached, in current maps, for the Darchlight purple nectar
+      @character_name = "invisible"
+      @through = false
+    end
   end
   
   def itemRadar_revert_ball
-    if @page == nil
-      @tile_id = 0
-      @character_name = ""
-      @character_hue = 0
-      @move_type = 0
-      @through = true
-      @trigger = nil
-      @list = nil
-      @interpreter = nil
-      return
+    if @tile_id < 384 # Dunno why, but this is the threshold for "will override the sprite"
+      if @page == nil
+        @tile_id = 0
+        @character_name = ""
+        @character_hue = 0
+        @move_type = 0
+        @through = true
+        @trigger = nil
+        @list = nil
+        @interpreter = nil
+        return
+      end
+      @character_name = @page.graphic.character_name
+      @character_hue = @page.graphic.character_hue
+      @opacity = @page.graphic.opacity
+    else # This branch is only reached, in current maps, for the Darchlight purple nectar
+      @character_name = "invisible"
+      @through = false
     end
-    @character_name = @page.graphic.character_name
-    @character_hue = @page.graphic.character_hue
-    @opacity = @page.graphic.opacity
   end
 end
 
