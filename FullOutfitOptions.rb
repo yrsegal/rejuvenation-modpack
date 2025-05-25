@@ -248,11 +248,11 @@ def outfitoptions_handle_clothing_choices
     caveat = _INTL('(Outfits marked with * might act strangely outside intended locations.)')
     msgwindow=Kernel.pbCreateMessageWindow(nil,nil)
     ret = Kernel.pbMessageDisplay(msgwindow,caveat,false,
-       proc { next Kernel.pbShowCommands(nil,choices,default+1,-1) })
+       proc { next Kernel.pbShowCommands(nil,choices,-1,default) })
     Kernel.pbDisposeMessageWindow(msgwindow)
     Input.update
   else
-    Kernel.pbShowCommands(nil,choices,default+1,-1)
+    ret = Kernel.pbShowCommands(nil,choices,-1,default)
   end
 
   newOutfit = outfits[ret]

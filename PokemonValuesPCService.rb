@@ -160,6 +160,7 @@ class PokemonValuesPCService
         for i in 0...6
           pkmn.iv[i] = 31
         end
+        command = 0
         anyChange = true
       elsif command >= 0
         params=ChooseNumberParams.new
