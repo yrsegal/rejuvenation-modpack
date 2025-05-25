@@ -306,7 +306,17 @@ module ServicePCList
     return false
   end
 
+  def self.blacksteeple?
+    mapid = $game_map.map_id
+    while mapid != 0
+      return true if mapid == 128
+      mapid = $cache.mapinfos[mapid].parent_id
+    end
+    return false
+  end
+
   def self.offMap?
+    return true if blacksteeple?
     if $cache.mapdata[$game_map.map_id].MapPosition.is_a?(Hash)
       region = pbUnpackMapHash[0]
     else
