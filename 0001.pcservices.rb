@@ -369,6 +369,23 @@ class PokemonReadyMenu_Scene
   end
 end
 
+Kernel.singleton_class.class_eval do
+  if !defined?(pcservices_old_pbUseKeyItemInField)
+    alias :pcservices_old_pbUseKeyItemInField :pbUseKeyItemInField
+  end
+
+  def pbUseKeyItemInField(item)
+    wasInMenu = $pcservices_in_menu
+    wasMenuCalling = $game_temp.menu_calling
+    $pcservices_in_menu = true
+    $game_temp.menu_calling = true
+    ret = pcservices_old_pbUseKeyItemInField(item)
+    $pcservices_in_menu = wasInMenu
+    $game_temp.menu_calling = wasMenuCalling
+    return ret
+  end
+
+end
 
 class ItemData < DataObject
   attr_accessor :flags
