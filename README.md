@@ -79,6 +79,8 @@ QoL mods:
   Holding shift overrides your spice scent with 0200.
 - ThiefAndPickupEvenWithItem.rb  
   Thief/Covet, Pickup, Pickpocket, and Magician work even if the user is holding an item in wild battles, and items stolen by these effects are deposited directly into the bag at the end of those battles.
+- VendorQuantityDisplay.rb (depends on 0000.injection.rb)  
+  Move Tutors and other vendors will show the resources they ask for.
 - XOverRun.rb  
   Hitting the "back" button when selecting a command in battle will move your cursor over "Run".
 - ZygardeCaffeine.rb  
