@@ -92,6 +92,8 @@ Other mods:
   Adds an Ana route to a specific cutscene.
 - FullOutfitOptions.rb (depends on 0000.injection.rb)  
   You get full options for outfits, and they're supported a little more in cutscenes. This does not add sprites for them, and the only character given spritework currently for this is Ana.
+- GDCCentralReputationPillars.rb (depends on 0000.injection.rb)  
+  Makes the GDC Central Pillars able to check your reputation (like the game tells you they can).
 - MiningOverhaul.rb  
   More items for mining! Nicer sprites, too. Also, you can keep mining after you've fully cracked the bar by spending money.
 - MoveTweak.rb  
