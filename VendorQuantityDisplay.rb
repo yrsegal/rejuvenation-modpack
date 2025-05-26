@@ -45,8 +45,7 @@ module VendorQuantityDisplay
       textMatches = InjectionHelper.lookForAll(insns,
         [:ShowText, /\\ch\[/])
 
-      choiceMatch = InjectionHelper.lookForSequence(insns,
-        [:ShowText, nil],
+      choiceMatches = InjectionHelper.lookForAll(insns,
         [:ShowChoices, nil, nil])
 
       for insn in textMatches
@@ -54,14 +53,18 @@ module VendorQuantityDisplay
         insns.insert(targetIdx, InjectionHelper.parseEventCommand(insn.indent, :Script, script))
       end
 
-      if choiceMatch
-        insn = choiceMatch[0]
-        targetIdx = insns.index(insn)
-        insns.insert(targetIdx, InjectionHelper.parseEventCommand(insn.indent, :Script, script))
+      for insn in choiceMatches
+        choiceIdx = insns.index(insn)
+        insertIdx = choiceIdx - 1
+        while insertIdx > 0 && insns[insertIdx].code == InjectionHelper::EVENT_INSNS[:ShowTextContinued]
+          insertIdx -= 1
+        end
+        if insertIdx > 0 && insns[insertIdx].code == InjectionHelper::EVENT_INSNS[:ShowText]
+          insns.insert(insertIdx, InjectionHelper.parseEventCommand(insn.indent, :Script, script))
+        end
       end
 
-
-      next textMatches.length > 0 || choiceMatch
+      next textMatches.length > 0 || choiceMatches.length > 0
     }
   end
 
@@ -132,11 +135,13 @@ module VendorQuantityDisplay
     425 => [16] # Move Relearner
   }
 
-  TUTORS = {
+  VENDORS = {
     19 => [14, 15, 43], # Neo East Gearen
-    28 => [37, 38, 39], # Festival Plaza
+    28 => [27, 37, 38, 39], # Festival Plaza
     103 => [7, 8, 24], # Akuwa Interiors
+    176 => [9], # ACDMC Center
     330 => [94], # Hiyoshi City
+    388 => [35, 36, 37, 38, 39], # The Underground Interiors
     434 => [38, 39, 40, 41, 42, 43, 46, [36, :BLKPRISM], [28, :BLKPRISM], [[53, 2], :BLKPRISM]], # Luck's Tent
     601 => [[2, :BALMMUSHROOM], [25, :BIGMUSHROOM]] # Goomidra Interiors
   }
@@ -148,22 +153,22 @@ class Interpreter
   end
 
   def vendorquantity_show_item_window(item)
-    @vendorquantity_windows = [] if !@vendorquantity_windows
-    @vendorquantity_windows.push(VendorQuantityDisplay.quantityWindow(item))
+    @vendorquantity_window.dispose if @vendorquantity_window
+    @vendorquantity_window = VendorQuantityDisplay.quantityWindow(item)
   end
 
   def vendorquantity_show_shard_window
-    @vendorquantity_windows = [] if !@vendorquantity_windows
-    @vendorquantity_windows.push(VendorQuantityDisplay.shardQuantityWindow)
+    @vendorquantity_window.dispose if @vendorquantity_window
+    @vendorquantity_window = VendorQuantityDisplay.shardQuantityWindow
   end
 
   def vendorquantity_show_redessence_window
-    @vendorquantity_windows = [] if !@vendorquantity_windows
-    @vendorquantity_windows.push(VendorQuantityDisplay.quantityWindowVariable(_INTL("Red Essence"), :RedEssence))
+    @vendorquantity_window.dispose if @vendorquantity_window
+    @vendorquantity_window = VendorQuantityDisplay.quantityWindowVariable(_INTL("Red Essence"), :RedEssence)
   end
 
   def command_end
-    @vendorquantity_windows.each {|window| window.dispose if !window.disposed? } if @vendorquantity_windows
+    @vendorquantity_window.dispose if @vendorquantity_window
     vendorquantity_old_command_end
   end
 end
@@ -182,12 +187,12 @@ class Cache_Game
 
     ret = vendorquantity_old_map_load(mapid)
 
-    if VendorQuantityDisplay::TUTORS[mapid]
-      for tutor in VendorQuantityDisplay::TUTORS[mapid]
-        if tutor.is_a?(Array)
-          VendorQuantityDisplay.injectForEvent(ret.events, tutor[0], "vendorquantity_show_item_window(:#{tutor[1]})")
+    if VendorQuantityDisplay::VENDORS[mapid]
+      for vendor in VendorQuantityDisplay::VENDORS[mapid]
+        if vendor.is_a?(Array)
+          VendorQuantityDisplay.injectForEvent(ret.events, vendor[0], "vendorquantity_show_item_window(:#{vendor[1]})")
         else
-          VendorQuantityDisplay.injectForEvent(ret.events, tutor, "vendorquantity_show_shard_window")
+          VendorQuantityDisplay.injectForEvent(ret.events, vendor, "vendorquantity_show_shard_window")
         end
       end
     end
