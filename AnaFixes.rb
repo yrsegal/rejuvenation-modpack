@@ -62,6 +62,24 @@ def anafixes_fix_darchsprite(event)
   }
 end
 
+def anafixes_replacewitheyesprite(event)
+  insns = event.list
+  InjectionHelper.patch(insns, :anafixes_inject_special_sprite) {
+    matched = InjectionHelper.lookForAll(insns,
+      [:SetMoveRoute, nil, nil])
+
+    submatcher = InjectionHelper.parseMatcher([:SetCharacter, 'BGirlwalk', nil, nil, nil])
+
+    for insn in matched
+      insn.parameters[1].list.each { |movecommand|
+        movecommand.parameters[0] = 'BGirlwalk_1' if submatcher.matches?(movecommand)
+      }
+    end
+
+    next matched.length > 0
+  }
+end
+
 def anafixes_inject_special_sprite(event, special)
   insns = event.list
   InjectionHelper.patch(insns, :anafixes_inject_special_sprite) {
@@ -220,6 +238,7 @@ class Cache_Game
       aevdupe = ret.events[2] # Aevis/Dupe
       anapage = aevdupe.pages[1] # if Ana on
       alainpage = aevdupe.pages[7] # if Alain on
+      anafixes_replacewitheyesprite(anapage)
       # Swap them so Ana always runs last, displaying properly
       aevdupe.pages[1] = alainpage
       aevdupe.pages[7] = anapage
