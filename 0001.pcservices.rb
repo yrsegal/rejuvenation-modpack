@@ -210,7 +210,7 @@ module ServicePCList
     itemName = getItemName(item) + 's'
     itemQuantity = $PokemonBag.pbQuantity(item)
     quantityString = pbCommaNumber(itemQuantity)
-    return createCornerWindow(_INTL("{3}{1}</c3>\n<ar>{2}</ar>",itemName, quantityString, getSkinColor(nil, 1, true)), viewport, z, windowAbove: windowAbove)
+    return createCornerWindow(_INTL("{3}{1}:</c3>\n<ar>{2}</ar>",itemName, quantityString, getSkinColor(nil, 1, true)), viewport, z, windowAbove: windowAbove)
   end
 
   def self.createCornerWindow(text, viewport=nil, z=99999, windowAbove: nil)
