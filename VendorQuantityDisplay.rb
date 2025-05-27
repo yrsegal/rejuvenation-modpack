@@ -150,29 +150,32 @@ module VendorQuantityDisplay
   }
 end
 
+$vendorquantity_window.dispose if defined?($vendorquantity_window) && $vendorquantity_window
+$vendorquantity_window = nil
+
 class Interpreter
   if !defined?(vendorquantity_old_command_end)
     alias :vendorquantity_old_command_end :command_end
   end
 
   def vendorquantity_show_item_window(item)
-    @vendorquantity_window.dispose if @vendorquantity_window
-    @vendorquantity_window = VendorQuantityDisplay.quantityWindow(item)
+    $vendorquantity_window.dispose if $vendorquantity_window
+    $vendorquantity_window = VendorQuantityDisplay.quantityWindow(item)
   end
 
   def vendorquantity_show_shard_window
-    @vendorquantity_window.dispose if @vendorquantity_window
-    @vendorquantity_window = VendorQuantityDisplay.shardQuantityWindow
+    $vendorquantity_window.dispose if $vendorquantity_window
+    $vendorquantity_window = VendorQuantityDisplay.shardQuantityWindow
   end
 
   def vendorquantity_show_redessence_window
-    @vendorquantity_window.dispose if @vendorquantity_window
-    @vendorquantity_window = VendorQuantityDisplay.quantityWindowVariable(_INTL("Red Essence"), :RedEssence)
+    $vendorquantity_window.dispose if $vendorquantity_window
+    $vendorquantity_window = VendorQuantityDisplay.quantityWindowVariable(_INTL("Red Essence"), :RedEssence)
   end
 
   def command_end
-    @vendorquantity_window.dispose if @vendorquantity_window
-    @vendorquantity_window = nil
+    $vendorquantity_window.dispose if $vendorquantity_window
+    $vendorquantity_window = nil
     vendorquantity_old_command_end
   end
 end
