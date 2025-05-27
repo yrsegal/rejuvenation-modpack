@@ -5,17 +5,22 @@ Events.onMapChanging+=proc {
     mostRecentReset = nil
     switchState = false
     RT4GLOBAL_ROUTE4EVENTS.each {|event| 
-      if mostRecentReset.nil? || $PokemonGlobal.eventvars[event] > mostRecentReset
-        mostRecentReset = $PokemonGlobal.eventvars[event]
+      eventTime = $PokemonGlobal.eventvars[event]
+      
+      if !eventTime.nil? && (mostRecentReset.nil? || eventTime > mostRecentReset)
+        mostRecentReset = eventTime
         switchState = $game_self_switches[event + ['A']]
       end
     }
 
-    mostRecentReset = [Time.now.to_i, mostRecentReset].min
+    if !mostRecentReset.nil?
 
-    RT4GLOBAL_ROUTE4EVENTS.each {|event| 
-      $PokemonGlobal.eventvars[event] = mostRecentReset
-      $game_self_switches[event + ['A']] = switchState
-    }
+      mostRecentReset = [Time.now.to_i, mostRecentReset].min
+
+      RT4GLOBAL_ROUTE4EVENTS.each {|event| 
+        $PokemonGlobal.eventvars[event] = mostRecentReset
+        $game_self_switches[event + ['A']] = switchState
+      }
+    end
   end
 }
