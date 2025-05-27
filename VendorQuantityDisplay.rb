@@ -53,18 +53,21 @@ module VendorQuantityDisplay
         insns.insert(targetIdx, InjectionHelper.parseEventCommand(insn.indent, :Script, script))
       end
 
+      anyChoice = false
+
       for insn in choiceMatches
         choiceIdx = insns.index(insn)
         insertIdx = choiceIdx - 1
         while insertIdx > 0 && insns[insertIdx].code == InjectionHelper::EVENT_INSNS[:ShowTextContinued]
           insertIdx -= 1
         end
-        if insertIdx > 0 && insns[insertIdx].code == InjectionHelper::EVENT_INSNS[:ShowText]
+        if insertIdx >= 0 && insns[insertIdx].code == InjectionHelper::EVENT_INSNS[:ShowText]
           insns.insert(insertIdx, InjectionHelper.parseEventCommand(insn.indent, :Script, script))
+          anyChoice = true
         end
       end
 
-      next textMatches.length > 0 || choiceMatches.length > 0
+      next textMatches.length > 0 || anyChoice
     }
   end
 
@@ -169,6 +172,7 @@ class Interpreter
 
   def command_end
     @vendorquantity_window.dispose if @vendorquantity_window
+    @vendorquantity_window = nil
     vendorquantity_old_command_end
   end
 end
