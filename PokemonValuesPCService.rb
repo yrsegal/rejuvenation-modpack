@@ -63,13 +63,13 @@ class PokemonValuesPCService
     end
   end
 
-  def makeOptions(anyChange)
+  def makeOptions(changed)
     options = []
     options.push(disabledIfNot("IVs", $game_screen.pokemonvaluespc_unlocked_iv))
     options.push(disabledIfNot("EVs", $game_screen.pokemonvaluespc_unlocked_ev))
     options.push(disabledIfNot("Natures", $game_screen.pokemonvaluespc_unlocked_nature))
     options.push(disabledIfNot("Abilities", $game_screen.pokemonvaluespc_unlocked_ability))
-    options.push("Done") if anyChange
+    options.push(_INTL("Done")) if changed
     return options
   end
 
@@ -116,40 +116,58 @@ class PokemonValuesPCService
     return _INTL("{5}IVs:</c3>\n<ar>{1}</ar>\n{5}EVs:</c3>\n<ar>{2}</ar>\n{5}Nature:</c3>\n<ar>{3}</ar>\n{5}Ability:</c3>\n<ar>{4}</ar>", ivs, evs, nature, ability, color(6))
   end
 
+  def anyChange(pkmn, backups)
+    return true if pkmn.iv != backups[0]
+    return true if pkmn.ev != backups[1]
+    return true if pkmn.nature != backups[2]
+    return true if pkmn.ability != backups[3]
+    return false
+  end
+
   def tweaking(pkmn)
     command = 0
-    anyChange = false
+    backups = [pkmn.iv.clone, pkmn.ev.clone, pkmn.nature, pkmn.ability]
     while command >= 0
-      commands=makeOptions(anyChange)
+      commands=makeOptions(anyChange(pkmn, backups))
       summarywindow = ServicePCList.createCornerWindow(createSummaryText(pkmn))
       command=Kernel.advanced_pbMessage(_INTL("Tweak which?"), commands, -1, nil, command)
       summarywindow.dispose
       case command
         when 0
-          anyChange = ivs(pkmn) || anyChange if $game_screen.pokemonvaluespc_unlocked_iv
+          ivs(pkmn) if $game_screen.pokemonvaluespc_unlocked_iv
           ServicePCList.buzzer if !$game_screen.pokemonvaluespc_unlocked_iv
         when 1
-          anyChange = evs(pkmn) || anyChange if $game_screen.pokemonvaluespc_unlocked_ev
+          evs(pkmn) if $game_screen.pokemonvaluespc_unlocked_ev
           ServicePCList.buzzer if !$game_screen.pokemonvaluespc_unlocked_ev
         when 2
-          anyChange = natures(pkmn) || anyChange if $game_screen.pokemonvaluespc_unlocked_nature
+          natures(pkmn) if $game_screen.pokemonvaluespc_unlocked_nature
           ServicePCList.buzzer if !$game_screen.pokemonvaluespc_unlocked_nature
         when 3
-          anyChange = abilities(pkmn) || anyChange if $game_screen.pokemonvaluespc_unlocked_ability
+          abilities(pkmn) if $game_screen.pokemonvaluespc_unlocked_ability
           ServicePCList.buzzer if !$game_screen.pokemonvaluespc_unlocked_ability
       end
 
-      if (command < 0 || command == 4) && anyChange
-        command = [0,command].max if !Kernel.pbConfirmMessage(lab("Are you satisfied with your changes?"))
+      if command == 4 && anyChange(pkmn, backups)
+        break if !Kernel.pbConfirmMessage(lab("Are you satisfied with your changes?"))
+      elsif command < 0 && anyChange(pkmn, backups)
+        if Kernel.pbConfirmMessageSerious(lab("Are you sure you want to cancel your changes?"))
+          Kernel.pbMessage(lab("Then your Pokemon will be returned as-is. Have a nice day!"))
+          pkmn.iv = backups[0]
+          pkmn.ev = backups[1]
+          pkmn.nature = backups[2]
+          pkmn.ability = backups[3]
+        else
+          command = 0
+        end
+      elsif command < 0
+        Kernel.pbMessage(lab("Changed your mind then? Have a nice day!"))
       end
-
     end
-    return anyChange
+    return anyChange(pkmn, backups)
   end
 
   def ivs(pkmn)
     command = 0
-    anyChange = false
 
     while command >= 0
       commands=makeStatOptions(false, pkmn.iv, 31)
@@ -162,25 +180,20 @@ class PokemonValuesPCService
           pkmn.iv[i] = 31
         end
         command = 0
-        anyChange = true
       elsif command >= 0
         params=ChooseNumberParams.new
         params.setRange(0,99)
         params.setDefaultValue(pkmn.iv[command])
         params.setCancelValue(pkmn.iv[command])
-        newValue = [31, Kernel.pbMessageChooseNumber(
+        pkmn.iv[command] = [31, Kernel.pbMessageChooseNumber(
            _INTL("Set the IV for {1} (max. 31).",STAT_NAMES[command]),params)].min
-        anyChange = true if newValue != pkmn.iv[command]
-        pkmn.iv[command] = newValue
       end
     end
-    return anyChange
   end
 
 
   def evs(pkmn)
     command = 0
-    anyChange = false
     evMax = $game_switches[:No_Total_EV_Cap] ? 255 : 252
     evTotalMax = $game_switches[:No_Total_EV_Cap] ? 255 * 6 : 510
 
@@ -208,14 +221,10 @@ class PokemonValuesPCService
         params.setRange(0,999)
         params.setDefaultValue(pkmn.ev[command])
         params.setCancelValue(pkmn.ev[command])
-        newValue = [currentMax, Kernel.pbMessageChooseNumber(
+        pkmn.ev[command] = [currentMax, Kernel.pbMessageChooseNumber(
            _INTL("Set the EV for {1} (max. {2}).",STAT_NAMES[command],currentMax),params)].min
-        anyChange = true if newValue != pkmn.iv[command]
-        pkmn.ev[command]=newValue
       end
     end
-
-    return anyChange
   end
 
   if !defined?($builtCommands) || !defined?($builtNatures)
@@ -241,7 +250,6 @@ class PokemonValuesPCService
 
   def natures(pkmn)
     command = 0
-    anyChange = false
     
     buildNatures
 
@@ -253,20 +261,16 @@ class PokemonValuesPCService
       msg=_INTL("{1} is {2}'s current nature.",getNatureName(pkmn.nature),pkmn.name)
       command=Kernel.advanced_pbMessage(msg,$builtCommands, -1, nil, command)
       if command >= 0 && command < $builtNatures.size
-        anyChange = true if pkmn.nature != $builtNatures[command]
         pkmn.setNature(nil)
         pkmn.nature = $builtNatures[command]
       end
     end
-
-    return anyChange
   end
 
   def abilities(pkmn)
     abils=pkmn.getAbilityList || [] # Dedupe
     command = abils.index(pkmn.ability)
     command = 0 if command.nil?
-    anyChange = false
 
     commands=[]
     for i in 0..abils.length-1
@@ -277,13 +281,9 @@ class PokemonValuesPCService
       msg=_INTL("{1} is {2}'s current ability.",getAbilityName(abils[command]),pkmn.name)
       command=Kernel.pbMessage(msg,commands,-1, nil, command)
       if command >= 0 && command < commands.length
-        newAbility = abils[command]
-        anyChange = true if newAbility != pkmn.ability
-        pkmn.setAbility(newAbility)
+        pkmn.setAbility(abils[command])
       end
     end
-
-    return anyChange
   end
 
   def wait(length)
@@ -428,7 +428,7 @@ class PokemonValuesPCService
 
     if !$game_screen.pokemonvaluespc_given_heartscale_gift
       heartscalewindow = ServicePCList.quantityWindow(:HEARTSCALE)
-      Kernel.pbMessage(lab("We have a promotion for first-time users."))
+      Kernel.pbMessage(lab("We have a promotion of 15 Heart Scales for first-time users."))
       if Kernel.pbReceiveItem(:HEARTSCALE, 15)
         Kernel.pbMessage(lab("Enjoy!"))
         $game_screen.pokemonvaluespc_given_heartscale_gift = true
@@ -465,8 +465,6 @@ class PokemonValuesPCService
         heartscalewindow = ServicePCList.quantityWindow(:HEARTSCALE)
         $PokemonBag.pbDeleteItem(:HEARTSCALE)
         Kernel.pbMessage(lab("And...\\| \\se[balldrop]Done! Thank you for your business! Have a nice day!"))
-      else
-        Kernel.pbMessage(lab("Changed your mind then? Have a nice day!"))
       end
     else
       Kernel.pbMessage(lab("Changed your mind then? Have a nice day!"))
