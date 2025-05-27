@@ -63,12 +63,13 @@ class PokemonValuesPCService
     end
   end
 
-  def makeOptions
+  def makeOptions(anyChange)
     options = []
     options.push(disabledIfNot("IVs", $game_screen.pokemonvaluespc_unlocked_iv))
     options.push(disabledIfNot("EVs", $game_screen.pokemonvaluespc_unlocked_ev))
     options.push(disabledIfNot("Natures", $game_screen.pokemonvaluespc_unlocked_nature))
     options.push(disabledIfNot("Abilities", $game_screen.pokemonvaluespc_unlocked_ability))
+    options.push("Done") if anyChange
     return options
   end
 
@@ -119,7 +120,7 @@ class PokemonValuesPCService
     command = 0
     anyChange = false
     while command >= 0
-      commands=makeOptions
+      commands=makeOptions(anyChange)
       summarywindow = ServicePCList.createCornerWindow(createSummaryText(pkmn))
       command=Kernel.advanced_pbMessage(_INTL("Tweak which?"), commands, -1, nil, command)
       summarywindow.dispose
@@ -138,8 +139,8 @@ class PokemonValuesPCService
           ServicePCList.buzzer if !$game_screen.pokemonvaluespc_unlocked_ability
       end
 
-      if command < 0 && anyChange
-        command = 0 if !Kernel.pbConfirmMessage(lab("Are you satisfied with your changes?"))
+      if (command < 0 || command == 4) && anyChange
+        command = [0,command].max if !Kernel.pbConfirmMessage(lab("Are you satisfied with your changes?"))
       end
 
     end
@@ -228,7 +229,7 @@ class PokemonValuesPCService
       $builtNatures = []
       $cache.natures.each_with_index { |(natureKey, nature), idx|
         if !nature.incStat && !nature.decStat
-          $builtCommands.push(_INTL("{1}  {3}±{2}", nature.name, STAT_NAMES_SHORT[FLAVORS_TO_STATS.index(nature.like)], grayColor))
+          $builtCommands.push(_INTL("{1}  {3}±{2}</c3>", nature.name, STAT_NAMES_SHORT[FLAVORS_TO_STATS.index(nature.like)], grayColor))
         else
           $builtCommands.push(_INTL("{1}  {4}+{2}</c3> {5}-{3}</c3>", nature.name, STAT_NAMES_SHORT[nature.incStat], STAT_NAMES_SHORT[nature.decStat],
             positiveColor, negativeColor))
