@@ -95,7 +95,7 @@ module ShowSomniamMallStamps
           insns.insert(targetIdx, InjectionHelper.parseEventCommand(insn.indent, :Script, "showmallstamps_disposefully"))
         end
 
-        next textMatches.length > 0
+        next textMatches.length > 0 || martMatches.length > 0
       }
     end
   end

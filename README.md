@@ -41,6 +41,8 @@ Fix/hotfix mods:
   Reclassifies some items that are improperly classified.
 - FixBasculegionForms.rb  
   Fixes Basculegion's forms on evolution. (Currently, female basculegion does not recieve the proper icon or stats.)
+- FixBlueMIC.rb (depends on 0000.injection.rb)  
+  Fixes Blue Moon Ice Cream not being rarely available from certain shops as intended. (It was still possible to access, but not in the intended way.)
 - FixCdAName.rb  
   Fixes an area name being displayed incorrectly.
 - FixMissingItemTextures.rb (depends on 0000.textures.rb)  
