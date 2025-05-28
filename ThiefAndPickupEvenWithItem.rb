@@ -106,8 +106,8 @@ class AbilityData < DataObject
   attr_accessor :fullDesc
 end
 
-$cache.abil[:BALLFETCH].desc = $cache.abil[:BALLFETCH].desc.gsub(/ if no held item/, 'thrown per battle')
-$cache.abil[:BALLFETCH].fullDesc = $cache.abil[:BALLFETCH].fullDesc.gsub(/ if no held item/, 'thrown per battle')
+$cache.abil[:BALLFETCH].desc = $cache.abil[:BALLFETCH].desc.gsub(/if no held item/, 'thrown per battle')
+$cache.abil[:BALLFETCH].fullDesc = $cache.abil[:BALLFETCH].fullDesc.gsub(/if no held item/, 'thrown per battle')
 
 module PokeBattle_BattleCommon
   def pbBallFetch(pokeball)
