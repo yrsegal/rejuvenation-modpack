@@ -9,7 +9,20 @@ module VendorQuantityDisplay
   def self.quantityWindowVariable(descriptor, variable, viewport=nil, z=99999)
     itemQuantity = $game_variables[variable]
     quantityString = pbCommaNumber(itemQuantity)
-    return createCornerWindow(_INTL("{1}:\n<ar>{2}</ar>", descriptor, quantityString), viewport, z)
+    return createCornerWindow(_INTL("{1}\n<ar>{2}</ar>", descriptor, quantityString), viewport, z)
+  end
+
+  def self.quantityWindowTwoVariable(descriptor1, variable1, descriptor2, variable2, viewport=nil, z=99999)
+    itemQuantity1 = $game_variables[variable1]
+    quantityString1 = pbCommaNumber(itemQuantity1)
+    itemQuantity2 = $game_variables[variable2]
+    quantityString2 = pbCommaNumber(itemQuantity2)
+    return createCornerWindow(_INTL("{1}\n<ar>{2}</ar>\n{3}\n<ar>{4}</ar>", descriptor1, quantityString1, descriptor2, quantityString2), viewport, z)
+  end
+
+  def self.quantityWindowVariableWithOptional(descriptor, variable, optDescriptor, optVariable, viewport=nil, z=99999)
+    return quantityWindowVariable(descriptor, variable, viewport, z) if $game_variables[optVariable] <= 0
+    return quantityWindowTwoVariable(descriptor, variable, optDescriptor, optVariable, viewport, z)
   end
 
   def self.shardQuantityWindow(viewport=nil, z=99999)
@@ -69,6 +82,7 @@ module VendorQuantityDisplay
 
       next textMatches.length > 0 || anyChoice
     }
+    injectCleanup(page)
   end
 
   def self.injectForEvent(events, key, script)
@@ -86,6 +100,7 @@ module VendorQuantityDisplay
         insns.unshift(InjectionHelper.parseEventCommand(0, :Script, script))
         next true
       }
+      injectCleanup(page)
     end
   end
 
@@ -111,6 +126,7 @@ module VendorQuantityDisplay
 
         next showRE.length > 0 || showMoney.length > 0 
       }
+      injectCleanup(page)
     end
   end
 
@@ -128,7 +144,23 @@ module VendorQuantityDisplay
 
         next showRE.length > 0
       }
+      injectCleanup(page)
     end
+  end
+
+  def self.injectCleanup(page)
+    insns = page.list
+    InjectionHelper.patch(insns, :VendorQuantityCleanup) {
+      ends = InjectionHelper.lookForAll(insns,
+        [:ShowText, /\\ch\[/]) + [insns[-1]]
+
+      for insn in ends
+        targetIdx = insns.index(insn)
+        insns.insert(targetIdx, InjectionHelper.parseEventCommand(insn.indent, :Script, 'vendorquantity_disposefully')) # To ensure not disposed TOO early
+      end
+
+      next true
+    }
   end
 
   HEARTSCALES = {
@@ -170,13 +202,20 @@ class Interpreter
 
   def vendorquantity_show_redessence_window
     $vendorquantity_window.dispose if $vendorquantity_window
-    $vendorquantity_window = VendorQuantityDisplay.quantityWindowVariable(_INTL("Red Essence"), :RedEssence)
+    $vendorquantity_window = VendorQuantityDisplay.quantityWindowVariable(
+      getSkinColor(nil, 2, true) + _INTL("Red Essence:") + '</c3>', :RedEssence)
   end
 
-  def command_end
+  def vendorquantity_show_zcell_window
+    $vendorquantity_window.dispose if $vendorquantity_window
+    $vendorquantity_window = VendorQuantityDisplay.quantityWindowVariableWithOptional(
+      getSkinColor(nil, 3, true) + _INTL("Zygarde Cells:") + '</c3>', :Z_Cells, 
+      getSkinColor(nil, 3, true) + _INTL("Zygarde Cores:") + '</c3>', :Z_Cores)
+  end
+
+  def vendorquantity_disposefully
     $vendorquantity_window.dispose if $vendorquantity_window
     $vendorquantity_window = nil
-    vendorquantity_old_command_end
   end
 end
 
@@ -214,6 +253,8 @@ class Cache_Game
       VendorQuantityDisplay.injectCairo(ret.events[16])
     elsif mapid == 201 # Helojak Island
       VendorQuantityDisplay.injectBeldumRaidDen(ret.events[5])
+    elsif mapid == 117 # Help Plaza (Gearen)
+      VendorQuantityDisplay.injectAtStart(ret.events[9], 'vendorquantity_show_zcell_window')
     end
     return ret
   end
