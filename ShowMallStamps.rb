@@ -4,7 +4,8 @@ class Window_SomniamMallStamps < Window_AdvancedTextPokemon
   LIME = '<c3=63ED71,1c7a24>'
   BLUE = getSkinColor(nil, 1, true)
   RED = getSkinColor(nil, 2, true)
-  DARK_BLUE = '<c3=3445DB,080e3f>'
+  INVERSE_LIME = '<c3=28C930,bed1bf>'
+  INVERSE_RED = '<c3=C93828,d1c0be>'
 
   attr_accessor :title
   attr_accessor :showTitle
@@ -14,10 +15,16 @@ class Window_SomniamMallStamps < Window_AdvancedTextPokemon
     if moneywindow.nil? || !moneywindow.visible
       self.y = 0
       @showTitle = true
+      setSkin(MessageConfig.pbGetSystemFrame())
     else
       self.y = moneywindow.y + moneywindow.height
       @showTitle = false
+      setSkin("Graphics/Windowskins/goldskin")
     end
+    colors=getDefaultTextColors(self.windowskin)
+    self.baseColor=colors[0]
+    self.shadowColor=colors[1]
+
     updateText
     refresh
   end
@@ -30,14 +37,19 @@ class Window_SomniamMallStamps < Window_AdvancedTextPokemon
 
   def titleText
     stamps = $game_variables[:Stamps]
-    return _INTL("<ac>{4}{1}</c3></ac>\n{5}Stamps:</c3>\n<ar>{6}{2}</c3></ar>\n{5}Required:</c3>\n<ar>{3}</ar>", 
-      _INTL(title), stamps, stampsRequired, DARK_BLUE, BLUE, stamps >= stampsRequired ? LIME : RED)
+    return _INTL("<ac>{4}{1}</c3></ac>\nStamps:\n<ar>{5}{2}</c3></ar>\nRequired:\n<ar>{3}</ar>", 
+      _INTL(title), stamps, stampsRequired, BLUE, stampTextColor(stamps))
   end
 
   def noTitleText
     stamps = $game_variables[:Stamps]
-    return _INTL("{3}Stamps:</c3>\n<ar>{4}{1}</c3></ar>\n{3}Required:</c3>\n<ar>{2}</ar>", 
-      stamps, stampsRequired, BLUE, stamps >= stampsRequired ? LIME : RED)
+    return _INTL("Stamps:\n<ar>{3}{1}</c3></ar>\nRequired:\n<ar>{2}</ar>", 
+      stamps, stampsRequired, stampTextColor(stamps))
+  end
+
+  def stampTextColor(stamps)
+    return stamps >= stampsRequired ? LIME : RED if isDarkWindowskin(self.windowskin)
+    return stamps >= stampsRequired ? INVERSE_LIME : INVERSE_RED
   end
 end
 
