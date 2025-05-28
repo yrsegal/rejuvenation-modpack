@@ -3,6 +3,7 @@
 $OUTFITOPTIONS_SWITCH_ICEPTOUTFIT = 1991
 
 Variables[:Outfit] = 259
+Switches[:BecameOne] = 1134
 Switches[:DarchOutfit] = 1666
 Switches[:LegacyOutfit] = 1052
 Switches[:XGOutfitAvailable] = 1645
@@ -220,7 +221,7 @@ def outfitoptions_handle_clothing_choices
     outfits.push(2)
   end
 
-  if !$game_switches[:outfitoptions_IceptOutfit] && $game_variables[:V13Story] >= 97 # V13 story
+  if !$game_switches[:outfitoptions_IceptOutfit] && $game_variables[:V13Story] >= 97 && $game_switches[:BecameOne]
     $game_switches[:outfitoptions_IceptOutfit] = true
   end
 
@@ -244,8 +245,7 @@ def outfitoptions_handle_clothing_choices
   default = outfits.find_index(currVal) || 0
 
   if needsCaveat
-
-    caveat = _INTL('(Outfits marked with * might act strangely outside intended locations.)')
+    caveat = _INTL('(Outfits marked with * might act strangely outside intended scenarios.)')
     msgwindow=Kernel.pbCreateMessageWindow(nil,nil)
     Kernel.pbMessageDisplay(msgwindow,caveat,false,
        proc { ret = Kernel.pbShowCommands(nil,choices,-1,default) })
