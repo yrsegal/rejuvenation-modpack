@@ -74,6 +74,48 @@ class PokeBattle_Battler
     return ret
   end
 end
+
+class PokeBattle_Battle
+  if !defined?(evenWithItem_old_pbEndOfRoundPhase)
+    alias :evenWithItem_old_pbEndOfRoundPhase :pbEndOfRoundPhase
+  end
+
+  def pbEndOfRoundPhase
+    if self.sides[0].effects[:BallFetch] && self.sides[0].effects[:BallFetch].is_a?(Symbol)
+      pokeball = self.sides[0].effects[:BallFetch]
+      for i in 0...4
+        battler = self.battlers[i]
+        if battler.ability == :BALLFETCH
+          if $PokemonBag.pbCanStore?(pokeball)
+            $PokemonBag.pbStoreItem(pokeball)
+            PBDebug.log("[Ability triggered] #{battler.pbThis}'s Ball Fetch found #{getItemName(pokeball)}")
+            pbDisplay(_INTL("{1} fetched a {2}!",battler.pbThis,getItemName(pokeball)))
+            self.sides[0].effects[:BallFetch] = true
+            break
+          end
+        end
+      end
+    end
+
+    return evenWithItem_old_pbEndOfRoundPhase
+  end
+end
+
+class AbilityData < DataObject
+  attr_accessor :desc
+  attr_accessor :fullDesc
+end
+
+$cache.abil[:BALLFETCH].desc = $cache.abil[:BALLFETCH].desc.gsub(/ if no held item/, 'thrown per battle')
+$cache.abil[:BALLFETCH].fullDesc = $cache.abil[:BALLFETCH].fullDesc.gsub(/ if no held item/, 'thrown per battle')
+
+module PokeBattle_BattleCommon
+  def pbBallFetch(pokeball)
+    ### MODDED
+    self.sides[0].effects[:BallFetch] = pokeball if !self.sides[0].effects[:BallFetch]
+    ### /MODDED
+  end
+end
   
 
 class Event
