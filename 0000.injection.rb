@@ -330,8 +330,6 @@ module InjectionHelper
     return matcher.matches?(insn)
   end
 
-  # TODO: instruction matching, partial matching NECESSARY. I want every magic number out of my shit
-
   def self.lookForSequence(insns, *insnMatchers)
     return [] if !insnMatchers
 

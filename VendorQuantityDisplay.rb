@@ -186,10 +186,6 @@ $vendorquantity_window.dispose if defined?($vendorquantity_window) && $vendorqua
 $vendorquantity_window = nil
 
 class Interpreter
-  if !defined?(vendorquantity_old_command_end)
-    alias :vendorquantity_old_command_end :command_end
-  end
-
   def vendorquantity_show_item_window(item)
     $vendorquantity_window.dispose if $vendorquantity_window
     $vendorquantity_window = VendorQuantityDisplay.quantityWindow(item)

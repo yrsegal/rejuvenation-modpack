@@ -77,6 +77,8 @@ QoL mods:
   Makes all instances of choosing a pokemon from your party use your boxes and party instead.
 - ShiftToScent.rb  
   Holding shift overrides your spice scent with 0200.
+- ShowMallStamps.rb (depends on 0000.injection.rb)  
+  Somniam Mall shops show their Stamp requirements.
 - ThiefAndPickupEvenWithItem.rb  
   Thief/Covet, Pickup, Pickpocket, and Magician work even if the user is holding an item in wild battles, and items stolen by these effects are deposited directly into the bag at the end of those battles.
 - VendorQuantityDisplay.rb (depends on 0000.injection.rb)  
