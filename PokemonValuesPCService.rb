@@ -148,7 +148,7 @@ class PokemonValuesPCService
       end
 
       if command == 4 && anyChange(pkmn, backups)
-        break if !Kernel.pbConfirmMessage(lab("Are you satisfied with your changes?"))
+        break if Kernel.pbConfirmMessage(lab("Are you satisfied with your changes?"))
       elsif command < 0 && anyChange(pkmn, backups)
         if Kernel.pbConfirmMessageSerious(lab("Are you sure you want to cancel your changes?"))
           Kernel.pbMessage(lab("Then your Pokemon will be returned as-is. Have a nice day!"))
