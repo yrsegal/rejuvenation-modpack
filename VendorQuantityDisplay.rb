@@ -152,11 +152,11 @@ module VendorQuantityDisplay
     insns = page.list
     InjectionHelper.patch(insns, :VendorQuantityCleanup) {
       ends = InjectionHelper.lookForAll(insns,
-        [:ShowText, /\\ch\[/]) + [insns[-1]]
+        [:EndEventProcessing) + [insns[-1]]
 
       for insn in ends
         targetIdx = insns.index(insn)
-        insns.insert(targetIdx, InjectionHelper.parseEventCommand(insn.indent, :Script, 'vendorquantity_disposefully')) # To ensure not disposed TOO early
+        insns.insert(targetIdx, InjectionHelper.parseEventCommand(insn.indent, :Script, 'vendorquantity_disposefully'))
       end
 
       next true
