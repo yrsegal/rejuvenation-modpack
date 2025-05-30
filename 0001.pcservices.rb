@@ -66,6 +66,7 @@ class SubCategoryPCService
 end
 
 module ServicePCList
+
   @@pclisttop=[]
   @@pclistsub={}
   @@pclistcategories=[]
@@ -207,10 +208,7 @@ module ServicePCList
   ### Utility functions for creating various kinds of windows
 
   def self.quantityWindow(item, viewport=nil, z=99999, windowAbove: nil)
-    itemName = getItemName(item) + 's'
-    itemQuantity = $PokemonBag.pbQuantity(item)
-    quantityString = pbCommaNumber(itemQuantity)
-    return createCornerWindow(_INTL("{3}{1}:</c3>\n<ar>{2}</ar>",itemName, quantityString, getSkinColor(nil, 1, true)), viewport, z, windowAbove: windowAbove)
+    return createCornerWindow(quantityText(item), viewport, z, windowAbove: windowAbove)
   end
 
   def self.createCornerWindow(text, viewport=nil, z=99999, windowAbove: nil)
@@ -223,6 +221,17 @@ module ServicePCList
     window.visible=true
     window.z = z
     return window
+  end
+
+  def self.quantityText(item)
+    itemName = getItemName(item) + 's'
+    itemQuantity = $PokemonBag.pbQuantity(item)
+    quantityString = pbCommaNumber(itemQuantity)
+    return _INTL("{3}{1}:</c3>\n<ar>{2}</ar>",itemName, quantityString, getSkinColor(nil, 1, true))
+  end
+
+  def self.updateWindowQuantity(window, item)
+    updateWindow(window, quantityText(item))
   end
 
   def self.updateWindow(window, text)

@@ -139,6 +139,7 @@ class RelearnerPCService
 
   def takeScale
     $PokemonBag.pbDeleteItem(:HEARTSCALE)
+    ServicePCList.updateQuantity(@heartscalewindow, :HEARTSCALE) if @heartscalewindow && !@heartscalewindow.disposed
     Kernel.pbMessage(_INTL("\\PN sent over one Heart Scale in exchange."))
     $game_screen.relearnerpc_scales += 1
     if $game_screen.relearnerpc_scales >= 10
@@ -161,8 +162,8 @@ class RelearnerPCService
     end
 
     if $game_screen.relearnerpc_scales >= 10  
-      heartscalewindow = ServicePCList.quantityWindow(:HEARTSCALE)
-      heartscalewindow.visible = true
+      @heartscalewindow = ServicePCList.quantityWindow(:HEARTSCALE)
+      @heartscalewindow.visible = true
     end
 
     Kernel.pbMessage(sister("SAMANTHA: Hello, you've reached the Sheridan Move Reminder..."))
@@ -173,6 +174,7 @@ class RelearnerPCService
         Kernel.pbMessage(sister("She's always forgetting that she has a duty here in Sheridan!"))
         Kernel.pbMessage(sister("Um, don't tell her I sent you this, but-"))
         if Kernel.pbReceiveItem(:HEARTSCALE)
+          ServicePCList.updateQuantity(@heartscalewindow, :HEARTSCALE) if @heartscalewindow && !@heartscalewindow.disposed
           Kernel.pbMessage(sister("You earned that."))
           Kernel.pbMessage(sister("Put it to good use, okay?"))
           $game_self_switches[[425, 15, 'A']] = true

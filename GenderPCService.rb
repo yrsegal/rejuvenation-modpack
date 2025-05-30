@@ -236,6 +236,7 @@ class GenderPCService
 
                 if Kernel.pbConfirmMessage(odessa("ODESSA: Then you want to change \\v[3] from {1}\\c[0] into {2}\\c[0]?", pkmnGender, targetGender))
                   $PokemonBag.pbDeleteItem(:HEARTSCALE)
+                  ServicePCList.updateQuantity(heartscalewindow, :HEARTSCALE)
                   Kernel.pbMessage(odessa("ODESSA: Then so it shall be! Manaphy..."))
                   $game_screen.start_tone_change(Tone.new(0,0,0,255),80)
                   manaphySound
@@ -291,6 +292,7 @@ class GenderPCService
               Kernel.pbMessage(odessa("If so, I apologize. I meant no offense. You are already a quite lovely {1}.", playerReferent))
             elsif choice <= 2
               $PokemonBag.pbDeleteItem(:HEARTSCALE, 2)
+              ServicePCList.updateQuantity(heartscalewindow, :HEARTSCALE)
               Kernel.pbMessage(odessa("ODESSA: V-very well then! Manaphy..."))
               $game_screen.start_tone_change(Tone.new(0,0,0,255),80)
               manaphySound
@@ -335,6 +337,7 @@ class GenderPCService
           end
           pbSEPlay('PRSFX- Teleport')
           $PokemonBag.pbDeleteItem(:GOURMETTREAT)
+          ServicePCList.updateQuantity(gourmetwindow, :GOURMETTREAT)
           pbWait(20)
           pbHealAll()
           pbSEPlay('PRSFX- Healing Pulse')

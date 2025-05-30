@@ -430,6 +430,7 @@ class PokemonValuesPCService
       heartscalewindow = ServicePCList.quantityWindow(:HEARTSCALE)
       Kernel.pbMessage(lab("We have a promotion of 15 Heart Scales for first-time users."))
       if Kernel.pbReceiveItem(:HEARTSCALE, 15)
+        ServicePCList.updateQuantity(heartscalewindow, :HEARTSCALE)
         Kernel.pbMessage(lab("Enjoy!"))
         $game_screen.pokemonvaluespc_given_heartscale_gift = true
       else
@@ -462,8 +463,8 @@ class PokemonValuesPCService
     if Kernel.pbConfirmMessage("And you'd like to spend a Heart Scale to tweak \\v[3]?")
       heartscalewindow.dispose
       if tweaking(pkmn)
-        heartscalewindow = ServicePCList.quantityWindow(:HEARTSCALE)
         $PokemonBag.pbDeleteItem(:HEARTSCALE)
+        heartscalewindow = ServicePCList.quantityWindow(:HEARTSCALE)
         Kernel.pbMessage(lab("And...\\| \\se[balldrop]Done! Thank you for your business! Have a nice day!"))
       end
     else
