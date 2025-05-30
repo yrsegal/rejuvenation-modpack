@@ -91,6 +91,8 @@ QoL mods:
   Zygarde Cells become indifferent to time of day.
 
 Other mods:
+- BoostPickupOdds.rb  
+  Makes Pickup guaranteed to trigger after battle.
 - DarchlightTrainerSprites.rb (depends on 0000.textures.rb)  
   Adds some relevant sprites to the Darchlight Caves segment.
 - DarkCutsceneAna.rb  

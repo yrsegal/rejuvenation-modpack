@@ -106,7 +106,7 @@ class HiddenPowerPCService
             if hpChange(pkmn)
               Kernel.pbMessage(nerta("NERTA: Okay, send over that Heart Scale, and..."))
               $PokemonBag.pbDeleteItem(:HEARTSCALE)
-              ServicePCList.updateQuantity(heartscalewindow, :HEARTSCALE)
+              ServicePCList.updateWindowQuantity(heartscalewindow, :HEARTSCALE)
               Kernel.pbMessage(nerta("Bada bing, bada boom."))
               pbSEPlay("itemlevel")
               Kernel.pbMessage(nerta("Your \\v[3] should be feeling new power surging through them right about now!"))
