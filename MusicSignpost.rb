@@ -337,7 +337,7 @@ class MusicLocationWindow
     @window.setSkin("Graphics/Windowskins/speech hgss 34") if gsc
     @window.resizeToFit(name,Graphics.width)
 
-    @diesToMessageWindow = !$game_temp.message_window_showing
+    @diesToMessageWindow = !$game_temp.message_window_showing && !$game_temp.menu_calling
 
     if !$musicSignpost_storedInfo.nil?
       @window.setXYZ(0, $musicSignpost_storedInfo[0], 999999) # Higher than transitions
@@ -379,7 +379,8 @@ class MusicLocationWindow
   def update
     return if @window.disposed?
     @window.update
-    if (@diesToMessageWindow && $game_temp.message_window_showing) || ($musicSignpost_lastTrackDisplayed && @track.name != $musicSignpost_lastTrackDisplayed.name)
+    if (@diesToMessageWindow && ($game_temp.message_window_showing || $game_temp.menu_calling)) || 
+      ($musicSignpost_lastTrackDisplayed && @track.name != $musicSignpost_lastTrackDisplayed.name)
       @window.dispose
       return
     end
