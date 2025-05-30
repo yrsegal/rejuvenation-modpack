@@ -148,16 +148,21 @@ class PokemonValuesPCService
       end
 
       if command == 4 && anyChange(pkmn, backups)
+        @heartscalewindow = ServicePCList.quantityWindow(:HEARTSCALE)
         break if Kernel.pbConfirmMessage(lab("Are you satisfied with your changes?"))
+        @heartscalewindow.dispose
       elsif command < 0 && anyChange(pkmn, backups)
+        @heartscalewindow = ServicePCList.quantityWindow(:HEARTSCALE)
         if Kernel.pbConfirmMessageSerious(lab("Are you sure you want to cancel your changes?"))
           Kernel.pbMessage(lab("Then your Pokemon will be returned as-is. Have a nice day!"))
+          @heartscalewindow.dispose
           pkmn.iv = backups[0]
           pkmn.ev = backups[1]
           pkmn.nature = backups[2]
           pkmn.ability = backups[3]
         else
           command = 0
+          @heartscalewindow.dispose
         end
       elsif command < 0
         Kernel.pbMessage(lab("Changed your mind then? Have a nice day!"))
@@ -427,16 +432,16 @@ class PokemonValuesPCService
     end
 
     if !$game_screen.pokemonvaluespc_given_heartscale_gift
-      heartscalewindow = ServicePCList.quantityWindow(:HEARTSCALE)
+      @heartscalewindow = ServicePCList.quantityWindow(:HEARTSCALE)
       Kernel.pbMessage(lab("We have a promotion of 15 Heart Scales for first-time users."))
       if Kernel.pbReceiveItem(:HEARTSCALE, 15)
-        ServicePCList.updateQuantity(heartscalewindow, :HEARTSCALE)
+        ServicePCList.updateQuantity(@heartscalewindow, :HEARTSCALE)
         Kernel.pbMessage(lab("Enjoy!"))
         $game_screen.pokemonvaluespc_given_heartscale_gift = true
       else
         Kernel.pbMessage(lab("Ah, well. We'll hold it until you've got room."))
       end
-      heartscalewindow.dispose
+      @heartscalewindow.dispose
     end
 
     if !checkUnlocks
@@ -458,13 +463,14 @@ class PokemonValuesPCService
       return
     end
 
-    heartscalewindow = ServicePCList.quantityWindow(:HEARTSCALE)
+    @heartscalewindow = ServicePCList.quantityWindow(:HEARTSCALE)
     pkmn = $Trainer.party[result]
     if Kernel.pbConfirmMessage("And you'd like to spend a Heart Scale to tweak \\v[3]?")
-      heartscalewindow.dispose
+      @heartscalewindow.dispose
       if tweaking(pkmn)
         $PokemonBag.pbDeleteItem(:HEARTSCALE)
-        heartscalewindow = ServicePCList.quantityWindow(:HEARTSCALE)
+        ServicePCList.updateQuantity(@heartscalewindow, :HEARTSCALE) if !@heartscalewindow.disposed
+        @heartscalewindow = ServicePCList.quantityWindow(:HEARTSCALE) if @heartscalewindow.disposed
         Kernel.pbMessage(lab("And...\\| \\se[balldrop]Done! Thank you for your business! Have a nice day!"))
       end
     else
