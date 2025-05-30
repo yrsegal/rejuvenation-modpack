@@ -210,7 +210,6 @@ class Interpreter
   end
 
   def vendorquantity_disposefully
-    print('woops')
     $vendorquantity_window.dispose if $vendorquantity_window
     $vendorquantity_window = nil
   end
