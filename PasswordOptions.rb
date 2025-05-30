@@ -9,6 +9,7 @@ BULK_PASSWORDS["wirepack"] = [
   "freeremotepc", 
   "fullivs",
   "powerpack",
+  "mintyfresh",
   "eeveepls"]
 
 module ModPasswordOptions
