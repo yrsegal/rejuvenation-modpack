@@ -152,7 +152,7 @@ module VendorQuantityDisplay
     insns = page.list
     InjectionHelper.patch(insns, :VendorQuantityCleanup) {
       ends = InjectionHelper.lookForAll(insns,
-        :EndEventProcessing) + [insns[-1]]
+        :ExitEventProcessing) + [insns[-1]]
 
       for insn in ends
         targetIdx = insns.index(insn)
@@ -210,6 +210,7 @@ class Interpreter
   end
 
   def vendorquantity_disposefully
+    print('woops')
     $vendorquantity_window.dispose if $vendorquantity_window
     $vendorquantity_window = nil
   end
