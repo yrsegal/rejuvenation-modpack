@@ -90,7 +90,6 @@ QoL mods:
 - ZygardeCaffeine.rb  
   Zygarde Cells become indifferent to time of day.
 
-
 Other mods:
 - DarchlightTrainerSprites.rb (depends on 0000.textures.rb)  
   Adds some relevant sprites to the Darchlight Caves segment.
@@ -122,5 +121,7 @@ Other mods:
   Oricorio hold their Nectar in the wild, as in gen 9, allowing you to get Pink and Yellow Nectars (otherwise unobtainable).
 - PasswordAPRefund.rb  
   If a password gives you an item you've already spent AP for, the AP gets refunded.
+- PasswordOptions.rb (depends on 0000.injection.rb)  
+  Expands the Password menu in the intro to give you much more info when enabling passwords.
 - SkipTitleSoftResets.rb  
   Skips the intro scene for soft resets, making it easier to get back into the game.

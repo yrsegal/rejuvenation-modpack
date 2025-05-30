@@ -120,8 +120,7 @@ module DarkAnaCutscene
         "ANA: ...Okay. I... understand."]
     },
     18 => {
-      0 => ["ANA: She really doesn't seem to remember...",
-      "But can I trust that?",
+      0 => ["ANA: She really doesn't seem to remember... But can I trust that?",
       "If I let my guard down again...",
       "...",
       "I should continue my recon work."]
@@ -451,7 +450,7 @@ module DarkAnaCutscene
         "MELIA: ...",
         "I'll come back for you.",
         "I promise I will.",
-        "ANA: Then \|<i>I</i> \|will be waiting.",
+        "ANA: Then \\|<i>I</i> \\|will be waiting.",
         "It's your turn to carry our hope, got it?",
         "Now go, Melia.",
         "With \\PN, go and make a new path for all of us.",
@@ -551,7 +550,7 @@ module DarkAnaCutscene
         "HOODED GIRL: And what is that supposed to do for us?",
         "This is pointless too.",
         "ANA: It's not pointless.",
-        "If things about the city starts returning, that means that--",
+        "If things about the city start returning, that means that--",
         "HOODED GIRL: It doesn't MEAN ANYTHING! Why are you being so stubborn?!",
         "ANA: Why are you so hell-bent on foregoing hope?",
         "HOODED GIRL: ...",
@@ -595,7 +594,7 @@ module DarkAnaCutscene
         "I can't take this anymore! Day in and day out we walk around in circles!",
         "There's no light at the end of the tunnel, there's never any hope!",
         "What is the point of continuing further?!",
-        "ANA: What is the point of not looking for a way back?",
+        "ANA: What is the point of <i>not</i> looking for a way back?",
         "HOODED GIRL: THERE IS NO WAY BACK, \\vU[#{Variables[:MCname]}]!",
         "THIS WORLD THAT WE ARE IN IS IT. THIS IS IT!",
         "Do you even realize how long we've been here?!",
