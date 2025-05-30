@@ -152,7 +152,7 @@ module VendorQuantityDisplay
     insns = page.list
     InjectionHelper.patch(insns, :VendorQuantityCleanup) {
       ends = InjectionHelper.lookForAll(insns,
-        [:EndEventProcessing) + [insns[-1]]
+        :EndEventProcessing) + [insns[-1]]
 
       for insn in ends
         targetIdx = insns.index(insn)
