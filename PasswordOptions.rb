@@ -1,16 +1,14 @@
 # QoL Passwords (not just the "qol" password)
-BULK_PASSWORDS["wirepack"] = [
-  "easyhms", 
-  "nopoisondam", 
-  "freeexpall", 
-  "earlyincu", 
-  "pinata", 
-  "unrealtime",
+BULK_PASSWORDS["wirepack"] = BULK_PASSWORDS["qol"] + [
   "freeremotepc", 
   "fullivs",
   "powerpack",
   "mintyfresh",
   "eeveepls"]
+BULK_PASSWORDS["truewirepack"] = BULK_PASSWORDS["wirepack"] + [
+  "9494",
+  "nointro",
+  "hello eizen."]
 
 module ModPasswordOptions
   @@passwordOptions = []
@@ -52,7 +50,8 @@ module ModPasswordOptions
     "terajuma" => ["Skip to Terajuma", "Skip directly to Terajuma, getting a premade team."],
     "hello eizen." => ["hello eizen.", "it's only polite"],
 
-    "wirepack" => ["Wire's Pack", "The mod dev's pack! QoL, Remote PC, Full IVs, Power Pack, Mint Pack, Eevee Pls."],
+    "wirepack" => ["Wire's Pack", "The mod dev's pack. QoL, Remote PC, Full IVs, Power Pack, Mint Pack, Eevee Pls."],
+    "truewirepack" => ["Wire's (Actual) Pack", "The mod dev's actual pack. Wire's Pack, 9494, nointro, hello eizen."],
     "casspack" => ["Cass's Pack", "A Reborn/Rejuv dev's pack. No Items, Full IVs, Golden Pack, No Rolls."],
     "easymode" => ["Easy Mode", "Full IVs, Rich Mode, Lite Mode, No Enemy Items."],
     "hardmode" => ["Hard Mode", "No Items, Penniless, Pulse-2, Empty IVs."],
@@ -62,6 +61,7 @@ module ModPasswordOptions
   PASSWORDS_BADGE_DATA = {
     'hello eizen.' => -1,
     '9494' => -1,
+    'truewirepack' => -1,
     'nointro' => 1,
     'terajuma' => 5
   }
@@ -112,14 +112,17 @@ module ModPasswordOptions
     @@passwordOptions = output
   end
 
-  def self.shouldPasswordShow(pw)
+  def self.shouldPasswordShow(pw, idsChecked={})
     return true if !PASSWORDS_BADGE_DATA[pw]
-    return false if PASSWORDS_BADGE_DATA[pw] < 0
-    badgeCount = $Unidata[:BadgeCount] ? $Unidata[:BadgeCount] : 0
-    knownPasswords = $Unidata[:knownPasswords] ? $Unidata[:knownPasswords] : []
 
-    return true if knownPasswords.include?(pw)
-    return true if PASSWORDS_BADGE_DATA[pw] <= badgeCount
+    knownPasswords = $Unidata[:knownPasswords] ? $Unidata[:knownPasswords] : []
+    
+    return true if !BULK_PASSWORDS[pw] && knownPasswords.include?(pw)
+    return true if BULK_PASSWORDS[pw] && BULK_PASSWORDS[pw].none? { |subPw| !knownPasswords.include?(subPw) }
+
+    badgeCount = $Unidata[:BadgeCount] ? $Unidata[:BadgeCount] : 0
+
+    return true if PASSWORDS_BADGE_DATA[pw] >= 0 && PASSWORDS_BADGE_DATA[pw] <= badgeCount
     return false
   end
 
@@ -179,11 +182,43 @@ module ModPasswordOptions
     return pws,choices,helps
   end
 
+  def self.addPasswordAndLearn(password)
+    addPassword(password)
+    if password == "truewirepack"
+      $game_variables[472] = 3 # Do the eizen greetings
+    end
+
+    passwords=pbGetKnownOrActivePasswords()
+    password=password.downcase
+    ids=pbGetPasswordIds(password)
+
+    for id,pw in ids
+      alreadyKnown=alreadyKnown && passwords[id] ? true : false
+      # Toggle the password
+      active=$game_switches[id] ? true : false
+      passwords[id]={
+        'password': pw,
+        'active': active
+      }
+    end
+
+    pbUpdateKnownPasswords(passwords) if !alreadyKnown
+  end
+
+  def self.presentChoices(choices, helps)
+    msgwindow = Kernel.pbCreateMessageWindow(nil)
+    msgwindow.opacity = 0 if $game_system && $game_system.respond_to?("message_frame") && $game_system.message_frame != 0
+    subcommand = Kernel.pbShowCommandsWithHelp(msgwindow, choices, helps, -1)
+    Kernel.pbDisposeMessageWindow(msgwindow)
+    return subcommand
+  end
+
 end
 
 $mod_passwordoptions_lastcommand = 0 if !defined?($mod_passwordoptions_lastcommand)
 
 def mod_passwordoptions_scene
+  allPasswords=pbGetKnownOrActivePasswords()
   loop do 
     command = Kernel.pbMessage(_INTL("Which kind of password do you want to enter?"), [_INTL("Bulk"), _INTL("From List"), _INTL("Manual")], -1, nil, $mod_passwordoptions_lastcommand)
 
@@ -195,28 +230,22 @@ def mod_passwordoptions_scene
     $mod_passwordoptions_lastcommand = command if command >= 0
     if command == 0
       pws, choices, helps = ModPasswordOptions.passwordPacks
-      msgwindow = Kernel.pbCreateMessageWindow(nil)
-      msgwindow.opacity = 0 if $game_system && $game_system.respond_to?("message_frame") && $game_system.message_frame != 0
-      subcommand = Kernel.pbShowCommandsWithHelp(msgwindow, choices, helps, -1)
-      Kernel.pbDisposeMessageWindow(msgwindow)
+      subcommand = ModPasswordOptions.presentChoices(choices, helps)
       if subcommand >= 0
-        addPassword(pws[subcommand])
+        ModPasswordOptions.addPasswordAndLearn(pws[subcommand])
         return false
       end
     elsif command == 1
       pws, choices, helps = ModPasswordOptions.passwordList
-      msgwindow = Kernel.pbCreateMessageWindow(nil)
-      msgwindow.opacity = 0 if $game_system && $game_system.respond_to?("message_frame") && $game_system.message_frame != 0
-      subcommand = Kernel.pbShowCommandsWithHelp(msgwindow, choices, helps, -1)
-      Kernel.pbDisposeMessageWindow(msgwindow)
+      subcommand = ModPasswordOptions.presentChoices(choices, helps)
       if subcommand >= 0
-        addPassword(pws[subcommand])
+        ModPasswordOptions.addPasswordAndLearn(pws[subcommand])
         return false
       end
     else
       $trainpass = pbEnterText(_INTL("Enter password."),0,12)
       if $trainpass && $trainpass != ""
-        addPassword($trainpass)
+        ModPasswordOptions.addPasswordAndLearn($trainpass)
         return false
       end
     end
