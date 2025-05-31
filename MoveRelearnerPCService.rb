@@ -161,7 +161,7 @@ class RelearnerPCService
       return
     end
 
-    if $game_screen.relearnerpc_scales >= 10  
+    if $game_screen.relearnerpc_scales && $game_screen.relearnerpc_scales >= 10  
       @heartscalewindow = ServicePCList.quantityWindow(:HEARTSCALE)
       @heartscalewindow.visible = true
     end

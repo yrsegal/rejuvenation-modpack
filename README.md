@@ -92,7 +92,7 @@ QoL mods:
 
 Other mods:
 - BoostPickupOdds.rb  
-  Makes Pickup guaranteed to trigger after battle.
+  Makes Pickup more likely (33%) to trigger after battle.
 - DarchlightTrainerSprites.rb (depends on 0000.textures.rb)  
   Adds some relevant sprites to the Darchlight Caves segment.
 - DarkCutsceneAna.rb  
