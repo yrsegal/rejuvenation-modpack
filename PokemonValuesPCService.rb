@@ -212,10 +212,25 @@ class PokemonValuesPCService
 
     while command >= 0
       commands=makeStatOptions(true, pkmn.ev, evMax)
+      allowedToEditTotal = 0
+      for i in 0...6
+        allowedToEditTotal += pkmn.ev[i] if unlockedEvs[i]
+      end
       currentTotal = pkmn.ev.sum
+      if allowedToEditTotal != 0
+        commands.push(color(1) + _INTL("Reset all"))
+      end
       command=Kernel.advanced_pbMessage(_INTL("Change which EV? (Total: {1}, max. {3}{2}</c3>)", 
         currentTotal, evTotalMax, colorForStat(currentTotal, evTotalMax)), commands, -1, nil, command)
       if command >= 0
+        if command == 6
+          for i in 0...6
+            pkmn.ev[i] = 0 if unlockedEvs[i]
+          end
+          command = 0
+          next
+        end
+
         if !unlockedEvs[command]
           ServicePCList.buzzer
           next

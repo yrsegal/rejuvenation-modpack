@@ -161,7 +161,7 @@ class RelearnerPCService
       return
     end
 
-    if $game_screen.relearnerpc_scales && $game_screen.relearnerpc_scales >= 10  
+    if !$game_screen.relearnerpc_scales || $game_screen.relearnerpc_scales < 10  
       @heartscalewindow = ServicePCList.quantityWindow(:HEARTSCALE)
       @heartscalewindow.visible = true
     end
@@ -240,7 +240,7 @@ class RelearnerPCService
         if pbRelearnMoveScreen(pkmn)
           couldRelearnAll = pkmn.canRelearnAll?
           pkmn.relearner = [true, 3]
-          if couldRelearnAll && $game_screen.relearnerpc_scales < 10
+          if !couldRelearnAll && $game_screen.relearnerpc_scales < 10
             return if takeScale
             Kernel.pbMessage(sister("SAMANTHA: Thanks for doing business with us, \\PN! Call soon!"))
             return
