@@ -35,6 +35,12 @@ for item in $cache.items.values
   end
 end
 
-$cache.items[:OLDROD].flags[:important] = true
-$cache.items[:GOODROD].flags[:important] = true
-$cache.items[:SUPERROD].flags[:important] = true
+$cache.items[:AMPLIFIELDROCK].flags[:battlehold] = true
+
+for rod in [:OLDROD, :GOODROD, :SUPERROD]
+  $cache.items[rod].flags[:important] = true
+end
+
+for petal in [:PINKPETAL,:GREENPETAL,:ORANGEPETAL,:BLUEPETAL]
+  $cache.items[petal].flags[:nectar] = true
+end

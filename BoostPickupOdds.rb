@@ -1,4 +1,6 @@
-def Kernel.pbPickup(pokemon)
+
+# Named this way to override the internal function for achievements
+def __core_pbPickup(pokemon)
   return if !(pokemon.ability == :PICKUP) || pokemon.isEgg?
   return if !pokemon.item.nil?
   ### MODDED/
