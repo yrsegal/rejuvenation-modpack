@@ -51,7 +51,9 @@ class FashionPCService
 
     if Kernel.pbConfirmMessage(xatu("Would you like to change clothes?"))
       if defined?(outfitoptions_handle_clothing_choices)
-        outfitoptions_handle_clothing_choices # Mod compat!
+        ServicePCList.fadeScreen(Tone.new(-255,-255,-255,0), 14)
+        outfitoptions_handle_clothing_choices(true) # Mod compat!
+        ServicePCList.restoreScreen(10)
       else
         handle_clothing_choices
       end
@@ -81,14 +83,14 @@ class FashionPCService
 
     newOutfit = outfits[ret]
     if newOutfit != -1
-      $game_screen.start_tone_change(Tone.new(-255,-255,-255,0), 14 * 2)
+      ServicePCList.fadeScreen(Tone.new(-255,-255,-255,0), 14)
       pbWait(20)
       pbSEPlay('Fire1', 80, 80)
       $game_variables[:Outfit] = newOutfit # Outfit
       $Trainer.outfit = newOutfit
       Kernel.pbMessage(_INTL('\\PN changed clothes!'))
       pbWait(10)
-      $game_screen.start_tone_change(Tone.new(0,0,0,0), 10 * 2)
+      ServicePCList.restoreScreen(10)
     end
   end
 end

@@ -179,11 +179,11 @@ class DayCarePCService
         if pbDayCareGetCompat == 0
           Kernel.pbMessage(lady("Your pokemon don't seem to be paying that much attention to each other, dear."))
         else
-          $game_screen.start_tone_change(Tone.new(-255,-255,-255,0),20)
+          ServicePCList.fadeScreen(Tone.new(-255,-255,-255,0),10)
           pbWait(10)
           pbMEPlay('Pokemon Healing', 100, 55)
           pbWait(50)
-          $game_screen.start_tone_change(Tone.new(0,0,0,0),20)
+          ServicePCList.restoreScreen(10)
           $PokemonGlobal.daycareEgg=1
           Kernel.pbMessage(lady("Well, would you look at that!"))
           Kernel.pbMessage(lady("My husband will probably want to see you."))
@@ -196,11 +196,11 @@ class DayCarePCService
           next
         end
         Kernel.pbMessage(lady("Let me just take those Eggs, and..."))
-        $game_screen.start_tone_change(Tone.new(-255,-255,-255,0),20)
+        ServicePCList.fadeScreen(Tone.new(-255,-255,-255,0),10)
         pbWait(10)
         pbMEPlay('Pokemon Healing', 100, 55)
         pbWait(50)
-        $game_screen.start_tone_change(Tone.new(0,0,0,0),20)
+        ServicePCList.restoreScreen(10)
         for pokemon in $Trainer.party
           pokemon.eggsteps=1 if pokemon.isEgg?
         end

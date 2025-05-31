@@ -39,7 +39,7 @@ class TimeSkipPCService
 
   def theGearsShift # Largely copied from common event ForwardTime
     pbSEPlay('PRSFX- Final Gambit1', 100, 150)
-    $game_screen.start_tone_change(Tone.new(-34,-34,-34,221), 40)
+    ServicePCList.fadeScreen(Tone.new(-34,-34,-34,221), 20)
     $game_screen.pictures[2].show('TimeGear1', 1, 485, 375, 10, 10, 50, 0)
     $game_screen.pictures[3].show('TimeGear2', 1, 30, 30, 10, 10, 50, 0)
     $game_screen.pictures[4].show('TimeGear3', 1, 480, 230, 10, 10, 50, 0)
@@ -84,7 +84,7 @@ class TimeSkipPCService
     $game_screen.pictures[5].erase
     $game_screen.pictures[6].erase
     $game_screen.pictures[7].erase
-    $game_screen.start_tone_change(Tone.new(0,0,0,0), 2)
+    ServicePCList.restoreScreen(1)
   end
 
   def access
@@ -155,7 +155,7 @@ class TimeSkipPCService
       $game_system.message_position = 1 # Middle
       $game_system.message_frame = 1 # Hide
 
-      $game_screen.start_tone_change(Tone.new(-51,-51,-51,0), 40)
+      ServicePCList.fadeScreen(Tone.new(-51,-51,-51,0), 20)
       pbWait(20)
 
       $game_system.bgm_memorize
@@ -194,12 +194,12 @@ class TimeSkipPCService
       pbSEPlay('Exit Door', 100, 50)
       pbWait(30)
 
-      $game_screen.start_tone_change(Tone.new(-51,-51,-51, 0), 40)
+      ServicePCList.fadeScreen(Tone.new(-51,-51,-51,0), 20)
       pbWait(20)
 
       Kernel.pbMessage(_INTL("<ac>\\c[3]THE FLOW OF TIME HAS SHIFTED.</ac>"))
 
-      $game_screen.start_tone_change(Tone.new(0,0,0,0), 40)
+      ServicePCList.restoreScreen(10)
       $game_system.message_position = 2 # Bottom
       $game_system.message_frame = 0 # Show
       celebiSound(80, 100)

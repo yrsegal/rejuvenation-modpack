@@ -210,7 +210,7 @@ def outfitoptions_handle_clothing_select
   end
 end
 
-def outfitoptions_handle_clothing_choices
+def outfitoptions_handle_clothing_choices(doToneChange = true)
   currVal = $game_variables[:Outfit]
 
   choices = ["Default outfit", "Secondary outfit"]
@@ -258,14 +258,14 @@ def outfitoptions_handle_clothing_choices
   if ret 
     newOutfit = outfits[ret]
     if newOutfit != -1
-      $game_screen.start_tone_change(Tone.new(-255,-255,-255,0), 14 * 2)
+      $game_screen.start_tone_change(Tone.new(-255,-255,-255,0), 14 * 2) if doToneChange
       pbWait(20)
       pbSEPlay('Fire1', 80, 80)
       $game_variables[:Outfit] = newOutfit # Outfit
       $Trainer.outfit = newOutfit
       Kernel.pbMessage(_INTL('\\PN changed clothes!'))
       pbWait(10)
-      $game_screen.start_tone_change(Tone.new(0,0,0,0), 10 * 2)
+      $game_screen.start_tone_change(Tone.new(0,0,0,0), 10 * 2) if doToneChange
     end
   end
 end

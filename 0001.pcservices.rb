@@ -8,6 +8,9 @@ $pcservices_in_menu = false
 class Game_Screen
   attr_accessor :pcservices_lastCommand
   attr_accessor :pcservices_lastCommandsCategories
+
+  # Existing field
+  attr_accessor :tone_target
 end
 
 class CallServicePC
@@ -73,6 +76,7 @@ module ServicePCList
   @@pclist=[]
 
   @@cleanupSprites=[]
+  @@toneTemp=nil
 
   def self.registerService(pc)
     @@pclist.push(pc)
@@ -204,6 +208,18 @@ module ServicePCList
     pbWait(17)
     $game_player.step_anime = false
   end
+
+  def self.fadeScreen(tone, frames)
+    @@toneTemp = $game_screen.tone_target if @@toneTemp.nil?
+    $game_screen.start_tone_change(tone, frames * 2)
+  end
+
+  def self.restoreScreen(frames)
+    target = @@toneTemp || Tone.new(0,0,0,0)
+    @@toneTemp = nil
+    $game_screen.start_tone_change(target, frames * 2)
+  end
+
 
   ### Utility functions for creating various kinds of windows
 

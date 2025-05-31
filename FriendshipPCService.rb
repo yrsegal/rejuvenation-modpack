@@ -67,7 +67,7 @@ class FriendshipPCService
         Kernel.pbMessage(teila("Okay, I'll give your \\v[3] the deluxe treatment!"))
         pkmn = $Trainer.party[result]
         pkmn.changeHappiness("groom3")
-        $game_screen.start_tone_change(Tone.new(-255,-255,-255,0),20)
+        ServicePCList.fadeScreen(Tone.new(-255,-255,-255,0), 10)
         pbWait(25)
         pbSEPlay('Refresh')
         pbWait(6)
@@ -77,7 +77,7 @@ class FriendshipPCService
         pbWait(40)
         ServicePCList.happySound
         pbWait(25)
-        $game_screen.start_tone_change(Tone.new(0,0,0,0),20)
+        ServicePCList.restoreScreen(10)
         Kernel.pbMessage(teila("Your \\v[3] looks pleased to bits!"))
         Kernel.pbMessage(teila("Thank you, and call again soon!"))
         pbSetEventTime

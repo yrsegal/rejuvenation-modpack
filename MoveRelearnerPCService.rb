@@ -338,7 +338,7 @@ end
 
 ServicePCList.registerService(RelearnerPCService.new)
 
-# Gen 8 learnsets for Galarian forms/Indeedee-F
+# Gen 8 learnsets for Galarian forms/Indeedee-F/Hisuian Qwilfish
 $cache.pkmn[:SLOWPOKE].formData["Galarian Form"][:EggMoves] = [:BELCH,:BELLYDRUM,:BLOCK,:STOMP]
 $cache.pkmn[:PONYTA].formData["Galarian Form"][:EggMoves] = [:DOUBLEKICK,:DOUBLEEDGE,:HORNDRILL,:HYPNOSIS,:MORNINGSUN,:THRASH,:PLAYROUGH] # Because play rough isn't tutorable yet
 $cache.pkmn[:FARFETCHD].formData["Galarian Form"][:EggMoves] = [:COVET,:CURSE,:FEATHERDANCE,:FEINT,:FINALGAMBIT,:FLAIL,:GUST,:LEAFBLADE,:MUDSLAP,:NIGHTSLASH,:QUICKATTACK,:REVENGE,:SIMPLEBEAM,:SKYATTACK]
@@ -346,6 +346,8 @@ $cache.pkmn[:INDEEDEE].formData["Female"][:EggMoves] = [:FAKEOUT, :HEALPULSE, :P
 if !$cache.pkmn[:FARFETCHD].formData["Galarian Form"][:compatiblemoves].include?(:CUT)
   $cache.pkmn[:FARFETCHD].formData["Galarian Form"][:compatiblemoves].push(:CUT)
 end
+$cache.pkmn[:QWILFISH].formData["Hisuian Form"][:EggMoves] = [:ACIDSPRAY, :AQUAJET, :AQUATAIL, :ASTONISH, :BUBBLEBEAM, :FLAIL, :HAZE, :SELFDESTRUCT, :SUPERSONIC, :WATERPULSE]
+
 # Fix Basculin forms
 $cache.pkmn[:BASCULIN].formData["Blue-Striped"][:EggMoves] = [:AGILITY,:BRINE,:BUBBLEBEAM,:ENDEAVOR,:HEADSMASH,:MUDSHOT,:MUDDYWATER,:RAGE,:REVENGE,:SWIFT,:WHIRLPOOL]
 $cache.pkmn[:BASCULIN].formData["White-Striped"][:EggMoves] = [:AGILITY,:ENDEAVOR,:HEADSMASH,:MUDDYWATER,:RAGE,:REVENGE,:SWIFT,:WHIRLPOOL,:SHADOWBONE] # Shadow Bone as poor replacement for Last Respects
