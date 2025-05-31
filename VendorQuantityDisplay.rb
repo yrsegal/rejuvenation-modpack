@@ -130,6 +130,30 @@ module VendorQuantityDisplay
     end
   end
 
+  def self.injectNerta(event)
+    for page in event.pages
+      insns = page.list
+      InjectionHelper.patch(insns, :VendorQuantityDisplay_AddText) {
+        spiffen = InjectionHelper.lookForAll(insns,
+          [:ShowText, "Let's spiffen them up, shall we?"])
+        choices = InjectionHelper.lookForAll(insns,
+          [:ShowChoices, ["Yes", "No"], 2])
+
+        for insn in spiffen
+          insns.delete(insn)
+        end
+
+        for insn in choices
+          targetIdx = insns.index(insn)
+          insns.insert(targetIdx, InjectionHelper.parseEventCommand(insn.indent, :ShowText, "Let's spiffen them up, shall we?"))
+        end
+
+        next choices.size > 0 || spiffen.size > 0 
+      }
+    end
+  end
+
+
   def self.injectBeldumRaidDen(event)
     for page in event.pages
       insns = page.list
@@ -251,6 +275,8 @@ class Cache_Game
       VendorQuantityDisplay.injectBeldumRaidDen(ret.events[5])
     elsif mapid == 117 # Help Plaza (Gearen)
       VendorQuantityDisplay.injectAtStart(ret.events[9], 'vendorquantity_show_zcell_window')
+    elsif mapid == 329 # Kristiline Town
+      VendorQuantityDisplay.injectNerta(ret.events[90])
     end
     return ret
   end
