@@ -1,6 +1,6 @@
 
 # Named this way to override the internal function for achievements
-def Kernel.__core_pbPickup(pokemon)
+def Kernel.mod_pbPickup(pokemon)
   return if !(pokemon.ability == :PICKUP) || pokemon.isEgg?
   return if !pokemon.item.nil?
   ### MODDED/
@@ -30,3 +30,4 @@ def Kernel.__core_pbPickup(pokemon)
     end
   end
 end
+Kernel.singleton_class.send(:alias_method, :__core_pbPickup, :mod_pbPickup)
