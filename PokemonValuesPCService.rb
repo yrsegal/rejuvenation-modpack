@@ -416,14 +416,17 @@ class PokemonValuesPCService
         Kernel.pbMessage(_INTL("\\ts[5]Hello. We are not available. Please leave your name and number-"))
         Kernel.pbMessage(_INTL("(You hang up. What was that about?)"))
         $game_screen.pokemonvaluespc_called_gearen_in_gdc = true
+        return
       elsif $game_variables[:Post10thBadge] < 3
         Kernel.pbMessage(_INTL("..."))
         Kernel.pbMessage(_INTL("\\ts[5]Hello. We are not available-"))
         Kernel.pbMessage(_INTL("(Still?)"))
+        return
       else $game_variables[:Post10thBadge] >= 3
         Kernel.pbMessage(_INTL("..."))
         Kernel.pbMessage(_INTL("\\ts[5]Hello. We are not-"))
         Kernel.pbMessage(_INTL("(Still no response.)"))
+        return
       end
 
       if $game_variables[:Post10thBadge] >= 3
