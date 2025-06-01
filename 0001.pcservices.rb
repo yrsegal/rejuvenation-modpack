@@ -214,9 +214,9 @@ module ServicePCList
       $game_player.update_pattern
       pbWait(1)
     end
+    $game_player.step_anime = false
     $game_player.update_stop
     $game_player.update_pattern
-    $game_player.step_anime = false
   end
 
   def self.fadeScreen(tone, frames)
