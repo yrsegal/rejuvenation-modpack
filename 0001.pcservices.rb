@@ -13,6 +13,10 @@ class Game_Screen
   attr_accessor :tone_target
 end
 
+class Game_Character
+  attr_accessor :step_anime
+end
+
 class CallServicePC
   def shouldShow?
     return false if ServicePCList.getCommandList()[0].size == 0
@@ -205,7 +209,11 @@ module ServicePCList
 
   def self.playerTalk
     $game_player.step_anime = true
-    pbWait(17)
+    for i in 0...34
+      $game_player.update_stop
+      $game_player.update_pattern
+      pbWait(1)
+    end
     $game_player.step_anime = false
   end
 

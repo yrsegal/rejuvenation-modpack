@@ -12,26 +12,26 @@ Libraries:
   Adds a "service directory" to the PC, which lets you call NPCs for various services. Also makes the Rotom Phone a Remote PC.
 
 "Service" mods (0001.pcservices.rb)
-- DayCarePCService.rb (depends on 0000.formattedchoices.rb, 0001.pcservices.rb, 0000.textures.rb)  
+- DayCarePCService.rb (depends on 0000.formattedchoices.rb, 0001.pcservices.rb)  
   Adds a service for accessing the Day-Care remotely.
-- FashionPCService.rb (depends on 0001.pcservices.rb, 0000.textures.rb)  
+- FashionPCService.rb (depends on 0001.pcservices.rb)  
   Adds a clothing-swapping service.
-- FriendshipPCService.rb (depends on 0001.pcservices.rb, 0000.textures.rb)  
+- FriendshipPCService.rb (depends on 0001.pcservices.rb)  
   Adds a Spa service, which lets you instantly max out or check a pokemon's friendship. Unlocked by entering Teila Resort.
-- GenderPCService.rb (depends on 0000.formattedchoices.rb, 00001.pcservices.rb, 0000.textures.rb)  
+- GenderPCService.rb (depends on 0000.formattedchoices.rb, 00001.pcservices.rb,  
   Adds a Genderswapping service, for setting Pokemon (and player) gender. Unlocked through Tale of Two Hearts.
-- HealPCService.rb (depends on 0001.pcservices.rb, 0000.textures.rb)  
+- HealPCService.rb (depends on 0001.pcservices.rb)  
   Adds a Field Healing service.
-- HiddenPowerPCService.rb (depends on 0001.pcservices.rb, 0000.textures.rb)  
+- HiddenPowerPCService.rb (depends on 0001.pcservices.rb)  
   Adds a Hidden Power Changer/checker service. Unlocked by speaking to the relevant NPC in Kristiline.
-- MoveRelearnerPCService.rb (depends on 0001.pcservices.rb, 0000.textures.rb)  
+- MoveRelearnerPCService.rb (depends on 0001.pcservices.rb)  
   Adds a service which allows relearning, teaching egg moves, and move deletion (always free). Free after 10 Heart Scales.  
   Also fixes missing Egg Move pools and allows evolutions to learn preevo moves.
-- PokeballTransferPCService.rb (depends on 0001.pcservices.rb, 0000.textures.rb)  
+- PokeballTransferPCService.rb (depends on 0001.pcservices.rb)  
   Adds a Pokeball Transfer service, unlocked after The Inconsistency.
-- PokemonValuesPCService.rb (depends on 0000.formattedchoices.rb, 0001.pcservices.rb, 0000.textures.rb)  
+- PokemonValuesPCService.rb (depends on 0000.formattedchoices.rb, 0001.pcservices.rb)  
   Adds a Lab service for tweaking your pokemon's IVs, EVs, Nature, and Ability. Each component has its own unlock requirements.
-- TimeSkipPCService.rb (depends on 0001.pcservices.rb, 0000.textures.rb)  
+- TimeSkipPCService.rb (depends on 0001.pcservices.rb)  
   Adds a Celebi service for advancing to different times if Unreal Time is on.
 
 Fix/hotfix mods:
