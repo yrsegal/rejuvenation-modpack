@@ -5,7 +5,7 @@ TextureOverrides.registerTextureOverride(TextureOverrides::BATTLEICON + "battleF
 
 module BBUIConsts 
   X_PAD = 50
-  Y_PAD = 10
+  Y_PAD = 40
 end
 
 class AnimatedBitmap
@@ -555,13 +555,13 @@ class PokemonDataBox < SpriteWrapper
     rect=$betterBattleUI_statBoosts_data[:battlers][@battler.index][:bitmap].rect
     case battler.index
     # Player's mon in singles
-    when 0 then return 34-rect.width, @doublebattle ? BBUIConsts::Y_PAD : (BBUIConsts::Y_PAD * 2 + 10)
+    when 0 then return 34-rect.width, @doublebattle ? BBUIConsts::Y_PAD : (BBUIConsts::Y_PAD + 20)
     # Foe's mon in singles
-    when 1 then return @databox.width+66, @doublebattle ? BBUIConsts::Y_PAD : (BBUIConsts::Y_PAD * 2 + 10)
+    when 1 then return @databox.width+66, @doublebattle ? BBUIConsts::Y_PAD : (BBUIConsts::Y_PAD + 20)
     # Player's other mon in doubles
-    when 2 then return 34-rect.width, @doublebattle ? BBUIConsts::Y_PAD : (BBUIConsts::Y_PAD * 2 + 10)
+    when 2 then return 34-rect.width, @doublebattle ? BBUIConsts::Y_PAD : (BBUIConsts::Y_PAD + 20)
     # Foe's other mon in doubles
-    else        return @databox.width+66, @doublebattle ? BBUIConsts::Y_PAD : (BBUIConsts::Y_PAD * 2 + 10)
+    else        return @databox.width+66, @doublebattle ? BBUIConsts::Y_PAD : (BBUIConsts::Y_PAD + 20)
     end
   end
   
