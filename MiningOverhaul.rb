@@ -202,16 +202,16 @@ class MiningGameScene
    ##       MODDED          ##
      [:OLDAMBER,2, 21,3, 4,4,[0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0]],
      [:OLDAMBER,2, 25,3, 4,4,[1,1,1,0,1,1,1,1,1,1,1,1,0,1,1,1]],
-   [:NUGGET,20, 19,35, 2,2,[1,1,1,1]],
-   [:BIGNUGGET,12, 16,35, 3,3,[1,1,1,1,1,1,1,1,1]],
-   [:COMETSHARD,12, 21,35, 3,3,[0,1,0,1,1,1,0,1,0]],
-   [:COVERFOSSIL,4, 12,35, 4,4,[1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0]],
-   [:PLUMEFOSSIL,4, 4,35, 4,4,[0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0]],
-   [:JAWFOSSIL,4, 0,35, 4,4,[0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0]],
-   [:SAILFOSSIL,4, 8,35, 4,4,[0,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1]],
-   [:RELICGOLD,6,20,32,2,1,[1,1]],
-   [:RELICSILVER,10,20,33,2,1,[1,1]],
-   [:RELICCOPPER,16,20,34,2,1,[1,1]],
+     [:NUGGET,20, 19,35, 2,2,[1,1,1,1]],
+     [:BIGNUGGET,12, 16,35, 3,3,[1,1,1,1,1,1,1,1,1]],
+     [:COMETSHARD,12, 21,35, 3,3,[0,1,0,1,1,1,0,1,0]],
+     [:COVERFOSSIL,4, 12,35, 4,4,[1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0]],
+     [:PLUMEFOSSIL,4, 4,35, 4,4,[0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0]],
+     [:JAWFOSSIL,4, 0,35, 4,4,[0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0]],
+     [:SAILFOSSIL,4, 8,35, 4,4,[0,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1]],
+     [:RELICGOLD,6,20,32,2,1,[1,1]],
+     [:RELICSILVER,10,20,33,2,1,[1,1]],
+     [:RELICCOPPER,16,20,34,2,1,[1,1]],
      [:BUGGEM,20, 0,39, 2,2,[1,1,1,1]],
      [:DARKGEM,20, 2,39, 2,2,[1,1,1,1]],
      [:DRAGONGEM,20, 4,39, 2,2,[1,1,1,1]],
@@ -285,22 +285,34 @@ class MiningGameScene
     @sprites["costwindow"].height=96
     @sprites["costwindow"].baseColor=Color.new(88,88,80)
     @sprites["costwindow"].shadowColor=Color.new(168,184,184)
-    overhaul_displaymoney
+    miningoverhaul_displaymoney
     ###/modded
     update
     pbFadeInAndShow(@sprites)
   end
 
 #mod
-  def overhaul_displaymoney 
+  def miningoverhaul_displaymoney 
     hits = miningoverhaul_getHitsCount(0, false)
     pickaxeHits=1
     hammerHits=2
     pickaxeCost=miningoverhaul_getHitCost(pickaxeHits, false)
     hammerCost=miningoverhaul_getHitCost(hammerHits, false)
 
-    @sprites["moneywindow"].visible = hits > 0
-    @sprites["costwindow"].visible = hits > 0
+    show = hits > 0
+
+    if !@wasDisplaying && show
+      foundall=true
+      for i in @items
+        foundall=false if !i[3]
+        break if !foundall
+      end
+      show = false if foundall
+      @wasDisplaying = show
+    end
+    
+    @sprites["moneywindow"].visible = show
+    @sprites["costwindow"].visible = show
     @sprites["moneywindow"].text=_INTL("Money:\n<r>${1}",$Trainer.money)
     @sprites["costwindow"].text=_INTL("Pick:<r>${1}\nHammer:<r>${2}",pickaxeCost,hammerCost)
   end
@@ -360,7 +372,7 @@ class MiningGameScene
   def pbHit(*args, **kwargs)
     result=miningoverhaul_miningForRich_oldPbHit(*args, **kwargs)
     miningoverhaul_payToMine
-    overhaul_displaymoney
+    miningoverhaul_displaymoney
     return result
   end
 

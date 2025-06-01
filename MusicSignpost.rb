@@ -379,7 +379,12 @@ class MusicLocationWindow
   def update
     return if @window.disposed?
     @window.update
-    if (@diesToMessageWindow && ($game_temp.message_window_showing || $game_temp.menu_calling)) || 
+    shouldDie = (@diesToMessageWindow && ($game_temp.message_window_showing || $game_temp.menu_calling))
+    if @frames < 2
+      shouldDie = false
+      @diesToMessageWindow = !$game_temp.message_window_showing && !$game_temp.menu_calling
+    end
+    if shouldDie || 
       ($musicSignpost_lastTrackDisplayed && @track.name != $musicSignpost_lastTrackDisplayed.name)
       @window.dispose
       return
