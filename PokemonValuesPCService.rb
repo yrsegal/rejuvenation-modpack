@@ -146,6 +146,7 @@ class PokemonValuesPCService
           abilities(pkmn) if $game_screen.pokemonvaluespc_unlocked_ability
           ServicePCList.buzzer if !$game_screen.pokemonvaluespc_unlocked_ability
       end
+      pkmn.calcStats
 
       if command == 4 && anyChange(pkmn, backups)
         @heartscalewindow = ServicePCList.quantityWindow(:HEARTSCALE)
@@ -160,6 +161,7 @@ class PokemonValuesPCService
           pkmn.ev = backups[1]
           pkmn.nature = backups[2]
           pkmn.ability = backups[3]
+          pkmn.calcStats
         else
           command = 0
           @heartscalewindow.dispose

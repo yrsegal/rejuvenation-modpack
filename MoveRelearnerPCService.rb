@@ -338,19 +338,34 @@ end
 
 ServicePCList.registerService(RelearnerPCService.new)
 
-# Gen 8 learnsets for Galarian forms/Indeedee-F/Hisuian Qwilfish
+def moverelearnpc_injectMove(moves, move)
+  moves.push(move) unless moves.include?(move)
+end
+
+# Gen 8/9 learnsets for Galarian forms/Indeedee-F/Hisuian Qwilfish/Hisuian Growlithe
 $cache.pkmn[:SLOWPOKE].formData["Galarian Form"][:EggMoves] = [:BELCH,:BELLYDRUM,:BLOCK,:STOMP]
 $cache.pkmn[:PONYTA].formData["Galarian Form"][:EggMoves] = [:DOUBLEKICK,:DOUBLEEDGE,:HORNDRILL,:HYPNOSIS,:MORNINGSUN,:THRASH,:PLAYROUGH] # Because play rough isn't tutorable yet
 $cache.pkmn[:FARFETCHD].formData["Galarian Form"][:EggMoves] = [:COVET,:CURSE,:FEATHERDANCE,:FEINT,:FINALGAMBIT,:FLAIL,:GUST,:LEAFBLADE,:MUDSLAP,:NIGHTSLASH,:QUICKATTACK,:REVENGE,:SIMPLEBEAM,:SKYATTACK]
 $cache.pkmn[:INDEEDEE].formData["Female"][:EggMoves] = [:FAKEOUT, :HEALPULSE, :PSYCHUP, :PSYCHOSHIFT]
-if !$cache.pkmn[:FARFETCHD].formData["Galarian Form"][:compatiblemoves].include?(:CUT)
-  $cache.pkmn[:FARFETCHD].formData["Galarian Form"][:compatiblemoves].push(:CUT)
-end
+moverelearnpc_injectMove($cache.pkmn[:FARFETCHD].formData["Galarian Form"][:compatiblemoves], :CUT)
 $cache.pkmn[:QWILFISH].formData["Hisuian Form"][:EggMoves] = [:ACIDSPRAY, :AQUAJET, :AQUATAIL, :ASTONISH, :BUBBLEBEAM, :FLAIL, :HAZE, :SELFDESTRUCT, :SUPERSONIC, :WATERPULSE]
+$cache.pkmn[:GROWLITHE].formData["Hisuian Form"][:EggMoves] = [:COVET,:DOUBLEKICK,:DOUBLEEDGE,:HEADSMASH,:MORNINGSUN,:THRASH]
+
+# Give Quiver Dance to oricorio, as is its right
+moverelearnpc_injectMove($cache.pkmn[:ORICORIO].EggMoves, :QUIVERDANCE)
+$cache.pkmn[:ORICORIO].formData.each_pair { |k, form| form[:EggMoves] = $cache.pkmn[:ORICORIO].EggMoves }
+
+# Fix East Shellos and Small Pumpkaboo
+$cache.pkmn[:SHELLOS].formData["East Sea"][:EggMoves] = $cache.pkmn[:SHELLOS].EggMoves
+$cache.pkmn[:PUMPKABOO].formData["Small"][:EggMoves] = $cache.pkmn[:PUMPKABOO].EggMoves
 
 # Fix Basculin forms
 $cache.pkmn[:BASCULIN].formData["Blue-Striped"][:EggMoves] = [:AGILITY,:BRINE,:BUBBLEBEAM,:ENDEAVOR,:HEADSMASH,:MUDSHOT,:MUDDYWATER,:RAGE,:REVENGE,:SWIFT,:WHIRLPOOL]
 $cache.pkmn[:BASCULIN].formData["White-Striped"][:EggMoves] = [:AGILITY,:ENDEAVOR,:HEADSMASH,:MUDDYWATER,:RAGE,:REVENGE,:SWIFT,:WHIRLPOOL,:SHADOWBONE] # Shadow Bone as poor replacement for Last Respects
 
-# Aevian Jangmo-o has no egg moves
-$cache.pkmn[:JANGMOO].formData["Aevian Form"][:EggMoves] = [:COUNTER,:DRAGONBREATH,:FOCUSPUNCH,:REVERSAL]
+# Aevian forms with no egg moves
+$cache.pkmn[:SHELLOS].formData["West Aevian Form"][:EggMoves] = [:SHELTER,:CHARM,:AMNESIA,:CLEARSMOG,:CURSE,:TOXIC,         :SPITUP,:STOCKPILE,:SWALLOW,:YAWN] # Custom, riffing off s-shellos
+$cache.pkmn[:SHELLOS].formData["East Aevian Form"][:EggMoves] = [:SHELTER,:CHARM,:AMNESIA,:CLEARSMOG,:CURSE,:SCORCHINGSANDS,:SPITUP,:STOCKPILE,:SWALLOW,:YAWN]
+$cache.pkmn[:SEWADDLE].formData["Aevian Form"][:EggMoves] = [:FIRSTIMPRESSION,:FAKEOUT,:SCREECH,:RAZORLEAF,:POISONFANG,:CAMOUFLAGE,:SCALESHOT] # Custom, original
+$cache.pkmn[:SIGILYPH].formData["Aevian Form"][:EggMoves] = [:ANCIENTPOWER,:FUTURESIGHT,:GRUDGE,:MOONLIGHT,:MIRRORMOVE,:ESPERWING,:STOREDPOWER] # Custom, riffing off u-sigilyph
+$cache.pkmn[:JANGMOO].formData["Aevian Form"][:EggMoves] = [:COUNTER,:AVALANCHE,:FOCUSPUNCH,:REVENGE] # Custom, original
