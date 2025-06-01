@@ -1,23 +1,34 @@
 
+$vendorquantitydisplay_activewindows = []
+
 module VendorQuantityDisplay
   def self.quantityWindow(item, viewport=nil, z=99999)
-    itemName = getItemName(item) + 's'
-    itemQuantity = $PokemonBag.pbQuantity(item)
-    quantityString = pbCommaNumber(itemQuantity)
-    return createCornerWindow(_INTL("{1}:\n<ar>{2}</ar>", itemName, quantityString), viewport, z)
+    textProc = proc {
+      itemName = getItemName(item) + 's'
+      itemQuantity = $PokemonBag.pbQuantity(item)
+      quantityString = pbCommaNumber(itemQuantity)
+      next _INTL("{1}:\n<ar>{2}</ar>", itemName, quantityString)
+    }
+    return createCornerWindow(textProc, viewport, z)
   end
   def self.quantityWindowVariable(descriptor, variable, viewport=nil, z=99999)
-    itemQuantity = $game_variables[variable]
-    quantityString = pbCommaNumber(itemQuantity)
-    return createCornerWindow(_INTL("{1}\n<ar>{2}</ar>", descriptor, quantityString), viewport, z)
+    textProc = proc {
+      itemQuantity = $game_variables[variable]
+      quantityString = pbCommaNumber(itemQuantity)
+      next _INTL("{1}\n<ar>{2}</ar>", descriptor, quantityString)
+    }
+    return createCornerWindow(textProc, viewport, z)
   end
 
   def self.quantityWindowTwoVariable(descriptor1, variable1, descriptor2, variable2, viewport=nil, z=99999)
-    itemQuantity1 = $game_variables[variable1]
-    quantityString1 = pbCommaNumber(itemQuantity1)
-    itemQuantity2 = $game_variables[variable2]
-    quantityString2 = pbCommaNumber(itemQuantity2)
-    return createCornerWindow(_INTL("{1}\n<ar>{2}</ar>\n{3}\n<ar>{4}</ar>", descriptor1, quantityString1, descriptor2, quantityString2), viewport, z)
+    textProc = proc {
+      itemQuantity1 = $game_variables[variable1]
+      quantityString1 = pbCommaNumber(itemQuantity1)
+      itemQuantity2 = $game_variables[variable2]
+      quantityString2 = pbCommaNumber(itemQuantity2)
+      next _INTL("{1}\n<ar>{2}</ar>\n{3}\n<ar>{4}</ar>", descriptor1, quantityString1, descriptor2, quantityString2)
+    }
+    return createCornerWindow(textProc, viewport, z)
   end
 
   def self.quantityWindowVariableWithOptional(descriptor, variable, optDescriptor, optVariable, viewport=nil, z=99999)
@@ -26,23 +37,27 @@ module VendorQuantityDisplay
   end
 
   def self.shardQuantityWindow(viewport=nil, z=99999)
-    redQuantity = $PokemonBag.pbQuantity(:REDSHARD)
-    blueQuantity = $PokemonBag.pbQuantity(:BLUESHARD)
-    greenQuantity = $PokemonBag.pbQuantity(:GREENSHARD)
-    yellowQuantity = $PokemonBag.pbQuantity(:YELLOWSHARD)
-    return createCornerWindow(_INTL("Shards:             \n<ar>{5}{1}</c3>  {6}{2}</c3>  {7}{3}</c3>  {8}{4}</ar>",
-      redQuantity, blueQuantity, greenQuantity, yellowQuantity, 
-      getSkinColor(nil, 2, true), getSkinColor(nil, 1, true), getSkinColor(nil, 3, true), getSkinColor(nil, 6, true)), viewport, z)
+    textProc = proc {
+      redQuantity = $PokemonBag.pbQuantity(:REDSHARD)
+      blueQuantity = $PokemonBag.pbQuantity(:BLUESHARD)
+      greenQuantity = $PokemonBag.pbQuantity(:GREENSHARD)
+      yellowQuantity = $PokemonBag.pbQuantity(:YELLOWSHARD)
+      next _INTL("Shards:             \n<ar>{5}{1}</c3>  {6}{2}</c3>  {7}{3}</c3>  {8}{4}</ar>",
+        redQuantity, blueQuantity, greenQuantity, yellowQuantity, 
+        getSkinColor(nil, 2, true), getSkinColor(nil, 1, true), getSkinColor(nil, 3, true), getSkinColor(nil, 6, true))
+    }
+    return createCornerWindow(textProc, viewport, z)
   end
 
-  def self.createCornerWindow(text, viewport=nil, z=99999, windowAbove: nil)
-    window=Window_AdvancedTextPokemon.new(text)
+  def self.createCornerWindow(textProc, viewport=nil, z=99999, windowAbove: nil)
+    window=Window_AdvancedTextPokemon.new(textProc.call())
     window.resizeToFit(window.text,Graphics.width)
     window.width=160 if window.width<=160
     window.y=(windowAbove) ? windowAbove.y + windowAbove.height : 0
     window.viewport=viewport
     window.visible=true
     window.z = z
+    $vendorquantitydisplay_activewindows.push([window, textProc])
     return window
   end
 
@@ -236,6 +251,30 @@ class Interpreter
   def vendorquantity_disposefully
     $vendorquantity_window.dispose if $vendorquantity_window
     $vendorquantity_window = nil
+  end
+end
+
+module Kernel
+  singleton_class.class_eval do
+    if !defined?(vendorquantity_old_pbMessageDisplay)
+      alias :vendorquantity_old_pbMessageDisplay :pbMessageDisplay
+    end
+
+    def pbMessageDisplay(*args, **kwargs, &block)
+      windows = $vendorquantitydisplay_activewindows.clone
+      for window, textProc in windows
+        if window.disposed?
+          $vendorquantitydisplay_activewindows.delete([window, textProc])
+          next
+        end
+
+        window.text = textProc.call()
+        window.resizeToFit(window.text,Graphics.width)
+        window.width=160 if window.width<=160
+      end
+
+      return vendorquantity_old_pbMessageDisplay(*args, **kwargs, &block)
+    end
   end
 end
 
