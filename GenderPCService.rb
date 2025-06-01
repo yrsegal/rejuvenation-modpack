@@ -238,11 +238,12 @@ class GenderPCService
                   $PokemonBag.pbDeleteItem(:HEARTSCALE)
                   ServicePCList.updateWindowQuantity(heartscalewindow, :HEARTSCALE)
                   Kernel.pbMessage(odessa("ODESSA: Then so it shall be! Manaphy..."))
-                  ServicePCList.fadeScreen(Tone.new(0,0,0,255),40)
+                  ServicePCList.fadeScreen(Tone.new(0,0,0,255),20)
                   manaphySound
                   Kernel.pbMessage(odessa("ODESSA: HEART SWAP!"))
                   pbExclaim($game_player, HEART_SWAP_ANIMATION_ID)
                   pkmn.setGender(1 - pkmn.gender)
+                  pbWait(2)
                   ServicePCList.restoreScreen(10)
                   Kernel.pbMessage(odessa("ODESSA: It is done."))
                   break
@@ -294,13 +295,14 @@ class GenderPCService
               $PokemonBag.pbDeleteItem(:HEARTSCALE, 2)
               ServicePCList.updateWindowQuantity(heartscalewindow, :HEARTSCALE)
               Kernel.pbMessage(odessa("ODESSA: V-very well then! Manaphy..."))
-              ServicePCList.fadeScreen(Tone.new(0,0,0,255),40)
+              ServicePCList.fadeScreen(Tone.new(0,0,0,255),20)
               manaphySound
               Kernel.pbMessage(odessa("ODESSA: HEART SWAP!"))
               pbExclaim($game_player, HEART_SWAP_ANIMATION_ID)
               $game_switches[:PlayerMale] = choice == 0
               $game_switches[:PlayerFemale] = choice == 1
               $game_switches[:PlayerEnby] = choice == 2
+              pbWait(2)
               ServicePCList.restoreScreen(10)
               Kernel.pbMessage(odessa("ODESSA: It is done."))
               pbExclaim($game_player,ELIPSES_ANIMATION_ID)
