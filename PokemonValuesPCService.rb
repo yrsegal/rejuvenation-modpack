@@ -426,7 +426,6 @@ class PokemonValuesPCService
         Kernel.pbMessage(_INTL("..."))
         Kernel.pbMessage(_INTL("\\ts[5]Hello. We are not-"))
         Kernel.pbMessage(_INTL("(Still no response.)"))
-        return
       end
 
       if $game_variables[:Post10thBadge] >= 3
