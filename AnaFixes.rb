@@ -50,7 +50,7 @@ def anafixes_fix_darchsprite(event)
     matched = InjectionHelper.lookForAll(insns,
       [:SetMoveRoute, nil, nil])
 
-    submatcher = InjectionHelper.parseMatcher([:SetCharacter, nil, 'BGirlwalk', nil, nil, nil])
+    submatcher = InjectionHelper.parseMatcher([:SetCharacter, 'BGirlwalk', nil, nil, nil], InjectionHelper::MOVE_INSNS)
 
     for insn in matched
       insn.parameters[1].list.each { |movecommand|
@@ -68,7 +68,7 @@ def anafixes_replacewitheyesprite(event)
     matched = InjectionHelper.lookForAll(insns,
       [:SetMoveRoute, nil, nil])
 
-    submatcher = InjectionHelper.parseMatcher([:SetCharacter, nil, 'BGirlwalk', nil, nil, nil])
+    submatcher = InjectionHelper.parseMatcher([:SetCharacter, 'BGirlwalk', nil, nil, nil], InjectionHelper::MOVE_INSNS)
 
     for insn in matched
       insn.parameters[1].list.each { |movecommand|
