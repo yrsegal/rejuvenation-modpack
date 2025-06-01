@@ -247,8 +247,8 @@ def outfitoptions_handle_clothing_choices(doToneChange = true)
   if needsCaveat
     caveat = _INTL('(Outfits marked with * might act strangely outside intended scenarios.)')
     msgwindow=Kernel.pbCreateMessageWindow(nil,nil)
-    Kernel.pbMessageDisplay(msgwindow,caveat,false,
-       proc { ret = Kernel.pbShowCommands(nil,choices,-1,default) })
+    ret = Kernel.pbMessageDisplay(msgwindow,caveat,false,
+       proc { next Kernel.pbShowCommands(nil,choices,-1,default) })
     Kernel.pbDisposeMessageWindow(msgwindow)
     Input.update
   else
