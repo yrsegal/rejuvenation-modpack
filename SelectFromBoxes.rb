@@ -177,8 +177,8 @@ end
 
 def pbRemovePokemonAt(idx)
   if idx.is_a?(Array)
-    if i[0] != -1
-      $PokemonStorage.pbDelete(i[0], i[1])
+    if idx[0] != -1
+      $PokemonStorage.pbDelete(idx[0], idx[1])
       return true
     else
       idx = idx[1]
