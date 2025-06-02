@@ -532,20 +532,10 @@ module Selectfromboxes_PartyArray
 end
 
 class Selectfromboxes_SelectionArray < Array
-  def >=(other)
-    return 1 >= other
-  end
-
-  def >(other)
-    return 1 > other
-  end
-
-  def <=(other)
-    return 1 <= other
-  end
-
-  def <(other)
-    return 1 < other
+  include Comparable
+  
+  def <=>(other)
+    1 <=> other
   end
 end
 

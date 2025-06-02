@@ -52,6 +52,13 @@ class DayCarePCService
     return false
   end
 
+  BABIES = [ 
+    :PICHU, :CLEFFA, :IGGLYBUFF, :TOGEPI, :TYROGUE, :SMOOCHUM, :ELEKID, :MAGBY, # Gen 2
+    :AZURILL, :WYNAUT, # Gen 3
+    :BUDEW, :CHINGLING, :BONSLY, :MIMEJR, :HAPPINY, :MUNCHLAX, :RIOLU, :MANTYKE, # Gen 4
+    :TOXEL # Gen 8
+  ]
+
   def buildCommands
     options = []
     egg = Kernel.pbEggGenerated?
@@ -67,6 +74,20 @@ class DayCarePCService
 
   def incubator?
     return $game_switches[:EarlyIncubator] # Currently, no other way to unlock the Incubator exists
+  end
+
+  def compatCheck(poke,nameVariable=nil)
+    pokeEggGroups = poke.eggGroups
+    return false if pokeEggGroups.include?(:Undiscovered)
+    return true if pbDayCareDeposited != 1
+
+    daycarePoke = $PokemonGlobal.daycare[0][0]
+    $game_variables[nameVariable] = daycarePoke.name if nameVariable
+    return false if !daycarePoke
+    daycareEggGroups = daycarePoke.eggGroups
+    return false if daycareEggGroups.include?(:Undiscovered)
+    return ((pokeEggGroups & daycareEggGroups) || poke.species == :DITTO || daycarePoke.species == :DITTO) && 
+      pbDayCareCompatibleGender(poke, daycarePoke)
   end
 
   def access
@@ -107,12 +128,41 @@ class DayCarePCService
         end
         Kernel.pbMessage(lady("Which Pokémon should we raise for you?"))
         loop do
-          pbChooseNonEggPokemon(1,3)
+          pbChoosePokemon(1,3,proc {|poke|
+             !poke.isEgg? && 
+             !(poke.isShadow? rescue false) &&
+             compatCheck(poke)
+          }, true)
           result = pbGet(1)
           break if result < 0
+
+          poke = $Trainer.party[result]
+
+          if poke.isEgg?
+            Kernel.pbMessage(lady("That Pokémon hasn't even hatched yet!"))
+            next
+          end
+
           if !pbCheckAble(result)
             Kernel.pbMessage(lady("If you leave me that Pokémon, what are you gonna battle with?"))
           else
+            issueWithMon = false
+            if (poke.isShadow? rescue false)
+              Kernel.pbMessage(lady("Oh, my. That Pokémon... I don't think it'll get along with anything at all."))
+              issueWithMon = true
+            elsif BABIES.include?(poke.species)
+              Kernel.pbMessage(lady("Ah, what a cute little Pokémon! It isn't ready to have Eggs, though."))
+              issueWithMon = true
+            elsif poke.eggGroups.include?(:Undiscovered)
+              Kernel.pbMessage(lady("This Pokémon can't have Eggs at all."))
+              issueWithMon = true
+            elsif !compatCheck(poke,4)
+              Kernel.pbMessage(lady("I don't think \\v[4] and \\v[3] will get along."))
+              issueWithMon = true
+            end
+
+            next if issueWithMon && !Kernel.pbConfirmMessage(lady("Do you want to deposit \\v[3] anyway?"))
+
             pbDayCareDeposit(result)
             Kernel.pbMessage(lady("Fine, we'll raise your \\v[3] for a while."))
             break

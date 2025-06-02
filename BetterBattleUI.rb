@@ -930,7 +930,7 @@ class FightMenuButtons < BitmapSprite
   def betterBattleUI_showMoveEffectivenessStatus (move, battler, opponent, movetype, typemod = 4, zorovar = false)
     if (move.move == :THUNDERWAVE && (move.pbTypeModifier(movetype, battler, opponent, zorovar) == 0 || !opponent.pbCanParalyze?(false) ||
        (opponent.nullsElec? && movetype == :ELECTRIC))) || #Innefective by type or immune to paralysis. If Thunder Wave is electrict type, the abilities nullyfing it also nullify this one
-       (!opponent.pbCanPoison?(false) && (move.move == :POISONGAS || move.move == :POISONPOWDER || move.move == :TOXIC)) ||
+       (!opponent.pbCanPoison?(false, false, battler.ability == :CORROSION) && (move.move == :POISONGAS || move.move == :POISONPOWDER || move.move == :TOXIC)) ||
        (opponent.status != :POISON && move.move == :VENOMDRENCH) ||
        (PBStuff::POWDERMOVES.include?(move.move) && (opponent.hasType?(:GRASS) || opponent.ability == :OVERCOAT || (opponent.itemWorks? && opponent.item == :SAFETYGOGGLES))) ||
        (move.move == :WILLOWISP && (!opponent.pbCanBurn?(false) || opponent.ability == :FLASHFIRE)) ||
