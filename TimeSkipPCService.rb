@@ -12,6 +12,8 @@ class Game_Screen
 end
 
 class TimeSkipPCService
+
+  LIME = '<c3=63ED71,1c7a24>'
   
   def shouldShow?
     return false if $game_variables[:PostCarotosQuest] < 3
@@ -160,10 +162,14 @@ class TimeSkipPCService
 
       $game_system.bgm_memorize
       pbBGMPlay('citamginE - gnileeF', 100, 130)
+      celebiSound(50, 60)
+      Kernel.pbMessage(_INTL("<ac>\\ts[5]#{LIME}<fn=Garufan>O' ersatz flow and flux of time,</fn></ac>"))
       celebiSound(200, 60)
-      Kernel.pbMessage(_INTL("\\c[3]<ac><fn=Garufan>O' flow of time...</fn></ac>"))
+      Kernel.pbMessage(_INTL("<ac>\\ts[5]#{LIME}<fn=Garufan>O' queen of zones high and divine,</fn></ac>"))
+      celebiSound(50, 120)
+      Kernel.pbMessage(_INTL("<ac>\\ts[5]#{LIME}<fn=Garufan>The Interceptor calls for change!</fn></ac>"))
       celebiSound(200, 120)
-      Kernel.pbMessage(_INTL("\\c[3]<ac><fn=Garufan>The Interceptor bids you move!</fn></ac>"))
+      Kernel.pbMessage(_INTL("<ac>\\ts[5]#{LIME}<fn=Garufan>And by their will, we shall obey!</fn></ac>"))
 
       pbWait(20)
 
