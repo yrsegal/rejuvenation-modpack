@@ -39,6 +39,8 @@ Fix/hotfix mods:
   Fixes some issues with the character Ana's sprites.
 - BagReclassification.rb  
   Reclassifies some items that are improperly classified.
+- BlackBoxFix.rb (depends on 0000.injection.rb)  
+  Fixes some logic errors in a cutscene that leaves key items which are intended to be deleted.
 - FixBasculegionForms.rb  
   Fixes Basculegion's forms on evolution. (Currently, female basculegion does not recieve the proper icon or stats.)
 - FixBlueMIC.rb (depends on 0000.injection.rb)  
@@ -61,6 +63,8 @@ Fix/hotfix mods:
 QoL mods:
 - AutoFish.rb  
   Fishing requires no timing, and always succeeds if possible.
+- AutoSpeedUpBattles.rb  
+  The game will always speed up at the start of battles, then return to the state it was in prior to the battle.
 - BetterBattleUI.rb  
   Show types and stat boosts visually in battle.
 - CleanerPrismPower.rb  
@@ -69,6 +73,8 @@ QoL mods:
   Hidden Power, Revelation Dance, and such all display their correct type in summaries and move listings.
 - ItemRadar.rb (depends on 0000.injection.rb)  
   The Itemfinder becomes a toggleable overlay rather than an item you have to use repeatedly. Also pings you when entering a map with a Zygarde Cell you haven't collected.
+- ItemRestocking.rb  
+  If a consumable item is used up, at the end of the battle it will be restored from your Bag if you have another copy.
 - LRInBoxes.rb  
   L and R (or rather, Q and W, with default mappings) will shift your position in the Box menu. This works even when holding a Pokemon.
 - LureRework.rb  
