@@ -69,6 +69,8 @@ QoL mods:
   Hidden Power, Revelation Dance, and such all display their correct type in summaries and move listings.
 - ItemRadar.rb (depends on 0000.injection.rb)  
   The Itemfinder becomes a toggleable overlay rather than an item you have to use repeatedly. Also pings you when entering a map with a Zygarde Cell you haven't collected.
+- LRInBoxes.rb  
+  L and R (or rather, Q and W, with default mappings) will shift your position in the Box menu. This works even when holding a Pokemon.
 - LureRework.rb  
   The Mirror Lure lets you run always, like it says it does. The Magnetic Lure becomes a toggleable key item.
 - MoreSpecificGatherCube.rb  
