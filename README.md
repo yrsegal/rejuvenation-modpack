@@ -51,6 +51,8 @@ Fix/hotfix mods:
   Fixes several missing items textures.
 - FixNWSilvally.rb  
   Fixes a field interaction with Silvally.
+- FixProboCrest.rb  
+  Fixes the silly internal name of the followup attack of the Probopass Crest from displaying.
 - FixSuperLuck.rb  
   Super Luck increases held item chances on wild pokemon, as it's supposed to.
 - RelearnPreShadowMoves.rb  
