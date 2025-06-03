@@ -53,6 +53,8 @@ Fix/hotfix mods:
   Fixes a field interaction with Silvally.
 - FixSuperLuck.rb  
   Super Luck increases held item chances on wild pokemon, as it's supposed to.
+- RelearnPreShadowMoves.rb  
+  Shadow Pokemon regain their old moves over time, as they're supposed to.
 - Route4GlobalChange.rb  
   Makes Route 4's reset trigger work in all areas as intended.
 - KingleriteHotfix.rb  
