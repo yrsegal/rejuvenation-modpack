@@ -144,7 +144,7 @@ MUSIC_SIGNPOST_MAPPING = {
   "Gym Battle Victory" => "[Music] Gym Battle Victory",
   "Her_Awakening_1" => "[Awakening] Her Awakening",
   "Her_Awakening_2" => "[Awakening] <c3=F8C471,8a461e>Her Awakening</c3>",
-  "It Changes" => "[Music] It Changes",
+  "It Changes" => "[Awakening] It Changes",
   "Keep Marching on!" => "[Music] Keep Marching On!",
   "Melia's Theme" => "[Music] Melia's Theme",
   "Mood - Breakthrough" => "[Music] Mood - Breakthrough",
@@ -292,7 +292,7 @@ MUSIC_SIGNPOST_MAPPING = {
   "Music - Xen Antics" => "[Music] Xen Antics",
   "Music - Xen Base" => "[Music] Xen Base",
   "Music - Xen HQ" => "[Music] Xen HQ",
-  "Music - Xenogene" => "[Music] Xenogene",
+  "Music - Xenogene" => "[Music] Dreaded Nightmare", # Dunno why this is called xenogene tbh.
   "Music - Zone Zero" => "[Music] Zone Zero",
   "Rejuvenation - ..." => "[Awakening] Painful Truth...?",
   "Rejuvenation - Title Screen_2" => "[Awakening] Painful Truth I",

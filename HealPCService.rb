@@ -88,7 +88,16 @@ class HealPCService
     end
 
     if ServicePCList.denOfSouls?
+      $game_system.message_position = 1 # Middle
+      $game_system.message_frame = 1 # Hide
+
+      ServicePCList.fadeScreen(Tone.new(-51,-51,-51,0), 20)
+      pbWait(20)
       Kernel.pbMessage(_INTL("<ac>Activating remote healing.</ac>"))
+      ServicePCList.restoreScreen(10)
+      
+      $game_system.message_position = 2 # Bottom
+      $game_system.message_frame = 0 # Show
       lockOn
       pbWait(20)
       heal
