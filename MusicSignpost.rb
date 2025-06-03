@@ -576,6 +576,7 @@ module ExperimentalMusicDisplay
       super(text)
       self.zoom_y = 0.5
       self.zoom_x = 0.5
+      self.opacity = 200
     end
 
 
