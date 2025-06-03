@@ -15,16 +15,21 @@ class LocationWindow
   attr_reader :frames
 end
 
-MUSIC_SIGNPOST_ICONS = ["Awakening", "BadMusic", "Battle", "GSCMusic", "Music", "Rampage", "Night"]
+TextureOverrides.registerTextureOverrides({
+  TextureOverrides::SPEECH + "choice 34" => $MISSING_TEXTURE_FOLDER + "choice 34",
+  TextureOverrides::SPEECH + "choice rse" => $MISSING_TEXTURE_FOLDER + "choice rse"
+})
+
+MUSIC_SIGNPOST_ICONS = ["Awakening", "BadMood", "LightBattle", "Battle", "LightMusic", "Music", "Rampage", "Night"]
 
 MUSIC_SIGNPOST_MAPPING = {
-  "Bad Mood - Club REM Part 2" => "[BadMusic] Club REM (Panic)",
-  "Bad Mood - Club REM" => "[BadMusic] Club REM",
-  "Bad Mood - GuiltyOrNah" => "[BadMusic] GuiltyOrNah",
-  "Bad Mood - Hunt Part 2" => "[BadMusic] Hunt Ends",
-  "Bad Mood - Hunt" => "[BadMusic] Hunt",
-  "Bad Mood - The System Binds Us Part 2" => "[BadMusic] Axiom Waltz (Storm)",
-  "Bad Mood - The System Binds Us" => "[BadMusic] Axiom Waltz (Rain)",
+  "Bad Mood - Club REM Part 2" => "[BadMood] Club REM (Panic)",
+  "Bad Mood - Club REM" => "[BadMood] Club REM",
+  "Bad Mood - GuiltyOrNah" => "[BadMood] Guilty or Nah?",
+  "Bad Mood - Hunt Part 2" => "[BadMood] Hunt Ends",
+  "Bad Mood - Hunt" => "[BadMood] Hunt",
+  "Bad Mood - The System Binds Us Part 2" => "[BadMood] Axiom Waltz (Storm)",
+  "Bad Mood - The System Binds Us" => "[BadMood] Axiom Waltz (Rain)",
   "Battle - Ana's Lament" => "[Battle] Ana's Lament",
   "Battle - Angie" => "[Battle] Angie",
   "Battle - Boss" => "[Battle] Boss",
@@ -57,7 +62,7 @@ MUSIC_SIGNPOST_MAPPING = {
   "Battle - Protector of Aevium" => "[Battle] Protector of Aevium",
   "Battle - Pseudo Contribution" => "[Battle] Pseudo Contribution",
   "Battle - Pseudo Gym" => "[Battle] Pseudo Gym",
-  "Battle - Regis" => "[Battle] Regi",
+  "Battle - Regis" => "[Battle] VS. Regis",
   "Battle - Rival 2" => "[Battle] Rival II",
   "Battle - Rival" => "[Battle] Rival",
   "Battle - Rorrim B." => "[Battle] Rorim B.",
@@ -131,11 +136,11 @@ MUSIC_SIGNPOST_MAPPING = {
   "GDC - City of Dreams" => "[Music] City of Dreams",
   "GDC - City of Dreamsn" => "[Music][Night] City of Dreams",
   "Gearen News!" => "[Music] Gearen News!",
-  "GSC - Gym Leader" => "\\gsc[GSCMusic] Gym Leader",
-  "GSC - New Bark Town" => "\\gsc[GSCMusic] New Bark Town",
-  "GSC - Queen Alice" => "\\gsc[GSCMusic] Queen Alice",
-  "GSC - Trouble" => "\\gsc[GSCMusic] Trouble",
-  "Gym Battle Victory GS" => "\\gsc[GSCMusic] Gym Battle Victory",
+  "GSC - Gym Leader" => "\\gsc[Battle] Gym Leader",
+  "GSC - New Bark Town" => "\\gsc[Music] New Bark Town",
+  "GSC - Queen Alice" => "\\gsc[Music] Queen Alice",
+  "GSC - Trouble" => "\\gsc[Music] Trouble",
+  "Gym Battle Victory GS" => "\\gsc[Music] Gym Battle Victory",
   "Gym Battle Victory" => "[Music] Gym Battle Victory",
   "Her_Awakening_1" => "[Awakening] Her Awakening",
   "Her_Awakening_2" => "[Awakening] <c3=F8C471,8a461e>Her Awakening</c3>",
@@ -204,8 +209,8 @@ MUSIC_SIGNPOST_MAPPING = {
   "Music - Akuwa Town" => "[Music] Akuwa Town",
   "Music - Alamissa Urben" => "[Music] Alamissa Urben",
   "Music - Angie's Manor" => "[Music] Angie's Manor",
-  "Music - AtebitWorld_1" => "\\gsc[GSCMusic] Atebit World II",
-  "Music - AtebitWorld" => "\\gsc[GSCMusic] Atebit World",
+  "Music - AtebitWorld_1" => "\\gsc[Music] Atebit World II",
+  "Music - AtebitWorld" => "\\gsc[Music] Atebit World",
   "Music - BestieBeatdown_1" => "[Music] Bestie Beatdown II",
   "Music - BestieBeatdown" => "[Music] Bestie Beatdown",
   "Music - Bike" => "[Music] Bike",
@@ -254,11 +259,11 @@ MUSIC_SIGNPOST_MAPPING = {
   "Music - Reservoir" => "[Music] Reservoir",
   "Music - Reservoirn" => "[Music][Night] Reservoir",
   "Music - Rigid Annihilation" => "[Music] Rigid Annihilation",
-  "Music - Route 2" => "[Music] Route 2",
-  "Music - Route 3" => "[Music] Route 3",
-  "Music - Route 6" => "[Music] Route 6",
-  "Music - Route 7" => "[Music] Route 7",
-  "Music - Route 9" => "[Music] Route 9",
+  "Music - Route 2" => "[Music] Cherry Blossoms",
+  "Music - Route 3" => "[Music] Riverside Stroll",
+  "Music - Route 6" => "[Music] Path to the Peak",
+  "Music - Route 7" => "[Music] Untamed Wilderness",
+  "Music - Route 9" => "[Music] Autumn Stroll",
   "Music - Saki's Hijinx" => "[Music] Saki's Hijinx",
   "Music - Savior" => "[Music] Savior",
   "Music - Song of The Faithful" => "[Music] Song of The Faithful",
@@ -293,35 +298,35 @@ MUSIC_SIGNPOST_MAPPING = {
   "Rejuvenation - Title Screen_2" => "[Awakening] Painful Truth",
   "Rejuvenation - Title Screen" => "[Awakening] Title Screen",
   "Roxie - Doggars!" => "[Music] Roxie - Doggars!",
-  "RSE - Battle Deoxys" => "[Battle] RSE - Battle Deoxys",
-  "RSE - Battle Regis" => "[Battle] RSE - Battle Regi",
-  "RSE - Battle" => "[Battle] RSE - Battle",
-  "RSE - BattlePike" => "[Music] RSE - BattlePike",
-  "RSE - Enemy Battle" => "[Music] RSE - Enemy Battle",
-  "RSE - Fallarbor Town" => "[Music] RSE - Fallarbor Town",
-  "RSE - H-Help!" => "[Music] RSE - H-Help!",
-  "RSE - Lilycove City" => "[Music] RSE - Lilycove City",
-  "RSE - Museum" => "[Music] RSE - Museum",
-  "RSE - Petalburg Woods" => "[Music] RSE - Petalburg Woods",
-  "RSE - Poke Center" => "[Music] RSE - Poke Center",
-  "RSE - Poke Mart" => "[Music] RSE - Poke Mart",
-  "RSE - Route 101" => "[Music] RSE - Route 101",
-  "RSE - Route120" => "[Music] RSE - Route120",
-  "RSE - Rustboro City" => "[Music] RSE - Rustboro City",
-  "RSE - Surf" => "[Music] RSE - Surf",
-  "RSE - Verdanturf Town" => "[Music] RSE - Verdanturf Town",
+  "RSE - Battle Deoxys" => "\\rse[Battle] VS. Deoxys",
+  "RSE - Battle Regis" => "\\rse[Battle] VS. Regis",
+  "RSE - Battle" => "\\rse[Battle] Battle",
+  "RSE - BattlePike" => "\\rse[Music] Battle Pike",
+  "RSE - Enemy Battle" => "\\rse[Music] Enemy Battle",
+  "RSE - Fallarbor Town" => "\\rse[Music] Fallarbor Town",
+  "RSE - H-Help!" => "\\rse[Music] H-Help!",
+  "RSE - Lilycove City" => "\\rse[Music] Lilycove City",
+  "RSE - Museum" => "\\rse[Music] Museum",
+  "RSE - Petalburg Woods" => "\\rse[Music] Petalburg Woods",
+  "RSE - Poke Center" => "\\rse[Music] Poke Center",
+  "RSE - Poke Mart" => "\\rse[Music] Poke Mart",
+  "RSE - Route 101" => "\\rse[Music] Route 101",
+  "RSE - Route120" => "\\rse[Music] Route 120",
+  "RSE - Rustboro City" => "\\rse[Music] Rustboro City",
+  "RSE - Surf" => "\\rse[Music] Surf",
+  "RSE - Verdanturf Town" => "\\rse[Music] Verdanturf Town",
   "Stop! Thief!" => "[Music] Stop! Thief!",
   "Team Player" => "[Music] Team Player",
   "Time to Party!" => "[Music] Time to Party",
   "Venam's Theme" => "[Music] Venam's Theme",
-  "Victory - RSE!" => "[Music] RSE - Victory!",
-  "Victory! - RSETRAINER!" => "[Music] RSE Trainer - Victory!",
+  "Victory - RSE!" => "\\rse[Music] Victory!",
+  "Victory! - RSETRAINER!" => "\\rse[Music] Trainer - Victory!",
   "Victory! - Tera" => "[Music] Tera - Victory!",
   "Victory!" => "[Music] Victory!",
   "Wild Battle - Badlands" => "[Battle] Wild - Badlands",
-  "Wild Battle - Gen 2" => "\\gsc[GSCMusic] Battle Wild",
+  "Wild Battle - Gen 2" => "\\gsc[Battle] Wild",
   "Wild Battle - Regular" => "[Battle] Wild",
-  "Wild Battle - RSE" => "[Battle] Wild - RSE",
+  "Wild Battle - RSE" => "\\rse[Battle] Wild",
   "Wild Battle - Terajuma" => "[Battle] Wild - Terajuma",
   "Wild Battle - Terrial" => "[Battle] Wild - Terrial",
   "WMute" => nil
@@ -331,10 +336,16 @@ class MusicLocationWindow
   def initialize(track, name, spriteset)
     @track = track
     gsc = name.start_with?("\\gsc")
-    name = name.gsub(/^\\gsc/, '') if gsc
-    name = '<c3=4F4E4E,979797>' + name if gsc
-    @window=Window_AdvancedTextPokemon.new(name)
-    @window.setSkin("Graphics/Windowskins/speech hgss 34") if gsc
+    rse = name.start_with?("\\rse")
+    name = name.gsub(/^\\(gsc|rse)/, '') if gsc || rse
+    @window=Window_AdvancedTextPokemon.new()
+    @window.setSkin("Graphics/Windowskinschoice 34") if gsc
+    @window.setSkin("Graphics/Windowskinschoice rse") if rse
+    @window.setSkin("Graphics/Windowskins/choice 1") if !gsc && !rse
+
+    name = musicSignpost_adjustForMode(@window, name)
+    @window.text = name
+
     @window.resizeToFit(name,Graphics.width)
 
     @diesToMessageWindow = !$game_temp.message_window_showing && !$game_temp.menu_calling
@@ -407,6 +418,20 @@ Events.onMapUpdate += proc {|sender, e|
     end 
   end
 }
+
+def musicSignpost_adjustForMode(window, trackName)
+  if !isDarkWindowskin(window.windowskin)
+    for replacement in ["Music", "Battle"]
+        trackName = trackName.gsub('<img=' + pbResolveBitmap("Data/Mods/MusicTypes/#{replacement}.png") + '>', 
+          '<img=' + pbResolveBitmap("Data/Mods/MusicTypes/Light#{replacement}.png") + '>')
+    end
+  end
+  colors=getDefaultTextColors(window.windowskin)
+  window.baseColor=colors[0]
+  window.shadowColor=colors[1]
+
+  return trackName
+end
 
 def musicSignpost_msg(track)
   trackName = MUSIC_SIGNPOST_MAPPING[track.name.gsub(/\.(ogg|mp3)$/, '')]
@@ -529,15 +554,17 @@ module ExperimentalMusicDisplay
       musicCurrent = musicSignpost_msg($game_system.playing_bgm)
       if musicCurrent.nil?
         @@displaybox.visible = false 
-      elsif @@lastText != musicCurrent || @@lastbox != MessageConfig.pbGetSystemFrame()
+      elsif @@lastText != musicCurrent
         @@lastText = musicCurrent
+
         gsc = musicCurrent.start_with?("\\gsc")
-        musicCurrent = musicCurrent.gsub(/^\\gsc/, '') if gsc
-        musicCurrent = '<c3=4F4E4E,979797>' + musicCurrent if gsc
-        @@displaybox.text="#{musicCurrent}"
-        @@displaybox.setSkin("Graphics/Windowskins/speech hgss 34") if gsc
-        @@displaybox.setSkin(MessageConfig.pbGetSystemFrame()) unless gsc
-        @@lastbox = MessageConfig.pbGetSystemFrame()
+        rse = musicCurrent.start_with?("\\rse")
+        @@displaybox.setSkin("Graphics/Windowskins/choice 34") if gsc
+        @@displaybox.setSkin("Graphics/Windowskins/choice rse") if rse
+        @@displaybox.setSkin("Graphics/Windowskins/choice 1") if !gsc && !rse
+        musicCurrent = musicCurrent.gsub(/^\\(gsc|rse)/, '') if gsc || rse
+        musicCurrent = musicSignpost_adjustForMode(@@displaybox, musicCurrent)
+        @@displaybox.text=musicCurrent
         positionBox
       end
     end
@@ -557,7 +584,9 @@ module ExperimentalMusicDisplay
       cwidth=maxwidth<0 ? Graphics.width : maxwidth
       chars=getFormattedTextForDims(self.contents,0,0,
          cwidth-self.borderX-2-6,-1,text,@lineHeight,true)
+      ### MODDED/
       chars.delete_at(-1) if chars.size > 0 && chars[-1][0] == ' '
+      ### /MODDED
       for ch in chars
         dims[0]=[dims[0],ch[1]+ch[3]].max
         dims[1]=[dims[1],ch[2]+ch[4]].max

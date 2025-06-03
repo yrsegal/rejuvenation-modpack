@@ -8,6 +8,7 @@ module TextureOverrides
   CHARS = 'Graphics/Characters/'
   VS = 'Graphics/Transitions/'
   ICONS = 'Graphics/Icons/'
+  SPEECH = 'Graphics/Windowskins/'
 
 
   TEXTURE_OVERRIDES = {
