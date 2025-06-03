@@ -424,7 +424,7 @@ def musicSignpost_createSignpost(scene, track)
   if scene.is_a?(Scene_Map) && scene.spritesets && scene.spriteset
     displayName = musicSignpost_msg(track)
     if !displayName.nil?
-      scene.spriteset.addUserSprite(MusicLocationWindow.new(track, displayName, scene.spriteset))
+      scene.spriteset.addUserSprite(MusicLocationWindow.new(track, displayName, scene.spriteset)) if !$MUSICSIGNPOSTEXPERIMENTAL
     end
     $musicSignpost_signpostWaiting = nil
   end
@@ -484,3 +484,75 @@ class Scene_Map
     return ret
   end
 end
+
+
+
+##### EXPERIMENTAL VERSION
+
+$MUSICSIGNPOSTEXPERIMENTAL = true
+
+
+module ExperimentalMusicDisplay
+  @@lastText = ''
+
+  def self.ensureBox
+    if !defined?(@@displaybox) || @@displaybox.contents.disposed?
+      @@displaybox = SmallWindow.new()
+      positionBox
+      @@displaybox.z = 100000
+    end
+
+    @@displaybox.visible = !!$game_system.playing_bgm
+  end
+
+  def self.positionBox
+    @@displaybox.resizeToFit(@@displaybox.text,Graphics.width)
+    # Style: bottom corner
+    # @@displaybox.x = 0
+    # @@displaybox.y = (Graphics.height - @@displaybox.height) * 2 # * 2 because of zoom
+    # @@displaybox.y -= 3*32 * 2 if $game_temp.message_window_showing # * 2 because of zoom
+
+    # Style: top middle
+    @@displaybox.x = Graphics.width - (@@displaybox.width/2) # No divide by 2 because of zoom
+    @@displaybox.y = -4
+  end
+
+
+  def self.updateMusic
+    ensureBox
+    if $game_system.playing_bgm
+      musicCurrent = musicSignpost_msg($game_system.playing_bgm)
+      if @@lastText != musicCurrent || @@lastbox != MessageConfig.pbGetSystemFrame()
+        @@lastText = musicCurrent
+        gsc = musicCurrent.start_with?("\\gsc")
+        musicCurrent = musicCurrent.gsub(/^\\gsc/, '') if gsc
+        musicCurrent = '<c3=4F4E4E,979797>' + musicCurrent if gsc
+        @@displaybox.text="#{musicCurrent}"
+        @@displaybox.setSkin("Graphics/Windowskins/speech hgss 34") if gsc
+        @@displaybox.setSkin(MessageConfig.pbGetSystemFrame()) unless gsc
+        @@lastbox = MessageConfig.pbGetSystemFrame()
+        positionBox
+      end
+    end
+  end
+
+  class SmallWindow < Window_AdvancedTextPokemon
+
+    def initialize(text="")
+      super(text)
+      self.zoom_y = 0.5
+      self.zoom_x = 0.5
+    end
+  end
+end
+
+
+class Game_Screen
+  alias :expsignpost_old_update :update
+
+  def update(*args, **kwargs)
+    ExperimentalMusicDisplay.updateMusic if $MUSICSIGNPOSTEXPERIMENTAL
+    return expsignpost_old_update(*args, **kwargs)
+  end
+end
+
