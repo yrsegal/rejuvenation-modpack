@@ -15,7 +15,7 @@ class LocationWindow
   attr_reader :frames
 end
 
-MUSIC_SIGNPOST_ICONS = ["Awakening", "BadMusic", "Battle", "GSCMusic", "Music"]
+MUSIC_SIGNPOST_ICONS = ["Awakening", "BadMusic", "Battle", "GSCMusic", "Music", "Rampage", "Night"]
 
 MUSIC_SIGNPOST_MAPPING = {
   "Bad Mood - Club REM Part 2" => "[BadMusic] Club REM (Panic)",
@@ -29,7 +29,7 @@ MUSIC_SIGNPOST_MAPPING = {
   "Battle - Angie" => "[Battle] Angie",
   "Battle - Boss" => "[Battle] Boss",
   "Battle - Club" => "[Battle] Club",
-  "Battle - Conclusive_1" => "[Battle] Conclusive 2",
+  "Battle - Conclusive_1" => "[Battle] Conclusive II",
   "Battle - Conclusive" => "[Battle] Conclusive",
   "Battle - Crowd" => "[Battle] Crowd",
   "Battle - Dimensional Rift" => "[Battle] Dimensional Rift",
@@ -41,7 +41,7 @@ MUSIC_SIGNPOST_MAPPING = {
   "Battle - Gyms" => "[Battle] Gyms",
   "Battle - Insanity" => "[Battle] Insanity",
   "Battle - Intense" => "[Battle] Intense",
-  "Battle - Legendary_1" => "[Battle] Legendary 2",
+  "Battle - Legendary_1" => "[Battle] Legendary II",
   "Battle - Legendary" => "[Battle] Legendary",
   "Battle - Lonely Moon" => "[Battle] Lonely Moon",
   "Battle - Lucile" => "[Battle] Lucile",
@@ -51,25 +51,25 @@ MUSIC_SIGNPOST_MAPPING = {
   "Battle - Mini Boss" => "[Battle] Mini Boss",
   "Battle - Monstrosity" => "[Battle] Monstrosity",
   "Battle - Mysterious Figures" => "[Battle] Mysterious Figures",
-  "Battle - Nightmare_1" => "[Battle] Nightmare_1",
+  "Battle - Nightmare_1" => "[Battle] Nightmare II",
   "Battle - Nightmare" => "[Battle] Nightmare",
   "Battle - Paradox" => "[Battle] Paradox",
   "Battle - Protector of Aevium" => "[Battle] Protector of Aevium",
   "Battle - Pseudo Contribution" => "[Battle] Pseudo Contribution",
   "Battle - Pseudo Gym" => "[Battle] Pseudo Gym",
-  "Battle - Regis" => "[Battle] Regis",
-  "Battle - Rival 2" => "[Battle] Rival 2",
+  "Battle - Regis" => "[Battle] Regi",
+  "Battle - Rival 2" => "[Battle] Rival II",
   "Battle - Rival" => "[Battle] Rival",
   "Battle - Rorrim B." => "[Battle] Rorim B.",
   "Battle - Soul" => "[Battle] Soul",
   "Battle - Space and Time" => "[Battle] Space and Time",
-  "Battle - Team Xen_1" => "[Battle] Team Xen 2",
+  "Battle - Team Xen_1" => "[Battle] Team Xen II",
   "Battle - Team Xen" => "[Battle] Team Xen",
   "Battle - Tera" => "[Battle] Tera",
   "Battle - Tournament" => "[Battle] Tournament",
   "Battle - Trainers" => "[Battle] Trainers",
-  "Battle - Trainers2" => "[Battle] Trainers 2",
-  "Battle - Trainers3" => "[Battle] Trainers 3",
+  "Battle - Trainers2" => "[Battle] Trainers II",
+  "Battle - Trainers3" => "[Battle] Trainers III",
   "Battle - Xen Executives" => "[Battle] Xen Executives",
   "Battle - XG Rival" => "[Battle] XG Rival",
   "citamginE - gnileeF" => "citamginE - gnileeF [Music] ",
@@ -77,7 +77,7 @@ MUSIC_SIGNPOST_MAPPING = {
   "Cryptic Feelings" => "[Music] Cryptic Feelings",
   "Evolution" => "[Music] Evolution",
   "Feeling - Amazing" => "[Music] Feeling - Amazing",
-  "Feeling - Attacked Part 2" => "[Music] Feeling - Attacked Part 2",
+  "Feeling - Attacked Part 2" => "[Music] Feeling - Attacked II",
   "Feeling - Attacked" => "[Music] Feeling - Attacked",
   "Feeling - Conflict" => "[Music] Feeling - Conflict",
   "Feeling - Dark and Sinister" => "[Music] Feeling - Dark and Sinister",
@@ -89,7 +89,7 @@ MUSIC_SIGNPOST_MAPPING = {
   "Feeling - Frozen" => "[Music] Feeling - Frozen",
   "Feeling - Futile" => "[Music] Feeling - Futile",
   "Feeling - Genetic" => "[Music] Feeling - Genetic",
-  "Feeling - Hopeful_2" => "[Music] Feeling - Hopeful 2",
+  "Feeling - Hopeful_2" => "[Music] Feeling - Hopeful II",
   "Feeling - Hopeful" => "[Music] Feeling - Hopeful",
   "Feeling - Hotheaded" => "[Music] Feeling - Hotheaded",
   "Feeling - Immediate Danger" => "[Music] Feeling - Immediate Danger",
@@ -99,17 +99,17 @@ MUSIC_SIGNPOST_MAPPING = {
   "Feeling - Lost" => "[Music] Feeling - Lost",
   "Feeling - Magical" => "[Music] Feeling - Magical",
   "Feeling - Magma" => "[Music] Feeling - Magma",
-  "Feeling - Miracle_1" => "[Music] Feeling - Miracle 2",
-  "Feeling - Miracle" => "[Music] Feeling - Miracle",
+  "Feeling - Miracle_1" => "[Awakening] Feeling - Make a Miracle",
+  "Feeling - Miracle" => "[Awakening] Feeling - Miracle",
   "Feeling - Mysterious" => "[Music] Feeling - Mysterious",
-  "Feeling - Mysterious2" => "[Music] Feeling - Mysterious2",
+  "Feeling - Mysterious2" => "[Music] Feeling - Mysterious II",
   "Feeling - New Beginning" => "[Music] Feeling - New Beginning",
   "Feeling - Nostalgic" => "[Music] Feeling - Nostalgic",
-  "Feeling - Ominous_2" => "[Music] Feeling - Ominous 2",
+  "Feeling - Ominous_2" => "[Music] Feeling - Ominous II",
   "Feeling - Ominous" => "[Music] Feeling - Ominous",
   "Feeling - Onslaught" => "[Music] Feeling - Onslaught",
   "Feeling - Ragged" => "[Music] Feeling - Ragged",
-  "Feeling - Rebellious_2" => "[Music] Feeling - Rebellious 2",
+  "Feeling - Rebellious_2" => "[Music] Feeling - Rebellious II",
   "Feeling - Rebellious" => "[Music] Feeling - Rebellious",
   "Feeling - Reflective" => "[Music] Feeling - Reflective",
   "Feeling - Sadness" => "[Music] Feeling - Sadness",
@@ -121,15 +121,15 @@ MUSIC_SIGNPOST_MAPPING = {
   "Feeling - Unsettled" => "[Music] Feeling - Unsettled",
   "Feeling - Unwavering Hope" => "[Music] Feeling - Unwavering Hope",
   "Feeling - Utter Despair" => "[Music] Feeling - Utter Despair",
-  "Feeling - Utter Despair2" => "[Music] Feeling - Utter Despair 2",
+  "Feeling - Utter Despair2" => "[Music] Feeling - Utter Despair II",
   "Feeling - Wacky" => "[Music] Feeling - Wacky",
   "Feeling - Winter Is Coming" => "[Music] Feeling - Winter Is Coming",
   "Feeling - yeehaw" => "[Music] Feeling - yeehaw",
-  "Fighting for Victory_1" => "[Music] Fighting for Victory 2",
+  "Fighting for Victory_1" => "[Music] Fighting for Victory II",
   "Fighting for Victory" => "[Music] Fighting for Victory",
   "Fighting for What's Right" => "[Music] Fighting for What's Right",
   "GDC - City of Dreams" => "[Music] City of Dreams",
-  "GDC - City of Dreamsn" => "[Music] City of Dreams (Night)",
+  "GDC - City of Dreamsn" => "[Music][Night] City of Dreams",
   "Gearen News!" => "[Music] Gearen News!",
   "GSC - Gym Leader" => "\\gsc[GSCMusic] Gym Leader",
   "GSC - New Bark Town" => "\\gsc[GSCMusic] New Bark Town",
@@ -138,8 +138,8 @@ MUSIC_SIGNPOST_MAPPING = {
   "Gym Battle Victory GS" => "\\gsc[GSCMusic] Gym Battle Victory",
   "Gym Battle Victory" => "[Music] Gym Battle Victory",
   "Her_Awakening_1" => "[Awakening] Her Awakening",
-  "Her_Awakening_2" => "[Awakening] Her Awakening 2",
-  "It Changes" => "[Awakening] Her Awakening",
+  "Her_Awakening_2" => "[Awakening] <c3=F8C471,8a461e>Her Awakening</c3>",
+  "It Changes" => "[Music] It Changes",
   "Keep Marching on!" => "[Music] Keep Marching On!",
   "Melia's Theme" => "[Music] Melia's Theme",
   "Mood - Breakthrough" => "[Music] Mood - Breakthrough",
@@ -147,7 +147,7 @@ MUSIC_SIGNPOST_MAPPING = {
   "Mood - Carnival" => "[Music] Mood - Carnival",
   "Mood - Chaos" => "[Music] Mood - Chaos",
   "Mood - Coffee" => "[Music] Mood - Coffee",
-  "Mood - Comeback_1" => "[Music] Mood - Comeback 2",
+  "Mood - Comeback_1" => "[Music] Mood - Comeback II",
   "Mood - Comeback" => "[Music] Mood - Comeback",
   "Mood - Conniving" => "[Music] Mood - Conniving",
   "Mood - Craggy" => "[Music] Mood - Craggy",
@@ -156,7 +156,7 @@ MUSIC_SIGNPOST_MAPPING = {
   "Mood - Departure" => "[Music] Mood - Departure",
   "Mood - Desert Chamber" => "[Music] Mood - Desert Chamber",
   "Mood - Determination!" => "[Music] Mood - Determination!",
-  "Mood - Disaster_1" => "[Music] Mood - Disaster 2",
+  "Mood - Disaster_1" => "[Music] Mood - Disaster II",
   "Mood - Disaster" => "[Music] Mood - Disaster",
   "Mood - Distressed" => "[Music] Mood - Distressed",
   "Mood - Encounter" => "[Music] Mood - Encounter",
@@ -177,7 +177,7 @@ MUSIC_SIGNPOST_MAPPING = {
   "Mood - Ritual" => "[Music] Mood - Ritual",
   "Mood - Rivalry" => "[Music] Mood - Rivalry",
   "Mood - Royal" => "[Music] Mood - Royal",
-  "Mood - Ruins_1" => "[Music] Mood - Ruins 2",
+  "Mood - Ruins_1" => "[Music] Mood - Ruins II",
   "Mood - Ruins" => "[Music] Mood - Ruins",
   "Mood - Sanctuary" => "[Music] Mood - Sanctuary",
   "Mood - Sandy" => "[Music] Mood - Sandy",
@@ -186,8 +186,8 @@ MUSIC_SIGNPOST_MAPPING = {
   "Mood - Shopaholic" => "[Music] Mood - Shopaholic",
   "Mood - Sinister" => "[Music] Mood - Sinister",
   "Mood - Stardom" => "[Music] Mood - Stardom",
-  "Mood - Teamwork_1" => "[Music] Mood - Teamwork 2",
-  "Mood - Teamwork_2" => "[Music] Mood - Teamwork 3",
+  "Mood - Teamwork_1" => "[Music] Mood - Teamwork II",
+  "Mood - Teamwork_2" => "[Music] Mood - Teamwork III",
   "Mood - Teamwork" => "[Music] Mood - Teamwork",
   "Mood - Technical_1" => "[Music] Mood - Technical",
   "Mood - That's right" => "[Music] Mood - That's right",
@@ -196,18 +196,18 @@ MUSIC_SIGNPOST_MAPPING = {
   "Mood - Triumphant" => "[Music] Mood - Triumphant",
   "Mood - Tropical" => "[Music] Mood - Tropical",
   "Mood - Truth" => "[Music] Mood - Truth",
-  "Mood - Village_1" => "[Music] Mood - Village 2",
+  "Mood - Village_1" => "[Music] Mood - Village II",
   "Mood - Village" => "[Music] Mood - Village",
-  "Music - 3rd Heaven" => "[Awakening] ARCHETYPE (Third Heaven)",
-  "Music - 3rd HQ" => "[Awakening] ARCHETYPE (Third Layer HQ)",
-  "Music - Akuwa Town_1" => "[Music] Akuwa Town 2",
+  "Music - 3rd Heaven" => "[Awakening] ARCHETYPE Third Heaven",
+  "Music - 3rd HQ" => "[Awakening] ARCHETYPE Third HQ",
+  "Music - Akuwa Town_1" => "[Music] Akuwa Town II",
   "Music - Akuwa Town" => "[Music] Akuwa Town",
   "Music - Alamissa Urben" => "[Music] Alamissa Urben",
   "Music - Angie's Manor" => "[Music] Angie's Manor",
-  "Music - AtebitWorld_1" => "\\gsc[GSCMusic] AtebitWorld 2",
-  "Music - AtebitWorld" => "\\gsc[GSCMusic] AtebitWorld",
-  "Music - BestieBeatdown_1" => "[Music] BestieBeatdown 2",
-  "Music - BestieBeatdown" => "[Music] BestieBeatdown",
+  "Music - AtebitWorld_1" => "\\gsc[GSCMusic] Atebit World II",
+  "Music - AtebitWorld" => "\\gsc[GSCMusic] Atebit World",
+  "Music - BestieBeatdown_1" => "[Music] Bestie Beatdown II",
+  "Music - BestieBeatdown" => "[Music] Bestie Beatdown",
   "Music - Bike" => "[Music] Bike",
   "Music - Bladestar Base" => "[Music] Bladestar Base",
   "Music - Celandine City" => "[Music] Celandine City",
@@ -218,21 +218,21 @@ MUSIC_SIGNPOST_MAPPING = {
   "Music - Desert Town" => "[Music] Desert Town",
   "Music - Desert" => "[Music] Desert",
   "Music - Despair Desert" => "[Music] Despair Desert",
-  "Music - Dive(m)" => "[Music] Dive (m)",
+  "Music - Dive(m)" => "[Music] Dive",
   "Music - Enemy Base" => "[Music] Enemy Base",
   "Music - Festival" => "[Music] Festival",
   "Music - Forest of Time" => "[Music] Forest of Time",
   "Music - Garden" => "[Music] Garden",
-  "Music - Garufa Inc" => "[Music] Garufa Inc.",
+  "Music - Garufa Inc" => "[Awakening] Garufa Inc.",
   "Music - Gates" => "[Music] Gates",
   "Music - Goldenleaf" => "[Music] Goldenleaf",
   "Music - Guitar" => "[Music] Guitar",
-  "Music - Hang Out_1" => "[Music] Hang Out 2",
+  "Music - Hang Out_1" => "[Music] Hang Out II",
   "Music - Hang Out" => "[Music] Hang Out",
   "Music - I'm Aelita" => "[Music] I'm Aelita",
   "Music - Investigative" => "[Music] Investigative",
-  "Music - Jungle_1" => "[Music] Jungle 2",
-  "Music - Jungle_2" => "[Music] Jungle 3",
+  "Music - Jungle_1" => "[Music] Jungle II",
+  "Music - Jungle_2" => "[Music] Jungle III",
   "Music - Jungle" => "[Music] Jungle",
   "Music - Jynnobi" => "[Music] Jynnobi",
   "Music - Kakori Village" => "[Music] Kakori Village",
@@ -247,12 +247,12 @@ MUSIC_SIGNPOST_MAPPING = {
   "Music - Nostalgia Reborn" => "[Music] Nostalgia Reborn",
   "Music - Phone Call" => "[Music] Phone Call",
   "Music - PKMN Centers" => "[Music] PKMN Centers",
-  "Music - PKMN Centersn" => "[Music] PKMN Centers (Night)",
+  "Music - PKMN Centersn" => "[Music][Night] PKMN Centers",
   "Music - Pokeflute" => "[Music] Pokeflute",
-  "Music - RAMPAGE" => "[Music] RAMPAGE",
+  "Music - RAMPAGE" => "[Rampage] <outln2><c3=EC7063,7B241C>RAMPAGE!</c3></outln2>",
   "Music - Relic Song" => "[Music] Relic Song",
   "Music - Reservoir" => "[Music] Reservoir",
-  "Music - Reservoirn" => "[Music] Reservoir (Night)",
+  "Music - Reservoirn" => "[Music][Night] Reservoir",
   "Music - Rigid Annihilation" => "[Music] Rigid Annihilation",
   "Music - Route 2" => "[Music] Route 2",
   "Music - Route 3" => "[Music] Route 3",
@@ -263,9 +263,9 @@ MUSIC_SIGNPOST_MAPPING = {
   "Music - Savior" => "[Music] Savior",
   "Music - Song of The Faithful" => "[Music] Song of The Faithful",
   "Music - Space-Time Distortion" => "[Music] Space-Time Distortion",
-  "Music - Story of The Ancients_1" => "[Awakening] Story of The Ancients 2",
+  "Music - Story of The Ancients_1" => "[Awakening] Story of The Ancients II",
   "Music - Story of The Ancients" => "[Awakening] Story of The Ancients",
-  "Music - Struggle_1" => "[Music] Struggle 2",
+  "Music - Struggle_1" => "[Music] Struggle II",
   "Music - Struggle" => "[Music] Struggle",
   "Music - Surf" => "[Music] Surf",
   "Music - Taelia" => "[Music] Taelia",
@@ -273,11 +273,11 @@ MUSIC_SIGNPOST_MAPPING = {
   "Music - Teila Resort" => "[Music] Teila Resort",
   "Music - Temple" => "[Music] Temple",
   "Music - Terajuma Jungle" => "[Music] Terajuma Jungle",
-  "Music - The Lounge_1" => "[Music] The Lounge 2",
+  "Music - The Lounge_1" => "[Music] The Lounge II",
   "Music - The Lounge" => "[Music] The Lounge",
   "Music - The Play's Right" => "[Music] The Play's Right",
   "Music - The Under" => "[Music] The Under",
-  "Music - Third Layer" => "[Music] Third Layer",
+  "Music - Third Layer" => "[Awakening] Third Layer",
   "Music - Tournament" => "[Music] Tournament",
   "Music - Unown" => "[Music] Unown",
   "Music - Valor Mountain" => "[Music] Valor Mountain",
@@ -290,11 +290,11 @@ MUSIC_SIGNPOST_MAPPING = {
   "Music - Xenogene" => "[Music] Xenogene",
   "Music - Zone Zero" => "[Music] Zone Zero",
   "Rejuvenation - ..." => "[Awakening] ...",
-  "Rejuvenation - Title Screen_2" => "[Awakening] Title Screen 2",
+  "Rejuvenation - Title Screen_2" => "[Awakening] Painful Truth",
   "Rejuvenation - Title Screen" => "[Awakening] Title Screen",
   "Roxie - Doggars!" => "[Music] Roxie - Doggars!",
   "RSE - Battle Deoxys" => "[Battle] RSE - Battle Deoxys",
-  "RSE - Battle Regis" => "[Battle] RSE - Battle Regis",
+  "RSE - Battle Regis" => "[Battle] RSE - Battle Regi",
   "RSE - Battle" => "[Battle] RSE - Battle",
   "RSE - BattlePike" => "[Music] RSE - BattlePike",
   "RSE - Enemy Battle" => "[Music] RSE - Enemy Battle",
@@ -448,6 +448,7 @@ class Game_System
   def bgm_play(bgm)
     ret = musicSignpost_old_bgm_play(bgm)
     musicSignpost_playSignpost(bgm) if bgm
+    ExperimentalMusicDisplay.updateMusic(false) if $MUSICSIGNPOSTEXPERIMENTAL
     return ret
   end
 
@@ -458,6 +459,7 @@ class Game_System
   def bgm_pause(fadetime=0.0)
     ret = musicSignpost_old_bgm_pause(fadetime)
     $musicSignpost_lastTrackDisplayed = nil
+    ExperimentalMusicDisplay.updateMusic(false) if $MUSICSIGNPOSTEXPERIMENTAL
     return ret
   end
 
@@ -468,6 +470,7 @@ class Game_System
   def bgm_resume(bgm,position=nil)
     ret = musicSignpost_old_bgm_resume(bgm,position)
     musicSignpost_playSignpost(bgm) if bgm
+    ExperimentalMusicDisplay.updateMusic(false) if $MUSICSIGNPOSTEXPERIMENTAL
     return ret
   end
 end
@@ -502,10 +505,11 @@ module ExperimentalMusicDisplay
       @@displaybox.z = 100000
     end
 
-    @@displaybox.visible = !!$game_system.playing_bgm
+    @@displaybox.visible = @@displaybox.text != '' && !!$game_system.playing_bgm
   end
 
   def self.positionBox
+
     @@displaybox.resizeToFit(@@displaybox.text,Graphics.width)
     # Style: bottom corner
     # @@displaybox.x = 0
@@ -517,12 +521,15 @@ module ExperimentalMusicDisplay
     @@displaybox.y = -4
   end
 
+  def self.updateMusic(createBox=true)
+    return if !createBox && (!defined?(@@displaybox) || @@displaybox.contents.disposed?)
 
-  def self.updateMusic
     ensureBox
     if $game_system.playing_bgm
       musicCurrent = musicSignpost_msg($game_system.playing_bgm)
-      if @@lastText != musicCurrent || @@lastbox != MessageConfig.pbGetSystemFrame()
+      if musicCurrent.nil?
+        @@displaybox.visible = false 
+      elsif @@lastText != musicCurrent || @@lastbox != MessageConfig.pbGetSystemFrame()
         @@lastText = musicCurrent
         gsc = musicCurrent.start_with?("\\gsc")
         musicCurrent = musicCurrent.gsub(/^\\gsc/, '') if gsc
@@ -542,6 +549,20 @@ module ExperimentalMusicDisplay
       super(text)
       self.zoom_y = 0.5
       self.zoom_x = 0.5
+    end
+
+
+    def resizeToFitInternal(text,maxwidth)
+      dims=[0,0]
+      cwidth=maxwidth<0 ? Graphics.width : maxwidth
+      chars=getFormattedTextForDims(self.contents,0,0,
+         cwidth-self.borderX-2-6,-1,text,@lineHeight,true)
+      chars.delete_at(-1) if chars.size > 0 && chars[-1][0] == ' '
+      for ch in chars
+        dims[0]=[dims[0],ch[1]+ch[3]].max
+        dims[1]=[dims[1],ch[2]+ch[4]].max
+      end
+      return dims
     end
   end
 end
