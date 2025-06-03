@@ -360,7 +360,7 @@ $cache.pkmn[:SHELLOS].formData["East Sea"][:EggMoves] = $cache.pkmn[:SHELLOS].Eg
 $cache.pkmn[:PUMPKABOO].formData["Small"][:EggMoves] = $cache.pkmn[:PUMPKABOO].EggMoves
 
 # Fix Basculin forms
-$cache.pkmn[:BASCULIN].formData["Blue-Striped"][:EggMoves] = [:AGILITY,:BRINE,:BUBBLEBEAM,:ENDEAVOR,:HEADSMASH,:MUDSHOT,:MUDDYWATER,:RAGE,:REVENGE,:SWIFT,:WHIRLPOOL]
+$cache.pkmn[:BASCULIN].formData["Blue-Striped"][:EggMoves] = $cache.pkmn[:BASCULIN].EggMoves
 $cache.pkmn[:BASCULIN].formData["White-Striped"][:EggMoves] = [:AGILITY,:ENDEAVOR,:HEADSMASH,:MUDDYWATER,:RAGE,:REVENGE,:SWIFT,:WHIRLPOOL,:SHADOWBONE] # Shadow Bone as poor replacement for Last Respects
 
 # Aevian forms with no egg moves
