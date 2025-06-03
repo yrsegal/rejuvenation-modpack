@@ -22,6 +22,30 @@ class Window_AdvancedCommandPokemon
     dims[1]=[self.borderY+1,windowheight].max
     dims[1]=[dims[1],Graphics.height].min
   end
+
+  def drawItem(index,count,rect)
+    pbSetSystemFont(self.contents)
+    rect=drawCursor(index,rect)
+    if toUnformattedText(@commands[index]).gsub(/\n/,"")==@commands[index]
+      # Use faster alternative for unformatted text without line breaks
+      pbDrawShadowText(self.contents,rect.x,rect.y,rect.width,rect.height,
+         @commands[index],self.baseColor,self.shadowColor)
+    else
+      ### MODDED/
+      @textCache = {} if !@textCache
+
+      chars = @textCache[[index, rect.y]]
+      if !chars
+        chars=getFormattedText(
+          self.contents,rect.x,rect.y,rect.width,rect.height,
+          @commands[index],rect.height,true,true)
+        @textCache[[index, rect.y]] = chars
+      end
+      ### /MODDED
+
+      drawFormattedChars(self.contents,chars)
+    end
+  end
 end
 
 def Kernel.advanced_pbMessage(message,commands=nil,cmdIfCancel=0,skin=nil,defaultCmd=0,&block)
