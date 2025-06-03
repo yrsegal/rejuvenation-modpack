@@ -608,7 +608,7 @@ class PokeBattle_Battle
   end
 
   def pbSendOut(*args, **kwargs)
-    $expmusic_disabled = true
+    $expmusic_disabled = @doublebattle
     ExperimentalMusicDisplay.ensureBox if $MUSICSIGNPOSTEXPERIMENTAL
     return expsignpost_old_pbSendOut(*args, **kwargs)
   end
