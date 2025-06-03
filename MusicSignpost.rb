@@ -530,7 +530,7 @@ module ExperimentalMusicDisplay
       @@displaybox.z = 100000
     end
 
-    @@displaybox.visible = @@displaybox.text != '' && !!$game_system.playing_bgm
+    @@displaybox.visible = !!(@@displaybox.text != '' && $game_system.playing_bgm && !$expmusic_disabled)
   end
 
   def self.positionBox
@@ -597,9 +597,32 @@ module ExperimentalMusicDisplay
   end
 end
 
+$expmusic_disabled = false
+
+class PokeBattle_Battle
+  if !defined?(expsignpost_old_pbSendOut)
+    alias :expsignpost_old_pbSendOut :pbSendOut
+  end
+  if !defined?(expsignpost_old_pbEndOfBattle)
+    alias :expsignpost_old_pbEndOfBattle :pbEndOfBattle
+  end
+
+  def pbSendOut(*args, **kwargs)
+    $expmusic_disabled = true
+    ExperimentalMusicDisplay.ensureBox if $MUSICSIGNPOSTEXPERIMENTAL
+    return expsignpost_old_pbSendOut(*args, **kwargs)
+  end
+  def pbEndOfBattle(*args, **kwargs)
+    $expmusic_disabled = false
+    ExperimentalMusicDisplay.ensureBox if $MUSICSIGNPOSTEXPERIMENTAL
+    return expsignpost_old_pbEndOfBattle(*args, **kwargs)
+  end
+end
 
 class Game_Screen
-  alias :expsignpost_old_update :update
+  if !defined?(expsignpost_old_update)
+    alias :expsignpost_old_update :update
+  end
 
   def update(*args, **kwargs)
     ExperimentalMusicDisplay.updateMusic if $MUSICSIGNPOSTEXPERIMENTAL

@@ -1,6 +1,26 @@
 $betterBattleUI_typeIcons_bitmaps = nil # Force the reloading of disposed graphics on soft resetting
 $betterBattleUI_statBoosts_data = nil
 
+$BBUI_FIXED_DAMAGE = [
+  0x06A, # Sonic Boom
+  0x06B, # Dragon Rage
+  0x06C, # Super Fang
+  0x06D, # Seismic Toss
+  0x06E, # Endeavor
+  0x06F, # Psywave
+  0x070, # OHKO
+  0x071, # Counter
+  0x072, # Mirror Coat
+  0x073, # Metal Burst
+  0x0D4, # Bide
+  0x0E1, # Final Gambit
+  0x809, # Guardian of Alola
+]
+
+$BBUI_FIXED_DAMAGE_FIELD = {
+  0x118 => :DEEPEARTH # Gravity
+}
+
 TextureOverrides.registerTextureOverride(TextureOverrides::BATTLEICON + "battleFightButtonsFighting", "Data/Mods/BetterBattleUI/FightingButton") if defined?(TextureOverrides)
 
 module BBUIConsts 
@@ -833,12 +853,13 @@ class FightMenuButtons < BitmapSprite
     pbDrawImagePositions(self.bitmap,imagepos)
     for i in 0...4
       next if !moves[i]
+      move = moves[i]
       x=((i%2)==0) ? 4 : 192
       y=((i/2)==0) ? 6 : 48
       y+=UPPERGAP
       y-=2 if Rejuv
       ### MODDED/
-      movetype = moves[i].pbType(battler,moves[i].type)
+      movetype = move.pbType(battler,move.type)
       typemodR = 4
       typemodL = 4
       twoOpponents = false
@@ -852,7 +873,7 @@ class FightMenuButtons < BitmapSprite
       else
         zorovar = false
       end
-      if moves[i].category != :status
+      if !move.pbIsStatus?
         if twoOpponents
           if battler.pbOpposing1.effects[:Illusion]
             zorovar1 = true
@@ -864,27 +885,31 @@ class FightMenuButtons < BitmapSprite
           else
             zorovar2 = false
           end
-          typemodR = moves[i].betterBattleUI_showMoveEffectiveness(movetype, battler, battler.pbOpposing1, zorovar1)
-          typemodL = moves[i].betterBattleUI_showMoveEffectiveness(movetype, battler, battler.pbOpposing2, zorovar2)
+          typemodR = move.betterBattleUI_showMoveEffectiveness(movetype, battler, battler.pbOpposing1, zorovar1)
+          typemodL = move.betterBattleUI_showMoveEffectiveness(movetype, battler, battler.pbOpposing2, zorovar2)
         else
-          typemodL = moves[i].betterBattleUI_showMoveEffectiveness(movetype, battler, opponent, zorovar)
+          typemodL = move.betterBattleUI_showMoveEffectiveness(movetype, battler, opponent, zorovar)
         end
       else
         if battler.effects[:Taunt] > 0 ||
-          (battler.effects[:HealBlock] > 0 && (moves[i].isHealingMove? || (moves[i].function == 0xDD || moves[i].function == 0x139 || moves[i].function == 0x158))) # Healing and Absorbtion Moves fail on HealBlock
+          (battler.effects[:HealBlock] > 0 && (move.isHealingMove? || (move.function == 0xDD || move.function == 0x139 || move.function == 0x158))) # Healing and Absorbtion Moves fail on HealBlock
           typemod = 0
-        elsif moves[i].target != :User && moves[i].target != :Partner
+        elsif move.target != :User && move.target != :Partner
           if twoOpponents
-            typemodR = betterBattleUI_showMoveEffectivenessStatus(moves[i], battler, battler.pbOpposing1, movetype, typemodR, zorovar1)
-            typemodL = betterBattleUI_showMoveEffectivenessStatus(moves[i], battler, battler.pbOpposing2, movetype, typemodL, zorovar2)
+            typemodR = betterBattleUI_showMoveEffectivenessStatus(move, battler, battler.pbOpposing1, movetype, typemodR, zorovar1)
+            typemodL = betterBattleUI_showMoveEffectivenessStatus(move, battler, battler.pbOpposing2, movetype, typemodL, zorovar2)
           else
-            typemodL = betterBattleUI_showMoveEffectivenessStatus(moves[i], battler, opponent, movetype, typemodL, zorovar)
+            typemodL = betterBattleUI_showMoveEffectivenessStatus(move, battler, opponent, movetype, typemodL, zorovar)
           end
         end
       end
       typemodL = typemodL.clamp(1,16) if typemodL != 0 
       typemodR = typemodR.clamp(1,16) if typemodR != 0 
-      case pbFieldNotesBattle(moves[i])
+      if move.betterBattleUI_fixedDamageMove?
+        typemodL = 4 if typemodL != 0
+        typemodR = 4 if typemodR != 0
+      end
+      case pbFieldNotesBattle(move)
         when 1 then self.bitmap.blt(x + 2, y + 2, @goodmovebitmap.bitmap, Rect.new(0, 0, @goodmovebitmap.bitmap.width, @goodmovebitmap.bitmap.height))
         when 2 then self.bitmap.blt(x + 2, y + 2, @badmovebitmap.bitmap, Rect.new(0, 0, @badmovebitmap.bitmap.width, @badmovebitmap.bitmap.height))
         when 3 then self.bitmap.blt(x + 2, y + 2, @betterBattleUI_fieldnullmove.bitmap, Rect.new(0, 0, @betterBattleUI_fieldnullmove.bitmap.width, @betterBattleUI_fieldnullmove.bitmap.height))
@@ -989,6 +1014,13 @@ class FightMenuButtons < BitmapSprite
 end
 
 class PokeBattle_Move
+
+  def betterBattleUI_fixedDamageMove?
+    return true if $BBUI_FIXED_DAMAGE.include?(self.function)
+    return true if $BBUI_FIXED_DAMAGE_FIELD[self.function] && $BBUI_FIXED_DAMAGE_FIELD[self.function] == self.battle.field
+    return false
+  end
+
   def betterBattleUI_showMoveEffectiveness(type, attacker, opponent, zorovar = false)
     secondtype = getSecondaryType(attacker)
     if opponent.ability == :SAPSIPPER && !opponent.moldbroken && (type == :GRASS || (!secondtype.nil? && secondtype.include?(:GRASS)))
