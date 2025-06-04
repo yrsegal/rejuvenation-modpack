@@ -471,9 +471,12 @@ class Game_System
   end
 
   def bgm_play(bgm)
+    oldPlaying = @playing_bgm
     ret = musicSignpost_old_bgm_play(bgm)
+    @playing_bgm = oldPlaying if bgm && !FileTest.audio_exist?("Audio/BGM/"+ bgm.name)
+
     musicSignpost_playSignpost(bgm) if bgm
-    ExperimentalMusicDisplay.updateMusic(false) if $MUSICSIGNPOSTEXPERIMENTAL
+    ExperimentalMusicDisplay.updateMusic(false) if bgm && $MUSICSIGNPOSTEXPERIMENTAL
     return ret
   end
 
@@ -495,7 +498,7 @@ class Game_System
   def bgm_resume(bgm,position=nil)
     ret = musicSignpost_old_bgm_resume(bgm,position)
     musicSignpost_playSignpost(bgm) if bgm
-    ExperimentalMusicDisplay.updateMusic(false) if $MUSICSIGNPOSTEXPERIMENTAL
+    ExperimentalMusicDisplay.updateMusic(false) if bgm && $MUSICSIGNPOSTEXPERIMENTAL
     return ret
   end
 end

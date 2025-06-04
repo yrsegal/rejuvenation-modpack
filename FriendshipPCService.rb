@@ -41,6 +41,8 @@ class FriendshipPCService
 
     choices = [_INTL("Yes"),_INTL("No"),_INTL("Check Friendship")]
 
+    updateEvent
+
     if (tsOn?("A"))
       price = 15000
       choice = Kernel.pbMessage(teila("\\gWould you like to book a Pokemon? You've already booked for today, so the price will be ${1}.", pbCommaNumber(price)),
@@ -123,11 +125,9 @@ class FriendshipPCService
     $PokemonGlobal.eventvars[[333, 16]]=time
   end
 
-  def cooledDown?(seconds)
-    if !(expired?(seconds) && !tsOn?("A"))
-      return false
-    else
-      return true
+  def updateEvent
+    if expired?(86400)
+      $game_self_switches[[333,16,"A"]] = false
     end
   end
 
