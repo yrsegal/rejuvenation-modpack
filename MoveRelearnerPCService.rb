@@ -280,7 +280,7 @@ class RelearnerPCService
             Kernel.pbMessage(sister("SAMANTHA: Which Pokemon needs to forget a move?"))
           elsif Kernel.pbConfirmMessage(sister("SAMANTHA: \\v[3]'s \\v[4]? No problem!"))
             pbDeleteMove(pkmn, moveresult)
-            Kernel.pbMessage(sister("And...\\| done! \\v[3] has forgotten \\v[4]!"))
+            Kernel.pbMessage(sister("And...\\|\\se[balldrop] done! \\v[3] has forgotten \\v[4]!"))
             Kernel.pbMessage(sister("Thanks for calling, \\PN! Talk to you soon!"))
             return
           end

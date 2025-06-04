@@ -499,7 +499,7 @@ class PokemonDataBox < SpriteWrapper
     # fill with black (shows what the HP used to be)
     hpGaugeX=PBScene::HPGAUGE_X
     hpGaugeY=PBScene::HPGAUGE_Y
-    if @battler.issossmon && !(@battler.index == 2)
+    if @battler.issossmon && (@battler.index&1)!=0 && !(@battler.index == 2)
       hpGaugeY=PBScene::HPGAUGE_Y-10
       hpGaugeX=PBScene::HPGAUGE_X-16
     end
