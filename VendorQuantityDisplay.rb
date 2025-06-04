@@ -102,7 +102,7 @@ module VendorQuantityDisplay
 
   def self.injectForEvent(events, key, script)
     if key.is_a?(Array)
-      injectPage(events[key[0]].pages[key[1]], script)
+      injectPage(events[key[0]].pages[key[1] - 1], script)
     else
       inject(events[key], script)
     end
