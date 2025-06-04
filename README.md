@@ -137,5 +137,7 @@ Other mods:
   If a password gives you an item you've already spent AP for, the AP gets refunded.
 - PasswordOptions.rb (depends on 0000.injection.rb)  
   Expands the Password menu in the intro to give you much more info when enabling passwords.
+- ReplaceRepelInPickup.rb  
+  Replaces Repel in Pickup tables, as it is effectively useless with the Spice Scent.
 - SkipTitleSoftResets.rb  
   Skips the intro scene for soft resets, making it easier to get back into the game.
