@@ -4,8 +4,12 @@ def hpSummary_trueType(move, pokemon)
       type = pbHiddenPower(pokemon)
     elsif move.move == :REVELATIONDANCE
       type = pokemon.type1
-    elsif move.move == :MIRRORBEAM && pokemon.type2 && pokemon.type2 != pokemon.type1
-      type = pokemon.type2
+    elsif move.move == :MIRRORBEAM
+      if !pokemon.type2.nil?
+        type = pokemon.type2
+      else
+        type = pokemon.type1
+      end
     end
     return type
 end
