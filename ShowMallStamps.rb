@@ -121,6 +121,8 @@ module ShowSomniamMallStamps
   end
 
   SHOPS = {
+    3 =>  [0,  'General Store'],
+    38 => [0,  'Move Extenders'],
     4 =>  [2,  'Evolutionary Stones'],
     5 =>  [2,  'Battle Items'],
     6 =>  [3,  'Vitamins'],
