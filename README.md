@@ -57,8 +57,6 @@ Fix/hotfix mods:
   Fixes the silly internal name of the followup attack of the Probopass Crest from displaying.
 - FixSuperLuck.rb  
   Super Luck increases held item chances on wild pokemon, as it's supposed to.
-- PredictedMegaMoveTypes.rb  
-  Command buttons properly indicate what type a move will be upon Mega Evolution if the Mega Evolved Pokemon's ability would change that.
 - RelearnPreShadowMoves.rb  
   Shadow Pokemon regain their old moves over time, as they're supposed to.
 - Route4GlobalChange.rb  

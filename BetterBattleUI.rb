@@ -763,6 +763,47 @@ class FightMenuButtons < BitmapSprite
     
     return betterBattleUI_old_initialize(*args, **kwargs)
   end
+
+  def betterBattleUI_pbType(move, attacker)
+    if !attacker.isMega? && attacker.hasMega?
+      side=(attacker.battle.pbIsOpposing?(attacker.index)) ? 1 : 0
+      owner=attacker.battle.pbGetOwnerIndex(attacker.index)
+      if attacker.battle.megaEvolution[side][owner] == attacker.index
+        attacker.pokemon.makeMega
+        prevAbility = attacker.ability
+        prevType1 = attacker.type1
+        prevType2 = attacker.type2
+        attacker.ability = attacker.pokemon.ability
+        attacker.type1 = attacker.pokemon.type1
+        attacker.type2 = attacker.pokemon.type2
+        ret = move.pbType(attacker, move.type)
+        attacker.pokemon.makeUnmega
+        attacker.ability = prevAbility
+        attacker.type1 = prevType1
+        attacker.type2 = prevType2
+        return ret
+      end
+    elsif !attacker.isUltra? && attacker.hasUltra?
+      side=(attacker.battle.pbIsOpposing?(attacker.index)) ? 1 : 0
+      owner=attacker.battle.pbGetOwnerIndex(attacker.index)
+      if attacker.battle.ultraBurst[side][owner] == attacker.index
+        attacker.pokemon.makeMega
+        prevAbility = attacker.ability
+        prevType1 = attacker.type1
+        prevType2 = attacker.type2
+        attacker.ability = attacker.pokemon.ability
+        attacker.type1 = attacker.pokemon.type1
+        attacker.type2 = attacker.pokemon.type2
+        ret = move.pbType(attacker, move.type)
+        attacker.pokemon.makeUnmega
+        attacker.ability = prevAbility
+        attacker.type1 = prevType1
+        attacker.type2 = prevType2
+        return ret
+      end
+    end
+    return move.pbType(attacker)
+  end
     
 
   if !defined?(betterBattleUI_old_dispose)
@@ -809,7 +850,9 @@ class FightMenuButtons < BitmapSprite
       y=((i/2)==0) ? 6 : 48
       y+=UPPERGAP
       imagepos=[]
-      movetype = moves[i].pbType(battler,moves[i].type)
+      ### MODDED/
+      movetype = betterBattleUI_pbType(moves[i], battler)
+      ### /MODDED
       imagepos.push([sprintf("Graphics/Pictures/Battle/battleFightButtons%s",movetype),x,y,0,0,192,46])
       pbDrawImagePositions(self.bitmap,imagepos)
       textpos.push([_INTL("{1}",moves[i].name),x+96,y+12,2,
@@ -829,7 +872,9 @@ class FightMenuButtons < BitmapSprite
       y=((i/2)==0) ? 6 : 48
       y+=UPPERGAP
       imagepos=[]
-      movetype = moves[i].pbType(battler,moves[i].type)
+      ### MODDED/
+      movetype = betterBattleUI_pbType(moves[i], battler)
+      ### /MODDED
       secondtype = moves[i].getSecondaryType(battler)
       if secondtype.nil?
         imagepos.push([sprintf("Graphics/Icons/type%s",movetype),416,20+UPPERGAP,0,0,64,28])
@@ -859,7 +904,7 @@ class FightMenuButtons < BitmapSprite
       y+=UPPERGAP
       y-=2 if Rejuv
       ### MODDED/
-      movetype = move.pbType(battler,move.type)
+      movetype = betterBattleUI_pbType(move, battler)
       typemodR = 4
       typemodL = 4
       twoOpponents = false
@@ -978,7 +1023,7 @@ class FightMenuButtons < BitmapSprite
     typeBoost = 1; moveBoost=1
     attacker = battle.battlers.find { |battler| battler.moves.include?(move) || (battler.zmoves && battler.zmoves.include?(move)) }
     opponent = attacker.pbOppositeOpposing
-    movetype = move.pbType(attacker)
+    movetype = betterBattleUI_pbType(move, attacker)
     if move.basedamage > 0 && !((0x6A..0x73).include?(move.function) || [0xD4,0xE1].include?(move.function))
       typeBoost = move.typeFieldBoost(movetype,attacker,opponent)
       moveBoost = move.moveFieldBoost
