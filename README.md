@@ -47,6 +47,8 @@ Fix/hotfix mods:
   Fixes Blue Moon Ice Cream not being rarely available from certain shops as intended. (It was still possible to access, but not in the intended way.)
 - FixCdAName.rb  
   Fixes an area name being displayed incorrectly.
+- FixFactoryAreas.rb (depends on 0000.injection.rb)  
+  Adds a field effect message to entering Oceana Pier's field-effect tutorial warehouse, and fixes damage pads not applying the proper types of damage.
 - FixMissingItemTextures.rb (depends on 0000.textures.rb)  
   Fixes several missing items textures.
 - FixNWSilvally.rb  
@@ -55,8 +57,6 @@ Fix/hotfix mods:
   Fixes the silly internal name of the followup attack of the Probopass Crest from displaying.
 - FixSuperLuck.rb  
   Super Luck increases held item chances on wild pokemon, as it's supposed to.
-- FixFactoryAreas.rb (depends on 0000.injection.rb)  
-  Adds a field effect message to entering Oceana Pier's field-effect tutorial warehouse, and fixes damage pads not applying the proper types of damage.
 - RelearnPreShadowMoves.rb  
   Shadow Pokemon regain their old moves over time, as they're supposed to.
 - Route4GlobalChange.rb  

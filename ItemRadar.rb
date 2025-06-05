@@ -13,13 +13,30 @@ end
 
 $cache.items[:ITEMFINDER].desc = "A device used for finding items. Makes hidden items visible when activated."
 
+class PokemonMartAdapter
+  if !defined?(itemradar_old_getDisplayName)
+    alias :itemradar_old_getDisplayName :getDisplayName
+  end
+
+  def getDisplayName(item)
+    old = itemradar_old_getDisplayName(item)
+    if item == :ITEMFINDER
+      if $game_screen && defined?($game_screen.itemRadar_itemRadarIsOn) && $game_screen.itemRadar_itemRadarIsOn
+        old += ' (On)'
+      else
+        old += ' (Off)'
+      end
+    end
+    return old
+  end
+end
+
 ### /MODDED
 
 class Game_Screen
   ### MODDED/
   attr_accessor   :itemRadar_itemRadarIsOn
   
-
   def itemRadar_updateItemRadar
     foundz = false
     biggestid = 0
@@ -60,6 +77,7 @@ class Game_Screen
 
   def itemRadar_checkIsItemRadarOn?
     return false if Rejuv && $game_switches[:NotPlayerCharacter] && !$game_switches[:InterceptorsWish]
+    return false if $PokemonBag.pbQuantity(:ITEMFINDER) == 0
     @itemRadar_itemRadarIsOn=false if !defined?(@itemRadar_itemRadarIsOn)
     return @itemRadar_itemRadarIsOn
   end

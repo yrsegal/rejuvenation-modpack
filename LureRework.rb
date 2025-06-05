@@ -28,6 +28,24 @@ $cache.items[:MAGNETICLURE].flags[:noUse] = false
 $cache.items[:MAGNETICLURE].flags[:utilityhold] = false
 $cache.items[:MAGNETICLURE].desc = "A strange device. Draws in uncaught species when activated."
 
+class PokemonMartAdapter
+  if !defined?(lurerework_old_getDisplayName)
+    alias :lurerework_old_getDisplayName :getDisplayName
+  end
+
+  def getDisplayName(item)
+    old = lurerework_old_getDisplayName(item)
+    if item == :MAGNETICLURE
+      if $game_screen && defined?($game_screen.lurerework_lureIsOn) && $game_screen.lurerework_lureIsOn
+        old += ' (On)'
+      else
+        old += ' (Off)'
+      end
+    end
+    return old
+  end
+end
+
 class PokemonBag_Scene
   if !defined?(lurerework_old_pbStartScene)
     alias :lurerework_old_pbStartScene :pbStartScene
@@ -51,6 +69,7 @@ class Game_Screen
 
   def lurerework_checkIsMagneticLureOn?
     return false if Rejuv && $game_switches[:NotPlayerCharacter] && !$game_switches[:InterceptorsWish]
+    return false if $PokemonBag.pbQuantity(:MAGNETICLURE) == 0
     @lurerework_lureIsOn=false if !defined?(@lurerework_lureIsOn)
     return @lurerework_lureIsOn
   end
