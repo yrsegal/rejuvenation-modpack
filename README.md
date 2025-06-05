@@ -55,6 +55,8 @@ Fix/hotfix mods:
   Fixes the silly internal name of the followup attack of the Probopass Crest from displaying.
 - FixSuperLuck.rb  
   Super Luck increases held item chances on wild pokemon, as it's supposed to.
+- FixFactoryAreas.rb (depends on 0000.injection.rb)  
+  Adds a field effect message to entering Oceana Pier's field-effect tutorial warehouse, and fixes damage pads not applying the proper types of damage.
 - RelearnPreShadowMoves.rb  
   Shadow Pokemon regain their old moves over time, as they're supposed to.
 - Route4GlobalChange.rb  
@@ -131,8 +133,6 @@ Other mods:
   Mr. Luck can no longer tell if you cheat.
 - MusicSignpost.rb *(experimental)* (depends on 0000.textures.rb)  
   Show music near the map signpost.
-- OceanaPierFieldMessage.rb (depends on 0000.injection.rb)  
-  Adds a field effect message to entering Oceana Pier's field-effect tutorial warehouse.
 - OricorioHoldNectar.rb  
   Oricorio hold their Nectar in the wild, as in gen 9, allowing you to get Pink and Yellow Nectars (otherwise unobtainable).
 - PasswordAPRefund.rb  
