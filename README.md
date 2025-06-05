@@ -131,6 +131,8 @@ Other mods:
   Mr. Luck can no longer tell if you cheat.
 - MusicSignpost.rb *(experimental)* (depends on 0000.textures.rb)  
   Show music near the map signpost.
+- OceanaPierFieldMessage.rb (depends on 0000.injection.rb)  
+  Adds a field effect message to entering Oceana Pier's field-effect tutorial warehouse.
 - OricorioHoldNectar.rb  
   Oricorio hold their Nectar in the wild, as in gen 9, allowing you to get Pink and Yellow Nectars (otherwise unobtainable).
 - PasswordAPRefund.rb  
