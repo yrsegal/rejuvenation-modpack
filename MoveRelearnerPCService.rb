@@ -127,8 +127,12 @@ def moverelearnerpc_conversationTakeScale(evt, sister, window)
     Kernel.pbMessage(_I("BRIE: Oh! That's a lot of Heart Scales you've given me!"))
     Kernel.pbMessage(_I("I can't justify the price for someone my sister is so fond of."))
     Kernel.pbMessage(_I("Tell you what. I'm helping you for free now, and I won't take no for an answer!"))
+    sister.turn_toward_player
+    pbExclaim(sister)
+    pbWait(20)
     pbExclaim(sister, HAPPY_ANIMATION_ID)
     Kernel.pbMessage(_I("SAMANTHA: Wow! Thanks, sis! Enjoy, \\PN!"))
+    window.dispose
     return true
   end
   return false
