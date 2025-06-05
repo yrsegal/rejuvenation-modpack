@@ -466,6 +466,7 @@ def musicSignpost_playSignpost(track)
 end
 
 class Game_System
+
   if !defined?(musicSignpost_old_bgm_play)
     alias :musicSignpost_old_bgm_play :bgm_play
   end
@@ -522,6 +523,9 @@ end
 
 $MUSICSIGNPOSTEXPERIMENTAL = true
 
+class Game_System
+  attr_accessor :defaultBGM
+end
 
 module ExperimentalMusicDisplay
   @@lastText = ''
@@ -553,8 +557,8 @@ module ExperimentalMusicDisplay
     return if !createBox && (!defined?(@@displaybox) || @@displaybox.contents.disposed?)
 
     ensureBox
-    if $game_system.playing_bgm
-      musicCurrent = musicSignpost_msg($game_system.playing_bgm)
+    if $game_system.defaultBGM || $game_system.playing_bgm
+      musicCurrent = musicSignpost_msg($game_system.defaultBGM || $game_system.playing_bgm)
       if musicCurrent.nil?
         @@displaybox.visible = false 
       elsif @@lastText != musicCurrent
