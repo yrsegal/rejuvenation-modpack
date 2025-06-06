@@ -1108,12 +1108,17 @@ class PokeBattle_Move
         end
     end
     if (opponent.ability == :BULLETPROOF) && !(opponent.moldbroken)
-      if (PBStuff::BULLETMOVE).include?(@betterBattleUI_move)
+      if (PBStuff::BULLETMOVE).include?(@move)
+        return 0
+      end
+    end
+    if (opponent.ability == :SOUNDPROOF) && !(opponent.moldbroken)
+      if isSoundBased?
         return 0
       end
     end
     if @battle.FE == :ROCKY && (opponent.effects[:Substitute]>0 || opponent.stages[PBStats::DEFENSE] > 0)
-      if (PBStuff::BULLETMOVE).include?(@betterBattleUI_move)
+      if (PBStuff::BULLETMOVE).include?(@move)
         return 0
       end
     end
@@ -1165,11 +1170,11 @@ class PokeBattle_Move
         end
       end
     end
-    typemod *= 4 if @betterBattleUI_move == :FREEZEDRY && opponent.hasType?(:WATER)
-    if @betterBattleUI_move == :CUT && opponent.hasType?(:GRASS) && ((!Rejuv && @battle.FE == :FOREST) || @battle.ProgressiveFieldCheck(PBFields::FLOWERGARDEN,2,5))
+    typemod *= 4 if @move == :FREEZEDRY && opponent.hasType?(:WATER)
+    if @move == :CUT && opponent.hasType?(:GRASS) && ((!Rejuv && @battle.FE == :FOREST) || @battle.ProgressiveFieldCheck(PBFields::FLOWERGARDEN,2,5))
       typemod *= 2
     end
-    if @betterBattleUI_move == :FLYINGPRESS
+    if @move == :FLYINGPRESS
       if @battle.FE == :SKY
         if ((PBTypes.oneTypeEff(:FLYING, opponent.type1) > 2) || (PBTypes.oneTypeEff(:FLYING, opponent.type1) < 2 && $game_switches[:Inversemode]))
           typemod*=2
