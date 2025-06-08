@@ -537,7 +537,8 @@ module ExperimentalMusicDisplay
       @@displaybox.z = 100000
     end
 
-    @@displaybox.visible = !!(@@displaybox.text != '' && $game_system.playing_bgm && !$expmusic_disabled)
+    @@displaybox.visible = !!(@@displaybox.text != '' && $game_system.playing_bgm && !$expmusic_disabled && 
+      !($game_system.message_position != 0 && $game_temp.message_window_showing))
   end
 
   def self.positionBox

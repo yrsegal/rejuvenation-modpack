@@ -290,20 +290,25 @@ class PokemonValuesPCService
   end
 
   def abilities(pkmn)
-    abils=pkmn.getAbilityList || [] # Dedupe
-    command = abils.index(pkmn.ability)
-    command = 0 if command.nil?
+    abils=pkmn.getAbilityList # Dedupe
+    command = 0
 
     commands=[]
+    abilities=[]
     for i in 0..abils.length-1
-      commands.push(((i < abils.length-1 || !$cache.pkmn[pkmn.species].checkFlag?(:HiddenAbilities)) ? "" : "(H) ")+getAbilityName(abils[i]))
+      if !abilities.include?(abils[i])
+        commands.push(((i < abils.length-1 || !$cache.pkmn[pkmn.species].checkFlag?(:HiddenAbilities)) ? "" : "(H) ")+getAbilityName(abils[i]))
+
+        command = abilities.size if pkmn.ability == abils[i]
+        abilities.push(abils[i])
+      end
     end
 
     while command >= 0
-      msg=_INTL("{1} is {2}'s current ability.",getAbilityName(abils[command]),pkmn.name)
+      msg=_INTL("{1} is {2}'s current ability.",getAbilityName(abilities[command]),pkmn.name)
       command=Kernel.pbMessage(msg,commands,-1, nil, command)
       if command >= 0 && command < commands.length
-        pkmn.setAbility(abils[command])
+        pkmn.setAbility(abilities[command])
       end
     end
   end
