@@ -72,9 +72,15 @@ QoL mods:
 - AutoSpeedUpBattles.rb  
   The game will always speed up at the start of battles, then return to the state it was in prior to the battle.
 - BetterBattleUI.rb  
-  Show types and stat boosts visually in battle.
+  Show types and stat boosts visually in battle. In addition:  
+  Hitting the "back" button when selecting a command in battle will move your cursor over "Run". 
+  There's a keybind for Q (which is L) in wild battle to throw the last ball you've used.
 - CleanerPrismPower.rb  
   Makes a Rejuvenation-exclusive ability cleaner.
+- DeleteEndWaits.rb (depends on 0000.injection.rb)  
+  Generally remove end-of-message waits, whichcan cause you to accidentally select an option when you didn't mean to.
+- FLHUDStatus.rb  
+  Makes the in-menu party HUD show if a Pokemon is statused.
 - HiddenPowerInSummary.rb  
   Hidden Power, Revelation Dance, and such all display their correct type in summaries and move listings.
 - ItemRadar.rb (depends on 0000.injection.rb)  
@@ -99,8 +105,6 @@ QoL mods:
   Thief/Covet, Pickup, Pickpocket, and Magician work even if the user is holding an item in wild battles, and items stolen by these effects are deposited directly into the bag at the end of those battles.
 - VendorQuantityDisplay.rb (depends on 0000.injection.rb)  
   Move Tutors and other vendors will show the resources they ask for.
-- XOverRun.rb  
-  Hitting the "back" button when selecting a command in battle will move your cursor over "Run".
 - ZygardeCaffeine.rb  
   Zygarde Cells become indifferent to time of day.
 

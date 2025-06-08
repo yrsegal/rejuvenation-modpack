@@ -247,6 +247,250 @@ class BossPokemonDataBox < SpriteWrapper
   end
 
 end
+    
+### Command Menu Throw Ball
+
+class BetterBattleUI_PokeballThrowButtonDisplay
+  def initialize(battle,viewport=nil)
+    @battle = battle
+    @display=BetterBattleUI_PokeballThrowButton.new(viewport)
+  end
+
+  def updateData(index)
+    @display.updateData(index, @battle)
+  end
+
+  def throwBall(scene)
+    ball = @display.pokeball
+    if pbIsPokeBall?(ball) && ItemHandlers.hasBattleUseOnBattler(ball)
+      scene.betterBattleUI_autoselectitem = ball
+      return true
+    end
+    return false
+  end
+
+  def x; @display.x; end
+  def x=(value)
+    @display.x=value
+  end
+
+  def y; @display.y; end
+  def y=(value)
+    @display.y=value
+  end
+
+  def z; @display.z; end
+  def z=(value)
+    @display.z=value
+  end
+
+  def ox; @display.ox; end
+  def ox=(value)
+    @display.ox=value
+  end
+
+  def oy; @display.oy; end
+  def oy=(value)
+    @display.oy=value
+  end
+
+  def visible; @display.visible; end
+  def visible=(value)
+    @display.visible=value
+  end
+
+  def color; @display.color; end
+  def color=(value)
+    @display.color=value
+  end
+
+  def disposed?
+    return @display.disposed?
+  end
+
+  def dispose
+    return if disposed?
+    @display.dispose
+  end
+
+  def refresh
+    @display.refresh
+  end
+
+  def update
+    @display.update
+  end
+end
+
+
+class BetterBattleUI_PokeballThrowButton < BitmapSprite
+  attr_reader :pokeball
+
+  def initialize(viewport=nil)
+    super(40,68,viewport)
+    self.x=0
+    self.y=118
+    @buttonbitmap=AnimatedBitmap.new("Data/Mods/BetterBattleUI/ThrowBall")
+    @pokeball = nil
+    @pokeballbitmap=nil
+    @cancatch = false
+  end
+
+  def dispose
+    @buttonbitmap.dispose
+    super
+  end
+
+  def updateData(index, battle)
+    @index = index
+    @cancatch = canCatch(battle)
+
+    ball = $PokemonBag.pockets[3][$PokemonBag.getChoice(3)] # Pokeballs
+    if pbIsPokeBall?(ball) && (ball != @pokeball || !@pokeballbitmap)
+      @pokeball = ball
+      @pokeballbitmap = AnimatedBitmap.new(sprintf("Graphics/Pictures/Summary/summaryball" + @pokeball.to_s))
+    end
+
+    refresh
+  end
+
+  def refresh
+    self.bitmap.clear
+    if @pokeballbitmap
+      self.bitmap.blt(0,0,@buttonbitmap.bitmap,Rect.new(0,0,40,68))
+      self.bitmap.blt(2,6,@pokeballbitmap.bitmap,Rect.new(0,0,32,32))
+    end
+  end
+
+  def update
+    refresh
+  end
+
+  def canCatch(battle)
+    if battle.pbIsOpposing?(@index)
+      target=battle.battlers[@index]
+    else
+      target=battle.battlers[@index].pbOppositeOpposing
+    end
+    if target.isFainted?
+      target=target.pbPartner
+    end
+    return false if target.isFainted?
+    return false if battle.opponent && (!pbIsSnagBall?(ball) || !target.isShadow?)
+    return false if $game_switches[:No_Catching] || target.issossmon || (target.isbossmon && (!target.capturable || target.shieldCount > 0))
+    return true
+  end
+end
+
+class PokeBattle_Scene
+
+  if !defined?(betterBattleUI_old_pbStartBattle)
+    alias :betterBattleUI_old_pbStartBattle :pbStartBattle
+  end
+
+  def pbStartBattle(battle)
+    betterBattleUI_old_pbStartBattle(battle)
+    @sprites["bbui_ballwindow"]=BetterBattleUI_PokeballThrowButtonDisplay.new(@battle,@viewport)
+    @sprites["bbui_ballwindow"].z=100
+  end
+
+  if !defined?(betterBattleUI_old_pbShowWindow)
+    alias :betterBattleUI_old_pbShowWindow :pbShowWindow
+  end
+
+  def pbShowWindow(windowtype)
+    betterBattleUI_old_pbShowWindow(windowtype)
+    @sprites["bbui_ballwindow"].visible=windowtype==COMMANDBOX if @sprites["bbui_ballwindow"]
+  end
+
+  if !defined?(betterBattleUI_old_pbItemMenu)
+    alias :betterBattleUI_old_pbItemMenu :pbItemMenu
+  end
+
+  attr_accessor :betterBattleUI_autoselectitem
+
+  def pbItemMenu(i)
+    if @betterBattleUI_autoselectitem
+      ret = @betterBattleUI_autoselectitem
+      @betterBattleUI_autoselectitem = nil
+      return [ret, $PokemonBag.getChoice(3)]
+    end
+    return betterBattleUI_old_pbItemMenu(i)
+  end
+
+  def pbCommandMenuEx(index,texts,mode=0)      # Mode: 0 - regular battle
+    pbShowWindow(COMMANDBOX)                   #       1 - Shadow Pokémon battle
+    cw=@sprites["commandwindow"]               #       2 - Safari Zone
+    cw.setTexts(texts)                         #       3 - Bug Catching Contest
+    cw.index=0 if @lastcmd[index]==2
+    cw.mode=mode
+    ### MODDED/
+    bw=@sprites["bbui_ballwindow"]
+    bw.updateData(index) if bw
+    ### /MODDED
+    pbSelectBattler(index)
+    pbRefresh
+    update_menu=true
+    loop do
+      pbGraphicsUpdate
+      Input.update
+      pbFrameUpdate(cw,update_menu)
+      ### MODDED/
+      bw.updateData(index) if bw
+      ### /MODDED
+      update_menu=false
+      # Update selected command
+      if Input.trigger?(Input::CTRL)
+        pbToggleStatsBoostsVisibility
+        pbPlayCursorSE()
+        update_menu=true
+      elsif Input.trigger?(Input::LEFT) && (cw.index&1)==1
+        pbPlayCursorSE()
+        cw.index-=1
+        update_menu=true
+      elsif Input.trigger?(Input::RIGHT) &&  (cw.index&1)==0
+        pbPlayCursorSE()
+        cw.index+=1
+        update_menu=true
+      elsif Input.trigger?(Input::UP) &&  (cw.index&2)==2
+        pbPlayCursorSE()
+        cw.index-=2
+        update_menu=true
+      elsif Input.trigger?(Input::DOWN) &&  (cw.index&2)==0
+        pbPlayCursorSE()
+        cw.index+=2
+        update_menu=true
+      ### MODDED/
+      elsif Input.trigger?(Input::B) && index==0 && cw.index != 3 # X Over Run
+        pbPlayDecisionSE()
+        cw.index=3
+        update_menu=true
+      elsif Input.trigger?(Input::L) # Throw Pokeball Directly
+        pbPlayDecisionSE()
+        return 1 if bw.throwBall(self)
+      ### /MODDED
+      elsif Input.trigger?(Input::Y)  #Show Battle Stats feature made by DemICE
+        statstarget=pbStatInfo(index)
+        return -1 if statstarget==-1      
+        if !pbInSafari?
+          pbShowBattleStats(statstarget)
+        end
+      end
+      if Input.trigger?(Input::C)   # Confirm choice
+        pbPlayDecisionSE()
+        ret=cw.index
+        @lastcmd[index]=ret
+        cw.index=0 if $Settings.remember_commands==0
+        return ret
+      elsif Input.trigger?(Input::B) && index==2 #&& @lastcmd[0]!=2 # Cancel #Commented out for cancelling switches in doubles
+        pbPlayDecisionSE()
+        return -1
+      end
+    end
+  end
+end
+
+###
 
 class PokemonDataBox < SpriteWrapper
   attr_accessor :betterBattleUI_statBoosts_xShift
@@ -562,7 +806,6 @@ class PokemonDataBox < SpriteWrapper
     end
     ### /MODDED
   end
-    
 
 
 
@@ -1000,6 +1243,7 @@ class FightMenuButtons < BitmapSprite
   def betterBattleUI_showMoveEffectivenessStatus (move, battler, opponent, movetype, typemod = 4, zorovar = false)
     if (move.move == :THUNDERWAVE && (move.pbTypeModifier(movetype, battler, opponent, zorovar) == 0 || !opponent.pbCanParalyze?(false) ||
        (opponent.nullsElec? && movetype == :ELECTRIC))) || #Innefective by type or immune to paralysis. If Thunder Wave is electrict type, the abilities nullyfing it also nullify this one
+       (@battle.state.effects[:Gravity]!=0 && (move.move == :SPLASH || move.move == :TELEKINESIS)) ||
        (!opponent.pbCanPoison?(false, false, battler.ability == :CORROSION) && (move.move == :POISONGAS || move.move == :POISONPOWDER || move.move == :TOXIC)) ||
        (opponent.status != :POISON && move.move == :VENOMDRENCH) ||
        (PBStuff::POWDERMOVES.include?(move.move) && (opponent.hasType?(:GRASS) || opponent.ability == :OVERCOAT || (opponent.itemWorks? && opponent.item == :SAFETYGOGGLES))) ||
@@ -1068,6 +1312,20 @@ class PokeBattle_Move
 
   def betterBattleUI_showMoveEffectiveness(type, attacker, opponent, zorovar = false)
     secondtype = getSecondaryType(attacker)
+
+
+    if opponent.item == nil && @function == 0x315
+      return 0
+    end
+
+    if @battle.state.effects[:Gravity]!=0 && [0x10B,0x0CE,0x0CC,0x0C9,0x506,0x137].include?(@function)
+      return 0
+    end
+
+    if (@move == :FAKEOUT || @move == :FIRSTIMPRESSION) && attacker.turncount != 0
+      return 0
+    end
+
     if opponent.ability == :SAPSIPPER && !opponent.moldbroken && (type == :GRASS || (!secondtype.nil? && secondtype.include?(:GRASS)))
       return 0
     end
