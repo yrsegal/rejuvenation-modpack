@@ -206,7 +206,7 @@ class TimeSkipPCService
       Kernel.pbMessage(_INTL("<ac>\\c[3]THE FLOW OF TIME HAS SHIFTED.</ac>"))
 
       ServicePCList.restoreScreen(10)
-      $game_system.message_position = 2 # Bottom
+      $game_system.message_position = 0 # Bottom
       $game_system.message_frame = 0 # Show
       celebiSound(80, 100)
       Kernel.pbMessage(celebi("CELEBI: Precel. (That's probably fine. Bye!)"))

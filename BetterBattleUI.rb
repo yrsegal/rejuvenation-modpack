@@ -345,7 +345,7 @@ class BetterBattleUI_PokeballThrowButton < BitmapSprite
     @index = index
     @cancatch = canCatch(battle)
 
-    ball = $PokemonBag.pockets[3][$PokemonBag.getChoice(3)] # Pokeballs
+    ball = $PokemonBag.pockets[3][$PokemonBag.getChoice(3)] || :POKEBALL # Pokeballs
     if pbIsPokeBall?(ball) && (ball != @pokeball || !@pokeballbitmap)
       @pokeball = ball
       @pokeballbitmap = AnimatedBitmap.new(sprintf("Graphics/Pictures/Summary/summaryball" + @pokeball.to_s))
@@ -356,7 +356,7 @@ class BetterBattleUI_PokeballThrowButton < BitmapSprite
 
   def refresh
     self.bitmap.clear
-    if @pokeballbitmap
+    if @pokeballbitmap && @cancatch
       self.bitmap.blt(0,0,@buttonbitmap.bitmap,Rect.new(0,0,40,68))
       self.bitmap.blt(2,6,@pokeballbitmap.bitmap,Rect.new(0,0,32,32))
     end
@@ -375,8 +375,9 @@ class BetterBattleUI_PokeballThrowButton < BitmapSprite
     if target.isFainted?
       target=target.pbPartner
     end
+    return false if @ball == nil || $PokemonBag.pbQuantity(@ball) == 0
     return false if target.isFainted?
-    return false if battle.opponent && (!pbIsSnagBall?(ball) || !target.isShadow?)
+    return false if battle.opponent && (!pbIsSnagBall?(@ball) || !target.isShadow?)
     return false if $game_switches[:No_Catching] || target.issossmon || (target.isbossmon && (!target.capturable || target.shieldCount > 0))
     return true
   end
