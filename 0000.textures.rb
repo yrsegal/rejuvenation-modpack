@@ -32,7 +32,11 @@ module TextureOverrides
     TextureOverrides::ICONS + "datachip" => TextureOverrides::ICONS + "datad",
     TextureOverrides::ICONS + "jynnobikey" => TextureOverrides::ICONS + "lightkey",
     TextureOverrides::ICONS + "blackshard2" => TextureOverrides::ICONS + "blackshard",
-    TextureOverrides::ICONS + "blkapricorn" => TextureOverrides::ICONS + "blackapricorn"
+    TextureOverrides::ICONS + "blkapricorn" => TextureOverrides::ICONS + "blackapricorn",
+
+    TextureOverrides::ICONS + "magstone" => TextureOverrides::MOD + "ItemReplace/EarthHeart",
+    TextureOverrides::ICONS + "megaring" => TextureOverrides::MOD + "ItemReplace/MegaZRing",
+    TextureOverrides::ICONS + "gathercube" => TextureOverrides::MOD + "ItemReplace/ZygardeCube",
 
   }
 

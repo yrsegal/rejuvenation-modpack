@@ -11,6 +11,32 @@ def hpSummary_trueType(move, pokemon)
         type = pokemon.type1
       end
     end
+
+    if ((move.move == :JUDGMENT) && (pokemon.species == :ARCEUS)) || 
+      ((move.move == :MULTIATTACK) && (pokemon.species == :SILVALLY))
+      type = $cache.pkmn[pokemon.species].forms[pokemon.form%19].upcase.intern
+      type = :QMARKS if type == "???".intern
+    end
+
+    if pokemon.form<19
+      if move.move == :TECHNOBLAST
+        case pokemon.item
+          when :SHOCKDRIVE then type = :ELECTRIC  
+          when :BURNDRIVE then type = :FIRE
+          when :CHILLDRIVE then type = :ICE
+          when :DOUSEDRIVE then type = :WATER
+        end
+      elsif move.move == :MULTIATTACK
+        itemtype = $cache.items[pokemon.item].checkFlag?(:memory)
+        type = itemtype if itemtype
+      elsif move.move == :JUDGMENT || move.move == :MULTIPULSE
+        if PBStuff::PLATEITEMS.include?(pokemon.item)
+          itemtype = $cache.items[pokemon.item].checkFlag?(:typeboost)
+          type = itemtype if itemtype
+        end
+      end
+    end
+    
     return type
 end
 

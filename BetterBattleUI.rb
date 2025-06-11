@@ -327,7 +327,7 @@ class BetterBattleUI_PokeballThrowButton < BitmapSprite
   attr_reader :pokeball
 
   def initialize(viewport=nil)
-    super(40,68,viewport)
+    super(44,68,viewport)
     self.x=0
     self.y=118
     @buttonbitmap=AnimatedBitmap.new("Data/Mods/BetterBattleUI/ThrowBall")
@@ -343,13 +343,14 @@ class BetterBattleUI_PokeballThrowButton < BitmapSprite
 
   def updateData(index, battle)
     @index = index
-    @cancatch = canCatch(battle)
 
     ball = $PokemonBag.pockets[3][$PokemonBag.getChoice(3)] || :POKEBALL # Pokeballs
     if pbIsPokeBall?(ball) && (ball != @pokeball || !@pokeballbitmap)
       @pokeball = ball
-      @pokeballbitmap = AnimatedBitmap.new(sprintf("Graphics/Pictures/Summary/summaryball" + @pokeball.to_s))
+      @pokeballbitmap = AnimatedBitmap.new(sprintf("Graphics/Icons/" + @pokeball.to_s.downcase))
     end
+
+    @cancatch = canCatch(battle)
 
     refresh
   end
@@ -357,8 +358,8 @@ class BetterBattleUI_PokeballThrowButton < BitmapSprite
   def refresh
     self.bitmap.clear
     if @pokeballbitmap && @cancatch
-      self.bitmap.blt(0,0,@buttonbitmap.bitmap,Rect.new(0,0,40,68))
-      self.bitmap.blt(2,6,@pokeballbitmap.bitmap,Rect.new(0,0,32,32))
+      self.bitmap.blt(0,0,@buttonbitmap.bitmap,Rect.new(0,0,44,68))
+      self.bitmap.blt(-4,0,@pokeballbitmap.bitmap,Rect.new(0,0,48,48))
     end
   end
 
@@ -375,9 +376,9 @@ class BetterBattleUI_PokeballThrowButton < BitmapSprite
     if target.isFainted?
       target=target.pbPartner
     end
-    return false if @ball == nil || $PokemonBag.pbQuantity(@ball) == 0
+    return false if @pokeball == nil || $PokemonBag.pbQuantity(@pokeball) == 0
     return false if target.isFainted?
-    return false if battle.opponent && (!pbIsSnagBall?(@ball) || !target.isShadow?)
+    return false if battle.opponent && (!pbIsSnagBall?(@pokeball) || !target.isShadow?)
     return false if $game_switches[:No_Catching] || target.issossmon || (target.isbossmon && (!target.capturable || target.shieldCount > 0))
     return true
   end
@@ -1244,7 +1245,7 @@ class FightMenuButtons < BitmapSprite
   def betterBattleUI_showMoveEffectivenessStatus (move, battler, opponent, movetype, typemod = 4, zorovar = false)
     if (move.move == :THUNDERWAVE && (move.pbTypeModifier(movetype, battler, opponent, zorovar) == 0 || !opponent.pbCanParalyze?(false) ||
        (opponent.nullsElec? && movetype == :ELECTRIC))) || #Innefective by type or immune to paralysis. If Thunder Wave is electrict type, the abilities nullyfing it also nullify this one
-       (@battle.state.effects[:Gravity]!=0 && (move.move == :SPLASH || move.move == :TELEKINESIS)) ||
+       (battler.battle.state.effects[:Gravity]!=0 && (move.move == :SPLASH || move.move == :TELEKINESIS)) ||
        (!opponent.pbCanPoison?(false, false, battler.ability == :CORROSION) && (move.move == :POISONGAS || move.move == :POISONPOWDER || move.move == :TOXIC)) ||
        (opponent.status != :POISON && move.move == :VENOMDRENCH) ||
        (PBStuff::POWDERMOVES.include?(move.move) && (opponent.hasType?(:GRASS) || opponent.ability == :OVERCOAT || (opponent.itemWorks? && opponent.item == :SAFETYGOGGLES))) ||
