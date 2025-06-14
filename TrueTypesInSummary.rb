@@ -37,6 +37,31 @@ def hpSummary_trueType(move, pokemon)
       end
     end
     
+    case pokemon.ability 
+      when :NORMALIZE   then type = :NORMAL
+      when :PIXILATE    then type = :FAIRY    if type==:NORMAL
+      when :AERILATE    then type = :FLYING   if type==:NORMAL
+      when :GALVANIZE   then type = :ELECTRIC if type==:NORMAL
+      when :REFRIGERATE then type = :ICE      if type==:NORMAL
+      when :DUSKILATE   then type = :DARK     if type==:NORMAL
+      when :LIQUIDVOICE then type = :WATER    if isSoundBased?
+    end
+    case pokemon.species
+      when :SIMISEAR  then type = :WATER      if type==:NORMAL && pokemon.item==:SEARCREST
+      when :SIMIPOUR  then type = :GRASS      if type==:NORMAL && pokemon.item==:POURCREST
+      when :SIMISAGE  then type = :FIRE       if type==:NORMAL && pokemon.item==:SAGECREST
+      when :LUXRAY    then type = :ELECTRIC   if type==:NORMAL && pokemon.item==:LUXCREST
+      when :SAWSBUCK
+        if pokemon.item == :SAWSCREST && type == :NORMAL
+          case attacker.form
+            when 0  then type = :WATER
+            when 1  then type = :FIRE
+            when 2  then type = :GROUND
+            when 3  then type = :ICE
+          end
+        end
+    end
+
     return type
 end
 

@@ -83,8 +83,6 @@ QoL mods:
   Generally remove end-of-message waits, whichcan cause you to accidentally select an option when you didn't mean to.
 - FLHUDStatus.rb  
   Makes the in-menu party HUD show if a Pokemon is statused.
-- HiddenPowerInSummary.rb  
-  Hidden Power, Revelation Dance, and such all display their correct type in summaries and move listings.
 - ItemRadar.rb (depends on 0000.injection.rb)  
   The Itemfinder becomes a toggleable overlay rather than an item you have to use repeatedly. Also pings you when entering a map with a Zygarde Cell you haven't collected.
 - ItemRestocking.rb  
@@ -105,6 +103,8 @@ QoL mods:
   Somniam Mall shops show their Stamp requirements.
 - ThiefAndPickupEvenWithItem.rb  
   Thief/Covet, Pickup, Pickpocket, and Magician work even if the user is holding an item in wild battles, and items stolen by these effects are deposited directly into the bag at the end of those battles.
+- TrueTypesInSummary.rb  
+  Hidden Power, Revelation Dance, and such all display their correct type in summaries and move listings. Abilities such as Galvanize and Aerilate are also applied.
 - VendorQuantityDisplay.rb (depends on 0000.injection.rb)  
   Move Tutors and other vendors will show the resources they ask for.
 - ZygardeCaffeine.rb  
