@@ -145,6 +145,47 @@ module VendorQuantityDisplay
     end
   end
 
+  def self.injectEnsureChoices(event)
+    for page in event.pages
+      insns = page.list
+      InjectionHelper.patch(insns, :VendorQuantityDisplay_AddText) {
+        choices = InjectionHelper.lookForAll(insns,
+          [:ShowChoices, ["Yes", "No"], 2])
+
+        doneAny = false
+
+        for insn in choices
+          targetIdx = insns.index(insn)
+
+          textStart = -1
+          textEnd = -1
+          while targetIdx > 0
+            targetIdx -= 1
+            break if insns[targetIdx].indent != insn.indent
+            if textEnd == -1 && insns[targetIdx].code == InjectionHelper::EVENT_INSNS[:ShowTextContinued]
+              textEnd = targetIdx
+            elsif insns[targetIdx].code == InjectionHelper::EVENT_INSNS[:ShowText]
+              textEnd = targetIdx if textEnd == -1
+              textStart = targetIdx
+              break
+            end
+          end
+
+          if textStart != -1
+            dialogue = insns[textStart..textEnd]
+            insns[textStart..textEnd] = []
+
+            targetIdx = insns.index(insn)
+            insns.insert(targetIdx, *dialogue)
+            doneAny = true
+          end
+        end
+
+        next doneAny
+      }
+    end
+  end
+
   def self.injectNerta(event)
     for page in event.pages
       insns = page.list
@@ -205,7 +246,7 @@ module VendorQuantityDisplay
   HEARTSCALES = {
     28 => [25], # Festival Plaza
     329 => [90], # Kristiline Town
-    388 => [34], # Underground
+    388 => [34], # Underground Interiors
     425 => [16] # Move Relearner
   }
 
@@ -218,6 +259,10 @@ module VendorQuantityDisplay
     388 => [35, 36, 37, 38, 39], # The Underground Interiors
     434 => [38, 39, 40, 41, 42, 43, 46, [36, :BLKPRISM], [28, :BLKPRISM], [[53, 2], :BLKPRISM]], # Luck's Tent
     601 => [[2, :BALMMUSHROOM], [25, :BIGMUSHROOM]] # Goomidra Interiors
+  }
+
+  ENSURECHOICES = {
+    388 => [35, 36, 37, 38, 39]
   }
 end
 
@@ -291,6 +336,12 @@ class Cache_Game
     end
 
     ret = vendorquantity_old_map_load(mapid)
+
+    if VendorQuantityDisplay::ENSURECHOICES[mapid]
+      for vendor in VendorQuantityDisplay::ENSURECHOICES[mapid]
+        VendorQuantityDisplay.injectEnsureChoices(ret.events[vendor])
+      end
+    end
 
     if VendorQuantityDisplay::VENDORS[mapid]
       for vendor in VendorQuantityDisplay::VENDORS[mapid]

@@ -1397,6 +1397,14 @@ class PokeBattle_Move
         return 0
       end
     end
+
+    # Handle Lunar/Solar Idol
+    if !opponent.moldbroken
+      if (type == :GROUND && (opponent.ability == :SOLARIDOL || opponent.ability == :LUNARIDOL) && @battle.FE != :CAVE && @move != :THOUSANDARROWS && opponent.isAirborne?)
+        return 0
+      end
+    end
+
     # UPDATE Implementing Flying Press + Freeze Dry
     typemod=pbTypeModifier(type,attacker,opponent, zorovar)
     typemodL= nil

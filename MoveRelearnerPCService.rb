@@ -120,12 +120,12 @@ end
 def moverelearnerpc_conversationTakeScale(evt, sister, window)
   $PokemonBag.pbDeleteItem(:HEARTSCALE)
   ServicePCList.updateWindowQuantity(window, :HEARTSCALE) if window && !window.disposed?
-  Kernel.pbMessage(_I("\\PN handed over one Heart Scale in exchange."))
+  Kernel.pbMessage(_I("\\PN handed over one Heart Scale in exchange.\1"))
   $game_screen.relearnerpc_scales += 1
   if $game_screen.relearnerpc_scales >= 10
     pbExclaim(evt)
-    Kernel.pbMessage(_I("BRIE: Oh! That's a lot of Heart Scales you've given me!"))
-    Kernel.pbMessage(_I("I can't justify the price for someone my sister is so fond of."))
+    Kernel.pbMessage(_I("BRIE: Oh! That's a lot of Heart Scales you've given me!\1"))
+    Kernel.pbMessage(_I("I can't justify the price for someone my sister is so fond of.\1"))
     Kernel.pbMessage(_I("Tell you what. I'm helping you for free now, and I won't take no for an answer!"))
     sister.turn_toward_player
     pbExclaim(sister)
@@ -148,11 +148,11 @@ def relearnerService_relearnerConversation(evt, sister)
       window = ServicePCList.quantityWindow(:HEARTSCALE)
       choice = Kernel.pbMessage(_I("BRIE: So, what'll it be?"), [_I("Relearn"), _I("Forget"), _I("Rare Moves"), _I("Cancel")])
     else
-      Kernel.pbMessage(_I("BRIE: Ah, is that a Heart Scale?"))
-      Kernel.pbMessage(_I("If you give me that Heart Scale, I'll help your Pokémon remember moves they've forgotten!"))
-      Kernel.pbMessage(_I("Afterwards, they'll be able to remember moves on their own too."))
-      Kernel.pbMessage(_I("I can also teach them some rare moves, or help them forget a move."))
-      Kernel.pbMessage(_I("And I hear that once trainers get far enough, their Pokemon can even remember these moves on their own!"))
+      Kernel.pbMessage(_I("BRIE: Ah, is that a Heart Scale?\1"))
+      Kernel.pbMessage(_I("If you give me that Heart Scale, I'll help your Pokémon remember moves they've forgotten!\1"))
+      Kernel.pbMessage(_I("Afterwards, they'll be able to remember moves on their own too.\1"))
+      Kernel.pbMessage(_I("I can also teach them some rare moves, or help them forget a move.\1"))
+      Kernel.pbMessage(_I("And I hear that once trainers get far enough, their Pokemon can even remember these moves on their own!\1"))
       window = ServicePCList.quantityWindow(:HEARTSCALE)
       choice = Kernel.pbMessage(_I("So, what'll it be?"), [_I("Relearn"), _I("Forget"), _I("Rare Moves"), _I("Cancel")])
     end
@@ -172,17 +172,17 @@ def relearnerService_relearnerConversation(evt, sister)
         else
           pkmn = $Trainer.party[subchoice]
           if pkmn.egg?
-            Kernel.pbMessage(_I("Um, that's an egg."))
-            Kernel.pbMessage(_I("Unless you want me to teach your Pokémon scrambled, or sunny-side..."))
+            Kernel.pbMessage(_I("Um, that's an egg.\1"))
+            Kernel.pbMessage(_I("Unless you want me to teach your Pokémon scrambled, or sunny-side...\1"))
             Kernel.pbMessage(_I("Come back with a Pokémon."))
           elsif (pkmn.isShadow? rescue false)
             Kernel.pbMessage(_I("What is this thing?! It isn't natural, get it out of here!"))
           elsif !pbHasRelearnableMove?(pkmn)
-            Kernel.pbMessage(_I("Uhh..."))
+            Kernel.pbMessage(_I("Uhh...\1"))
             Kernel.pbMessage(_I("This Pokémon doesn't have any move that it can relearn. Sorry, \\v[3]."))
           else 
             if pkmn.canRelearnAll?
-              Kernel.pbMessage(_I("\\v[3] can already remember all its moves! Just do it from the party screen."))
+              Kernel.pbMessage(_I("\\v[3] can already remember all its moves! Just do it from the party screen.\1"))
               if !noScaleNeeded
                 Kernel.pbMessage(_I("No reason I can't just help you here, though. Free of charge."))
               else
@@ -219,7 +219,7 @@ def relearnerService_relearnerConversation(evt, sister)
         else
           pkmn = $Trainer.party[subchoice]
           if pkmn.egg?
-            Kernel.pbMessage(_I("Um, that's an egg."))
+            Kernel.pbMessage(_I("Um, that's an egg.\1"))
             Kernel.pbMessage(_I("You need to know moves in the first place to forget them."))
           elsif (pkmn.isShadow? rescue false)
             Kernel.pbMessage(_I("What is this thing?! It isn't natural, get it out of here!"))
@@ -232,7 +232,7 @@ def relearnerService_relearnerConversation(evt, sister)
               Kernel.pbMessage(_I("Which Pokemon needs to forget a move?"))
             elsif Kernel.pbConfirmMessage(_I("\\v[3]'s \\v[4]? No problem!"))
               pbDeleteMove(pkmn, movechoice)
-              Kernel.pbMessage(_I("And...\\|\\se[balldrop] done! \\v[3] has forgotten \\v[4]!"))
+              Kernel.pbMessage(_I("And...\\|\\se[balldrop] done! \\v[3] has forgotten \\v[4]!\1"))
               Kernel.pbMessage(_I("Come back any time!"))
               return
             end
@@ -254,8 +254,8 @@ def relearnerService_relearnerConversation(evt, sister)
         else
           pkmn = $Trainer.party[subchoice]
           if pkmn.egg?
-            Kernel.pbMessage(_I("Um, that's an egg."))
-            Kernel.pbMessage(_I("Unless you want me to teach your Pokémon scrambled, or sunny-side..."))
+            Kernel.pbMessage(_I("Um, that's an egg.\1"))
+            Kernel.pbMessage(_I("Unless you want me to teach your Pokémon scrambled, or sunny-side...\1"))
             Kernel.pbMessage(_I("Come back with a Pokémon."))
           elsif (pkmn.isShadow? rescue false)
             Kernel.pbMessage(_I("What is this thing?! It isn't natural, get it out of here!"))
@@ -263,7 +263,7 @@ def relearnerService_relearnerConversation(evt, sister)
             Kernel.pbMessage(_I("This Pokémon doesn't have any rare moves to learn. Sorry, \\v[3]."))
           else 
             if pkmn.canRelearnAll? && Rejuv && $PokemonBag.pbHasItem?(:HM02)
-              Kernel.pbMessage(_I("\\v[3] can already remember all its moves! Just do it from the party screen."))
+              Kernel.pbMessage(_I("\\v[3] can already remember all its moves! Just do it from the party screen.\1"))
               if !noScaleNeeded
                 Kernel.pbMessage(_I("No reason I can't just help you here, though. Free of charge."))
               else
@@ -364,9 +364,9 @@ class RelearnerPCService
     $game_screen.relearnerpc_scales += 1
     if $game_screen.relearnerpc_scales >= 10
       ServicePCList.exclaimSound
-      Kernel.pbMessage(relearner("BRIE: Oh! That's a lot of Heart Scales you've given me!"))
-      Kernel.pbMessage(relearner("I can't justify the price for someone my sister speaks so fondly of."))
-      Kernel.pbMessage(relearner("Tell you what. This service is free for you, now, and I won't take no for an answer!"))
+      Kernel.pbMessage(relearner("BRIE: Oh! That's a lot of Heart Scales you've given me!\1"))
+      Kernel.pbMessage(relearner("I can't justify the price for someone my sister speaks so fondly of.\1"))
+      Kernel.pbMessage(relearner("Tell you what. This service is free for you, now, and I won't take no for an answer!\1"))
       ServicePCList.happySound
       Kernel.pbMessage(sister("SAMANTHA: Wow! Thanks, sis! Enjoy, \\PN!"))
       return true
@@ -376,7 +376,7 @@ class RelearnerPCService
 
   def access
     if ServicePCList.offMap? || ServicePCList.inRift? || inPast? || ServicePCList.darchlightCaves?
-      Kernel.pbMessage(_INTL("..."))
+      Kernel.pbMessage(_INTL("...\1"))
       Kernel.pbMessage(_INTL("There's no response..."))
       return
     end
@@ -386,8 +386,8 @@ class RelearnerPCService
       @heartscalewindow.visible = true
     end
 
-    Kernel.pbMessage(sister("SAMANTHA: Hello, you've reached the Sheridan Move Reminder..."))
-    Kernel.pbMessage(sister("Oh, it's \\PN! How've you been?"))
+    Kernel.pbMessage(sister("SAMANTHA: Hello, you've reached the Sheridan Move Reminder...\1"))
+    Kernel.pbMessage(sister("Oh, it's \\PN! How've you been?\1"))
     if !$game_screen.relearnerpc_used
       if !$game_self_switches[[425, 15, 'A']] # Sister
         Kernel.pbMessage(sister("Thank you for finding my sister!"))
@@ -400,11 +400,11 @@ class RelearnerPCService
           $game_self_switches[[425, 15, 'A']] = true
         end
       else
-        Kernel.pbMessage(sister("Thank you again for finding my sister!"))
+        Kernel.pbMessage(sister("Thank you again for finding my sister!\1"))
       end
-      Kernel.pbMessage(sister("I'm still in training for Move Relearner services, but I'm handling the phone."))
-      Kernel.pbMessage(sister("I can do Move Deleting, though! And I can call my sister over for Relearning, or learning rare moves."))
-      Kernel.pbMessage(sister("And we've got a special promotion! If you Relearn a move via this service, we'll teach your Pokemon to relearn moves on their own!"))
+      Kernel.pbMessage(sister("I'm still in training for Move Relearner services, but I'm handling the phone.\1"))
+      Kernel.pbMessage(sister("I can do Move Deleting, though! And I can call my sister over for Relearning, or learning rare moves.\1"))
+      Kernel.pbMessage(sister("And we've got a special promotion! If you Relearn a move via this service, we'll teach your Pokemon to relearn moves on their own!\1"))
       $game_screen.relearnerpc_used = true
     end
     $game_screen.relearnerpc_scales = 0 if !$game_screen.relearnerpc_scales
@@ -415,12 +415,12 @@ class RelearnerPCService
       return
     elsif choice == 0
       Kernel.pbMessage(_INTL("\\sh\\c[7]SAMANTHA: HEY, BRIE! CUSTOMER! IT'S \\PNUpper!\\wtnp[50]"))
-      Kernel.pbMessage(relearner("BRIE: Good to hear from you, \\PN. Relearner services? Sure!"))
+      Kernel.pbMessage(relearner("BRIE: Good to hear from you, \\PN. Relearner services? Sure!\1"))
       if $game_screen.relearnerpc_scales < 10
         if $PokemonBag.pbQuantity(:HEARTSCALE)>0
-          Kernel.pbMessage(relearner("You've got a Heart Scale, so I can teach a Pokemon."))
+          Kernel.pbMessage(relearner("You've got a Heart Scale, so I can teach a Pokemon.\1"))
         elsif 
-          Kernel.pbMessage(relearner("... Actually, sorry, you need to come back with a Heart Scale."))
+          Kernel.pbMessage(relearner("... Actually, sorry, you need to come back with a Heart Scale.\1"))
           Kernel.pbMessage(sister("SAMANTHA: Oh well! Talk to you later!"))
           return
         end
@@ -431,7 +431,7 @@ class RelearnerPCService
         pbChoosePokemon(1,3,proc{|p| pbHasRelearnableMove?(p)},true)
         result = pbGet(1)
         if result < 0
-          Kernel.pbMessage(relearner("BRIE: Ah, okay. Changed your mind?"))
+          Kernel.pbMessage(relearner("BRIE: Ah, okay. Changed your mind?\1"))
           Kernel.pbMessage(sister("SAMANTHA: Always nice to hear from you, though! Bye!"))
           return
         end
@@ -439,7 +439,7 @@ class RelearnerPCService
         pkmn = $Trainer.party[result]
 
         if pkmn.isEgg?
-          Kernel.pbMessage(relearner("BRIE: Um, that's an egg."))
+          Kernel.pbMessage(relearner("BRIE: Um, that's an egg.\1"))
           Kernel.pbMessage(relearner("Unless you want me to teach your Pokémon scrambled, or sunny-side..."))
           next
         elsif (pkmn.isShadow? rescue false)
@@ -449,7 +449,7 @@ class RelearnerPCService
           Kernel.pbMessage(relearner("BRIE: This Pokémon doesn't have any move that it can relearn. Sorry, \\v[3]."))
           next
         elsif pkmn.canRelearnAll?
-          Kernel.pbMessage(relearner("BRIE: \\v[3] can already remember all its moves! Just do it from the party screen."))
+          Kernel.pbMessage(relearner("BRIE: \\v[3] can already remember all its moves! Just do it from the party screen.\1"))
           if $game_screen.relearnerpc_scales < 10
             Kernel.pbMessage(relearner("No reason I can't help you out from here, though. Free of charge."))
           else
@@ -479,7 +479,7 @@ class RelearnerPCService
         pbChoosePokemon(1,3)
         result = pbGet(1)
         if result < 0
-          Kernel.pbMessage(sister("SAMANTHA: Changed your mind? That's fine."))
+          Kernel.pbMessage(sister("SAMANTHA: Changed your mind? That's fine.\1"))
           Kernel.pbMessage(sister("Always nice to hear from you, though! Bye!"))
           return
         end
@@ -500,7 +500,7 @@ class RelearnerPCService
             Kernel.pbMessage(sister("SAMANTHA: Which Pokemon needs to forget a move?"))
           elsif Kernel.pbConfirmMessage(sister("SAMANTHA: \\v[3]'s \\v[4]? No problem!"))
             pbDeleteMove(pkmn, moveresult)
-            Kernel.pbMessage(sister("And...\\|\\se[balldrop] done! \\v[3] has forgotten \\v[4]!"))
+            Kernel.pbMessage(sister("And...\\|\\se[balldrop] done! \\v[3] has forgotten \\v[4]!\1"))
             Kernel.pbMessage(sister("Thanks for calling, \\PN! Talk to you soon!"))
             return
           end
@@ -508,12 +508,12 @@ class RelearnerPCService
       end
     elsif choice == 2
       Kernel.pbMessage(_INTL("\\sh\\c[7]SAMANTHA: HEY, BRIE! CUSTOMER! IT'S \\PNUpper!\\wtnp[50]"))
-      Kernel.pbMessage(relearner("BRIE: Good to hear from you, \\PN. Rare moves? Sure!"))
+      Kernel.pbMessage(relearner("BRIE: Good to hear from you, \\PN. Rare moves? Sure!\1"))
       if $game_screen.relearnerpc_scales < 10
         if $PokemonBag.pbQuantity(:HEARTSCALE)>0
-          Kernel.pbMessage(relearner("You've got a Heart Scale, so I can teach a Pokemon."))
+          Kernel.pbMessage(relearner("You've got a Heart Scale, so I can teach a Pokemon.\1"))
         elsif 
-          Kernel.pbMessage(relearner("... Actually, sorry, you need to come back with a Heart Scale."))
+          Kernel.pbMessage(relearner("... Actually, sorry, you need to come back with a Heart Scale.\1"))
           Kernel.pbMessage(sister("SAMANTHA: Oh well! Talk to you later!"))
           return
         end
@@ -524,7 +524,7 @@ class RelearnerPCService
         pbChoosePokemon(1,3,proc{|p| moverelearnerpc_getEggMoveList(p).size > 0},true)
         result = pbGet(1)
         if result < 0
-          Kernel.pbMessage(relearner("BRIE: Ah, okay. Changed your mind?"))
+          Kernel.pbMessage(relearner("BRIE: Ah, okay. Changed your mind?\1"))
           Kernel.pbMessage(sister("SAMANTHA: Always nice to hear from you, though! Bye!"))
           return
         end
@@ -532,7 +532,7 @@ class RelearnerPCService
         pkmn = $Trainer.party[result]
 
         if pkmn.isEgg?
-          Kernel.pbMessage(relearner("BRIE: Um, that's an egg."))
+          Kernel.pbMessage(relearner("BRIE: Um, that's an egg.\1"))
           Kernel.pbMessage(relearner("Unless you want me to teach your Pokémon scrambled, or sunny-side..."))
         elsif (pkmn.isShadow? rescue false)
           Kernel.pbMessage(relearner("BRIE: What is this thing?! It isn't natural, get it out of here!"))

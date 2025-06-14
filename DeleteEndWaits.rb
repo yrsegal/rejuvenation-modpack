@@ -6,7 +6,7 @@ def deleteendwaits_patchinsns(insns, textmatcher, textcmatcher, nextmatcher)
       insn = insns[i]
 
       if (textmatcher.matches?(insn) || textcmatcher.matches?(insn)) && !nextmatcher.matches?(insns[i + 1])
-        insn.parameters[0].gsub!(/\\[|\.]$/, '')
+        insn.parameters[0].gsub!(%r"((\\[\.\|])|(</ac>))$", '')
         anypatch = true
       end
 
@@ -31,8 +31,8 @@ class Cache_Game
 
     ret = deleteendwaits_old_map_load(mapid)
 
-    textmatcher = InjectionHelper.parseMatcher([:ShowText, /\\[|\.]$/])
-    textcmatcher = InjectionHelper.parseMatcher([:ShowTextContinued, /\\[|\.]$/])
+    textmatcher = InjectionHelper.parseMatcher([:ShowText, %r"((\\[\.\|])|(</ac>))$"])
+    textcmatcher = InjectionHelper.parseMatcher([:ShowTextContinued, %r"((\\[\.\|])|(</ac>))$"])
     nextmatcher = InjectionHelper.parseMatcher([:ShowTextContinued, nil])
 
     ret.events.each_value { |event|

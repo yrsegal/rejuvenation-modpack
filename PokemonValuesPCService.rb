@@ -328,11 +328,11 @@ class PokemonValuesPCService
         $PokemonBag.pbDeleteItem(:CELLIMPRINT)
         wait(25)
         ServicePCList.happySound
-        Kernel.pbMessage(lab("Done! You're now registered for IV Tweaking."))
+        Kernel.pbMessage(lab("Done! You're now registered for IV Tweaking.\1"))
         $game_screen.pokemonvaluespc_unlocked_iv = true
         unlockedAny = true
       else
-        Kernel.pbMessage(lab("Alright..."))
+        Kernel.pbMessage(lab("Alright...\1"))
       end
     end
 
@@ -347,19 +347,19 @@ class PokemonValuesPCService
       if cards == 6
         ServicePCList.exclaimSound
         wait(5)
-        Kernel.pbMessage(lab("If I'm not mistaken, those are all of the EV Cards! Let me get you set up with EV Tweaking!"))
+        Kernel.pbMessage(lab("If I'm not mistaken, those are all of the EV Cards! Let me get you set up with EV Tweaking!\1"))
         wait(25)
         ServicePCList.happySound
-        Kernel.pbMessage(lab("Done! You're now registered for EV Tweaking, in every stat!"))
+        Kernel.pbMessage(lab("Done! You're now registered for EV Tweaking, in every stat!\1"))
         $game_screen.pokemonvaluespc_unlocked_ev = true
         unlockedAny = true
       elsif cards > 0
         ServicePCList.exclaimSound
         wait(5)
-        Kernel.pbMessage(lab("If I'm not mistaken, those are EV Cards! Let me get you set up with EV Tweaking!"))
+        Kernel.pbMessage(lab("If I'm not mistaken, those are EV Cards! Let me get you set up with EV Tweaking!\1"))
         wait(25)
         ServicePCList.happySound
-        Kernel.pbMessage(lab("Done! You're now registered for EV Tweaking. You can only tweak EVs you have the cards for, so get that AP!"))        
+        Kernel.pbMessage(lab("Done! You're now registered for EV Tweaking. You can only tweak EVs you have the cards for, so get that AP!\1"))        
         $game_screen.pokemonvaluespc_unlocked_ev = true  
         unlockedAny = true
       end
@@ -369,11 +369,11 @@ class PokemonValuesPCService
     if !$game_screen.pokemonvaluespc_unlocked_nature && $PokemonBag.pbQuantity(naturePower.item) > 0
       ServicePCList.exclaimSound
         wait(5)
-      Kernel.pbMessage(lab("If I'm not mistaken, that's {1} \\c[6]{2}\\c[0]! Let me get you set up with Nature Tweaking!", 
+      Kernel.pbMessage(lab("If I'm not mistaken, that's {1} \\c[6]{2}\\c[0]! Let me get you set up with Nature Tweaking!\1", 
       naturePower.name,getMoveName(:NATUREPOWER)))
       wait(25)
       ServicePCList.happySound
-      Kernel.pbMessage(lab("Done! You're now registered for Nature Tweaking."))
+      Kernel.pbMessage(lab("Done! You're now registered for Nature Tweaking.\1"))
       $game_screen.pokemonvaluespc_unlocked_nature = true
       unlockedAny = true
     end
@@ -386,15 +386,15 @@ class PokemonValuesPCService
         $PokemonBag.pbDeleteItem(:ABILITYCAPSULE)
         wait(25)
         ServicePCList.happySound
-        Kernel.pbMessage(lab("Done! You're now registered for Ability Tweaking."))
+        Kernel.pbMessage(lab("Done! You're now registered for Ability Tweaking.\1"))
         $game_screen.pokemonvaluespc_unlocked_ability = true
         unlockedAny = true
       else
-        Kernel.pbMessage(lab("Alright..."))
+        Kernel.pbMessage(lab("Alright...\1"))
       end
     end
 
-    Kernel.pbMessage(lab("Now, with that sorted!")) if unlockedAny
+    Kernel.pbMessage(lab("Now, with that sorted!\1")) if unlockedAny
 
     return $game_screen.pokemonvaluespc_unlocked_iv || $game_screen.pokemonvaluespc_unlocked_ev || 
       $game_screen.pokemonvaluespc_unlocked_ability || $game_screen.pokemonvaluespc_unlocked_nature
@@ -402,14 +402,14 @@ class PokemonValuesPCService
 
   def access
     if ServicePCList.offMap? || ServicePCList.inRift? || inPast? || ServicePCList.darchlightCaves?
-      Kernel.pbMessage(_INTL("..."))
+      Kernel.pbMessage(_INTL("...\1"))
       Kernel.pbMessage(_INTL("There's no response..."))
       return
     end
 
     if $game_variables[:QuestCrossover] >= 1 
       if $game_screen.pokemonvaluespc_use_gdc
-        Kernel.pbMessage(_INTL("(Since Gearen Labs is back up and running, you call them instead!)"))
+        Kernel.pbMessage(_INTL("(Since Gearen Labs is back up and running, you call them instead!)\1"))
         $game_screen.pokemonvaluespc_use_gdc = false
         $game_screen.pokemonvaluespc_neo = true
       elsif !$game_screen.pokemonvaluespc_used
@@ -419,51 +419,51 @@ class PokemonValuesPCService
 
     if $game_variables[:Post10thBadge] >= 1 && !$game_screen.pokemonvaluespc_use_gdc && !$game_screen.pokemonvaluespc_neo
       if !$game_screen.pokemonvaluespc_called_gearen_in_gdc
-        Kernel.pbMessage(_INTL("..."))
-        Kernel.pbMessage(_INTL("\\ts[5]Hello. We are not available. Please leave your name and number-"))
+        Kernel.pbMessage(_INTL("...\1"))
+        Kernel.pbMessage(_INTL("\\ts[5]Hello. We are not available. Please leave your name and number-\1"))
         Kernel.pbMessage(_INTL("(You hang up. What was that about?)"))
         $game_screen.pokemonvaluespc_called_gearen_in_gdc = true
         return
       elsif $game_variables[:Post10thBadge] < 3
-        Kernel.pbMessage(_INTL("..."))
-        Kernel.pbMessage(_INTL("\\ts[5]Hello. We are not available-"))
+        Kernel.pbMessage(_INTL("...\1"))
+        Kernel.pbMessage(_INTL("\\ts[5]Hello. We are not available-\1"))
         Kernel.pbMessage(_INTL("(Still?)"))
         return
       else $game_variables[:Post10thBadge] >= 3
-        Kernel.pbMessage(_INTL("..."))
-        Kernel.pbMessage(_INTL("\\ts[5]Hello. We are not-"))
+        Kernel.pbMessage(_INTL("...\1"))
+        Kernel.pbMessage(_INTL("\\ts[5]Hello. We are not-\1"))
         Kernel.pbMessage(_INTL("(Still no response.)"))
       end
 
       if $game_variables[:Post10thBadge] >= 3
         pbExclaim($game_player)
-        Kernel.pbMessage(_INTL("(...)"))
-        Kernel.pbMessage(_INTL("(Does GDC Central have this service?)"))
-        Kernel.pbMessage(_INTL("(It does! Seems Rhodea registered you for that, too!)"))
+        Kernel.pbMessage(_INTL("(...)\1"))
+        Kernel.pbMessage(_INTL("(Does GDC Central have this service?)\1"))
+        Kernel.pbMessage(_INTL("(It does! Seems Rhodea registered you for that, too!)\1"))
         $game_screen.pokemonvaluespc_use_gdc = true
       end
     end
 
 
-    Kernel.pbMessage(lab("This is {1}, how may I help you?", name))
+    Kernel.pbMessage(lab("This is {1}, how may I help you?\1", name))
 
     if !$game_screen.pokemonvaluespc_used
-      Kernel.pbMessage(lab("Oh! Is this the first time you're using this service? Let me explain."))
-      Kernel.pbMessage(lab("For one Heart Scale, you can tune the EVs, IVs, Nature, and Ability of a Pokemon."))
-      Kernel.pbMessage(lab("You can do all of these at once, but..."))
-      Kernel.pbMessage(lab("You do have to get certain things to unlock each of those services."))
+      Kernel.pbMessage(lab("Oh! Is this the first time you're using this service? Let me explain.\1"))
+      Kernel.pbMessage(lab("For one Heart Scale, you can tune the EVs, IVs, Nature, and Ability of a Pokemon.\1"))
+      Kernel.pbMessage(lab("You can do all of these at once, but...\1"))
+      Kernel.pbMessage(lab("You do have to get certain things to unlock each of those services.\1"))
       $game_screen.pokemonvaluespc_used = true
     end
 
     if !$game_screen.pokemonvaluespc_given_heartscale_gift
       @heartscalewindow = ServicePCList.quantityWindow(:HEARTSCALE)
-      Kernel.pbMessage(lab("We have a promotion of 15 Heart Scales for first-time users."))
+      Kernel.pbMessage(lab("We have a promotion of 15 Heart Scales for first-time users.\1"))
       if Kernel.pbReceiveItem(:HEARTSCALE, 15)
         ServicePCList.updateWindowQuantity(@heartscalewindow, :HEARTSCALE)
-        Kernel.pbMessage(lab("Enjoy!"))
+        Kernel.pbMessage(lab("Enjoy!\1"))
         $game_screen.pokemonvaluespc_given_heartscale_gift = true
       else
-        Kernel.pbMessage(lab("Ah, well. We'll hold it until you've got room."))
+        Kernel.pbMessage(lab("Ah, well. We'll hold it until you've got room.\1"))
       end
       @heartscalewindow.dispose
     end

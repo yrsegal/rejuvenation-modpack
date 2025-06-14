@@ -65,8 +65,8 @@ class HealPCService
         Kernel.pbMessage(_INTL("The memory of an annoying voice passes you by..."))
         heal
       else
-        Kernel.pbMessage(sec("SEC: Hi! You've reached SEC! Were you expecting someone else?"))
-        Kernel.pbMessage(secAnnoyed("You know that putting your Pokemon into the PC will heal them, right?"))
+        Kernel.pbMessage(sec("SEC: Hi! You've reached SEC! Were you expecting someone else?\1"))
+        Kernel.pbMessage(secAnnoyed("You know that putting your Pokemon into the PC will heal them, right?\1"))
         secAnnoyedWait(30) 
         lockOn { |i| secAnnoyedWait(i) }
         Kernel.pbMessage(sec("Oh, well. You're in my sights. Here's your easy and convenient heal. Enjoy."))
@@ -93,7 +93,7 @@ class HealPCService
 
       ServicePCList.fadeScreen(Tone.new(-51,-51,-51,0), 20)
       pbWait(20)
-      Kernel.pbMessage(_INTL("<ac>Activating remote healing.</ac>"))
+      Kernel.pbMessage(_INTL("<ac>Activating remote healing."))
       ServicePCList.restoreScreen(10)
       
       $game_system.message_position = 2 # Bottom
@@ -105,19 +105,19 @@ class HealPCService
     end
 
     if ServicePCList.bladestarTerritory?
-      Kernel.pbMessage(bladestarJoy("JOY: Hi! You've reached the Bladestar Field Healing Service."))
-      Kernel.pbMessage(bladestarJoy("Yes, I work for Bladestar. What of it? They need healing too!"))
-      if Kernel.pbConfirmMessage(bladestarJoy("Would you like me to heal your Pokemon?"))
+      Kernel.pbMessage(bladestarJoy("JOY: Hi! You've reached the Bladestar Field Healing Service.\1"))
+      Kernel.pbMessage(bladestarJoy("Yes, I work for Bladestar. What of it? They need healing too!\1"))
+      if Kernel.pbConfirmMessage(bladestarJoy("Would you like me to heal your Pokemon?\1"))
         bladestarJoyWait(30)
         lockOn { |i| bladestarJoyWait(i)}
         if ServicePCList.darchlightCaves?
-          Kernel.pbMessage(bladestarJoy("Ok, Smeargle, adjust for Darchlight interference..."))
+          Kernel.pbMessage(bladestarJoy("Ok, Smeargle, adjust for Darchlight interference...\1"))
         else
-          Kernel.pbMessage(bladestarJoy("Ok, Smeargle, ready, aim..."))
+          Kernel.pbMessage(bladestarJoy("Ok, Smeargle, ready, aim...\1"))
         end
         heal { |i| bladestarJoyWait(i)}
         ServicePCList.happySound
-        Kernel.pbMessage(bladestarJoy("JOY: Thank you for waiting, \\PN."))
+        Kernel.pbMessage(bladestarJoy("JOY: Thank you for waiting, \\PN.\1"))
         Kernel.pbMessage(bladestarJoy("Your Pokemon have been healed. Go Bladestar!"))
       else
         Kernel.pbMessage(bladestarJoy("Eh, whatever. Easier for me anyway."))
@@ -126,27 +126,27 @@ class HealPCService
     end
 
     if (!inPast? && ServicePCList.offMap?) || ServicePCList.inRift? || ServicePCList.distantTime?
-      Kernel.pbMessage(_INTL("..."))
+      Kernel.pbMessage(_INTL("...\1"))
       Kernel.pbMessage(_INTL("There's no response..."))
       return
     end
 
-    Kernel.pbMessage(nurseJoy("JOY: Hi! You've reached the Joy Field Healing Service!"))
+    Kernel.pbMessage(nurseJoy("JOY: Hi! You've reached the Joy Field Healing Service!\1"))
     if !inPast? && !$game_screen.healpc_used
-      Kernel.pbMessage(nurseJoy("We've been in service since before the Calamity, delivering healing wherever you go.")) 
-      Kernel.pbMessage(nurseJoy("Our Smeargle are powerful enough to Lock On to you from anywhere in the region!")) 
+      Kernel.pbMessage(nurseJoy("We've been in service since before the Calamity, delivering healing wherever you go.\1")) 
+      Kernel.pbMessage(nurseJoy("Our Smeargle are powerful enough to Lock On to you from anywhere in the region!\1")) 
       $game_screen.healpc_used = true
     end
 
     if Kernel.pbConfirmMessage(nurseJoy("Would you like me to heal your Pokemon?"))
-      Kernel.pbMessage(nurseJoy("We'll restore your Pokemon to full health! Just wait a few seconds..."))
+      Kernel.pbMessage(nurseJoy("We'll restore your Pokemon to full health! Just wait a few seconds...\1"))
       nurseJoyWait(30)
       lockOn { |i| nurseJoyWait(i)}
-      Kernel.pbMessage(nurseJoy("Our specially trained Smeargle have a bead on your location. Now, Heal Pulse!"))
+      Kernel.pbMessage(nurseJoy("Our specially trained Smeargle have a bead on your location. Now, Heal Pulse!\1"))
       heal { |i| nurseJoyWait(i)}
       ServicePCList.happySound if !inPast?
-      Kernel.pbMessage(nurseJoy("JOY: Thank you for waiting, \\PN!"))
-      Kernel.pbMessage(nurseJoy("We've successfully restored your Pokemon to full health."))
+      Kernel.pbMessage(nurseJoy("JOY: Thank you for waiting, \\PN!\1"))
+      Kernel.pbMessage(nurseJoy("We've successfully restored your Pokemon to full health.\1"))
     end
     Kernel.pbMessage(nurseJoy("We look forward to your next call!"))
   end

@@ -29,22 +29,22 @@ class FashionPCService
 
   def access
     if ServicePCList.offMap? || ServicePCList.inRift? || inPast? || ServicePCList.darchlightCaves?
-      Kernel.pbMessage(_INTL("..."))
+      Kernel.pbMessage(_INTL("...\1"))
       Kernel.pbMessage(_INTL("There's no response..."))
       return
     end
 
-    Kernel.pbMessage(xatu("Hello, you've reached the Xatu Fashion Service. How may I help?"))
+    Kernel.pbMessage(xatu("Hello, you've reached the Xatu Fashion Service. How may I help?\1"))
     if !$game_screen.fashionpc_used
-      Kernel.pbMessage(xatu("Oh! Is this your first time using the service? Let me explain."))
-      Kernel.pbMessage(xatu("We're a startup operating out of Coral Ward, Reborn City. We stock outfits for you and let you switch them at will!")) 
-      Kernel.pbMessage(xatu("We're subsidized by Adrienn, so the service is free to use. We've recently extended our operations to Aevium!")) 
+      Kernel.pbMessage(xatu("Oh! Is this your first time using the service? Let me explain.\1"))
+      Kernel.pbMessage(xatu("We're a startup operating out of Coral Ward, Reborn City. We stock outfits for you and let you switch them at will!\1")) 
+      Kernel.pbMessage(xatu("We're subsidized by Adrienn, so the service is free to use. We've recently extended our operations to Aevium!\1")) 
       $game_screen.fashionpc_used = true
     end
 
     if $game_variables[:LuckQuest] > 0 && $game_variables[:LuckQuest] < 6
-      Kernel.pbMessage(xatu("... I'm sorry, there's some sort of Teleport interference around you."))
-      Kernel.pbMessage(xatu("Someone seems quite invested in keeping your clothing how it is."))
+      Kernel.pbMessage(xatu("... I'm sorry, there's some sort of Teleport interference around you.\1"))
+      Kernel.pbMessage(xatu("Someone seems quite invested in keeping your clothing how it is.\1"))
       Kernel.pbMessage(xatu("Please figure out what's up with that, then call back."))
       return
     end

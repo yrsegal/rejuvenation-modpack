@@ -26,16 +26,16 @@ class FriendshipPCService
 
   def access
     if ServicePCList.offMap? || ServicePCList.inRift? || inPast? || ServicePCList.darchlightCaves?
-      Kernel.pbMessage(_INTL("..."))
+      Kernel.pbMessage(_INTL("...\1"))
       Kernel.pbMessage(_INTL("There's no response..."))
       return
     end
 
-    Kernel.pbMessage(teila("Hello! You've reached the Teila Resort Spa's booking service!"))
+    Kernel.pbMessage(teila("Hello! You've reached the Teila Resort Spa's booking service!\1"))
     if !$game_screen.friendshippc_used
-      Kernel.pbMessage(teila("It's more expensive than in-person sessions, but you can book a spa day for your Pokemon here!"))
-      Kernel.pbMessage(teila("There's a surcharge for every booking beyond the first per day."))
-      Kernel.pbMessage(teila("Pokemon tend to be happy as can be after one of our sessions!"))
+      Kernel.pbMessage(teila("It's more expensive than in-person sessions, but you can book a spa day for your Pokemon here!\1"))
+      Kernel.pbMessage(teila("There's a surcharge for every booking beyond the first per day.\1"))
+      Kernel.pbMessage(teila("Pokemon tend to be happy as can be after one of our sessions!\1"))
       $game_screen.friendshippc_used = true
     end
 
@@ -66,7 +66,7 @@ class FriendshipPCService
 
         $Trainer.money -= price
 
-        Kernel.pbMessage(teila("Okay, I'll give your \\v[3] the deluxe treatment!"))
+        Kernel.pbMessage(teila("Okay, I'll give your \\v[3] the deluxe treatment!\1"))
         pkmn = $Trainer.party[result]
         pkmn.changeHappiness("groom3")
         ServicePCList.fadeScreen(Tone.new(-255,-255,-255,0), 10)
@@ -80,11 +80,11 @@ class FriendshipPCService
         ServicePCList.happySound
         pbWait(25)
         ServicePCList.restoreScreen(10)
-        Kernel.pbMessage(teila("Your \\v[3] looks pleased to bits!"))
+        Kernel.pbMessage(teila("Your \\v[3] looks pleased to bits!\1"))
         Kernel.pbMessage(teila("Thank you, and call again soon!"))
         pbSetEventTime
       else
-        Kernel.pbMessage(teila("Oh, that's unfortunate. You don't have enough money for this."))
+        Kernel.pbMessage(teila("Oh, that's unfortunate. You don't have enough money for this.\1"))
         Kernel.pbMessage(teila("Do call back later!"))
       end
     else
@@ -99,19 +99,19 @@ class FriendshipPCService
       pkmn = $Trainer.party[result]
       if pkmn.happiness >= 250
         ServicePCList.happySound
-        Kernel.pbMessage(teila("Wow, I can tell your \\v[3] is inseparable from you!"))
+        Kernel.pbMessage(teila("Wow, I can tell your \\v[3] is inseparable from you!\1"))
       elsif pkmn.happiness >= 220
-        Kernel.pbMessage(teila("\\v[3] trusts you a lot. You must be a great trainer!"))
+        Kernel.pbMessage(teila("\\v[3] trusts you a lot. You must be a great trainer!\1"))
       elsif pkmn.happiness >= 150
-        Kernel.pbMessage(teila("\\v[3] seems to think well of you. Keep at it!"))
+        Kernel.pbMessage(teila("\\v[3] seems to think well of you. Keep at it!\1"))
       elsif pkmn.happiness >= 100
-        Kernel.pbMessage(teila("I think you need to spend more time with \\v[3], but it seems to appreciate you!"))
+        Kernel.pbMessage(teila("I think you need to spend more time with \\v[3], but it seems to appreciate you!\1"))
       elsif pkmn.happiness >= 70
-        Kernel.pbMessage(teila("\\v[3]... seems unsure of itself. Please take good care of it."))
+        Kernel.pbMessage(teila("\\v[3]... seems unsure of itself. Please take good care of it.\1"))
       elsif pkmn.happiness >= 35
-        Kernel.pbMessage(teila("\\v[3] seems worried. Is something the matter?"))
+        Kernel.pbMessage(teila("\\v[3] seems worried. Is something the matter?\1"))
       else
-        Kernel.pbMessage(teila("\\v[3] is terrified, poor thing! You need to cheer it up!"))
+        Kernel.pbMessage(teila("\\v[3] is terrified, poor thing! You need to cheer it up!\1"))
       end
       Kernel.pbMessage(teila("Call back any time!"))
     end

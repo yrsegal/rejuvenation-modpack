@@ -55,6 +55,8 @@ Fix/hotfix mods:
   Fixes a field interaction with Silvally.
 - FixProboCrest.rb  
   Fixes the silly internal name of the followup attack of the Probopass Crest from displaying.
+- FixRayquazaCrash.rb  
+  Fixes Rayquaza crashing the game by simple existence.
 - FixSuperLuck.rb  
   Super Luck increases held item chances on wild pokemon, as it's supposed to.
 - RelearnPreShadowMoves.rb  

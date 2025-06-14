@@ -65,17 +65,17 @@ class HiddenPowerPCService
 
   def access
     if ServicePCList.offMap? || ServicePCList.darchlightCaves?
-      Kernel.pbMessage(_INTL("..."))
+      Kernel.pbMessage(_INTL("...\1"))
       Kernel.pbMessage(_INTL("There's no response..."))
       return
     end
 
     if !$game_screen.hiddenpowerpc_used
-      Kernel.pbMessage(nerta("NERTA: Oh hey, it's you, kid!"))
-      Kernel.pbMessage(nerta("If you send me a Pokemon and a Heart Scale over the PC system, I can unlock the Hidden Power of your pokemon remotely."))
+      Kernel.pbMessage(nerta("NERTA: Oh hey, it's you, kid!\1"))
+      Kernel.pbMessage(nerta("If you send me a Pokemon and a Heart Scale over the PC system, I can unlock the Hidden Power of your pokemon remotely.\1"))
       $game_screen.hiddenpowerpc_used = true
     else
-      Kernel.pbMessage(nerta("NERTA: Hey, kid."))
+      Kernel.pbMessage(nerta("NERTA: Hey, kid.\1"))
     end
 
 
@@ -94,7 +94,7 @@ class HiddenPowerPCService
 
         result = pbGet(1)
         if result < 0
-          Kernel.pbMessage(nerta("NERTA: Change your mind huh?"))
+          Kernel.pbMessage(nerta("NERTA: Change your mind huh?\1"))
           Kernel.pbMessage(nerta("Well, call back when you're feeling more decisive."))
           selected = true
         else
@@ -104,12 +104,12 @@ class HiddenPowerPCService
           else
             Kernel.pbMessage(nerta("Okay, {1}\'s Hidden Power is {2}.",pkmn.name,getTypeName(pbHiddenPower(pkmn))))
             if hpChange(pkmn)
-              Kernel.pbMessage(nerta("NERTA: Okay, send over that Heart Scale, and..."))
+              Kernel.pbMessage(nerta("NERTA: Okay, send over that Heart Scale, and...\1"))
               $PokemonBag.pbDeleteItem(:HEARTSCALE)
               ServicePCList.updateWindowQuantity(heartscalewindow, :HEARTSCALE)
-              Kernel.pbMessage(nerta("Bada bing, bada boom."))
+              Kernel.pbMessage(nerta("Bada bing, bada boom.\1"))
               pbSEPlay("itemlevel")
-              Kernel.pbMessage(nerta("Your \\v[3] should be feeling new power surging through them right about now!"))
+              Kernel.pbMessage(nerta("Your \\v[3] should be feeling new power surging through them right about now!\1"))
               Kernel.pbMessage(nerta("Thanks for the Heart Scale. Call again!"))
               selected = true
             else

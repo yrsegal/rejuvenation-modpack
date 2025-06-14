@@ -91,19 +91,19 @@ class TimeSkipPCService
 
   def access
     if ServicePCList.inNightmare? || ServicePCList.inZeight? || ServicePCList.inRift?
-      Kernel.pbMessage(_INTL("..."))
+      Kernel.pbMessage(_INTL("...\1"))
       Kernel.pbMessage(_INTL("There's no response..."))
       return
     end
 
     if ServicePCList.denOfSouls?
-      Kernel.pbMessage(_INTL("..."))
+      Kernel.pbMessage(_INTL("...\1"))
       if !$game_screen.timeskippc_used
-        Kernel.pbMessage(_INTL("(Someone picked up, but...)"))
+        Kernel.pbMessage(_INTL("(Someone picked up, but...)\1"))
         celebiSound(40, 50)
         Kernel.pbMessage(_INTL("(They sighed sadly and hung up.)"))
       else
-        Kernel.pbMessage(_INTL("(Celebi picked up, but...)"))
+        Kernel.pbMessage(_INTL("(Celebi picked up, but...)\1"))
         celebiSound(40, 50)
         Kernel.pbMessage(_INTL("(It sighed sadly and hung up.)"))
       end
@@ -111,34 +111,34 @@ class TimeSkipPCService
     end
 
     celebiSound(80, 100)
-    Kernel.pbMessage(celebi("CELEBI: Cele bii! (Hello!)"))
+    Kernel.pbMessage(celebi("CELEBI: Cele bii! (Hello!)\1"))
 
     if ServicePCList.darchlightCaves? && !$game_screen.timeskippc_darchlight
-      Kernel.pbMessage(_INTL("(\\..\\..\\..\\. Isn't there supposed to be some kind of interference in Darchlight Caves?)"))
+      Kernel.pbMessage(_INTL("(\\..\\..\\..\\. Isn't there supposed to be some kind of interference in Darchlight Caves?)\1"))
       $game_screen.timeskippc_darchlight = true
     end
 
     if ServicePCList.distantTime? && !$game_screen.timeskippc_distant
-      Kernel.pbMessage(celebi("Bicel cel <i>cel!</i> (Oh, this is a poor timeline...)"))
+      Kernel.pbMessage(celebi("Bicel cel <i>cel!</i> (Oh, this is a poor timeline...)\1"))
       celebiSound(40, 50)
       $game_screen.timeskippc_distant = true
     elsif inPast? && !$game_screen.timeskippc_past
-      Kernel.pbMessage(_INTL("(It makes sense that Celebi would answer even in the past...)"))
+      Kernel.pbMessage(_INTL("(It makes sense that Celebi would answer even in the past...)\1"))
       $game_screen.timeskippc_past = true
     end
 
     if !$game_screen.timeskippc_used
       celebiSound(80, 100)
-      Kernel.pbMessage(celebi("Bici lee cel ebi. (I can help you control the flow of time.)"))
+      Kernel.pbMessage(celebi("Bici lee cel ebi. (I can help you control the flow of time.)\1"))
       celebiSound(80, 100)
-      Kernel.pbMessage(celebi("Ceeeeeeeeeeeeeeel. (Call me anytime! Time travelers have all the time in the world.)"))
-      Kernel.pbMessage(_INTL("(\\..\\..\\..\\.Wait.\\| You understood that?!)"))
+      Kernel.pbMessage(celebi("Ceeeeeeeeeeeeeeel. (Call me anytime! Time travelers have all the time in the world.)\1"))
+      Kernel.pbMessage(_INTL("(\\..\\..\\..\\.Wait.\\| You understood that?!)\1"))
       $game_screen.timeskippc_used = true
     end
 
     if $game_switches[:Forced_Time_of_Day]
       celebiSound(80, 80)
-      Kernel.pbMessage(celebi("Bipri... (Looks like time's been locked in place for a bit. That happens sometimes!)"))
+      Kernel.pbMessage(celebi("Bipri... (Looks like time's been locked in place for a bit. That happens sometimes!)\1"))
       celebiSound(80, 100)
       Kernel.pbMessage(celebi("Cece prici! (So I can't do much about that. I'll be off, then!)"))
       return
@@ -153,7 +153,7 @@ class TimeSkipPCService
       return
     elsif choice < 4
       celebiSound(80, 100)
-      Kernel.pbMessage(celebi("CELEBI: Cel... EBI! (Here we GO!)"))
+      Kernel.pbMessage(celebi("CELEBI: Cel... EBI! (Here we GO!)\1"))
       $game_system.message_position = 1 # Middle
       $game_system.message_frame = 1 # Hide
 
@@ -163,13 +163,13 @@ class TimeSkipPCService
       $game_system.bgm_memorize
       pbBGMPlay('citamginE - gnileeF', 100, 130)
       celebiSound(50, 60)
-      Kernel.pbMessage(_INTL("<ac>\\ts[5]#{LIME}<fn=Garufan>O' ersatz flow and flux of time,</fn></ac>"))
+      Kernel.pbMessage(_INTL("<ac>\\ts[5]#{LIME}<fn=Garufan>O' ersatz flow and flux of time,"))
       celebiSound(200, 60)
-      Kernel.pbMessage(_INTL("<ac>\\ts[5]#{LIME}<fn=Garufan>O' queen of zones high and divine,</fn></ac>"))
+      Kernel.pbMessage(_INTL("<ac>\\ts[5]#{LIME}<fn=Garufan>O' queen of zones high and divine,"))
       celebiSound(50, 120)
-      Kernel.pbMessage(_INTL("<ac>\\ts[5]#{LIME}<fn=Garufan>The Interceptor calls for change!</fn></ac>"))
+      Kernel.pbMessage(_INTL("<ac>\\ts[5]#{LIME}<fn=Garufan>The Interceptor calls for change!"))
       celebiSound(200, 120)
-      Kernel.pbMessage(_INTL("<ac>\\ts[5]#{LIME}<fn=Garufan>And by their will, we shall obey!</fn></ac>"))
+      Kernel.pbMessage(_INTL("<ac>\\ts[5]#{LIME}<fn=Garufan>And by their will, we shall obey!"))
 
       pbWait(20)
 
@@ -203,10 +203,10 @@ class TimeSkipPCService
       ServicePCList.fadeScreen(Tone.new(-51,-51,-51,0), 20)
       pbWait(20)
 
-      Kernel.pbMessage(_INTL("<ac>\\c[3]THE FLOW OF TIME HAS SHIFTED.</ac>"))
+      Kernel.pbMessage(_INTL("<ac>\\c[3]THE FLOW OF TIME HAS SHIFTED."))
 
       ServicePCList.restoreScreen(10)
-      $game_system.message_position = 0 # Bottom
+      $game_system.message_position = 2 # Bottom
       $game_system.message_frame = 0 # Show
       celebiSound(80, 100)
       Kernel.pbMessage(celebi("CELEBI: Precel. (That's probably fine. Bye!)"))

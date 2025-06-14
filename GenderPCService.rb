@@ -105,7 +105,7 @@ class GenderPCService
 
   def access
     if ServicePCList.offMap? || ServicePCList.inRift? || inPast? || ServicePCList.darchlightCaves?
-      Kernel.pbMessage(_INTL("..."))
+      Kernel.pbMessage(_INTL("...\1"))
       Kernel.pbMessage(_INTL("There's no response..."))
       return
     end
@@ -116,75 +116,75 @@ class GenderPCService
 
     if $game_screen.genderpc_angy
       if odessaAngy
-        Kernel.pbMessage(_INTL("..."))
+        Kernel.pbMessage(_INTL("...\1"))
         Kernel.pbMessage(_INTL("(She sent you to voicemail...)"))
         return
       else
-        Kernel.pbMessage(odessa("ODESSA: Ah. \\PN."))
-        Kernel.pbMessage(odessa("... My apologies. I had been irate at you over your leaving Ana alone."))
-        Kernel.pbMessage(odessa("I have calmed down and forgiven you."))
-        Kernel.pbMessage(blush("(Are you satisfied, you insatiable gremlin?)"))
+        Kernel.pbMessage(odessa("ODESSA: Ah. \\PN.\1"))
+        Kernel.pbMessage(odessa("... My apologies. I had been irate at you over your leaving Ana alone.\1"))
+        Kernel.pbMessage(odessa("I have calmed down and forgiven you.\1"))
+        Kernel.pbMessage(blush("(Are you satisfied, you insatiable gremlin?)\1"))
         manaphySound
-        Kernel.pbMessage(manaphy("MANAPHY: (Mana!)"))
+        Kernel.pbMessage(manaphy("MANAPHY: (Mana!)\1"))
         $game_screen.genderpc_angy = false
         if !$game_screen.genderpc_used
-          Kernel.pbMessage(odessa("ODESSA: Apologies aside, what is it you wanted to call me for?"))
+          Kernel.pbMessage(odessa("ODESSA: Apologies aside, what is it you wanted to call me for?\1"))
           skipFirstLine = true
         end
       end
     elsif !$game_screen.genderpc_used
-      Kernel.pbMessage(odessa("ODESSA: H-hello? I'm sorry, this phone is new. I haven't used it much."))
+      Kernel.pbMessage(odessa("ODESSA: H-hello? I'm sorry, this phone is new. I haven't used it much.\1"))
       ServicePCList.playerTalk
       ServicePCList.exclaimSound
       if odessaAngy
-        Kernel.pbMessage(angry("ODESSA: ..."))
+        Kernel.pbMessage(angry("ODESSA: ...\1"))
         Kernel.pbMessage(_INTL("(She hung up?)"))
         $game_screen.genderpc_angy = true
         return
       end
-      Kernel.pbMessage(odessa("ODESSA: Ah! Hello, \\PN!"))
+      Kernel.pbMessage(odessa("ODESSA: Ah! Hello, \\PN!\1"))
       manaphySound
-      Kernel.pbMessage(manaphy("MANAPHY: Mana!"))
+      Kernel.pbMessage(manaphy("MANAPHY: Mana!\1"))
       ServicePCList.happySound
-      Kernel.pbMessage(odessa("ODESSA: He says hello too!"))
+      Kernel.pbMessage(odessa("ODESSA: He says hello too!\1"))
     end
 
     if !$game_screen.genderpc_used
-      Kernel.pbMessage(odessa("So, why are you calling?")) if !skipFirstLine
+      Kernel.pbMessage(odessa("So, why are you calling?\1")) if !skipFirstLine
       ServicePCList.playerTalk
-      Kernel.pbMessage(confused("ODESSA: I\\..\\..\\..\\. see? You... wanted me to use Heart Swap again? Whyever for?"))
+      Kernel.pbMessage(confused("ODESSA: I\\..\\..\\..\\. see? You... wanted me to use Heart Swap again? Whyever for?\1"))
       ServicePCList.playerTalk
-      Kernel.pbMessage(odessa("ODESSA: To change the gender of your Pokemon? I... suppose that is possible."))
+      Kernel.pbMessage(odessa("ODESSA: To change the gender of your Pokemon? I... suppose that is possible.\1"))
 
       if odessaAssumedGender != "female"
         ServicePCList.happySound
-        Kernel.pbMessage(odessa("After all, in your body, I was for all intents and purposes {1}!", odessaAssumedGender))
+        Kernel.pbMessage(odessa("After all, in your body, I was for all intents and purposes {1}!\1", odessaAssumedGender))
       else
-        Kernel.pbMessage(blush("I... know Heart Swap works on those who aren't female, too."))
+        Kernel.pbMessage(blush("I... know Heart Swap works on those who aren't female, too.\1"))
       end
 
       if playerGender != odessaAssumedGender
         pbExclaim($game_player, GRUMPY_ANIMATION_ID)
         ServicePCList.playerTalk
         ServicePCList.exclaimSound
-        Kernel.pbMessage(blush("ODESSA: Oh? I-I'm sorry! You're {1}? I had assumed...", playerGender))
-        Kernel.pbMessage(blush("No, that's no excuse. I'm sorry, \\PN."))
+        Kernel.pbMessage(blush("ODESSA: Oh? I-I'm sorry! You're {1}? I had assumed...\1", playerGender))
+        Kernel.pbMessage(blush("No, that's no excuse. I'm sorry, \\PN.\1"))
       end
 
-      Kernel.pbMessage(odessa("The move is more versatile than that, of course..."))
+      Kernel.pbMessage(odessa("The move is more versatile than that, of course...\1"))
       manaphySound
-      Kernel.pbMessage(manaphy("MANAPHY: Mana! Man-na!"))
-      Kernel.pbMessage(odessa("ODESSA: We have been practicing, true."))
-      Kernel.pbMessage(odessa("I believe I know how we'd use it to \\c[6]change someone's gender directly."))
-      Kernel.pbMessage(odessa("So, that being said..."))
+      Kernel.pbMessage(manaphy("MANAPHY: Mana! Man-na!\1"))
+      Kernel.pbMessage(odessa("ODESSA: We have been practicing, true.\1"))
+      Kernel.pbMessage(odessa("I believe I know how we'd use it to \\c[6]change someone's gender directly.\1"))
+      Kernel.pbMessage(odessa("So, that being said...\1"))
       $game_screen.genderpc_used = true
     else
-      Kernel.pbMessage(odessa("ODESSA: Hello, \\PN. How are you?"))
+      Kernel.pbMessage(odessa("ODESSA: Hello, \\PN. How are you?\1"))
       manaphySound
-      Kernel.pbMessage(manaphy("MANAPHY: Mana!"))
+      Kernel.pbMessage(manaphy("MANAPHY: Mana!\1"))
       ServicePCList.happySound
-      Kernel.pbMessage(odessa("ODESSA: Manaphy assures you <i>he's</i> feeling fine."))
-      Kernel.pbMessage(odessa("That being said..."))
+      Kernel.pbMessage(odessa("ODESSA: Manaphy assures you <i>he's</i> feeling fine.\1"))
+      Kernel.pbMessage(odessa("That being said...\1"))
     end
 
     choice = 0
@@ -205,7 +205,7 @@ class GenderPCService
               if pkmn.isEgg?
                 Kernel.pbMessage(confused("ODESSA: ...\\PN? I don't think an Egg is a valid target."))
               elsif (pkmn.isShadow? rescue false)
-                Kernel.pbMessage(confused("ODESSA: ... What is this, and why are you showing it to me?"))
+                Kernel.pbMessage(confused("ODESSA: ... What is this, and why are you showing it to me?\1"))
                 Kernel.pbMessage(confused("Poor {1} looks like it's in agony...", getMonName(pkmn.species)))
               else
                 if pkmn.gender == 2
@@ -225,7 +225,7 @@ class GenderPCService
                     next
                 end
 
-                Kernel.pbMessage(odessa("ODESSA: Alright. That will require a Heart Scale as a catalyst."))
+                Kernel.pbMessage(odessa("ODESSA: Alright. That will require a Heart Scale as a catalyst.\1"))
                 if $PokemonBag.pbQuantity(:HEARTSCALE) <= 0
                   Kernel.pbMessage(odessa("Ah, unfortunate, you don't have any. Another time, then."))
                   break
@@ -237,7 +237,7 @@ class GenderPCService
                 if Kernel.pbConfirmMessage(odessa("ODESSA: Then you want to change \\v[3] from {1}\\c[0] into {2}\\c[0]?", pkmnGender, targetGender))
                   $PokemonBag.pbDeleteItem(:HEARTSCALE)
                   ServicePCList.updateWindowQuantity(heartscalewindow, :HEARTSCALE)
-                  Kernel.pbMessage(odessa("ODESSA: Then so it shall be! Manaphy..."))
+                  Kernel.pbMessage(odessa("ODESSA: Then so it shall be! Manaphy...\1"))
                   ServicePCList.fadeScreen(Tone.new(0,0,0,255),20)
                   manaphySound
                   Kernel.pbMessage(odessa("ODESSA: HEART SWAP!"))
@@ -253,22 +253,22 @@ class GenderPCService
             heartscalewindow.dispose
           end
         elsif subChoice == 1
-          Kernel.pbMessage(blush("ODESSA: Y-you?"))
+          Kernel.pbMessage(blush("ODESSA: Y-you?\1"))
           if !$game_screen.genderpc_askedForSwap
-            Kernel.pbMessage(blush("You really trust me, after..."))
-            Kernel.pbMessage(blush("\\..\\..\\..\\."))
-            Kernel.pbMessage(odessa("I appreciate it."))
-            Kernel.pbMessage(odessa("Ah, but is that even possible without physical presence?"))
-            Kernel.pbMessage(odessa("For a Pokemon, you can send it to me through the PC, but..."))
+            Kernel.pbMessage(blush("You really trust me, after...\1"))
+            Kernel.pbMessage(blush("\\..\\..\\..\\.\1"))
+            Kernel.pbMessage(odessa("I appreciate it.\1"))
+            Kernel.pbMessage(odessa("Ah, but is that even possible without physical presence?\1"))
+            Kernel.pbMessage(odessa("For a Pokemon, you can send it to me through the PC, but...\1"))
             manaphySound
-            Kernel.pbMessage(manaphy("MANAPHY: Mana ma!"))
-            Kernel.pbMessage(odessa("ODESSA: Apparently, it is within Manaphy's capabilities."))
-            Kernel.pbMessage(blush("So..."))
+            Kernel.pbMessage(manaphy("MANAPHY: Mana ma!\1"))
+            Kernel.pbMessage(odessa("ODESSA: Apparently, it is within Manaphy's capabilities.\1"))
+            Kernel.pbMessage(blush("So...\1"))
             $game_screen.genderpc_askedForSwap = true
           end
 
           heartscalewindow = ServicePCList.quantityWindow(:HEARTSCALE)
-          Kernel.pbMessage(odessa("I suppose I can do that... It will cost two Heart Scales as catalysts, though."))
+          Kernel.pbMessage(odessa("I suppose I can do that... It will cost two Heart Scales as catalysts, though.\1"))
           if $PokemonBag.pbQuantity(:HEARTSCALE) <= 0
             Kernel.pbMessage(odessa("Ah, you don't have any? I suppose that's not an option, then."))
           elsif $PokemonBag.pbQuantity(:HEARTSCALE) == 1
@@ -288,13 +288,13 @@ class GenderPCService
               Kernel.pbMessage(blush("\\sh\\c[7]ODESSA: D-don't ask me for th-that, then just blow it off!"))
               pbWait(20)
             elsif choice == playerGenderNum
-              Kernel.pbMessage(confused("ODESSA: Are you not already {1}?", playerGender))
-              Kernel.pbMessage(confused("Is this... are you insecure about that?"))
+              Kernel.pbMessage(confused("ODESSA: Are you not already {1}?\1", playerGender))
+              Kernel.pbMessage(confused("Is this... are you insecure about that?\1"))
               Kernel.pbMessage(odessa("If so, I apologize. I meant no offense. You are already a quite lovely {1}.", playerReferent))
             elsif choice <= 2
               $PokemonBag.pbDeleteItem(:HEARTSCALE, 2)
               ServicePCList.updateWindowQuantity(heartscalewindow, :HEARTSCALE)
-              Kernel.pbMessage(odessa("ODESSA: V-very well then! Manaphy..."))
+              Kernel.pbMessage(odessa("ODESSA: V-very well then! Manaphy...\1"))
               ServicePCList.fadeScreen(Tone.new(0,0,0,255),20)
               manaphySound
               Kernel.pbMessage(odessa("ODESSA: HEART SWAP!"))
@@ -307,9 +307,9 @@ class GenderPCService
               Kernel.pbMessage(odessa("ODESSA: It is done."))
               pbExclaim($game_player,ELIPSES_ANIMATION_ID)
               if !$game_screen.genderpc_doneSwap
-                Kernel.pbMessage(confused("ODESSA: You were expecting something flashier?"))
-                Kernel.pbMessage(confused("I changed your gender, not anything physical."))
-                Kernel.pbMessage(confused("If that wasn't what you wanted, you should have been more specific."))
+                Kernel.pbMessage(confused("ODESSA: You were expecting something flashier?\1"))
+                Kernel.pbMessage(confused("I changed your gender, not anything physical.\1"))
+                Kernel.pbMessage(confused("If that wasn't what you wanted, you should have been more specific.\1"))
                 Kernel.pbMessage(odessa("I don't believe I could even do that without a willing person to swap with."))
                 $game_screen.genderpc_doneSwap = true
               else
@@ -347,8 +347,8 @@ class GenderPCService
 
           ServicePCList.happySound
           Kernel.pbMessage(manaphy("MANAPHY: Mana phyyy!"))
-          Kernel.pbMessage(odessa("ODESSA: Did he just... Teleport to you..."))
-          Kernel.pbMessage(odessa("And you gave him a Gourmet Treat?!"))
+          Kernel.pbMessage(odessa("ODESSA: Did he just... Teleport to you...\1"))
+          Kernel.pbMessage(odessa("And you gave him a Gourmet Treat?!\1"))
           Kernel.pbMessage(angry("\\sh\\c[7]Don't enable the little rascal!"))
 
           for i in 0...5
@@ -391,9 +391,9 @@ class GenderPCService
           return
         else
           manaphySad
-          Kernel.pbMessage(manaphy("MANAPHY: Manaa..."))
-          Kernel.pbMessage(odessa("ODESSA: I say it's a good thing you don't have a treat to give him!"))
-          Kernel.pbMessage(odessa("Manaphy, you eat too many of those as it is."))
+          Kernel.pbMessage(manaphy("MANAPHY: Manaa...\1"))
+          Kernel.pbMessage(odessa("ODESSA: I say it's a good thing you don't have a treat to give him!\1"))
+          Kernel.pbMessage(odessa("Manaphy, you eat too many of those as it is.\1"))
           manaphySad
           Kernel.pbMessage(manaphy("MANAPHY: Manaaaaaa..."))
         end

@@ -92,20 +92,20 @@ class DayCarePCService
 
   def access
     if ServicePCList.offMap? || ServicePCList.inRift? || inPast? || ServicePCList.darchlightCaves?
-      Kernel.pbMessage(_INTL("..."))
+      Kernel.pbMessage(_INTL("...\1"))
       Kernel.pbMessage(_INTL("There's no response..."))
       return
     end
 
     if !$game_screen.daycarepc_used
-      Kernel.pbMessage(lady("Hello, you've reached the Day-Care Lady. How may I..."))
-      Kernel.pbMessage(lady("Ah, you're new to DayCare Delivers? It's no problem. We let you access the Day-Care through your PC."))
+      Kernel.pbMessage(lady("Hello, you've reached the Day-Care Lady. How may I...\1"))
+      Kernel.pbMessage(lady("Ah, you're new to DayCare Delivers? It's no problem. We let you access the Day-Care through your PC.\1"))
       $game_screen.daycarepc_used = true
     else
-      Kernel.pbMessage(lady("Hello, you've reached the Day-Care Lady!"))
+      Kernel.pbMessage(lady("Hello, you've reached the Day-Care Lady!\1"))
     end
 
-    Kernel.pbMessage(lady("It's good to see you. Now, about your Pokemon..."))
+    Kernel.pbMessage(lady("It's good to see you. Now, about your Pokemon...\1"))
     Kernel.pbMessage(lady("By level, your \\v[3] has grown by about \\v[4].")) if pbDayCareGetLevelGain(0,3,4) && pbGet(4)>0
     Kernel.pbMessage(lady("By level, your \\v[3] has grown by about \\v[4].")) if pbDayCareGetLevelGain(1,3,4) && pbGet(4)>0
 
@@ -144,20 +144,20 @@ class DayCarePCService
           end
 
           if !pbCheckAble(result)
-            Kernel.pbMessage(lady("If you leave me that Pokémon, what are you gonna battle with?"))
+            Kernel.pbMessage(lady("If you leave me that Pokémon, what are you gonna battle with?\1"))
           else
             issueWithMon = false
             if (poke.isShadow? rescue false)
-              Kernel.pbMessage(lady("Oh, my. That Pokémon... I don't think it'll get along with anything at all."))
+              Kernel.pbMessage(lady("Oh, my. That Pokémon... I don't think it'll get along with anything at all.\1"))
               issueWithMon = true
             elsif BABIES.include?(poke.species)
-              Kernel.pbMessage(lady("Ah, what a cute little Pokémon! It isn't ready to have Eggs, though."))
+              Kernel.pbMessage(lady("Ah, what a cute little Pokémon! It isn't ready to have Eggs, though.\1"))
               issueWithMon = true
             elsif poke.eggGroups.include?(:Undiscovered)
-              Kernel.pbMessage(lady("This Pokémon can't have Eggs at all."))
+              Kernel.pbMessage(lady("This Pokémon can't have Eggs at all.\1"))
               issueWithMon = true
             elsif !compatCheck(poke,4)
-              Kernel.pbMessage(lady("I don't think \\v[4] and \\v[3] will get along."))
+              Kernel.pbMessage(lady("I don't think \\v[4] and \\v[3] will get along.\1"))
               issueWithMon = true
             end
 
@@ -179,7 +179,7 @@ class DayCarePCService
           break if result < 0
           pbDayCareGetDeposited(pbGet(1),3,4)
           cost = pbGet(4)
-          if Kernel.pbConfirmMessage(lady("\\GIf you want your \\v[3] back, it will cost $\\v[4]."))
+          if Kernel.pbConfirmMessage(lady("\\GIf you want your \\v[3] back, it will cost $\\v[4].\1"))
             if $Trainer.money < cost
               Kernel.pbMessage(_INTL("You don't have enough money..."))
               break
@@ -200,19 +200,19 @@ class DayCarePCService
           next
         end
 
-        Kernel.pbMessage(lady("Dear?"))
-        Kernel.pbMessage(man("Ah, yes!"))
-        Kernel.pbMessage(man("We were raising your Pokémon, and my goodness, were we surprised!"))
-        Kernel.pbMessage(man("Your Pokémon was holding an Egg!"))
-        Kernel.pbMessage(man("We don't know how it got there, but your Pokémon had it."))
+        Kernel.pbMessage(lady("Dear?\1"))
+        Kernel.pbMessage(man("Ah, yes!\1"))
+        Kernel.pbMessage(man("We were raising your Pokémon, and my goodness, were we surprised!\1"))
+        Kernel.pbMessage(man("Your Pokémon was holding an Egg!\1"))
+        Kernel.pbMessage(man("We don't know how it got there, but your Pokémon had it.\1"))
         if Kernel.pbConfirmMessage(man("You do want it, don't you?")) ||
             Kernel.pbConfirmMessage(man("I really will keep it. You do want this Egg, yes?"))
           pbDayCareGenerateEgg
           Kernel.pbMessage(_INTL("\\PN was sent the Egg from the Day-Care Man."))
           Kernel.pbMessage(man("You take good care of it."))
         else
-          Kernel.pbMessage(man("Well all right then, I'll take it. Thank you."))
-          Kernel.pbMessage(man("That is, I don't think we'll ever find another..."))
+          Kernel.pbMessage(man("Well all right then, I'll take it. Thank you.\1"))
+          Kernel.pbMessage(man("That is, I don't think we'll ever find another...\1"))
           Kernel.pbMessage(man("No, no, I'm sure we'll find another one. I'm definitely sure of it!"))
         end
         $PokemonGlobal.daycareEgg=0
@@ -227,7 +227,7 @@ class DayCarePCService
           next
         end
         if pbDayCareGetCompat == 0
-          Kernel.pbMessage(lady("Your pokemon don't seem to be paying that much attention to each other, dear."))
+          Kernel.pbMessage(lady("Your Pokemon don't seem to be paying that much attention to each other, dear.\1"))
         else
           ServicePCList.fadeScreen(Tone.new(-255,-255,-255,0),10)
           pbWait(10)
@@ -235,7 +235,7 @@ class DayCarePCService
           pbWait(50)
           ServicePCList.restoreScreen(10)
           $PokemonGlobal.daycareEgg=1
-          Kernel.pbMessage(lady("Well, would you look at that!"))
+          Kernel.pbMessage(lady("Well, would you look at that!\1"))
           Kernel.pbMessage(lady("My husband will probably want to see you."))
           command = 2
           $game_screen.daycarepc_lastCommand=command
@@ -245,7 +245,7 @@ class DayCarePCService
           ServicePCList.buzzer
           next
         end
-        Kernel.pbMessage(lady("Let me just take those Eggs, and..."))
+        Kernel.pbMessage(lady("Let me just take those Eggs, and...\1"))
         ServicePCList.fadeScreen(Tone.new(-255,-255,-255,0),10)
         pbWait(10)
         pbMEPlay('Pokemon Healing', 100, 55)
@@ -254,7 +254,7 @@ class DayCarePCService
         for pokemon in $Trainer.party
           pokemon.eggsteps=1 if pokemon.isEgg?
         end
-        Kernel.pbMessage(lady("Your eggs are all warm and ready to hatch!"))
+        Kernel.pbMessage(lady("Your Eggs are all warm and ready to hatch!"))
         $game_screen.daycarepc_lastCommand=command
       end
     end

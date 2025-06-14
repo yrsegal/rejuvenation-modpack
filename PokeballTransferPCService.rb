@@ -93,13 +93,13 @@ class PokeballTransferPCService
     if pkmn.ability == :BALLFETCH
       Kernel.pbReceiveItem(originalBall)
       if !$game_screen.pokeballtransferpc_explainballfetch
-        Kernel.pbMessage(matt("MATTHEW: ...?"))
+        Kernel.pbMessage(matt("MATTHEW: ...?\1"))
         ServicePCList.happySound
-        Kernel.pbMessage(matt("Oh! Looks like it fetched the {1}! What a good {2}.", getItemName(originalBall), getMonName(pkmn.species)))
+        Kernel.pbMessage(matt("Oh! Looks like it fetched the {1}! What a good {2}.\1", getItemName(originalBall), getMonName(pkmn.species)))
         $game_screen.pokeballtransferpc_explainballfetch = true
       else
         ServicePCList.happySound
-        Kernel.pbMessage(matt("MATTHEW: What a good {2}! It fetched the {1}.", getItemName(originalBall), getMonName(pkmn.species)))
+        Kernel.pbMessage(matt("MATTHEW: What a good {2}! It fetched the {1}.\1", getItemName(originalBall), getMonName(pkmn.species)))
       end
       explainShiny if shininessChanged
       Kernel.pbMessage(matt("Well, have a good day!"))
@@ -114,27 +114,27 @@ class PokeballTransferPCService
   def explainShiny(statementStart = false)
     if !$game_screen.pokeballtransferpc_explainshiny
       if statementStart
-        Kernel.pbMessage(matt("MATTHEW: ...?"))
-        Kernel.pbMessage(matt("Oh! The color changed! Did the ball transfer change something?"))
+        Kernel.pbMessage(matt("MATTHEW: ...?\1"))
+        Kernel.pbMessage(matt("Oh! The color changed! Did the ball transfer change something?\1"))
       else
-        Kernel.pbMessage(matt("And the color changed! Did the ball transfer change something?"))
+        Kernel.pbMessage(matt("And the color changed! Did the ball transfer change something?\1"))
       end
       if $game_switches[:EizenKnows]
-        Kernel.pbMessage(eizen("EIZEN: The Glitter Ball sets the shiny flag of a Pokemon artificially."))
-        Kernel.pbMessage(eizen("If you transfer a Pokemon to or from one, their status as shiny can change."))
-        Kernel.pbMessage(eizen("Naturally occurring shiny Pokemon won't be affected by this."))
-        Kernel.pbMessage(matt("MATTHEW: That's really interesting? What's a 'shiny flag'?"))
-        Kernel.pbMessage(eizen("EIZEN: \\PN knows."))
-        Kernel.pbMessage(matt("MATTHEW: Neat!"))
+        Kernel.pbMessage(eizen("EIZEN: The Glitter Ball sets the shiny flag of a Pokemon artificially.\1"))
+        Kernel.pbMessage(eizen("If you transfer a Pokemon to or from one, their status as shiny can change.\1"))
+        Kernel.pbMessage(eizen("Naturally occurring shiny Pokemon won't be affected by this.\1"))
+        Kernel.pbMessage(matt("MATTHEW: That's really interesting? What's a 'shiny flag'?\1"))
+        Kernel.pbMessage(eizen("EIZEN: \\PN knows.\1"))
+        Kernel.pbMessage(matt("MATTHEW: Neat!\1"))
       else 
-        Kernel.pbMessage(matt("A Glitter Ball was involved... those can change a Pokemon's coloration."))
+        Kernel.pbMessage(matt("A Glitter Ball was involved... those can change a Pokemon's coloration.\1"))
       end
       $game_screen.pokeballtransferpc_explainshiny = true
     else
       if statementStart
-        Kernel.pbMessage(matt("MATTHEW: Oh, the color changed again!"))
+        Kernel.pbMessage(matt("MATTHEW: Oh, the color changed again!\1"))
       elsif
-        Kernel.pbMessage(matt("Oh, and the color changed again!"))
+        Kernel.pbMessage(matt("Oh, and the color changed again!\1"))
       end
     end
   end
@@ -154,25 +154,27 @@ class PokeballTransferPCService
 
   def access
     if ServicePCList.inZeight? || ServicePCList.inRift?
-      Kernel.pbMessage(_INTL("..."))
+      Kernel.pbMessage(_INTL("...\1"))
       Kernel.pbMessage(_INTL("The phone was answered, but immediately hung up..."))
       return
     end
 
     if ServicePCList.distantTime?
-      Kernel.pbMessage(_INTL("..."))
+      Kernel.pbMessage(_INTL("...\1"))
       Kernel.pbMessage(_INTL("There's no response..."))
       return
     end
 
     if ServicePCList.inNightmare?
-      Kernel.pbMessage(_INTL("..."))
+      Kernel.pbMessage(_INTL("...\1"))
       if $game_switches[:EizenKnows]
-        Kernel.pbMessage(eizen("It was picked up?"))
-        Kernel.pbMessage(eizen("EIZEN: <i>Some</i> of us are trying to sleep."))
+        Kernel.pbMessage(eizen("It was picked up?\1"))
         if $game_switches[:GreetingsEizen] && !$game_screen.pokeballtransferpc_eizen_prankcall
+          Kernel.pbMessage(eizen("EIZEN: <i>Some</i> of us are trying to sleep.\1"))
           Kernel.pbMessage(eizen("And please, stop prank calling me."))
           $game_screen.pokeballtransferpc_eizen_prankcall = true
+        else
+          Kernel.pbMessage(eizen("EIZEN: <i>Some</i> of us are trying to sleep."))
         end
       else
         Kernel.pbMessage(_INTL("The phone was answered, but immediately hung up..."))
@@ -181,13 +183,15 @@ class PokeballTransferPCService
     end
 
     if inPast?
-      Kernel.pbMessage(_INTL("..."))
+      Kernel.pbMessage(_INTL("...\1"))
       if $game_switches[:EizenKnows]
-        Kernel.pbMessage(eizen("It was picked up?"))
-        Kernel.pbMessage(eizen("EIZEN: This service isn't open yet."))
+        Kernel.pbMessage(eizen("It was picked up?\1"))
         if $game_switches[:GreetingsEizen] && !$game_screen.pokeballtransferpc_eizen_prankcall
+          Kernel.pbMessage(eizen("EIZEN: This service isn't open yet.\1"))
           Kernel.pbMessage(eizen("And please, stop prank calling me."))
           $game_screen.pokeballtransferpc_eizen_prankcall = true
+        else
+          Kernel.pbMessage(eizen("EIZEN: This service isn't open yet."))
         end
       else
         Kernel.pbMessage(_INTL("The phone was answered, but immediately hung up..."))
@@ -196,22 +200,22 @@ class PokeballTransferPCService
     end
 
     if ServicePCList.offMap? || ServicePCList.darchlightCaves?
-      Kernel.pbMessage(_INTL("..."))
+      Kernel.pbMessage(_INTL("...\1"))
       Kernel.pbMessage(_INTL("There's no response..."))
       return
     end
 
-    Kernel.pbMessage(matt("MATTHEW: Hello, \\PN! What can I do for you?"))
+    Kernel.pbMessage(matt("MATTHEW: Hello, \\PN! What can I do for you?\1"))
     if !$game_screen.pokeballtransferpc_used
       if $game_switches[:EizenKnows]
-        Kernel.pbMessage(eizen("EIZEN: Matthew, \\PN would like a Pokemon transfered out of its Pokeball."))
-        Kernel.pbMessage(matt("MATTHEW: Oh, sure! I can do that, no problem!"))
+        Kernel.pbMessage(eizen("EIZEN: Matthew, \\PN would like a Pokemon transfered out of its Pokeball.\1"))
+        Kernel.pbMessage(matt("MATTHEW: Oh, sure! I can do that, no problem!\1"))
       else
         ServicePCList.playerTalk
         ServicePCList.exclaimSound
-        Kernel.pbMessage(matt("MATTHEW: Ah! You want to transfer a Pokemon into a new ball? I can do that!"))
+        Kernel.pbMessage(matt("MATTHEW: Ah! You want to transfer a Pokemon into a new ball? I can do that!\1"))
       end
-      Kernel.pbMessage(matt("Just remember, you won't be able to get the original Pokeball back after the transfer."))
+      Kernel.pbMessage(matt("Just remember, you won't be able to get the original Pokeball back after the transfer.\1"))
       $game_screen.pokeballtransferpc_used = true
     end
 
@@ -220,8 +224,8 @@ class PokeballTransferPCService
     result = pbGet(1)
     if result < 0
       if $game_switches[:EizenKnows]
-        Kernel.pbMessage(matt("MATTHEW: Changed your mind? That's fine! I'll be here!"))
-        Kernel.pbMessage(eizen("EIZEN: Forever."))
+        Kernel.pbMessage(matt("MATTHEW: Changed your mind? That's fine! I'll be here!\1"))
+        Kernel.pbMessage(eizen("EIZEN: Forever.\1"))
         Kernel.pbMessage(matt("MATTHEW: Arrow..."))
       else
         Kernel.pbMessage(matt("MATTHEW: Changed your mind? That's fine! I'll be here!"))
@@ -244,8 +248,8 @@ class PokeballTransferPCService
         itemscene.pbEndScene
         $PokemonBag.lastpocket = oldlastpocket
         if $game_switches[:EizenKnows]
-          Kernel.pbMessage(matt("MATTHEW: Changed your mind? That's fine! I'll be here!"))
-          Kernel.pbMessage(eizen("EIZEN: Forever."))
+          Kernel.pbMessage(matt("MATTHEW: Changed your mind? That's fine! I'll be here!\1"))
+          Kernel.pbMessage(eizen("EIZEN: Forever.\1"))
           Kernel.pbMessage(matt("MATTHEW: Arrow..."))
         else
           Kernel.pbMessage(matt("MATTHEW: Changed your mind? That's fine! I'll be here!"))

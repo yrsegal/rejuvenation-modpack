@@ -535,7 +535,7 @@ class Selectfromboxes_SelectionArray < Array
   include Comparable
   
   def <=>(other)
-    1 <=> other
+    0.01 <=> other
   end
 end
 
