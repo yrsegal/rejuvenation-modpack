@@ -1,68 +1,102 @@
 def hpSummary_trueType(move, pokemon)
-    type = move.type
-    if move.move == :HIDDENPOWER
-      type = pbHiddenPower(pokemon)
-    elsif move.move == :REVELATIONDANCE
+  type = move.type
+  if move.move == :HIDDENPOWER
+    type = pbHiddenPower(pokemon)
+  elsif move.move == :REVELATIONDANCE
+    type = pokemon.type1
+  elsif move.move == :MIRRORBEAM
+    if !pokemon.type2.nil?
+      type = pokemon.type2
+    else
       type = pokemon.type1
-    elsif move.move == :MIRRORBEAM
-      if !pokemon.type2.nil?
-        type = pokemon.type2
-      else
-        type = pokemon.type1
+    end
+  elsif move.move == :GILDEDARROW || move.move == :GILDEDHELIX
+    if !pokemon.type2.nil? && (pokemon.type2 != :FAIRY && pokemon.type2 != :DARK)
+      type = pokemon.type2
+    else
+      type = pokemon.type1
+    end
+  elsif move.move == :NATURALGIFT
+    type= !PBStuff::NATURALGIFTTYPE[pokemon.item].nil? ? PBStuff::NATURALGIFTTYPE[pokemon.item] : :NORMAL
+  end
+
+  if ((move.move == :JUDGMENT) && (pokemon.species == :ARCEUS)) || 
+    ((move.move == :MULTIATTACK) && (pokemon.species == :SILVALLY))
+    type = $cache.pkmn[pokemon.species].forms[pokemon.form%19].upcase.intern
+    type = :QMARKS if type == "???".intern
+  end
+
+  if pokemon.form<19
+    if move.move == :TECHNOBLAST
+      case pokemon.item
+        when :SHOCKDRIVE then type = :ELECTRIC  
+        when :BURNDRIVE then type = :FIRE
+        when :CHILLDRIVE then type = :ICE
+        when :DOUSEDRIVE then type = :WATER
       end
-    end
-
-    if ((move.move == :JUDGMENT) && (pokemon.species == :ARCEUS)) || 
-      ((move.move == :MULTIATTACK) && (pokemon.species == :SILVALLY))
-      type = $cache.pkmn[pokemon.species].forms[pokemon.form%19].upcase.intern
-      type = :QMARKS if type == "???".intern
-    end
-
-    if pokemon.form<19
-      if move.move == :TECHNOBLAST
-        case pokemon.item
-          when :SHOCKDRIVE then type = :ELECTRIC  
-          when :BURNDRIVE then type = :FIRE
-          when :CHILLDRIVE then type = :ICE
-          when :DOUSEDRIVE then type = :WATER
-        end
-      elsif move.move == :MULTIATTACK
-        itemtype = $cache.items[pokemon.item].checkFlag?(:memory)
+    elsif move.move == :MULTIATTACK
+      itemtype = $cache.items[pokemon.item].checkFlag?(:memory)
+      type = itemtype if itemtype
+    elsif move.move == :JUDGMENT || move.move == :MULTIPULSE
+      if PBStuff::PLATEITEMS.include?(pokemon.item)
+        itemtype = $cache.items[pokemon.item].checkFlag?(:typeboost)
         type = itemtype if itemtype
-      elsif move.move == :JUDGMENT || move.move == :MULTIPULSE
-        if PBStuff::PLATEITEMS.include?(pokemon.item)
-          itemtype = $cache.items[pokemon.item].checkFlag?(:typeboost)
-          type = itemtype if itemtype
-        end
       end
     end
-    
-    case pokemon.ability 
-      when :NORMALIZE   then type = :NORMAL
-      when :PIXILATE    then type = :FAIRY    if type==:NORMAL
-      when :AERILATE    then type = :FLYING   if type==:NORMAL
-      when :GALVANIZE   then type = :ELECTRIC if type==:NORMAL
-      when :REFRIGERATE then type = :ICE      if type==:NORMAL
-      when :DUSKILATE   then type = :DARK     if type==:NORMAL
-      when :LIQUIDVOICE then type = :WATER    if isSoundBased?
-    end
-    case pokemon.species
-      when :SIMISEAR  then type = :WATER      if type==:NORMAL && pokemon.item==:SEARCREST
-      when :SIMIPOUR  then type = :GRASS      if type==:NORMAL && pokemon.item==:POURCREST
-      when :SIMISAGE  then type = :FIRE       if type==:NORMAL && pokemon.item==:SAGECREST
-      when :LUXRAY    then type = :ELECTRIC   if type==:NORMAL && pokemon.item==:LUXCREST
-      when :SAWSBUCK
-        if pokemon.item == :SAWSCREST && type == :NORMAL
-          case attacker.form
-            when 0  then type = :WATER
-            when 1  then type = :FIRE
-            when 2  then type = :GROUND
-            when 3  then type = :ICE
-          end
+  end
+  
+  case pokemon.ability 
+    when :NORMALIZE   then type = :NORMAL
+    when :PIXILATE    then type = :FAIRY    if type==:NORMAL
+    when :AERILATE    then type = :FLYING   if type==:NORMAL
+    when :GALVANIZE   then type = :ELECTRIC if type==:NORMAL
+    when :REFRIGERATE then type = :ICE      if type==:NORMAL
+    when :DUSKILATE   then type = :DARK     if type==:NORMAL
+    when :LIQUIDVOICE then type = :WATER    if isSoundBased?
+  end
+  case pokemon.species
+    when :SIMISEAR  then type = :WATER      if type==:NORMAL && pokemon.item==:SEARCREST
+    when :SIMIPOUR  then type = :GRASS      if type==:NORMAL && pokemon.item==:POURCREST
+    when :SIMISAGE  then type = :FIRE       if type==:NORMAL && pokemon.item==:SAGECREST
+    when :LUXRAY    then type = :ELECTRIC   if type==:NORMAL && pokemon.item==:LUXCREST
+    when :SAWSBUCK
+      if pokemon.item == :SAWSCREST && type == :NORMAL
+        case attacker.form
+          when 0  then type = :WATER
+          when 1  then type = :FIRE
+          when 2  then type = :GROUND
+          when 3  then type = :ICE
         end
-    end
+      end
+  end
 
-    return type
+  return type
+end
+
+def hpSummary_trueDamage(move, pokemon)
+  damage = move.basedamage
+
+  if pokemon.species == :LUVDISC && pokemon.item == :LUVCREST
+    return [250-pokemon.happiness,1].max if move.move == :FRUSTRATION
+    return [pokemon.happiness,250].min 
+  end
+
+  if move.move == :NATURALGIFT && PBStuff::NATURALGIFTDAMAGE[pokemon.item]
+    damage = PBStuff::NATURALGIFTDAMAGE[pokemon.item]
+  elsif move.move == :FLING
+    damage = PBStuff::FLINGDAMAGE[pokemon.item] if PBStuff::FLINGDAMAGE[pokemon.item]
+    damage = 10 if !pokemon.item.nil? && pbIsBerry?(pokemon.item)
+  elsif move.move == :ACROBATICS && (pokemon.item.nil? || pokemon.item == :FLYINGGEM)
+    damage *= 2
+  elsif move.move == :RETURN
+    damage = [(pokemon.happiness*2/5.0).floor,1].max
+  elsif move.move == :FRUSTRATION
+    damage = [((255-pokemon.happiness)*2/5.0).floor,1].max
+  elsif move.move == :ERUPTION || move.move == :WATERSPOUT || move.move == :DRAGONENERGY
+    damage = [(150*(pokemon.hp.to_f)/pokemon.totalhp).floor,1].max
+  end
+
+  return damage
 end
 
 class MoveRelearnerScene
@@ -109,7 +143,9 @@ class MoveRelearnerScene
     end
     imagepos.push(["Graphics/Pictures/reminderSel", 0,78+(@sprites["commands"].index-@sprites["commands"].top_item)*64, 0,0,258,72])
     selmovedata=$cache.moves[@moves[@sprites["commands"].index]]
-    basedamage=selmovedata.basedamage
+    ### MODDED/
+    basedamage=hpSummary_trueDamage(selmovedata, @pokemon)
+    ### /MODDED
     category=selmovedata.category
     accuracy=selmovedata.accuracy
     
@@ -260,5 +296,38 @@ class PokemonSummaryScene < SpriteWrapper
     end
     pbDrawTextPositions(overlay,textpos)
     pbDrawImagePositions(overlay,imagepos)
+  end
+
+  def drawSelectedMove(pokemon,moveToLearn,move)
+    overlay=@sprites["overlay"].bitmap
+    @sprites["pokemon"].visible=false if @sprites["pokemon"]
+    @sprites["pokeicon"].bitmap = pbPokemonIconBitmap(pokemon,pokemon.isEgg?)
+    @sprites["pokeicon"].src_rect=Rect.new(0,0,64,64)
+    @sprites["pokeicon"].visible=true
+    movedata=$cache.moves[move]
+    ### MODDED/
+    basedamage=hpSummary_trueDamage(movedata, pokemon)
+    type=hpSummary_trueType(movedata, pokemon)
+    ### /MODDED
+    category=movedata.category
+    accuracy=movedata.accuracy
+    drawMoveSelection(pokemon,moveToLearn)
+    pbSetSystemFont(overlay)
+    textpos=[
+       [basedamage<=1 ? basedamage==1 ? "???" : "---" : sprintf("%d",basedamage),
+          216,154,1,DarkBase,DarkShadow],
+       [accuracy==0 ? "---" : sprintf("%d",accuracy),
+          216,186,1,DarkBase,DarkShadow]
+    ]
+    pbDrawTextPositions(overlay,textpos)
+    cattype = 2
+    case category
+      when :physical then cattype = 0
+      when :special  then cattype = 1
+      when :status   then cattype = 2
+    end
+    imagepos=[["Graphics/Pictures/category",166,124,0,cattype*28,64,28]]
+    pbDrawImagePositions(overlay,imagepos)
+    drawTextEx(overlay,4,218,238,5,getMoveDesc(move),DarkBase,DarkShadow)
   end
 end

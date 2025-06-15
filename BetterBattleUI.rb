@@ -1324,6 +1324,10 @@ class PokeBattle_Move
       return 0
     end
 
+    if @move == :NATURALGIFT && (attacker.item.nil? || !pbIsBerry?(attacker.item))
+      return 0
+    end
+
     if (@move == :FAKEOUT || @move == :FIRSTIMPRESSION) && attacker.turncount != 0
       return 0
     end
