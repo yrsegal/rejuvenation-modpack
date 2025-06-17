@@ -24,6 +24,36 @@ def findWLLSave(path=File.dirname(System.data_directory))
   return false
 end
 
+def wllriolu_pbAddPokemonNoTimeSet(species,level=nil,seeform=true,form=0)
+  return if !species || !$Trainer
+  if pbBoxesFull?
+    Kernel.pbMessage(_INTL("There's no more room for Pokémon!\1"))
+    Kernel.pbMessage(_INTL("The Pokémon Boxes are full and can't accept any more!"))
+    return false
+  end
+  ### MODDED/
+  if !species.is_a?(PokeBattle_Pokemon)
+    pokemon=PokeBattle_Pokemon.new(species,level,$Trainer,true,form)
+    speciesname = getMonName(pokemon.species)
+    owner=nil
+  else
+    pokemon=species
+    speciesname = getMonName(pokemon.species)
+    owner=[pokemon.trainerID, pokemon.ot]
+  end
+
+  if owner && owner[0] != $Trainer.id && owner[1] != ''
+    Kernel.pbMessage(_INTL("{1} obtained {2}'s {3}!\\se[itemlevel]\1",$Trainer.name, owner[1], speciesname))
+  else
+    Kernel.pbMessage(_INTL("{1} obtained {2}!\\se[itemlevel]\1",$Trainer.name,speciesname))
+  end
+  ### /MODDED
+  
+  pbNicknameAndStore(pokemon)
+  $Trainer.pokedex.setFormSeen(pokemon) if seeform
+  return true
+end
+
 class Cache_Game
   alias :wllriolu_old_map_load :map_load
 
@@ -61,6 +91,7 @@ class Cache_Game
               [:ScriptContinued, 'poke.pbLearnMove(:QUICKATTACK)'],
               [:ScriptContinued, 'poke.makeShiny'],
               [:ScriptContinued, 'poke.makeFemale'],
+              [:ScriptContinued, 'poke.item = :LUCARIONITE'],
 
               # OT Properties
               [:ScriptContinued, 'timediverge = $Settings.unrealTimeDiverge'],
@@ -73,7 +104,7 @@ class Cache_Game
               [:ScriptContinued, 'poke.ot = "Kenneth"'],
               [:ScriptContinued, 'poke.trainerID = 924'], # Kenesu goroawase
 
-              [:ScriptContinued, 'pbAddPokemon(poke)'],
+              [:ScriptContinued, 'wllriolu_pbAddPokemonNoTimeSet(poke)'],
 
               [:ShowText, 'STAFF: Have a nice day!'],
             :Else,
