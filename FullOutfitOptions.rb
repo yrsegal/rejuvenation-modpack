@@ -58,7 +58,7 @@ def outfitoptions_arbitrary_outfit(event)
     insns = page.list
     InjectionHelper.patch(insns, :outfitoptions_arbitrary_outfit) {
       matched = InjectionHelper.lookForAll(insns,
-        [:Script, /^\$Trainer\.outfit=/])
+        [:Script, /^\$Trainer\.outfit=[0-24-9]/])
       for insn in matched
         insn.parameters[0] = '$Trainer.outfit=$game_variables[:Outfit]'
       end
@@ -161,7 +161,7 @@ def outfitoptions_set_icep_outfit_fight(event)
 
       for insn in matched
         insns.insert(insns.index(insn) + 1, 
-          InjectionHelper.parseEventCommands(
+          *InjectionHelper.parseEventCommands(
             [:ControlSwitch, :outfitoptions_IceptOutfit, true],
             baseIndent: insn.indent))
       end
