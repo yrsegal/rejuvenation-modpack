@@ -1,8 +1,6 @@
 
 class PokeBattle_Pokemon
-  if !defined?(relearnPreShadowMoves_old_adjustHeart)
-    alias :relearnPreShadowMoves_old_adjustHeart :adjustHeart
-  end
+  alias :relearnPreShadowMoves_old_adjustHeart :adjustHeart
 
   def adjustHeart(*args, **kwargs)
     ret = relearnPreShadowMoves_old_adjustHeart(*args, **kwargs)

@@ -1,9 +1,7 @@
 Variables[:GDCReputation] = 745
 
 class Cache_Game
-  if !defined?(gdccentralpillars_old_map_load)
-    alias :gdccentralpillars_old_map_load :map_load
-  end
+  alias :gdccentralpillars_old_map_load :map_load
 
   def map_load(mapid)
     if @cachedmaps && @cachedmaps[mapid]

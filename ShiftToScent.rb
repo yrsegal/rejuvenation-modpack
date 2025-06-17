@@ -1,9 +1,7 @@
 $stored_encounterrate_modifier = -1
 
 class Game_Player < Game_Character
-  if !defined?(stored_encounterrate_oldupdate)
-    alias :stored_encounterrate_oldupdate :update
-  end
+  alias :stored_encounterrate_oldupdate :update
 
   def update(*args, **kwargs)
     ret = stored_encounterrate_oldupdate(*args, **kwargs)

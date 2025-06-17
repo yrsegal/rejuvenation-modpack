@@ -77,13 +77,9 @@ class MoveRelearnerPC_EggMoveLearnerScreen
   end
 end
 
-if !defined?(moverelearnerpc_old_pbGetRelearnableMoves)
-  alias :moverelearnerpc_old_pbGetRelearnableMoves :pbGetRelearnableMoves
-end
+alias :moverelearnerpc_old_pbGetRelearnableMoves :pbGetRelearnableMoves
 
-if !defined?(moverelearnerpc_old_pbRelearnMoveScreen)
-  alias :moverelearnerpc_old_pbRelearnMoveScreen :pbRelearnMoveScreen
-end
+alias :moverelearnerpc_old_pbRelearnMoveScreen :pbRelearnMoveScreen
 
 def pbRelearnMoveScreen(pokemon)
   if !pbHasRelearnableMove?(pokemon) # In some circumstances, this can happen
@@ -303,9 +299,7 @@ end
 # Patch movetutors
 
 class Cache_Game
-  if !defined?(moverelearnerpc_old_map_load)
-    alias :moverelearnerpc_old_map_load :map_load
-  end
+  alias :moverelearnerpc_old_map_load :map_load
 
   def map_load(mapid)
     if @cachedmaps && @cachedmaps[mapid]

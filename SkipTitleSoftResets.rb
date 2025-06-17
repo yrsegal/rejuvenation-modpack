@@ -3,9 +3,7 @@ if !defined?($skiptitle_skippedfirst)
   $skiptitle_skippedfirst = false
 end
 
-if !defined?(skiptitle_old_pbCallTitle)
-  alias :skiptitle_old_pbCallTitle :pbCallTitle
-end
+alias :skiptitle_old_pbCallTitle :pbCallTitle
 def pbCallTitle(*args, **kwargs)
   if !$skiptitle_skippedfirst
     $skiptitle_skippedfirst = true

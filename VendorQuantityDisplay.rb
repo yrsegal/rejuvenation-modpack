@@ -301,9 +301,7 @@ end
 
 module Kernel
   singleton_class.class_eval do
-    if !defined?(vendorquantity_old_pbMessageDisplay)
-      alias :vendorquantity_old_pbMessageDisplay :pbMessageDisplay
-    end
+    alias :vendorquantity_old_pbMessageDisplay :pbMessageDisplay
 
     def pbMessageDisplay(*args, **kwargs, &block)
       windows = $vendorquantitydisplay_activewindows.clone
@@ -326,9 +324,7 @@ end
 # Patch movetutors
 
 class Cache_Game
-  if !defined?(vendorquantity_old_map_load)
-    alias :vendorquantity_old_map_load :map_load
-  end
+  alias :vendorquantity_old_map_load :map_load
 
   def map_load(mapid)
     if @cachedmaps && @cachedmaps[mapid]

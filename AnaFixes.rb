@@ -223,9 +223,7 @@ anafixes_hotfix_battyfriends($cache.RXevents[136])
 # Patch map events
 
 class Cache_Game
-  if !defined?(anafixes_old_map_load)
-    alias :anafixes_old_map_load :map_load
-  end
+  alias :anafixes_old_map_load :map_load
 
   def map_load(mapid)
     if @cachedmaps && @cachedmaps[mapid]

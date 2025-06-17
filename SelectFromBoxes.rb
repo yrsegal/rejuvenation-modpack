@@ -36,9 +36,7 @@ end
 ######
 
 ###### REPLACING SELECTION WINDOW
-if !defined?(selectfromboxes_old_pbChoosePokemon)
-  alias :selectfromboxes_old_pbChoosePokemon :pbChoosePokemon
-end
+alias :selectfromboxes_old_pbChoosePokemon :pbChoosePokemon
 
 def pbChoosePokemon(variableNumber,nameVarNumber,ableProc=nil,allowIneligible=false,giveAway=false,*args,
   ### MODDED/
@@ -125,9 +123,7 @@ end
 
 ###### REPLACING MOVE TUTOR WINDOW
 
-if !defined?(selectfromboxes_old_pbMoveTutorChoose)
-  alias :selectfromboxes_old_pbMoveTutorChoose :pbMoveTutorChoose
-end
+alias :selectfromboxes_old_pbMoveTutorChoose :pbMoveTutorChoose
 
 def pbMoveTutorChoose(move,movelist=nil,bymachine=false,bytutor=false,*args,**kwargs)
   ret=false
@@ -171,9 +167,7 @@ end
 
 ###### ALLOW SCRIPTS TO DELETE POKEMON IN BOXES
 
-if !defined?(selectfromboxes_old_pbRemovePokemonAt)
-  alias :selectfromboxes_old_pbRemovePokemonAt :pbRemovePokemonAt
-end
+alias :selectfromboxes_old_pbRemovePokemonAt :pbRemovePokemonAt
 
 def pbRemovePokemonAt(idx)
   if idx.is_a?(Array)
@@ -504,9 +498,7 @@ end
 ###### FOLLOWING CODE IS TO ENABLE COMPARISON
 
 class PokeBattle_Trainer
-  if !defined?(selectfromboxes_old_party)
-    alias :selectfromboxes_old_party :party
-  end
+  alias :selectfromboxes_old_party :party
 
   def party
     ret = selectfromboxes_old_party
@@ -544,9 +536,7 @@ end
 ###### PATCHING DAY CARE
 
 class Cache_Game
-  if !defined?(selectfromboxes_old_map_load)
-    alias :selectfromboxes_old_map_load :map_load
-  end
+  alias :selectfromboxes_old_map_load :map_load
 
   def selectfromboxes_patch_partycheck(event) 
     for page in event.pages      

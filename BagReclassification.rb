@@ -12,9 +12,7 @@ for stone in EVOSTONES
   $cache.items[stone].flags[:evoitem] = true if $cache.items[stone]
 end
 
-if !defined?(evostonefix_old_checkEvolution)
-  alias :evostonefix_old_checkEvolution :checkEvolution
-end
+alias :evostonefix_old_checkEvolution :checkEvolution
 
 def checkEvolution(pokemon,item=nil)
   return pbTradeCheckEvolution(pokemon,item,true) if item == :LINKHEART

@@ -187,9 +187,7 @@ end
 # Compile after mod load
 
 class Game_System
-  if !defined?(textureoverride_old_initialize)
-    alias :textureoverride_old_initialize :initialize
-  end
+  alias :textureoverride_old_initialize :initialize
 
   def initialize(*args, **kwargs)
     ret = textureoverride_old_initialize(*args, **kwargs)
@@ -199,9 +197,7 @@ class Game_System
 end
 
 
-if !defined?(textureoverride_old_pbLoadTrainer)
-  alias :textureoverride_old_pbLoadTrainer :pbLoadTrainer
-end
+alias :textureoverride_old_pbLoadTrainer :pbLoadTrainer
 
 def pbLoadTrainer(type,tname,id=0,noscaling=false)
   key = [tname, type, id]
@@ -214,9 +210,7 @@ def pbLoadTrainer(type,tname,id=0,noscaling=false)
   return textureoverride_old_pbLoadTrainer(type,tname,id,noscaling)
 end
 
-if !defined?(textureoverride_old_pbRegisterPartner)
-  alias :textureoverride_old_pbRegisterPartner :pbRegisterPartner
-end
+alias :textureoverride_old_pbRegisterPartner :pbRegisterPartner
 
 def pbRegisterPartner(trainerid,trainername,partyid=0)
   key = [trainername, trainerid, partyid]
@@ -234,18 +228,10 @@ end
 module RPG
   module Cache
     singleton_class.class_eval do
-      if !defined?(textureoverride_old_fromCache)
-        alias :textureoverride_old_fromCache :fromCache
-      end
-      if !defined?(textureoverride_old_setKey)
-        alias :textureoverride_old_setKey :setKey
-      end
-      if !defined?(textureoverride_old_load_bitmap)
-        alias :textureoverride_old_load_bitmap :load_bitmap
-      end
-      if !defined?(textureoverride_old_tileEx)
-        alias :textureoverride_old_tileEx :tileEx
-      end
+      alias :textureoverride_old_fromCache :fromCache
+      alias :textureoverride_old_setKey :setKey
+      alias :textureoverride_old_load_bitmap :load_bitmap
+      alias :textureoverride_old_tileEx :tileEx
     end
         
     def self.setKey(key, obj)
@@ -266,9 +252,7 @@ module RPG
   end
 end
 
-if !defined?(textureoverride_old_pbResolveBitmap)
-  alias :textureoverride_old_pbResolveBitmap :pbResolveBitmap
-end
+alias :textureoverride_old_pbResolveBitmap :pbResolveBitmap
 
 def pbResolveBitmap(x)
   return textureoverride_old_pbResolveBitmap(TextureOverrides.mapKey(x))

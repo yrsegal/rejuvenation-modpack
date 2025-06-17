@@ -1,7 +1,5 @@
 class PokemonMapFactory
-  if !defined?(kingleriteHotfix_old_getTerrainTag)
-    alias :kingleriteHotfix_old_getTerrainTag :getTerrainTag
-  end
+  alias :kingleriteHotfix_old_getTerrainTag :getTerrainTag
 
   def getTerrainTag(mapid,x,y)
     return 0 if mapid.nil?

@@ -1,9 +1,7 @@
 class PokeBattle_Battle
   attr_accessor :speedup_spedup
 
-  if !defined?(speedup_old_initialize)
-    alias :speedup_old_initialize :initialize
-  end
+  alias :speedup_old_initialize :initialize
 
   def initialize(*args,**kwargs)
     @speedup_spedup = Graphics.frame_rate != 40
@@ -12,9 +10,7 @@ class PokeBattle_Battle
     return speedup_old_initialize(*args, **kwargs)
   end
 
-  if !defined?(speedup_old_pbEndOfBattle)
-    alias :speedup_old_pbEndOfBattle :pbEndOfBattle
-  end
+  alias :speedup_old_pbEndOfBattle :pbEndOfBattle
 
   def pbEndOfBattle(*args, **kwargs)
     if @speedup_spedup

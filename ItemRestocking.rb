@@ -1,7 +1,5 @@
 class PokeBattle_Battler
-  if !defined?(restocking_old_pbDisposeItem)
-    alias :restocking_old_pbDisposeItem :pbDisposeItem
-  end
+  alias :restocking_old_pbDisposeItem :pbDisposeItem
 
   def pbDisposeItem(*args, **kwargs)
     itemToCheck = self.item

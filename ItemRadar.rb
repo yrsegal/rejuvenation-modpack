@@ -14,9 +14,7 @@ end
 $cache.items[:ITEMFINDER].desc = "A device used for finding items. Makes hidden items visible when activated."
 
 class PokemonMartAdapter
-  if !defined?(itemradar_old_getDisplayName)
-    alias :itemradar_old_getDisplayName :getDisplayName
-  end
+  alias :itemradar_old_getDisplayName :getDisplayName
 
   def getDisplayName(item)
     old = itemradar_old_getDisplayName(item)

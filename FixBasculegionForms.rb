@@ -1,7 +1,5 @@
 
-if !defined?(fixHisuian_old_getEvolutionForm)
-  alias :fixHisuian_old_getEvolutionForm :getEvolutionForm
-end
+alias :fixHisuian_old_getEvolutionForm :getEvolutionForm
 
 def getEvolutionForm(mon,item=nil)
   species = mon.species

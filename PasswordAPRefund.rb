@@ -1,7 +1,5 @@
 class PokemonBag
-  if !defined?(aprefund_old_pbStoreItem)
-    alias :aprefund_old_pbStoreItem :pbStoreItem
-  end
+  alias :aprefund_old_pbStoreItem :pbStoreItem
 
   APREFUND_AP_VALUES = {
     HPCARD: 10,

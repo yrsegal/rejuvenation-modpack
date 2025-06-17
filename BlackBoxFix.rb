@@ -2,9 +2,7 @@
 
 
 class Cache_Game
-  if !defined?(blackboxfixes_old_map_load)
-    alias :blackboxfixes_old_map_load :map_load
-  end
+  alias :blackboxfixes_old_map_load :map_load
 
   def blackboxfixes_patchBlackBoxRemoval(event)
     for page in event.pages

@@ -115,9 +115,7 @@ class MiningGameCounter < BitmapSprite
     return [textA]
   end
 
-  if !defined?(miningoverhaul_miningForRich_oldInitialize)
-    alias :miningoverhaul_miningForRich_oldInitialize :initialize
-  end
+  alias :miningoverhaul_miningForRich_oldInitialize :initialize
   #####/MODDED
 
   def initialize(*args, **kwargs)
@@ -365,9 +363,7 @@ class MiningGameScene
     return @sprites["crack"].hits-48
   end
 
-  if !defined?(miningoverhaul_miningForRich_oldPbHit)
-    alias :miningoverhaul_miningForRich_oldPbHit :pbHit
-  end
+  alias :miningoverhaul_miningForRich_oldPbHit :pbHit
 
   def pbHit(*args, **kwargs)
     result=miningoverhaul_miningForRich_oldPbHit(*args, **kwargs)
@@ -376,9 +372,7 @@ class MiningGameScene
     return result
   end
 
-  if !defined?(miningoverhaul_miningForRich_oldPbEndScene)
-    alias :miningoverhaul_miningForRich_oldPbEndScene :pbEndScene
-  end
+  alias :miningoverhaul_miningForRich_oldPbEndScene :pbEndScene
   def pbEndScene(*args, **kwargs)
     result = miningoverhaul_miningForRich_oldPbEndScene(*args, **kwargs)
     @viewport2.dispose

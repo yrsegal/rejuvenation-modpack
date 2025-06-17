@@ -383,9 +383,7 @@ end
 
 class PokemonReadyMenu_Scene
 
-  if !defined?(pcservices_old_pbStartScene)
-    alias :pcservices_old_pbStartScene :pbStartScene
-  end
+  alias :pcservices_old_pbStartScene :pbStartScene
 
   def pbStartScene(*args, **kwargs)
     $pcservices_in_menu = true
@@ -393,9 +391,7 @@ class PokemonReadyMenu_Scene
     return pcservices_old_pbStartScene(*args, **kwargs)
   end
 
-  if !defined?(pcservices_old_pbEndScene)
-    alias :pcservices_old_pbEndScene :pbEndScene
-  end
+  alias :pcservices_old_pbEndScene :pbEndScene
 
   def pbEndScene(*args, **kwargs)
     $pcservices_in_menu = false
@@ -405,9 +401,7 @@ class PokemonReadyMenu_Scene
 end
 
 Kernel.singleton_class.class_eval do
-  if !defined?(pcservices_old_pbUseKeyItemInField)
-    alias :pcservices_old_pbUseKeyItemInField :pbUseKeyItemInField
-  end
+  alias :pcservices_old_pbUseKeyItemInField :pbUseKeyItemInField
 
   def pbUseKeyItemInField(item)
     wasInMenu = $pcservices_in_menu

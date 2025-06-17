@@ -150,12 +150,8 @@ module ShowSomniamMallStamps
 end
 
 class PokemonMartScene
-  if !defined?(showmallstamps_old_pbEndBuyScene)
-    alias :showmallstamps_old_pbEndBuyScene :pbEndBuyScene
-  end
-  if !defined?(showmallstamps_old_pbStartBuyScene)
-    alias :showmallstamps_old_pbStartBuyScene :pbStartBuyScene
-  end
+  alias :showmallstamps_old_pbEndBuyScene :pbEndBuyScene
+  alias :showmallstamps_old_pbStartBuyScene :pbStartBuyScene
 
   def pbEndBuyScene
     $showmallstamps_window.visible = false if $showmallstamps_window
@@ -190,9 +186,7 @@ end
 # Patch
 
 class Cache_Game
-  if !defined?(showmallstamps_old_map_load)
-    alias :showmallstamps_old_map_load :map_load
-  end
+  alias :showmallstamps_old_map_load :map_load
 
   def map_load(mapid)
     if @cachedmaps && @cachedmaps[mapid]

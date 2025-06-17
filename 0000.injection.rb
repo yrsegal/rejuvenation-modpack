@@ -26,7 +26,7 @@ module InjectionHelper
     JumpToLabel: 119,
     ControlSwitch: 121, # Handled specially
     ControlSwitches: 121,
-    ControlVariable: 121, # Handled specially
+    ControlVariable: 122, # Handled specially
     ControlVariables: 122,
     ControlSelfSwitch: 123,
     ControlTimer: 124,
@@ -395,6 +395,8 @@ module InjectionHelper
           when :Switch
             mapValue(params, 1, Switches)
             mapValue(params, 2, InjectionHelper::TRUTH)
+          when :SelfSwitch
+            mapValue(params, 2, InjectionHelper::TRUTH)
           when :Variable
             mapValue(params, 1, Variables)
             if mapValue(params, 2, InjectionHelper::APPOINTMENT_METHODS) == :Variable
@@ -407,6 +409,8 @@ module InjectionHelper
           when :Gold
             mapValue(params, 2, InjectionHelper::MORE_OR_LESS)
         end
+      when :InputNumber
+        mapValue(params, 0, Variables)
       when :ShowAnimation, :SetEventLocation
         mapValue(params, 0, InjectionHelper::SPECIAL_EVENT_IDS)
       when :SetMoveRoute
@@ -436,6 +440,8 @@ module InjectionHelper
           when :Other
             mapValue(params, 4, InjectionHelper::SET_OTHER_VAR_NAMES)
         end
+      when :ControlSelfSwitch
+        mapValue(params, 1, InjectionHelper::TRUTH)
       when :TransferPlayer
         if mapValue(params, 0, InjectionHelper::APPOINTMENT_METHODS) == :Variable
             mapValue(params, 1, Variables)

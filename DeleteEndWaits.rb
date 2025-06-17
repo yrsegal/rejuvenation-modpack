@@ -20,9 +20,7 @@ end
 
 
 class Cache_Game
-  if !defined?(deleteendwaits_old_map_load)
-    alias :deleteendwaits_old_map_load :map_load
-  end
+  alias :deleteendwaits_old_map_load :map_load
 
   def map_load(mapid)
     if @cachedmaps && @cachedmaps[mapid]

@@ -1000,9 +1000,7 @@ Events.onMapChanging+=proc {
 #### INJECTION
 
 class Cache_Game
-  if !defined?(darkana_old_map_load)
-    alias :darkana_old_map_load :map_load
-  end
+  alias :darkana_old_map_load :map_load
 
   def map_load(mapid)
     if @cachedmaps && @cachedmaps[mapid]

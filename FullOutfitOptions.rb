@@ -161,7 +161,9 @@ def outfitoptions_set_icep_outfit_fight(event)
 
       for insn in matched
         insns.insert(insns.index(insn) + 1, 
-          InjectionHelper.parseEventCommand(insn.indent, :ControlSwitch, :outfitoptions_IceptOutfit, true))
+          InjectionHelper.parseEventCommands(
+            [:ControlSwitch, :outfitoptions_IceptOutfit, true],
+            baseIndent: insn.indent))
       end
 
       next matched.length > 0
@@ -284,9 +286,7 @@ outfitoptions_override_outfit_choice($cache.RXevents[133])
 # Patch map events
 
 class Cache_Game
-  if !defined?(outfitoptions_old_map_load)
-    alias :outfitoptions_old_map_load :map_load
-  end
+  alias :outfitoptions_old_map_load :map_load
 
   def map_load(mapid)
     if @cachedmaps && @cachedmaps[mapid]

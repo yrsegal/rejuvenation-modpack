@@ -29,9 +29,7 @@ $cache.items[:MAGNETICLURE].flags[:utilityhold] = false
 $cache.items[:MAGNETICLURE].desc = "A strange device. Draws in uncaught species when activated."
 
 class PokemonMartAdapter
-  if !defined?(lurerework_old_getDisplayName)
-    alias :lurerework_old_getDisplayName :getDisplayName
-  end
+  alias :lurerework_old_getDisplayName :getDisplayName
 
   def getDisplayName(item)
     old = lurerework_old_getDisplayName(item)
@@ -47,9 +45,7 @@ class PokemonMartAdapter
 end
 
 class PokemonBag_Scene
-  if !defined?(lurerework_old_pbStartScene)
-    alias :lurerework_old_pbStartScene :pbStartScene
-  end
+  alias :lurerework_old_pbStartScene :pbStartScene
 
   def pbStartScene(bag)
     # Pocket 1 is default items

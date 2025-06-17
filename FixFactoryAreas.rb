@@ -293,9 +293,7 @@ end
 
 
 class Cache_Game
-  if !defined?(fixfactoryareas_old_map_load)
-    alias :fixfactoryareas_old_map_load :map_load
-  end
+  alias :fixfactoryareas_old_map_load :map_load
 
   def map_load(mapid)
     if @cachedmaps && @cachedmaps[mapid]

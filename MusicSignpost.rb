@@ -467,9 +467,7 @@ end
 
 class Game_System
 
-  if !defined?(musicSignpost_old_bgm_play)
-    alias :musicSignpost_old_bgm_play :bgm_play
-  end
+  alias :musicSignpost_old_bgm_play :bgm_play
 
   def bgm_play(bgm)
     oldPlaying = @playing_bgm
@@ -481,9 +479,7 @@ class Game_System
     return ret
   end
 
-  if !defined?(musicSignpost_old_bgm_pause)
-    alias :musicSignpost_old_bgm_pause :bgm_pause
-  end
+  alias :musicSignpost_old_bgm_pause :bgm_pause
 
   def bgm_pause(fadetime=0.0)
     ret = musicSignpost_old_bgm_pause(fadetime)
@@ -492,9 +488,7 @@ class Game_System
     return ret
   end
 
-  if !defined?(musicSignpost_old_bgm_resume)
-    alias :musicSignpost_old_bgm_resume :bgm_resume
-  end
+  alias :musicSignpost_old_bgm_resume :bgm_resume
 
   def bgm_resume(bgm,position=nil)
     ret = musicSignpost_old_bgm_resume(bgm,position)
@@ -505,9 +499,7 @@ class Game_System
 end
 
 class Scene_Map
-  if !defined?(musicSignpost_old_transfer_player)
-    alias :musicSignpost_old_transfer_player :transfer_player
-  end
+  alias :musicSignpost_old_transfer_player :transfer_player
 
   def transfer_player(*args,**kwargs)
     $musicSignpost_transitioning = true
@@ -608,12 +600,8 @@ end
 $expmusic_disabled = false
 
 class PokeBattle_Battle
-  if !defined?(expsignpost_old_pbSendOut)
-    alias :expsignpost_old_pbSendOut :pbSendOut
-  end
-  if !defined?(expsignpost_old_pbEndOfBattle)
-    alias :expsignpost_old_pbEndOfBattle :pbEndOfBattle
-  end
+  alias :expsignpost_old_pbSendOut :pbSendOut
+  alias :expsignpost_old_pbEndOfBattle :pbEndOfBattle
 
   def pbSendOut(*args, **kwargs)
     $expmusic_disabled = @doublebattle
@@ -628,9 +616,7 @@ class PokeBattle_Battle
 end
 
 class Game_Screen
-  if !defined?(expsignpost_old_update)
-    alias :expsignpost_old_update :update
-  end
+  alias :expsignpost_old_update :update
 
   def update(*args, **kwargs)
     ExperimentalMusicDisplay.updateMusic if $MUSICSIGNPOSTEXPERIMENTAL

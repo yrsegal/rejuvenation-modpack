@@ -2,9 +2,7 @@ Variables[:IceCream] = 245
 Variables[:Random1] = 216
 
 class Cache_Game
-  if !defined?(fixbluemic_old_map_load)
-    alias :fixbluemic_old_map_load :map_load
-  end
+  alias :fixbluemic_old_map_load :map_load
 
   def fixbluemic_patchShop(event)
     for page in event.pages

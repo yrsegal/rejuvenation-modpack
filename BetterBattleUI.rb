@@ -234,9 +234,7 @@ class BossPokemonDataBox < SpriteWrapper
     return x+offsetX, y+offsetY
   end
 
-  if !defined?(betterBattleUI_old_refresh)
-    alias :betterBattleUI_old_refresh :refresh
-  end
+  alias :betterBattleUI_old_refresh :refresh
 
   def refresh(*args, **kwargs)
     ret = betterBattleUI_old_refresh(*args, **kwargs)
@@ -386,9 +384,7 @@ end
 
 class PokeBattle_Scene
 
-  if !defined?(betterBattleUI_old_pbStartBattle)
-    alias :betterBattleUI_old_pbStartBattle :pbStartBattle
-  end
+  alias :betterBattleUI_old_pbStartBattle :pbStartBattle
 
   def pbStartBattle(battle)
     betterBattleUI_old_pbStartBattle(battle)
@@ -396,18 +392,14 @@ class PokeBattle_Scene
     @sprites["bbui_ballwindow"].z=100
   end
 
-  if !defined?(betterBattleUI_old_pbShowWindow)
-    alias :betterBattleUI_old_pbShowWindow :pbShowWindow
-  end
+  alias :betterBattleUI_old_pbShowWindow :pbShowWindow
 
   def pbShowWindow(windowtype)
     betterBattleUI_old_pbShowWindow(windowtype)
     @sprites["bbui_ballwindow"].visible=windowtype==COMMANDBOX if @sprites["bbui_ballwindow"]
   end
 
-  if !defined?(betterBattleUI_old_pbItemMenu)
-    alias :betterBattleUI_old_pbItemMenu :pbItemMenu
-  end
+  alias :betterBattleUI_old_pbItemMenu :pbItemMenu
 
   attr_accessor :betterBattleUI_autoselectitem
 
@@ -989,9 +981,7 @@ end
 
 class FightMenuButtons < BitmapSprite
 
-  if !defined?(betterBattleUI_old_initialize)
-    alias :betterBattleUI_old_initialize :initialize
-  end
+  alias :betterBattleUI_old_initialize :initialize
   def initialize(*args,**kwargs)
     @betterBattleUI_fieldnullmove=AnimatedBitmap.new(_INTL("Data/Mods/BetterBattleUI/FieldNulled"))
 
@@ -1051,9 +1041,7 @@ class FightMenuButtons < BitmapSprite
   end
     
 
-  if !defined?(betterBattleUI_old_dispose)
-    alias :betterBattleUI_old_dispose :dispose
-  end
+  alias :betterBattleUI_old_dispose :dispose
   def dispose
     @betterBattleUI_fieldnullmove.dispose
 

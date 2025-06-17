@@ -1,8 +1,6 @@
 class PokeBattle_Move_0F1 < PokeBattle_Move
 
-  if !defined?(evenWithItem_old_pbEffect)
-    alias :evenWithItem_old_pbEffect :pbEffect
-  end
+  alias :evenWithItem_old_pbEffect :pbEffect
 
   def pbEffect(attacker,opponent,hitnum=0,alltargets=nil,showanimation=true)
     if !@battle.pbIsWild?
@@ -34,9 +32,7 @@ class PokeBattle_Move_0F1 < PokeBattle_Move
 end
 
 class PokeBattle_Battler
-  if !defined?(evenWithItem_old_pbEffectsOnDealingDamage)
-    alias :evenWithItem_old_pbEffectsOnDealingDamage :pbEffectsOnDealingDamage
-  end
+  alias :evenWithItem_old_pbEffectsOnDealingDamage :pbEffectsOnDealingDamage
 
   def pbEffectsOnDealingDamage(move,user,target,damage,innards)
     if !@battle.pbIsWild? || target.nil?
@@ -76,9 +72,7 @@ class PokeBattle_Battler
 end
 
 class PokeBattle_Battle
-  if !defined?(evenWithItem_old_pbEndOfRoundPhase)
-    alias :evenWithItem_old_pbEndOfRoundPhase :pbEndOfRoundPhase
-  end
+  alias :evenWithItem_old_pbEndOfRoundPhase :pbEndOfRoundPhase
 
   def pbEndOfRoundPhase
     if self.sides[0].effects[:BallFetch] && self.sides[0].effects[:BallFetch].is_a?(Symbol)

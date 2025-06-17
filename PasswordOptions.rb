@@ -253,9 +253,7 @@ def mod_passwordoptions_scene
 end
 
 class Cache_Game
-  if !defined?(passwordoptions_old_map_load)
-    alias :passwordoptions_old_map_load :map_load
-  end
+  alias :passwordoptions_old_map_load :map_load
 
   def map_load(mapid)
     if @cachedmaps && @cachedmaps[mapid]

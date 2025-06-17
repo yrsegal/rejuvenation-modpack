@@ -1,7 +1,5 @@
 class Cache_Game
-  if !defined?(labyrinthfix_old_map_load)
-    alias :labyrinthfix_old_map_load :map_load
-  end
+  alias :labyrinthfix_old_map_load :map_load
 
   def map_load(mapid)
     if @cachedmaps && @cachedmaps[mapid]
