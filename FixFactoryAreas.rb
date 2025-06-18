@@ -235,10 +235,11 @@ module FixFactoryAreas
         [:ChangeScreenColorTone, Tone.new(0, 0, 0), 5],
         [:PlaySoundEvent, 'Exit Door', 80, 60],
         [:ControlSwitch, :ReusableSwitch1, true],
+        [:ControlVariable, :Field_Effect_End_Of_Battle, :Set, :Constant, 0],
         [:Wait, 9],
         [:ShowText, 'The factory sparked to life!'],
         [:Script, '$game_variables[:Forced_BaseField] = "Factory"'],
-        [:ControlSwitch, :ShortedOut, true],
+        [:ControlSwitch, :ShortedOut, false],
       :Done,
       :Done)
     rawev.pages[0].trigger = 4 # parallel process
@@ -252,6 +253,7 @@ module FixFactoryAreas
         [:ChangeScreenColorTone, Tone.new(-136, -136, -136), 10],
         [:PlaySoundEvent, 'Exit Door', 80, 60],
         [:ControlSwitch, :ReusableSwitch1, false],
+        [:ControlVariable, :Field_Effect_End_Of_Battle, :Set, :Constant, 0],
         [:Wait, 9],
         [:ShowText, 'The factory shorted out!'],
         [:Script, '$game_variables[:Forced_BaseField] = "ShortCircuit"'],
