@@ -63,8 +63,6 @@ Fix/hotfix mods:
   Shadow Pokemon regain their old moves over time, as they're supposed to.
 - Route4GlobalChange.rb  
   Makes Route 4's reset trigger work in all areas as intended.
-- KingleriteHotfix.rb  
-  The Kinglerite crashes the game to pick up. This fixes that.
 - LabyrinthPuzzleFix.rb  
   A typo in a puzzle causes it to not select the proper type of pokemon.
 
