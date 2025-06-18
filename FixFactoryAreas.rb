@@ -50,7 +50,7 @@ module FixFactoryAreas
 
         for insn in flipLightsOn
           insns.insert(insns.index(insn), *InjectionHelper.parseEventCommands(
-            [:ControlSwitch, :ShortedOut, true],
+            [:ControlSwitch, :ShortedOut, true], # To ensure message sent
             baseIndent: insn.indent))
         end
 
