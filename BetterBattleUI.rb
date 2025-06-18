@@ -1390,9 +1390,11 @@ class PokeBattle_Move
       end
     end
 
-    # Handle Lunar/Solar Idol
+    # Handle Lunar/Solar Idol, Deep Earth
     if !opponent.moldbroken
-      if (type == :GROUND && (opponent.ability == :SOLARIDOL || opponent.ability == :LUNARIDOL) && @battle.FE != :CAVE && @move != :THOUSANDARROWS && opponent.isAirborne?)
+      if (type == :GROUND && (opponent.ability == :SOLARIDOL || opponent.ability == :LUNARIDOL || 
+        (@battle.FE == :DEEPEARTH && [:UNAWARE,:OBLIVIOUS,:MAGNETPULL,:CONTRARY].include?(opponent.ability))) && 
+        @battle.FE != :CAVE && @move != :THOUSANDARROWS && opponent.isAirborne?)
         return 0
       end
     end
