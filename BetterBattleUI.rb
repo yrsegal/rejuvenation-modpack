@@ -1308,7 +1308,7 @@ class PokeBattle_Move
       return 0
     end
 
-    if @battle.state.effects[:Gravity]!=0 && [0x10B,0x0CE,0x0CC,0x0C9,0x506,0x137].include?(@function)
+    if @battle.state.effects[:Gravity]!=0 && [0x10B,0x0CE,0x0CC,0x0C9,0x137].include?(@function)
       return 0
     end
 
