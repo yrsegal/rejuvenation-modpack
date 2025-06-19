@@ -315,11 +315,16 @@ module InjectionHelper
 
   def self.patch(insns, tag)
     @@anyPatches = false if @@anyPatches.nil?
-    if !patched?(insns, tag)
-      if yield
-        @@anyPatches = true
-        markPatched(insns, tag)
+    begin
+      if !patched?(insns, tag)
+        if yield
+          @@anyPatches = true
+          markPatched(insns, tag)
+        end
       end
+    rescue
+      pbPrintException($!)
+      @@anyPatches = true
     end
   end
 

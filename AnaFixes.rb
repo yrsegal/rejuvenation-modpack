@@ -1,5 +1,6 @@
 
 Variables[:Outfit] = 259
+Variables[:MCname] = 701
 
 # Code blocks
 
@@ -165,6 +166,44 @@ def anafixes_hotfix_battyfriends(event)
   }
 end
 
+def anafixes_provide_protagname
+  if !$game_variables[:MCname].is_a?(String) || $game_switches[:Ana]
+    return 'Aevis' if $game_switches[:Aevis]
+    return 'Aevia' if $game_switches[:Aevia]
+    return 'Axel' if $game_switches[:Axel]
+    return 'Ariana' if $game_switches[:Ariana]
+    return 'Alain' if $game_switches[:Alain]
+    return 'Aero' if $game_switches[:Aero]
+    return 'Ana' # Should be impossible under normal circumstances
+  end
+  return $game_variables[:MCname]
+end
+
+def anafixes_fix_protagname(page)
+  insns = page.list
+  InjectionHelper.patch(insns, :anafixes_fix_protagname) {
+    labelMatch = InjectionHelper.lookForSequence(insns,
+      [:Label, 'point1'])
+
+    textMatches = InjectionHelper.lookForAll(insns,
+      [:ShowText, /\\v\[701\]/]) + 
+    InjectionHelper.lookForAll(insns,
+      [:ShowTextContinued, /\\v\[701\]/])
+
+    if labelMatch
+      insns.insert(insns.index(labelMatch), *InjectionHelper.parseEventCommands(
+        [:Script, '$game_variables[5] = anafixes_provide_protagname'],
+        baseIndent: labelMatch.indent))
+    end
+
+    for matched in textMatches
+      matched.parameters[0].gsub! /\\v\[701\]/, '\\v[5]'
+    end
+
+    next labelMatch && textMatches.length > 0
+  }
+end
+
 TextureOverrides.registerTextureOverrides({
     TextureOverrides::CHARS + 'BGirlAerialDrive_2' => TextureOverrides::MOD + 'Ana/Legacy/Flying',
     TextureOverrides::CHARS + 'BGirlAquaDrive_2' => TextureOverrides::MOD + 'Ana/Legacy/Surfing',
@@ -222,4 +261,9 @@ InjectionHelper.defineMapPatch(53, 2) { |event| # I Nightmare Realm, Aevis/Dupe
   event.pages[7] = anapage
   next true
 }
+
+InjectionHelper.defineMapPatch(231, 40, 1) { |page| # Somniam Mall, Melia, Crescent Conversation
+  anafixes_fix_protagname(page)
+}
+
 InjectionHelper.defineMapPatch(291, 72) { |event| anafixes_addLegacyRedCarpet(event) } # Pokestar Studios, Red Carpet Event
