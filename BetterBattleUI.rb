@@ -620,7 +620,7 @@ class PokemonDataBox < SpriteWrapper
     end
     base=PBScene::BOXBASE
     shadow=PBScene::BOXSHADOW
-    ### MODDED\ Add sbY
+    ### MODDED/ Add sbY
     sbY = @spritebaseY
     headerY = 18 + sbY
     sbX = @spritebaseX 
@@ -699,7 +699,13 @@ class PokemonDataBox < SpriteWrapper
     megaX=215
     megaX=-27 if (@battler.index&1)==0 # If player's Pokémon
     if !@battler.issossmon || (@battler.issossmon && @battler.index == 2)
-      if @battler.isMega? && @battler.hasMega?
+      if @battler.pokemon.isPulse?
+        imagepos.push(["Graphics/Pictures/Battle/battlePulseEvoBox.png",sbX+megaX,sbY+megaY,0,0,-1,-1])
+      elsif @battler.pokemon.isRift?
+        imagepos.push(["Graphics/Pictures/Battle/battleRiftEvoBox.png",sbX+megaX,sbYmegaY,0,0,-1,-1])
+      elsif @battler.pokemon.isPerfection?
+        imagepos.push(["Graphics/Pictures/Battle/battlePerfectionEvoBox.png",sbX+megaX,sbY+megaY,0,0,-1,-1])
+      elsif @battler.isMega?
         imagepos.push(["Graphics/Pictures/Battle/battleMegaEvoBox.png",sbX+megaX,sbY+megaY,0,0,-1,-1])
       elsif @battler.isUltra? # Maybe temporary until new icon
         imagepos.push(["Graphics/Pictures/Battle/battleMegaEvoBox.png",sbX+megaX,sbY+megaY,0,0,-1,-1])
