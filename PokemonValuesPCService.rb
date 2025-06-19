@@ -479,16 +479,24 @@ class PokemonValuesPCService
       return
     end
 
+    pkmn = nil
+
     Kernel.pbMessage(lab("Pokemon Tweaking? Certainly! Which Pokemon would you like to tweak the values of?"))
-    pbChooseNonEggPokemon(1,3)
-    result = pbGet(1)
-    if result < 0
-      Kernel.pbMessage(lab("Changed your mind then? Have a nice day!"))
-      return
+    while pkmn.nil?
+      pbChooseNonEggPokemon(1,3)
+      result = pbGet(1)
+      if result < 0
+        Kernel.pbMessage(lab("Changed your mind then? Have a nice day!"))
+        return
+      end
+      pkmn = $Trainer.party[result]
+      if (pkmn.isShadow? rescue false)
+        Kernel.pbMessage(lab("Oh, I'm sorry. Shadow Pokemon are too temperamental for us to work with here."))
+        pkmn = nil
+      end
     end
 
     @heartscalewindow = ServicePCList.quantityWindow(:HEARTSCALE)
-    pkmn = $Trainer.party[result]
     if Kernel.pbConfirmMessage("And you'd like to spend a Heart Scale to tweak \\v[3]?")
       @heartscalewindow.dispose
       if tweaking(pkmn)
