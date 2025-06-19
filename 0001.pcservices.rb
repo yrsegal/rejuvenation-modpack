@@ -10,11 +10,11 @@ class Game_Screen
   attr_accessor :pcservices_lastCommandsCategories
 
   # Existing field
-  attr_accessor :tone_target
+  attr_writer :tone_target
 end
 
 class Game_Character
-  attr_accessor :step_anime
+  attr_writer :step_anime
 end
 
 class CallServicePC
@@ -415,8 +415,8 @@ Kernel.instance_eval do
 end
 
 class ItemData < DataObject
-  attr_accessor :flags
-  attr_accessor :desc
+  attr_writer :flags
+  attr_writer :desc
 end
 
 $cache.items[:ROTOMPHONE].flags[:noUse] = false

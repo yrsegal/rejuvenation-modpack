@@ -8,7 +8,7 @@ ItemHandlers::UseInField.add(:ITEMFINDER,proc{|item|
 })
 
 class ItemData < DataObject
-  attr_accessor :desc
+  attr_writer :desc
 end
 
 $cache.items[:ITEMFINDER].desc = "A device used for finding items. Makes hidden items visible when activated."

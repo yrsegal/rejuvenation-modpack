@@ -516,7 +516,7 @@ end
 $MUSICSIGNPOSTEXPERIMENTAL = true
 
 class Game_System
-  attr_accessor :defaultBGM
+  attr_reader :defaultBGM
 end
 
 module ExperimentalMusicDisplay

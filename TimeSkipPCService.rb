@@ -8,7 +8,6 @@ class Game_Screen
   attr_accessor :timeskippc_darchlight
   attr_accessor :timeskippc_past
   attr_accessor :timeskippc_distant
-  attr_accessor :timeskippc_denofsouls
 end
 
 class TimeSkipPCService

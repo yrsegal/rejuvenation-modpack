@@ -1,8 +1,8 @@
 class MonData < DataObject
-  attr_accessor :flags
+  attr_writer :flags
 end
 class ItemData < DataObject
-  attr_accessor :flags
+  attr_writer :flags
 end
 
 

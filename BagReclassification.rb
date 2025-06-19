@@ -1,6 +1,6 @@
 
 class ItemData < DataObject
-  attr_accessor :flags
+  attr_writer :flags
 end
 
 

@@ -143,23 +143,23 @@ end
 
 # For setting TM desc
 class ItemData < DataObject
-  attr_accessor :desc
+  attr_writer :desc
 end
 
 # For setting move data
 class MoveData < DataObject
-  attr_accessor :flags
-  attr_accessor :move
-  attr_accessor :name
-  attr_accessor :function
-  attr_accessor :type
-  attr_accessor :category
-  attr_accessor :basedamage
-  attr_accessor :accuracy
-  attr_accessor :maxpp
-  attr_accessor :target
-  attr_accessor :desc
-  attr_accessor :priority
+  attr_writer :flags
+  attr_writer :move
+  attr_writer :name
+  attr_writer :function
+  attr_writer :type
+  attr_writer :category
+  attr_writer :basedamage
+  attr_writer :accuracy
+  attr_writer :maxpp
+  attr_writer :target
+  attr_writer :desc
+  attr_writer :priority
 end
 
 def move_tweak(id, power: nil, accuracy: nil, type: nil, category: nil, pp: nil, target: nil, priority: nil, function: nil, flags: nil, copyFlags: true, desc: nil, tmdesc: nil) 

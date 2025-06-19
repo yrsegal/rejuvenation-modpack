@@ -10,8 +10,8 @@ class PokemonEncounters
 end
 
 class ItemData < DataObject
-  attr_accessor :flags
-  attr_accessor :desc
+  attr_writer :flags
+  attr_writer :desc
 end
 
 ItemHandlers::UseFromBag.add(:MAGNETICLURE,proc{|item| 

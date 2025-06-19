@@ -96,8 +96,8 @@ class PokeBattle_Battle
 end
 
 class AbilityData < DataObject
-  attr_accessor :desc
-  attr_accessor :fullDesc
+  attr_writer :desc
+  attr_writer :fullDesc
 end
 
 $cache.abil[:BALLFETCH].desc = $cache.abil[:BALLFETCH].desc.gsub(/if no held item/, 'thrown per battle')
@@ -113,7 +113,7 @@ end
   
 
 class Event
-  attr_accessor :callbacks
+  attr_reader :callbacks
 end
 
 Events.onEndBattle.callbacks.unshift proc {|sender,e|
