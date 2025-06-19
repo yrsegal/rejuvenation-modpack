@@ -101,7 +101,7 @@ class Cache_Game
               [:ScriptContinued, '$Settings.unrealTimeDiverge = timediverge'],
               [:ScriptContinued, 'poke.obtainText = _INTL("Four Island")'],
               [:ScriptContinued, 'poke.obtainMode = 0'], # Caught
-              [:ScriptContinued, 'poke.ot = "Kenneth"'],
+              [:ScriptContinued, 'poke.ot = _INTL("Kenneth")'],
               [:ScriptContinued, 'poke.trainerID = 924'], # Kenesu goroawase
 
               [:ScriptContinued, 'wllriolu_pbAddPokemonNoTimeSet(poke)'],
