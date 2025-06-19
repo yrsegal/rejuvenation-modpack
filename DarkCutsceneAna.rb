@@ -127,7 +127,7 @@ module DarkAnaCutscene
     },
     20 => {
       0 => ["ANA: The door might close up again if I leave, and then we'll be separated forever...",
-        "I can't let that happen."]
+        "I won't risk that."]
     },
     21 => 20,
     22 => 20,
@@ -136,14 +136,14 @@ module DarkAnaCutscene
         "But I can't risk leaving Melia behind."]
     },
     26 => {
-      0 => ["ANA: And of course it's broken, too."],
+      0 => ["ANA: And of course it's broken <i>too.</i>"],
       -8 => ["ANA: Ah! It moved!"]
     },
     29 => {
       7 => ["ANA: Another dead end.",
         "Disappointing for a place I've never seen before.",
         "MELIA: It's the Central Building. Grand Dream City.",
-        "ANA: Ah. Melia. Central? GDC doesn't have a Central Building.",
+        "ANA: Ah. Melia. Central? GDC didn't have a Central Building... that I can remember.",
         "MELIA: Well, where I'm from, that's what this place was called.",
         "It's not exactly the same, but it has some of the same attributes.",
         "ANA: I'm starting to believe you. A different Melia...",
@@ -461,7 +461,7 @@ module DarkAnaCutscene
         "MELIA: Yeah... ",
         "Let's go.",
         "ANA: ...And it's just another room.",
-        "Did we really climb this tower for nothing...?",
+        "Did we climb this tower for nothing...?",
         "MELIA: Stop that... We haven't even looked around yet.",
         "We should investigate before we jump to conclusions.",
         "ANA: ...Right."]
@@ -513,9 +513,9 @@ module DarkAnaCutscene
         "ANA: We can walk along them, and look for-",
         "HOODED GIRL: Are you fucking stupid? And what happens if we fall?",
         "Who knows what would even happen to us.",
-        "ANA: What else should we do?",
+        "ANA: Then what else should we do?",
         "HOODED GIRL: I don't give a shit about that!",
-        "ANA: That isn't a course of action.",
+        "ANA: <i>That</i> isn't a course of action.",
         "HOODED GIRL: We wait.",
         "Look over there.",
         "ANA: ...A train.",
@@ -560,7 +560,7 @@ module DarkAnaCutscene
     },
     22 => {
       7 => ["HOODED GIRL: You are fucking kidding me, right?",
-        "ANA: Apparently you were correct.",
+        "ANA: <i>Apparently,</i> you were correct.",
         "HOODED GIRL: I'm losing my fucking mind here.",
         "What was even the point of all that then? Huh? Looping around?",
         "ANA: I still haven't figured out the rules this world follows.",
