@@ -86,13 +86,13 @@ InjectionHelper.defineMapPatch(294, 70) { |event| # GDC Central, clerk
             [:ScriptContinued, 'timediverge = $Settings.unrealTimeDiverge'],
             [:ScriptContinued, '$Settings.unrealTimeDiverge = 0'],
             [:ScriptContinued, 'timeNow = pbGetTimeNow'],
-            [:ScriptContinued, 'poke.timeReceived = Time.unrealTime_oldTimeNew(timeNow.year-41,6,8,timeNow.hour,timeNow.min,timeNow.sec)'], # 41 years ago, june 8th
+            [:ScriptContinued, 'poke.timeReceived = Time.unrealTime_oldTimeNew(timeNow.year-36,6,8,timeNow.hour,timeNow.min,timeNow.sec)'], # 41 years ago, june 8th
             # Justification - He got riolu when he turned 10.
             # He left for Aevium at 18.
             # Chapter 3 occurs 10 years later.
-            # Chapter 4 occurs 15 years later, when Aelita is 10.
+            # Chapter 4 occurs 15 years later, when Aelita is 15.
             # Aelita is 17 going on 18 at start of story
-            # 8 + 10 + 15 + 7 or 8 = 40 or 41 
+            # 8 + 10 + 15 + 2 or 3 = 35 or 36 
             [:ScriptContinued, '$Settings.unrealTimeDiverge = timediverge'],
             [:ScriptContinued, 'poke.obtainText = _INTL("Four Island")'],
             [:ScriptContinued, 'poke.obtainMode = 0'], # Caught
