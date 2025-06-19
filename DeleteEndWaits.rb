@@ -17,28 +17,14 @@ def deleteendwaits_patchinsns(insns, textmatcher, textcmatcher, nextmatcher)
   }
 end
 
+InjectionHelper.defineMapPatch(-1) { |map| # Apply to every map
+  textmatcher = InjectionHelper.parseMatcher([:ShowText, %r"((\\[\.\|])|(</ac>))$"])
+  textcmatcher = InjectionHelper.parseMatcher([:ShowTextContinued, %r"((\\[\.\|])|(</ac>))$"])
+  nextmatcher = InjectionHelper.parseMatcher([:ShowTextContinued, nil])
 
-
-class Cache_Game
-  alias :deleteendwaits_old_map_load :map_load
-
-  def map_load(mapid)
-    if @cachedmaps && @cachedmaps[mapid]
-      return deleteendwaits_old_map_load(mapid)
-    end
-
-    ret = deleteendwaits_old_map_load(mapid)
-
-    textmatcher = InjectionHelper.parseMatcher([:ShowText, %r"((\\[\.\|])|(</ac>))$"])
-    textcmatcher = InjectionHelper.parseMatcher([:ShowTextContinued, %r"((\\[\.\|])|(</ac>))$"])
-    nextmatcher = InjectionHelper.parseMatcher([:ShowTextContinued, nil])
-
-    ret.events.each_value { |event|
-      event.pages.each { |page|
-        deleteendwaits_patchinsns(page.list, textmatcher, textcmatcher, nextmatcher)
-      }
+  map.events.each_value { |event|
+    event.pages.each { |page|
+      deleteendwaits_patchinsns(page.list, textmatcher, textcmatcher, nextmatcher)
     }
-
-    return ret
-  end
-end
+  }
+}

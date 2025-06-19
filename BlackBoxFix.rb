@@ -1,35 +1,16 @@
 
+InjectionHelper.defineMapPatch(99, 58) { |event| # School of Nightmares, Make Anything Within Reason Machine
+  for page in event.pages
+    insns = page.list
+    InjectionHelper.patch(insns, :blackboxfixes_patchBlackBoxRemoval) {
+      matched = InjectionHelper.lookForAll(insns,
+        [:Script, '$PokemonBag.pbDeleteItem(:MYSTBLACKBOX2)'])
 
+      for insn in matched
+        insn.parameters[0] = '$PokemonBag.pbDeleteItem(:MYSTBLACKBOX2,3)'
+      end
 
-class Cache_Game
-  alias :blackboxfixes_old_map_load :map_load
-
-  def blackboxfixes_patchBlackBoxRemoval(event)
-    for page in event.pages
-      insns = page.list
-      InjectionHelper.patch(insns, :blackboxfixes_patchBlackBoxRemoval) {
-        matched = InjectionHelper.lookForAll(insns,
-          [:Script, '$PokemonBag.pbDeleteItem(:MYSTBLACKBOX2)'])
-
-        for insn in matched
-          insn.parameters[0] = '$PokemonBag.pbDeleteItem(:MYSTBLACKBOX2,3)'
-        end
-
-        next matched.length > 0
-      }
-    end
+      next matched.length > 0
+    }
   end
-
-  def map_load(mapid)
-    if @cachedmaps && @cachedmaps[mapid]
-      return blackboxfixes_old_map_load(mapid)
-    end
-
-    ret = blackboxfixes_old_map_load(mapid)
-
-    if mapid == 99 # School of Nightmares
-      blackboxfixes_patchBlackBoxRemoval(ret.events[58])
-    end
-    return ret
-  end
-end
+}

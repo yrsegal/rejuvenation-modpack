@@ -185,25 +185,11 @@ end
 
 # Patch
 
-class Cache_Game
-  alias :showmallstamps_old_map_load :map_load
-
-  def map_load(mapid)
-    if @cachedmaps && @cachedmaps[mapid]
-      return showmallstamps_old_map_load(mapid)
-    end
-
-    ret = showmallstamps_old_map_load(mapid)
-
-    if mapid == 231 # Somniam Mall
-      ShowSomniamMallStamps::SHOPS.each_pair { |evt,info|
-        ShowSomniamMallStamps.patchShop(ret.events[evt], info[0], info[1])
-      }
-      ShowSomniamMallStamps::SIGNS.each_pair { |evt,info|
-        ShowSomniamMallStamps.patchSign(ret.events[evt], info)
-      }
-    end
-
-    return ret
-  end
-end
+InjectionHelper.defineMapPatch(231) { |map| # Somniam Mall
+  ShowSomniamMallStamps::SHOPS.each_pair { |evt,info|
+    ShowSomniamMallStamps.patchShop(map.events[evt], info[0], info[1])
+  }
+  ShowSomniamMallStamps::SIGNS.each_pair { |evt,info|
+    ShowSomniamMallStamps.patchSign(map.events[evt], info)
+  }
+}

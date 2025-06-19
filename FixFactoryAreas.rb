@@ -293,53 +293,51 @@ module FixFactoryAreas
   }
 end
 
+InjectionHelper.defineMapPatch(79) { |map| # Oceana Pier Interiors
+  FixFactoryAreas.patchOceanaPierFieldEffect(map.events[23], false) # Field toggler
+  FixFactoryAreas.patchOceanaPierFieldEffect(map.events[47], true) # Exit door
+  FixFactoryAreas.createFactoryMessageEvent(map, 32, 32)
+  next true
+}
 
-class Cache_Game
-  alias :fixfactoryareas_old_map_load :map_load
-
-  def map_load(mapid)
-    if @cachedmaps && @cachedmaps[mapid]
-      return fixfactoryareas_old_map_load(mapid)
-    end
-
-    ret = fixfactoryareas_old_map_load(mapid)
-
-    if mapid == 79 # Oceana Pier Interiors
-      FixFactoryAreas.patchOceanaPierFieldEffect(ret.events[23], false) # Field toggler
-      FixFactoryAreas.patchOceanaPierFieldEffect(ret.events[47], true) # Exit door
-      FixFactoryAreas.createFactoryMessageEvent(ret, 32, 32)
-    elsif mapid == 616 # Celgearn Manufactory
-      FixFactoryAreas.patchResetCelgearnFieldEffect(ret.events[51]) # The rift
-      FixFactoryAreas.createCelgearnFieldToggleEvent(ret, 6, 4)
-      FixFactoryAreas.createCelgearnFieldMessageEvent(ret, 6, 3)
-      for evtid in FixFactoryAreas::CELGEARN_AUTOSHUTOFF
-        FixFactoryAreas.killEvent(ret.events[evtid])
-      end
-    elsif mapid == 111 # Axis Factory
-      FixFactoryAreas.patchResetCelgearnFieldEffect(ret.events[120]) # The rift
-      FixFactoryAreas.patchCelgearnEntranceRiftBrightness(ret.events[120])
-    elsif mapid == 21 || mapid == 134 # Oceana Pier, Neo Oceana Pier
-      FixFactoryAreas.patchOceanaPierFieldEffect(ret.events[40], true) # Entrance to warehouse
-    end
-
-    if FixFactoryAreas::ELECTRICAL_FIELD_DAMAGE_EVENTS[mapid]
-      for evtid in FixFactoryAreas::ELECTRICAL_FIELD_DAMAGE_EVENTS[mapid]
-        FixFactoryAreas.patchFieldDamage(ret.events[evtid], 'Electric')
-      end
-    end
-
-    if FixFactoryAreas::FIGHTING_FIELD_DAMAGE_EVENTS[mapid]
-      for evtid in FixFactoryAreas::FIGHTING_FIELD_DAMAGE_EVENTS[mapid]
-        FixFactoryAreas.patchFieldDamage(ret.events[evtid], 'Fighting')
-      end
-    end
-
-    if FixFactoryAreas::POISON_FIELD_DAMAGE_EVENTS[mapid]
-      for evtid in FixFactoryAreas::POISON_FIELD_DAMAGE_EVENTS[mapid]
-        FixFactoryAreas.patchFieldDamage(ret.events[evtid], 'Poison')
-      end
-    end
-
-    return ret
+InjectionHelper.defineMapPatch(616) { |map| # Celgearn Manufactory
+  FixFactoryAreas.patchResetCelgearnFieldEffect(map.events[51]) # The rift
+  FixFactoryAreas.createCelgearnFieldToggleEvent(map, 6, 4)
+  FixFactoryAreas.createCelgearnFieldMessageEvent(map, 6, 3)
+  for evtid in FixFactoryAreas::CELGEARN_AUTOSHUTOFF
+    FixFactoryAreas.killEvent(map.events[evtid])
   end
-end
+}
+
+InjectionHelper.defineMapPatch(111, 120) { |event| # Axis Factory, the rift
+  FixFactoryAreas.patchResetCelgearnFieldEffect(event)
+  FixFactoryAreas.patchCelgearnEntranceRiftBrightness(event)
+}
+
+InjectionHelper.defineMapPatch(21, 40) { |event| # Oceana Pier, entrance to warehouse
+  FixFactoryAreas.patchOceanaPierFieldEffect(event, true)
+}
+
+InjectionHelper.defineMapPatch(134, 40) { |event| # Neo Oceana Pier, entrance to warehouse
+  FixFactoryAreas.patchOceanaPierFieldEffect(event, true)
+}
+
+InjectionHelper.defineMapPatch(-1) { |map, mapid| # Apply to all maps
+  if FixFactoryAreas::ELECTRICAL_FIELD_DAMAGE_EVENTS[mapid]
+    for evtid in FixFactoryAreas::ELECTRICAL_FIELD_DAMAGE_EVENTS[mapid]
+      FixFactoryAreas.patchFieldDamage(map.events[evtid], 'Electric')
+    end
+  end
+
+  if FixFactoryAreas::FIGHTING_FIELD_DAMAGE_EVENTS[mapid]
+    for evtid in FixFactoryAreas::FIGHTING_FIELD_DAMAGE_EVENTS[mapid]
+      FixFactoryAreas.patchFieldDamage(map.events[evtid], 'Fighting')
+    end
+  end
+
+  if FixFactoryAreas::POISON_FIELD_DAMAGE_EVENTS[mapid]
+    for evtid in FixFactoryAreas::POISON_FIELD_DAMAGE_EVENTS[mapid]
+      FixFactoryAreas.patchFieldDamage(map.events[evtid], 'Poison')
+    end
+  end
+}

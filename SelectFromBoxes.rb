@@ -535,64 +535,50 @@ end
 
 ###### PATCHING DAY CARE
 
-class Cache_Game
-  alias :selectfromboxes_old_map_load :map_load
+def selectfromboxes_patch_partycheck(event) 
+  for page in event.pages      
+    insns = page.list
+    InjectionHelper.patch(insns, :selectfromboxes_patch_partycheck) {
+      matched = InjectionHelper.lookForAll(insns,
+        [:ConditionalBranch, :Script, proc{|script| script == '$Trainer.pokemonCount<=1' || script == '$Trainer.party.length>=6'}])
 
-  def selectfromboxes_patch_partycheck(event) 
-    for page in event.pages      
-      insns = page.list
-      InjectionHelper.patch(insns, :selectfromboxes_patch_partycheck) {
-        matched = InjectionHelper.lookForAll(insns,
-          [:ConditionalBranch, :Script, proc{|script| script == '$Trainer.pokemonCount<=1' || script == '$Trainer.party.length>=6'}])
+      for insn in matched
+        insn.parameters[0] = 'false'
+      end
 
-        for insn in matched
-          insn.parameters[0] = 'false'
-        end
-
-        next matched.length > 0
-      }
-    end
-  end
-
-  def selectfromboxes_patch_daycarelady(event)
-    selectfromboxes_patch_partycheck(event)
-
-    for page in event.pages
-      insns = page.list
-      InjectionHelper.patch(insns, :selectfromboxes_patch_daycarelady) {
-        matched = InjectionHelper.lookForSequence(insns, 
-          [:Script, 'pbDayCareWithdraw(pbGet(1))'],
-          [:ShowText, "\\GExcellent\\nHere's your Pokémon."])
-
-        if !matched.nil?
-          insns.delete_at(insns.index(matched[0]))
-          insns.insert(insns.index(matched[1]) + 1, matched[0])
-        end
-        next !matched.nil?
-      }
-
-      
-    end
-  end
-
-  def map_load(mapid)
-    if @cachedmaps && @cachedmaps[mapid]
-      return selectfromboxes_old_map_load(mapid)
-    end
-
-    ret = selectfromboxes_old_map_load(mapid)
-
-    if mapid == 425 # Sheridan Village (Interior)
-      selectfromboxes_patch_daycarelady(ret.events[1]) # Day Care Lady
-      selectfromboxes_patch_partycheck(ret.events[59]) # Day Care Man
-    elsif mapid == 9 # Dream District
-      selectfromboxes_patch_partycheck(ret.events[14]) # pseudo-Day Care Man
-    elsif mapid == 282 # Dream District (Interior)
-      selectfromboxes_patch_daycarelady(ret.events[13]) # pseudo-Day Care Lady
-    end
-
-    return ret
+      next matched.length > 0
+    }
   end
 end
+
+def selectfromboxes_patch_daycarelady(event)
+  selectfromboxes_patch_partycheck(event)
+
+  for page in event.pages
+    insns = page.list
+    InjectionHelper.patch(insns, :selectfromboxes_patch_daycarelady) {
+      matched = InjectionHelper.lookForSequence(insns, 
+        [:Script, 'pbDayCareWithdraw(pbGet(1))'],
+        [:ShowText, "\\GExcellent\\nHere's your Pokémon."])
+
+      if !matched.nil?
+        insns.delete_at(insns.index(matched[0]))
+        insns.insert(insns.index(matched[1]) + 1, matched[0])
+      end
+      next !matched.nil?
+    }
+  end
+end
+
+InjectionHelper.defineMapPatch(425) { |map| # Sheridan Interiors
+  selectfromboxes_patch_daycarelady(map.events[1]) # Day Care Lady
+  selectfromboxes_patch_partycheck(map.events[59]) # Day Care Man
+}
+InjectionHelper.defineMapPatch(9, 14) { |event| # Dream District, pseudo-Day Care Man
+  selectfromboxes_patch_partycheck(event)
+}
+InjectionHelper.defineMapPatch(282, 13) { |event| # Dream District Interiors, pseudo-Day Care Lady
+  selectfromboxes_patch_daycarelady(event)
+}
 
 ######

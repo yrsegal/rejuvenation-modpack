@@ -295,39 +295,22 @@ def relearnerService_relearnerConversation(evt, sister)
   end
 end
 
-
-# Patch movetutors
-
-class Cache_Game
-  alias :moverelearnerpc_old_map_load :map_load
-
-  def map_load(mapid)
-    if @cachedmaps && @cachedmaps[mapid]
-      return moverelearnerpc_old_map_load(mapid)
-    end
-
-    ret = moverelearnerpc_old_map_load(mapid)
-
-    if mapid == 425 # Sheridan Interiors
-      for page in ret.events[16].pages # Move Relearner
-        insns = page.list
-        patchName = :VendorQuantityDisplay
-        patchName = :PCServiceParity if InjectionHelper.patched?(insns, :VendorQuantityDisplay)
-        # this overrides vendor quantity display, so use same patch key to cut it off
-        InjectionHelper.patch(insns, patchName) {
-          insns.unshift(*InjectionHelper.parseEventCommands(
-            [:ConditionalBranch, :Switch, :MoveRelearner, true],
-              [:Script, 'relearnerService_relearnerConversation(get_character(0), get_character(15))'],
-              :ExitEventProcessing,
-            :Done))
-          next true
-        }
-      end
-    end
-
-    return ret
+InjectionHelper.defineMapPatch(425, 16) { |event| # Sheridan Interiors, Move Relearner
+  for page in event.pages # Move Relearner
+    insns = page.list
+    patchName = :VendorQuantityDisplay
+    patchName = :PCServiceParity if InjectionHelper.patched?(insns, :VendorQuantityDisplay)
+    # this overrides vendor quantity display, so use same patch key to cut it off
+    InjectionHelper.patch(insns, patchName) {
+      insns.unshift(*InjectionHelper.parseEventCommands(
+        [:ConditionalBranch, :Switch, :MoveRelearner, true],
+          [:Script, 'relearnerService_relearnerConversation(get_character(0), get_character(15))'],
+          :ExitEventProcessing,
+        :Done))
+      next true
+    }
   end
-end
+}
 
 class RelearnerPCService
 

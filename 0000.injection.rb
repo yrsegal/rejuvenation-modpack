@@ -299,13 +299,25 @@ module InjectionHelper
     self.getPatchComment(insns, true).parameters.push(tag)
   end
 
+  @@anyPatches = nil
+
+  def self.beginPatch
+    @@anyPatches = nil
+  end
+
+  def self.endPatch
+    @@anyPatches
+  end
+
   def self.patched?(insns, tag)
     return self.getPatchComment(insns, false).parameters.include?(tag)
   end
 
   def self.patch(insns, tag)
+    @@anyPatches = false if @@anyPatches.nil?
     if !patched?(insns, tag)
       if yield
+        @@anyPatches = true
         markPatched(insns, tag)
       end
     end
@@ -544,4 +556,153 @@ module InjectionHelper
 
     return builtInsns
   end
+
+  ### Autopatcher
+
+  APPLIED_PATCHES = []
+
+  PATCHES = {}
+  COMMON_PATCHES = {}
+
+  def self.defineMapPatch(mapid, eventid=nil, pageid=nil, &block)
+    PATCHES[mapid] = [] unless PATCHES[mapid]
+    PATCHES[mapid].push(MapPatch.new(mapid, eventid, pageid, &block))
+  end
+
+  def self.defineCommonPatch(eventid, &block)
+    COMMON_PATCHES[eventid] = [] unless COMMON_PATCHES[eventid]
+    COMMON_PATCHES[eventid].push(CommonEventPatch.new(eventid, &block))
+  end
+
+  def self.applyCommonPatches
+    $cache.RXevents.each_value { |eventid, event|
+      if COMMON_PATCHES[eventid]
+        for cepatch in COMMON_PATCHES[eventid]
+          cepatch.apply(event)
+        end
+      end
+      if COMMON_PATCHES[-1]
+        for cepatch in COMMON_PATCHES[-1]
+          cepatch.apply(event)
+        end
+      end
+    }
+  end
+
+  def self.applyMapPatches(mapid, map)
+    doneAny = false
+    if PATCHES[mapid]
+      for mappatch in PATCHES[mapid]
+        if !mappatch.eventid
+          doneAny |= mappatch.applyToMap(map, mapid)
+        elsif !mappatch.pageid
+          doneAny |= mappatch.applyToEvent(map.events[mappatch.eventid])
+        else
+          doneAny |= mappatch.applyToPage(map.events[mappatch.eventid].pages[mappatch.pageid])
+        end
+      end
+    end
+
+    if PATCHES[-1]
+      for mappatch in PATCHES[-1]
+        if !mappatch.eventid
+          doneAny |= mappatch.applyToMap(map, mapid)
+        elsif !mappatch.pageid
+          doneAny |= mappatch.applyToEvent(map.events[mappatch.eventid])
+        else
+          doneAny |= mappatch.applyToPage(map.events[mappatch.eventid].pages[mappatch.pageid])
+        end
+      end
+    end
+
+    if doneAny
+      APPLIED_PATCHES.push(mapid)
+      $PREVIOUS_APPLIED_PATCHES.push(mapid)
+    end
+  end
+
+  class MapPatch
+    attr_reader :mapid, :eventid, :pageid
+
+    def initialize(mapid, eventid, pageid, &block)
+      @mapid = mapid
+      @eventid = eventid
+      @pageid = pageid
+      @proc = Proc.new(&block)
+    end
+
+    def applyToMap(map, mapid)
+      InjectionHelper.beginPatch
+      ret = @proc.call(map, mapid)
+      endPatch = InjectionHelper.endPatch
+      return endPatch unless endPatch.nil? || ret == true
+      return ret
+    end
+
+    def applyToEvent(event)
+      InjectionHelper.beginPatch
+      ret = @proc.call(event)
+      endPatch = InjectionHelper.endPatch
+      return endPatch unless endPatch.nil? || ret == true
+      return ret
+    end
+
+    def applyToPage(page)
+      InjectionHelper.beginPatch
+      ret = @proc.call(page)
+      endPatch = InjectionHelper.endPatch
+      return endPatch unless endPatch.nil? || ret == true
+      return ret
+    end
+  end
+
+  class CommonEventPatch
+    attr_reader :eventid
+
+    def initialize(eventid, &block)
+      @eventid = eventid
+      @proc = Proc.new(&block)
+    end
+
+    def apply(event)
+      InjectionHelper.beginPatch
+      ret = @proc.call(event)
+      endPatch = InjectionHelper.endPatch
+      return endPatch unless endPatch.nil? || ret == true
+      return ret
+    end
+  end
+
 end
+
+$PREVIOUS_APPLIED_PATCHES = [] if !defined?($PREVIOUS_APPLIED_PATCHES)
+
+# Compile after mod load
+
+class Cache_Game
+  alias :injectionhelper_old_initialize :initialize
+
+  def initialize(*args, **kwargs)
+    ret = injectionhelper_old_initialize(*args, **kwargs)
+    InjectionHelper.applyCommonPatches
+    return ret
+  end
+
+  alias :injectionhelper_old_map_load :map_load
+  def map_load(mapid)
+    if @cachedmaps && $PREVIOUS_APPLIED_PATCHES.include?(mapid) && !InjectionHelper::APPLIED_PATCHES.include?(mapid)
+      @cachedmaps[mapid] = nil
+      $PREVIOUS_APPLIED_PATCHES.delete(mapid)
+    end
+
+    if @cachedmaps && @cachedmaps[mapid]
+      return injectionhelper_old_map_load(mapid)
+    end
+
+    ret = injectionhelper_old_map_load(mapid)
+    InjectionHelper.applyMapPatches(mapid, ret)
+    return ret
+  end
+end
+
+

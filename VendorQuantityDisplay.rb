@@ -323,47 +323,42 @@ end
 
 # Patch movetutors
 
-class Cache_Game
-  alias :vendorquantity_old_map_load :map_load
-
-  def map_load(mapid)
-    if @cachedmaps && @cachedmaps[mapid]
-      return vendorquantity_old_map_load(mapid)
+InjectionHelper.defineMapPatch(-1) { |map, mapid| # Apply to all maps
+  if VendorQuantityDisplay::ENSURECHOICES[mapid]
+    for vendor in VendorQuantityDisplay::ENSURECHOICES[mapid]
+      VendorQuantityDisplay.injectEnsureChoices(map.events[vendor])
     end
-
-    ret = vendorquantity_old_map_load(mapid)
-
-    if VendorQuantityDisplay::ENSURECHOICES[mapid]
-      for vendor in VendorQuantityDisplay::ENSURECHOICES[mapid]
-        VendorQuantityDisplay.injectEnsureChoices(ret.events[vendor])
-      end
-    end
-
-    if VendorQuantityDisplay::VENDORS[mapid]
-      for vendor in VendorQuantityDisplay::VENDORS[mapid]
-        if vendor.is_a?(Array)
-          VendorQuantityDisplay.injectForEvent(ret.events, vendor[0], "vendorquantity_show_item_window(:#{vendor[1]})")
-        else
-          VendorQuantityDisplay.injectForEvent(ret.events, vendor, "vendorquantity_show_shard_window")
-        end
-      end
-    end
-
-    if VendorQuantityDisplay::HEARTSCALES[mapid]
-      for vendor in VendorQuantityDisplay::HEARTSCALES[mapid]
-        VendorQuantityDisplay.injectAtStart(ret.events[vendor], "vendorquantity_show_item_window(:HEARTSCALE)")
-      end
-    end
-    
-    if mapid == 168 # Route 4
-      VendorQuantityDisplay.injectCairo(ret.events[16])
-    elsif mapid == 201 # Helojak Island
-      VendorQuantityDisplay.injectBeldumRaidDen(ret.events[5])
-    elsif mapid == 117 # Help Plaza (Gearen)
-      VendorQuantityDisplay.injectAtStart(ret.events[9], 'vendorquantity_show_zcell_window')
-    elsif mapid == 329 # Kristiline Town
-      VendorQuantityDisplay.injectNerta(ret.events[90])
-    end
-    return ret
   end
-end
+
+  if VendorQuantityDisplay::VENDORS[mapid]
+    for vendor in VendorQuantityDisplay::VENDORS[mapid]
+      if vendor.is_a?(Array)
+        VendorQuantityDisplay.injectForEvent(map.events, vendor[0], "vendorquantity_show_item_window(:#{vendor[1]})")
+      else
+        VendorQuantityDisplay.injectForEvent(map.events, vendor, "vendorquantity_show_shard_window")
+      end
+    end
+  end
+
+  if VendorQuantityDisplay::HEARTSCALES[mapid]
+    for vendor in VendorQuantityDisplay::HEARTSCALES[mapid]
+      VendorQuantityDisplay.injectAtStart(map.events[vendor], "vendorquantity_show_item_window(:HEARTSCALE)")
+    end
+  end
+}
+
+InjectionHelper.defineMapPatch(168, 16) { |event| # Route 4, Cairo
+  VendorQuantityDisplay.injectCairo(event)
+} 
+
+InjectionHelper.defineMapPatch(201, 5) { |event| # Helojak Island, Beldum Den
+  VendorQuantityDisplay.injectBeldumRaidDen(event)
+} 
+
+InjectionHelper.defineMapPatch(117, 9) { |event| # Help Plaza (Gearen), Ayuda
+  VendorQuantityDisplay.injectAtStart(event, 'vendorquantity_show_zcell_window')
+} 
+
+InjectionHelper.defineMapPatch(329, 90) { |event| # Kristiline Town, Nerta
+  VendorQuantityDisplay.injectNerta(event)
+}

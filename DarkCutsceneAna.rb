@@ -997,60 +997,45 @@ Events.onMapChanging+=proc {
   end
 }
 
-#### INJECTION
+InjectionHelper.defineMapPatch(609) { |map| # Desolate ??? Inside
+  DarkAnaCutscene.addGraphicPage(map.events[12]) # Player Dupe First
+  DarkAnaCutscene.addGraphicPage(map.events[34]) # Player Dupe
+  DarkAnaCutscene.addGraphicPage(map.events[42]) # Player Dupe Final
+  DarkAnaCutscene.patchDesolateOutfit(map.events[43]) # 100th floor
+  DarkAnaCutscene.patchDesolateOutfit(map.events[13]) # first conversation
+  DarkAnaCutscene.patchDesolateOutfit(map.events[45]) # gain control on 100th floor
+  DarkAnaCutscene.patchDesolateOutfit(map.events[47]) # paradox gate
 
-class Cache_Game
-  alias :darkana_old_map_load :map_load
-
-  def map_load(mapid)
-    if @cachedmaps && @cachedmaps[mapid]
-      return darkana_old_map_load(mapid)
+  DarkAnaCutscene::MAP_609_DIALOGUE.each_pair {|eventId,dialogues|
+    event = map.events[eventId]
+    if dialogues.is_a?(Numeric)
+      dialogues = DarkAnaCutscene::MAP_609_DIALOGUE[dialogues]
     end
+    dialogues.each_pair { |karmaValue,dialogue|
+      if karmaValue < 0
+        DarkAnaCutscene.addSingleDialoguePage(event, -karmaValue, DarkAnaCutscene::KARMA_GOOD, dialogue)
+      else
+        DarkAnaCutscene.addAnaPage(event, karmaValue, DarkAnaCutscene::KARMA_GOOD, dialogue)
+      end
+    }
+  }
+}
 
-    ret = darkana_old_map_load(mapid)
+InjectionHelper.defineMapPatch(243) { |map| # Desolate ??? Outside
+  DarkAnaCutscene.patchDesolateOutfit(map.events[10]) # M conversation
+  DarkAnaCutscene.addGraphicPage(map.events[30]) # Player Dupe
 
-    if mapid == 609 # Desolate Inside
-
-      DarkAnaCutscene.addGraphicPage(ret.events[12]) # Player Dupe First
-      DarkAnaCutscene.addGraphicPage(ret.events[34]) # Player Dupe
-      DarkAnaCutscene.addGraphicPage(ret.events[42]) # Player Dupe Final
-      DarkAnaCutscene.patchDesolateOutfit(ret.events[43]) # 100th floor
-      DarkAnaCutscene.patchDesolateOutfit(ret.events[13]) # first conversation
-      DarkAnaCutscene.patchDesolateOutfit(ret.events[45]) # gain control on 100th floor
-      DarkAnaCutscene.patchDesolateOutfit(ret.events[47]) # paradox gate
-
-      DarkAnaCutscene::MAP_609_DIALOGUE.each_pair {|eventId,dialogues|
-        event = ret.events[eventId]
-        if dialogues.is_a?(Numeric)
-          dialogues = DarkAnaCutscene::MAP_609_DIALOGUE[dialogues]
-        end
-        dialogues.each_pair { |karmaValue,dialogue|
-          if karmaValue < 0
-            DarkAnaCutscene.addSingleDialoguePage(event, -karmaValue, DarkAnaCutscene::KARMA_GOOD, dialogue)
-          else
-            DarkAnaCutscene.addAnaPage(event, karmaValue, DarkAnaCutscene::KARMA_GOOD, dialogue)
-          end
-        }
-      }
-    elsif mapid == 243 # Desolate Outside
-      DarkAnaCutscene.patchDesolateOutfit(ret.events[10]) # M conversation
-      DarkAnaCutscene.addGraphicPage(ret.events[30]) # Player Dupe
-
-      DarkAnaCutscene::MAP_243_DIALOGUE.each_pair {|eventId,dialogues|
-        event = ret.events[eventId]
-        if dialogues.is_a?(Numeric)
-          dialogues = DarkAnaCutscene::MAP_243_DIALOGUE[dialogues]
-        end
-        dialogues.each_pair { |karmaValue,dialogue|
-          if karmaValue < 0
-            DarkAnaCutscene.addSingleDialoguePage(event, -karmaValue, DarkAnaCutscene::KARMA_BAD, dialogue)
-          else
-            DarkAnaCutscene.addAnaPage(event, karmaValue, DarkAnaCutscene::KARMA_BAD, dialogue)
-          end
-        }
-      }
-      # darkana_patch_desolateoutfit(ret.events[10]) # M Conversation
+  DarkAnaCutscene::MAP_243_DIALOGUE.each_pair {|eventId,dialogues|
+    event = map.events[eventId]
+    if dialogues.is_a?(Numeric)
+      dialogues = DarkAnaCutscene::MAP_243_DIALOGUE[dialogues]
     end
-    return ret
-  end
-end
+    dialogues.each_pair { |karmaValue,dialogue|
+      if karmaValue < 0
+        DarkAnaCutscene.addSingleDialoguePage(event, -karmaValue, DarkAnaCutscene::KARMA_BAD, dialogue)
+      else
+        DarkAnaCutscene.addAnaPage(event, karmaValue, DarkAnaCutscene::KARMA_BAD, dialogue)
+      end
+    }
+  }
+}

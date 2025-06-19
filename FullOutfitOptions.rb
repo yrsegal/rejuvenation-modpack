@@ -257,7 +257,7 @@ def outfitoptions_handle_clothing_choices(doToneChange = true)
     ret = Kernel.pbShowCommands(nil,choices,-1,default)
   end
 
-  if ret 
+  if ret && ret != -1
     newOutfit = outfits[ret]
     if newOutfit != -1
       $game_screen.start_tone_change(Tone.new(-255,-255,-255,0), 14 * 2) if doToneChange
@@ -274,53 +274,48 @@ end
 
 # Patch common events
 
-# Player Dupe
-outfitoptions_injectBeforeOutfit0($cache.RXevents[29], 0, [4], false)
-# Player Dupe 2
-outfitoptions_injectBeforeOutfit0($cache.RXevents[81], 2, [4], false)
-# Outfit Management
-outfitoptions_patch_outfit_management($cache.RXevents[131])
-# Choose Outfit
-outfitoptions_override_outfit_choice($cache.RXevents[133])
+InjectionHelper.defineCommonPatch(29) { |event| # Player Dupe
+  outfitoptions_injectBeforeOutfit0(event, 0, [4], false)
+}
+InjectionHelper.defineCommonPatch(81) { |event| # Player Dupe 2
+  outfitoptions_injectBeforeOutfit0(event, 2, [4], false)
+}
+InjectionHelper.defineCommonPatch(131) { |event| # Outfit Management
+  outfitoptions_patch_outfit_management(event)
+}
+InjectionHelper.defineCommonPatch(133) { |event| # Choose Outfit
+  outfitoptions_override_outfit_choice(event)
+}
 
-# Patch map events
+InjectionHelper.defineMapPatch(53) { |map| # I Nightmare Realm
+  # Mirror match
+  outfitoptions_injectBeforeOutfit0(map.events[66].pages[0], 0, [2, 3, 4, 6], true)
+  outfitoptions_injectBeforeOutfit0(map.events[76].pages[0], 0, [2, 3, 4, 6], true)
+}
 
-class Cache_Game
-  alias :outfitoptions_old_map_load :map_load
+InjectionHelper.defineMapPatch(85) { |map| # Nightmare Toy Box
+  # Beddtime
+  outfitoptions_wake_up(map.events[66].pages[0])
+  # Clothing box
+  outfitoptions_nix_darchoutfit_set(map.events[63], true)
+}
 
-  def map_load(mapid)
-    if @cachedmaps && @cachedmaps[mapid]
-      return outfitoptions_old_map_load(mapid)
-    end
+InjectionHelper.defineMapPatch(85, 22) { |event| # Nightbox Theater, PM talk
+  outfitoptions_nix_darchoutfit_set(event, false)
+}
 
-    ret = outfitoptions_old_map_load(mapid)
+InjectionHelper.defineMapPatch(57) { |map| # Land of Broken Dreams
+  # PM Fights
+  outfitoptions_arbitrary_outfit(map.events[91])
+  outfitoptions_arbitrary_outfit(map.events[103])
+  outfitoptions_set_icep_outfit_fight(map.events[91])
+  outfitoptions_set_icep_outfit_fight(map.events[103])
+}
 
-    if mapid == 53 # I Nightmare Realm
-      # Mirror match
-      outfitoptions_injectBeforeOutfit0(ret.events[66].pages[0], 0, [2, 3, 4, 6], true)
-      outfitoptions_injectBeforeOutfit0(ret.events[76].pages[0], 0, [2, 3, 4, 6], true)
-    elsif mapid == 85 # Nightmare Toy Box
-      # Beddtime
-      outfitoptions_wake_up(ret.events[66].pages[0])
-      # Clothing box
-      outfitoptions_nix_darchoutfit_set(ret.events[63], true)
-    elsif mapid == 151 # Nightbox Theater
-      # PM talk
-      outfitoptions_nix_darchoutfit_set(ret.events[22], false)
-    elsif mapid == 57 # Land of Broken Dreams
-      # PM Fights
-      outfitoptions_arbitrary_outfit(ret.events[91])
-      outfitoptions_arbitrary_outfit(ret.events[103])
-      outfitoptions_set_icep_outfit_fight(ret.events[91])
-      outfitoptions_set_icep_outfit_fight(ret.events[103])
-    elsif mapid == 495 # Decompression Lab
-      # Elevator
-      outfitoptions_replace_outfits_with_darchflag(ret.events[78])
-    elsif mapid == 609 # ??? (.KF P)
-      # P Gate
-      outfitoptions_arbitrary_outfit(ret.events[42])
-    end
+InjectionHelper.defineMapPatch(495, 78) { |event| # Decompression Lab, Elevator
+  outfitoptions_replace_outfits_with_darchflag(event)
+}
 
-    return ret
-  end
-end
+InjectionHelper.defineMapPatch(609, 42) { |event| # ??? .KF P, Paradox Gate
+  outfitoptions_arbitrary_outfit(event)
+}

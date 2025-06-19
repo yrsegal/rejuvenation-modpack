@@ -208,41 +208,18 @@ TextureOverrides.registerTextureOverrides({
     TextureOverrides::CHARS + 'BattyFriends_Ana_4' => TextureOverrides::MOD + 'Ana/Darchlight/BattyFriends'
 })
 
+InjectionHelper.defineCommonPatch(23) { |event| anafixes_fix_darchsprite(event) } # Player Dupe (D)
+InjectionHelper.defineCommonPatch(49) { |event| anafixes_inject_special_sprite(event, 'PlayerHeadache_8') } # Player Dupe Distress
+InjectionHelper.defineCommonPatch(50) { |event| anafixes_inject_special_sprite(event, 'PlayerKnockedOut_8') } # Player Dupe Knocked
+InjectionHelper.defineCommonPatch(136) { |event| anafixes_hotfix_battyfriends(event) } # Batty Friends
 
-# Patch common events
-
-# Player Dupe (D)
-anafixes_fix_darchsprite($cache.RXevents[23])
-# Player Dupe Distress
-anafixes_inject_special_sprite($cache.RXevents[49], 'PlayerHeadache_8')
-# Player Dupe Knocked
-anafixes_inject_special_sprite($cache.RXevents[50], 'PlayerKnockedOut_8')
-# Batty Friends
-anafixes_hotfix_battyfriends($cache.RXevents[136])
-
-# Patch map events
-
-class Cache_Game
-  alias :anafixes_old_map_load :map_load
-
-  def map_load(mapid)
-    if @cachedmaps && @cachedmaps[mapid]
-      return anafixes_old_map_load(mapid)
-    end
-
-    ret = anafixes_old_map_load(mapid)
-
-    if mapid == 53 # I Nightmare Realm
-      aevdupe = ret.events[2] # Aevis/Dupe
-      anapage = aevdupe.pages[1] # if Ana on
-      alainpage = aevdupe.pages[7] # if Alain on
-      anafixes_replacewitheyesprite(anapage)
-      # Swap them so Ana always runs last, displaying properly
-      aevdupe.pages[1] = alainpage
-      aevdupe.pages[7] = anapage
-    elsif mapid == 291 # Pokestar Studios
-      anafixes_addLegacyRedCarpet(ret.events[72]) # Red Carpet Event
-    end
-    return ret
-  end
-end
+InjectionHelper.defineMapPatch(53, 2) { |event| # I Nightmare Realm, Aevis/Dupe
+  anapage = event.pages[1] # if Ana on
+  alainpage = event.pages[7] # if Alain on
+  anafixes_replacewitheyesprite(anapage)
+  # Swap them so Ana always runs last, displaying properly
+  event.pages[1] = alainpage
+  event.pages[7] = anapage
+  next true
+}
+InjectionHelper.defineMapPatch(291, 72) { |event| anafixes_addLegacyRedCarpet(event) } # Pokestar Studios, Red Carpet Event

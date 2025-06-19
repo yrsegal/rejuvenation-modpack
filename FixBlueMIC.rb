@@ -1,38 +1,21 @@
 Variables[:IceCream] = 245
 Variables[:Random1] = 216
 
-class Cache_Game
-  alias :fixbluemic_old_map_load :map_load
+def fixbluemic_patchShop(event)
+  for page in event.pages
+    insns = page.list
+    InjectionHelper.patch(insns, :fixbluemic) {
+      checks = InjectionHelper.lookForAll(insns,
+        [:ConditionalBranch, :Variable, :Random1, :Constant, nil, :Equals])
 
-  def fixbluemic_patchShop(event)
-    for page in event.pages
-      insns = page.list
-      InjectionHelper.patch(insns, :fixbluemic) {
-        checks = InjectionHelper.lookForAll(insns,
-          [:ConditionalBranch, :Variable, :Random1, :Constant, nil, :Equals])
+      for insn in checks
+        insn.parameters[1] = Variables[:IceCream]
+      end
 
-        for insn in checks
-          insn.parameters[1] = Variables[:IceCream]
-        end
-
-        next checks.length > 0
-      }
-    end
-  end
-
-  def map_load(mapid)
-    if @cachedmaps && @cachedmaps[mapid]
-      return fixbluemic_old_map_load(mapid)
-    end
-
-    ret = fixbluemic_old_map_load(mapid)
-
-    if mapid == 28 # Festival Plaza
-      fixbluemic_patchShop(ret.events[26])
-    elsif mapid == 69 # Route 3
-      fixbluemic_patchShop(ret.events[5])
-    end
-
-    return ret
+      next checks.length > 0
+    }
   end
 end
+
+InjectionHelper.defineMapPatch(28, 26) { |event| fixbluemic_patchShop(event) } # Festival Plaza, Ice Cream Seller
+InjectionHelper.defineMapPatch(69, 5) { |event| fixbluemic_patchShop(event) } # Route 3, Ice Cream Seller
