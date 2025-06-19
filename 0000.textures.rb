@@ -225,30 +225,26 @@ end
 
 # Replacement code
 
-module RPG
-  module Cache
-    singleton_class.class_eval do
-      alias :textureoverride_old_fromCache :fromCache
-      alias :textureoverride_old_setKey :setKey
-      alias :textureoverride_old_load_bitmap :load_bitmap
-      alias :textureoverride_old_tileEx :tileEx
-    end
-        
-    def self.setKey(key, obj)
-      return self.textureoverride_old_setKey(TextureOverrides::mapKey(key), obj)
-    end
-
-    def self.load_bitmap(filename, hue = 0)
-      return self.textureoverride_old_load_bitmap(TextureOverrides::mapKey(filename), hue)
-    end
-
-    def self.tileEx(filename, tile_id, hue, width = 1, height = 1)
-      return self.textureoverride_old_tileEx(TextureOverrides::mapKey(filename), tile_id, hue, width, height) { |it| yield it }
-    end
+RPG::Cache.instance_eval do
+  alias :textureoverride_old_fromCache :fromCache
+  alias :textureoverride_old_setKey :setKey
+  alias :textureoverride_old_load_bitmap :load_bitmap
+  alias :textureoverride_old_tileEx :tileEx
     
-    def self.fromCache(i)
-      return self.textureoverride_old_fromCache(TextureOverrides.mapKey(i))
-    end
+  def setKey(key, obj)
+    return textureoverride_old_setKey(TextureOverrides::mapKey(key), obj)
+  end
+
+  def load_bitmap(filename, hue = 0)
+    return textureoverride_old_load_bitmap(TextureOverrides::mapKey(filename), hue)
+  end
+
+  def tileEx(filename, tile_id, hue, width = 1, height = 1)
+    return textureoverride_old_tileEx(TextureOverrides::mapKey(filename), tile_id, hue, width, height) { |it| yield it }
+  end
+  
+  def fromCache(i)
+    return textureoverride_old_fromCache(TextureOverrides.mapKey(i))
   end
 end
 

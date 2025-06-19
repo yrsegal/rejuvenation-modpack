@@ -398,7 +398,7 @@ class PokemonReadyMenu_Scene
   end
 end
 
-Kernel.singleton_class.class_eval do
+Kernel.instance_eval do
   alias :pcservices_old_pbUseKeyItemInField :pbUseKeyItemInField
 
   def pbUseKeyItemInField(item)
