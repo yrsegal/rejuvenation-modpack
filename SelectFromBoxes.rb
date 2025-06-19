@@ -79,9 +79,7 @@ end
 ######
 
 ###### CHECKS BOXES TOO
-if !defined?(selectfromboxes_old_pbHasSpecies?)
-  alias :selectfromboxes_old_pbHasSpecies? :pbHasSpecies?
-end
+alias :selectfromboxes_old_pbHasSpecies? :pbHasSpecies?
 
 def pbHasSpecies?(species)
   return true if selectfromboxes_old_pbHasSpecies?(species)
@@ -100,9 +98,7 @@ def pbHasSpecies?(species)
   return false
 end
 
-if !defined?(selectfromboxes_old_pbHasFatefulSpecies?)
-  alias :selectfromboxes_old_pbHasFatefulSpecies? :pbHasFatefulSpecies?
-end
+alias :selectfromboxes_old_pbHasFatefulSpecies? :pbHasFatefulSpecies?
 
 def pbHasFatefulSpecies?(species)
   return true if selectfromboxes_old_pbHasFatefulSpecies?(species)

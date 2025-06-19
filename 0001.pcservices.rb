@@ -369,9 +369,7 @@ module ServicePCList
   end
 end
 
-if !defined?(pcservices_old_shouldShowClock?)
-  alias :pcservices_old_shouldShowClock? :shouldShowClock?
-end
+alias :pcservices_old_shouldShowClock? :shouldShowClock?
 
 def shouldShowClock?
   if defined?($Settings.unrealTimeClock)

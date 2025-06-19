@@ -299,25 +299,23 @@ class Interpreter
   end
 end
 
-module Kernel
-  singleton_class.class_eval do
-    alias :vendorquantity_old_pbMessageDisplay :pbMessageDisplay
+Kernel.instance_eval do
+  alias :vendorquantity_old_pbMessageDisplay :pbMessageDisplay
 
-    def pbMessageDisplay(*args, **kwargs, &block)
-      windows = $vendorquantitydisplay_activewindows.clone
-      for window, textProc in windows
-        if window.disposed?
-          $vendorquantitydisplay_activewindows.delete([window, textProc])
-          next
-        end
-
-        window.text = textProc.call()
-        window.resizeToFit(window.text,Graphics.width)
-        window.width=160 if window.width<=160
+  def pbMessageDisplay(*args, **kwargs, &block)
+    windows = $vendorquantitydisplay_activewindows.clone
+    for window, textProc in windows
+      if window.disposed?
+        $vendorquantitydisplay_activewindows.delete([window, textProc])
+        next
       end
 
-      return vendorquantity_old_pbMessageDisplay(*args, **kwargs, &block)
+      window.text = textProc.call()
+      window.resizeToFit(window.text,Graphics.width)
+      window.width=160 if window.width<=160
     end
+
+    return vendorquantity_old_pbMessageDisplay(*args, **kwargs, &block)
   end
 end
 
