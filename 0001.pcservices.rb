@@ -10,7 +10,7 @@ class Game_Screen
   attr_accessor :pcservices_lastCommandsCategories
 
   # Existing field
-  attr_writer :tone_target
+  attr_reader :tone_target
 end
 
 class Game_Character
