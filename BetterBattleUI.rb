@@ -392,6 +392,14 @@ class PokeBattle_Scene
     @sprites["bbui_ballwindow"].z=100
   end
 
+  alias :betterBattleUI_old_pbEndBattle :pbEndBattle
+
+  def pbEndBattle(*args, **kwargs)
+    $betterBattleUI_statBoosts_data = nil
+    $betterBattleUI_typeIcons_bitmaps = nil
+    return betterBattleUI_old_pbEndBattle(*args, **kwargs)
+  end
+
   alias :betterBattleUI_old_pbShowWindow :pbShowWindow
 
   def pbShowWindow(windowtype)

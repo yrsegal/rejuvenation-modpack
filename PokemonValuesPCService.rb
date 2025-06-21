@@ -500,10 +500,11 @@ class PokemonValuesPCService
     if Kernel.pbConfirmMessage("And you'd like to spend a Heart Scale to tweak \\v[3]?")
       @heartscalewindow.dispose
       if tweaking(pkmn)
+        Kernel.pbMessage(lab("And...\\wtnp[40]"))
         $PokemonBag.pbDeleteItem(:HEARTSCALE)
         ServicePCList.updateWindowQuantity(@heartscalewindow, :HEARTSCALE) if !@heartscalewindow.disposed?
         @heartscalewindow = ServicePCList.quantityWindow(:HEARTSCALE) if @heartscalewindow.disposed?
-        Kernel.pbMessage(lab("And...\\| \\se[balldrop]Done! Thank you for your business! Have a nice day!"))
+        Kernel.pbMessage(lab("\\se[balldrop]Done! Thank you for your business! Have a nice day!"))
       end
     else
       Kernel.pbMessage(lab("Changed your mind then? Have a nice day!"))
