@@ -1177,10 +1177,10 @@ class FightMenuButtons < BitmapSprite
           else
             zorovar2 = false
           end
-          typemodR = move.betterBattleUI_showMoveEffectiveness(movetype, battler, battler.pbOpposing1, zorovar1)
-          typemodL = move.betterBattleUI_showMoveEffectiveness(movetype, battler, battler.pbOpposing2, zorovar2)
+          typemodR = move.betterBattleUI_showMoveEffectiveness(movetype, battler, battler.pbOpposing1, battler.pbOpposing2, zorovar1)
+          typemodL = move.betterBattleUI_showMoveEffectiveness(movetype, battler, battler.pbOpposing2, battler.pbOpposing1, zorovar2)
         else
-          typemodL = move.betterBattleUI_showMoveEffectiveness(movetype, battler, opponent, zorovar)
+          typemodL = move.betterBattleUI_showMoveEffectiveness(movetype, battler, opponent, nil, zorovar)
         end
       else
         if battler.effects[:Taunt] > 0 ||
@@ -1188,10 +1188,10 @@ class FightMenuButtons < BitmapSprite
           typemod = 0
         elsif move.target != :User && move.target != :Partner
           if twoOpponents
-            typemodR = betterBattleUI_showMoveEffectivenessStatus(move, battler, battler.pbOpposing1, movetype, typemodR, zorovar1)
-            typemodL = betterBattleUI_showMoveEffectivenessStatus(move, battler, battler.pbOpposing2, movetype, typemodL, zorovar2)
+            typemodR = betterBattleUI_showMoveEffectivenessStatus(move, battler, battler.pbOpposing1, battler.pbOpposing2, movetype, typemodR, zorovar1)
+            typemodL = betterBattleUI_showMoveEffectivenessStatus(move, battler, battler.pbOpposing2, battler.pbOpposing1, movetype, typemodL, zorovar2)
           else
-            typemodL = betterBattleUI_showMoveEffectivenessStatus(move, battler, opponent, movetype, typemodL, zorovar)
+            typemodL = betterBattleUI_showMoveEffectivenessStatus(move, battler, opponent, nil, movetype, typemodL, zorovar)
           end
         end
       end
@@ -1244,7 +1244,16 @@ class FightMenuButtons < BitmapSprite
     end
   end
 
-  def betterBattleUI_showMoveEffectivenessStatus (move, battler, opponent, movetype, typemod = 4, zorovar = false)
+  def betterBattleUI_showMoveEffectivenessStatus (move, battler, opponent, otherOpponent, movetype, typemod = 4, zorovar = false)
+    if movetype == :WATER && ((!opponent.moldbroken && opponent.ability == :STORMDRAIN) || 
+      (otherOpponent && !otherOpponent.moldbroken && otherOpponent.ability == :STORMDRAIN))
+      return 0
+    end
+    if movetype == :ELECTRIC && ((!opponent.moldbroken && opponent.ability == :LIGHTNINGROD) || 
+      (otherOpponent && !otherOpponent.moldbroken && otherOpponent.ability == :LIGHTNINGROD))
+      return 0
+    end
+
     if (move.move == :THUNDERWAVE && (move.pbTypeModifier(movetype, battler, opponent, zorovar) == 0 || !opponent.pbCanParalyze?(false) ||
        (opponent.nullsElec? && movetype == :ELECTRIC))) || #Innefective by type or immune to paralysis. If Thunder Wave is electrict type, the abilities nullyfing it also nullify this one
        (battler.battle.state.effects[:Gravity]!=0 && (move.move == :SPLASH || move.move == :TELEKINESIS)) ||
@@ -1314,7 +1323,7 @@ class PokeBattle_Move
     return false
   end
 
-  def betterBattleUI_showMoveEffectiveness(type, attacker, opponent, zorovar = false)
+  def betterBattleUI_showMoveEffectiveness(type, attacker, opponent, otherOpponent, zorovar = false)
     secondtype = getSecondaryType(attacker)
 
 
@@ -1334,11 +1343,21 @@ class PokeBattle_Move
       return 0
     end
 
+    if @priority > 0 && (!opponent.moldbroken && (opponent.ability == :DAZZLING || opponent.ability == :QUEENLYMAJESTY)) &&
+      (!otherOpponent || (!otherOpponent.moldbroken && (otherOpponent.ability == :DAZZLING || otherOpponent.ability == :QUEENLYMAJESTY)))
+      return 0
+    end
+
     if opponent.ability == :SAPSIPPER && !opponent.moldbroken && (type == :GRASS || (!secondtype.nil? && secondtype.include?(:GRASS)))
       return 0
     end
     if ((opponent.ability == :STORMDRAIN && (type == :WATER || (!secondtype.nil? && secondtype.include?(:WATER)))) ||
        (opponent.ability == :LIGHTNINGROD && (type == :ELECTRIC || (!secondtype.nil? && secondtype.include?(:ELECTRIC))))) && !opponent.moldbroken
+      return 0
+    end
+    if otherOpponent && move.target == :SingleNonUser && !attacker.ability == :STALWART && !attacker.ability == :PROPELLERTAIL &&
+      ((otherOpponent.ability == :STORMDRAIN && (type == :WATER || (!secondtype.nil? && secondtype.include?(:WATER)))) ||
+       (otherOpponent.ability == :LIGHTNINGROD && (type == :ELECTRIC || (!secondtype.nil? && secondtype.include?(:ELECTRIC))))) && !otherOpponent.moldbroken 
       return 0
     end
     if ((opponent.ability == :MOTORDRIVE && !opponent.moldbroken) ||
