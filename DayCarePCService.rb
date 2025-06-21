@@ -81,7 +81,7 @@ class DayCarePCService
     return false if pokeEggGroups.include?(:Undiscovered)
     return true if pbDayCareDeposited != 1
 
-    daycarePoke = $PokemonGlobal.daycare[0][0]
+    daycarePoke = $PokemonGlobal.daycare[0][0] || $PokemonGlobal.daycare[1][0]
     $game_variables[nameVariable] = daycarePoke.name if nameVariable
     return false if !daycarePoke
     daycareEggGroups = daycarePoke.eggGroups
