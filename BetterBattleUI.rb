@@ -1355,7 +1355,7 @@ class PokeBattle_Move
        (opponent.ability == :LIGHTNINGROD && (type == :ELECTRIC || (!secondtype.nil? && secondtype.include?(:ELECTRIC))))) && !opponent.moldbroken
       return 0
     end
-    if otherOpponent && @target == :SingleNonUser && !attacker.ability == :STALWART && !attacker.ability == :PROPELLERTAIL &&
+    if otherOpponent && [:SingleNonUser, :RandomOpposing, :SingleOpposing, :OppositeOpposing].include?(@target) && !attacker.ability == :STALWART && !attacker.ability == :PROPELLERTAIL &&
       ((otherOpponent.ability == :STORMDRAIN && (type == :WATER || (!secondtype.nil? && secondtype.include?(:WATER)))) ||
        (otherOpponent.ability == :LIGHTNINGROD && (type == :ELECTRIC || (!secondtype.nil? && secondtype.include?(:ELECTRIC))))) && !otherOpponent.moldbroken 
       return 0
