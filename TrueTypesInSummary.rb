@@ -19,7 +19,7 @@ def hpSummary_trueType(move, pokemon)
   elsif move.move == :NATURALGIFT
     type = !PBStuff::NATURALGIFTTYPE[pokemon.item].nil? ? PBStuff::NATURALGIFTTYPE[pokemon.item] : :NORMAL
   elsif move.move == :DOMAINSHIFT
-    type = $game_switches[:RenegadeRoute] && @battle.pbOwnedByPlayer?(attacker.index) ? :SHADOW : :FAIRY
+    type = $game_switches[:RenegadeRoute] ? :SHADOW : :FAIRY
   end
 
   if ((move.move == :JUDGMENT) && (pokemon.species == :ARCEUS)) || 
