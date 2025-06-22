@@ -126,7 +126,7 @@ class HealPCService
     end
 
     if (!inPast? && ServicePCList.offMap?) || ServicePCList.inRift? || ServicePCList.distantTime?
-      Kernel.pbMessage(_INTL("...\1"))
+      Kernel.pbMessage(_INTL("\\se[SFX - Dialtone:60]...\1"))
       Kernel.pbMessage(_INTL("There's no response..."))
       return
     end

@@ -154,21 +154,21 @@ class PokeballTransferPCService
 
   def access
     if ServicePCList.inZeight? || ServicePCList.inRift?
-      Kernel.pbMessage(_INTL("...\1"))
+      Kernel.pbMessage(_INTL("\\se[SFX - Dialtone:60]...\1"))
       Kernel.pbMessage(_INTL("The phone was answered, but immediately hung up..."))
       return
     end
 
     if ServicePCList.distantTime?
-      Kernel.pbMessage(_INTL("...\1"))
+      Kernel.pbMessage(_INTL("\\se[SFX - Dialtone:60]...\1"))
       Kernel.pbMessage(_INTL("There's no response..."))
       return
     end
 
     if ServicePCList.inNightmare?
-      Kernel.pbMessage(_INTL("...\1"))
+      Kernel.pbMessage(_INTL("\\se[SFX - Dialtone:60]...\1"))
       if $game_switches[:EizenKnows]
-        Kernel.pbMessage(eizen("It was picked up?\1"))
+        Kernel.pbMessage(_INTL("It was picked up?\1"))
         if $game_switches[:GreetingsEizen] && !$game_screen.pokeballtransferpc_eizen_prankcall
           Kernel.pbMessage(eizen("EIZEN: <i>Some</i> of us are trying to sleep.\1"))
           Kernel.pbMessage(eizen("And please, stop prank calling me."))
@@ -183,9 +183,9 @@ class PokeballTransferPCService
     end
 
     if inPast?
-      Kernel.pbMessage(_INTL("...\1"))
+      Kernel.pbMessage(_INTL("\\se[SFX - Dialtone:60]...\1"))
       if $game_switches[:EizenKnows]
-        Kernel.pbMessage(eizen("It was picked up?\1"))
+        Kernel.pbMessage(_INTL("It was picked up?\1"))
         if $game_switches[:GreetingsEizen] && !$game_screen.pokeballtransferpc_eizen_prankcall
           Kernel.pbMessage(eizen("EIZEN: This service isn't open yet.\1"))
           Kernel.pbMessage(eizen("And please, stop prank calling me."))
@@ -200,7 +200,7 @@ class PokeballTransferPCService
     end
 
     if ServicePCList.offMap? || ServicePCList.darchlightCaves?
-      Kernel.pbMessage(_INTL("...\1"))
+      Kernel.pbMessage(_INTL("\\se[SFX - Dialtone:60]...\1"))
       Kernel.pbMessage(_INTL("There's no response..."))
       return
     end

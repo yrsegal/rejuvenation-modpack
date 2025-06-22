@@ -402,7 +402,7 @@ class PokemonValuesPCService
 
   def access
     if ServicePCList.offMap? || ServicePCList.inRift? || inPast? || ServicePCList.darchlightCaves?
-      Kernel.pbMessage(_INTL("...\1"))
+      Kernel.pbMessage(_INTL("\\se[SFX - Dialtone:60]...\1"))
       Kernel.pbMessage(_INTL("There's no response..."))
       return
     end
@@ -419,18 +419,18 @@ class PokemonValuesPCService
 
     if $game_variables[:Post10thBadge] >= 1 && !$game_screen.pokemonvaluespc_use_gdc && !$game_screen.pokemonvaluespc_neo
       if !$game_screen.pokemonvaluespc_called_gearen_in_gdc
-        Kernel.pbMessage(_INTL("...\1"))
+        Kernel.pbMessage(_INTL("\\se[SFX - Dialtone:60]...\1"))
         Kernel.pbMessage(_INTL("\\ts[5]Hello. We are not available. Please leave your name and number-\1"))
         Kernel.pbMessage(_INTL("(You hang up. What was that about?)"))
         $game_screen.pokemonvaluespc_called_gearen_in_gdc = true
         return
       elsif $game_variables[:Post10thBadge] < 3
-        Kernel.pbMessage(_INTL("...\1"))
+        Kernel.pbMessage(_INTL("\\se[SFX - Dialtone:60]...\1"))
         Kernel.pbMessage(_INTL("\\ts[5]Hello. We are not available-\1"))
         Kernel.pbMessage(_INTL("(Still?)"))
         return
       else $game_variables[:Post10thBadge] >= 3
-        Kernel.pbMessage(_INTL("...\1"))
+        Kernel.pbMessage(_INTL("\\se[SFX - Dialtone:60]...\1"))
         Kernel.pbMessage(_INTL("\\ts[5]Hello. We are not-\1"))
         Kernel.pbMessage(_INTL("(Still no response.)"))
       end

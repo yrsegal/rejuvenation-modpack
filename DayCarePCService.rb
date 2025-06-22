@@ -92,7 +92,7 @@ class DayCarePCService
 
   def access
     if ServicePCList.offMap? || ServicePCList.inRift? || inPast? || ServicePCList.darchlightCaves?
-      Kernel.pbMessage(_INTL("...\1"))
+      Kernel.pbMessage(_INTL("\\se[SFX - Dialtone:60]...\1"))
       Kernel.pbMessage(_INTL("There's no response..."))
       return
     end

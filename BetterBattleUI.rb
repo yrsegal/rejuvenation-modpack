@@ -1432,6 +1432,11 @@ class PokeBattle_Move
       end
     end
 
+    # OK because Air Balloon informs on entry
+    if type == :GROUND && opponent.isAirborne? && opponent.hasWorkingItem(:AIRBALLOON)
+      return 0
+    end
+
     # UPDATE Implementing Flying Press + Freeze Dry
     typemod=pbTypeModifier(type,attacker,opponent, zorovar)
     typemodL= nil
