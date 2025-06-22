@@ -1,8 +1,8 @@
 def hpSummary_trueType(move, pokemon)
   type = move.type
-  if move.move == :HIDDENPOWER
+  if move.move == :HIDDENPOWER || move.move == :UNLEASHEDPOWER
     type = pbHiddenPower(pokemon)
-  elsif move.move == :REVELATIONDANCE
+  elsif move.move == :REVELATIONDANCE || move.move == :BLINDINGSPEED
     type = pokemon.type1
   elsif move.move == :MIRRORBEAM
     if !pokemon.type2.nil?
@@ -17,7 +17,9 @@ def hpSummary_trueType(move, pokemon)
       type = pokemon.type1
     end
   elsif move.move == :NATURALGIFT
-    type= !PBStuff::NATURALGIFTTYPE[pokemon.item].nil? ? PBStuff::NATURALGIFTTYPE[pokemon.item] : :NORMAL
+    type = !PBStuff::NATURALGIFTTYPE[pokemon.item].nil? ? PBStuff::NATURALGIFTTYPE[pokemon.item] : :NORMAL
+  elsif move.move == :DOMAINSHIFT
+    type = $game_switches[:RenegadeRoute] && @battle.pbOwnedByPlayer?(attacker.index) ? :SHADOW : :FAIRY
   end
 
   if ((move.move == :JUDGMENT) && (pokemon.species == :ARCEUS)) || 

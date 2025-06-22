@@ -277,7 +277,11 @@ move_tweak(:FLY,
 move_tweak(:MIRRORBEAM, type: :QMARKS)
 move_tweak(:REVELATIONDANCE, type: :QMARKS)
 move_tweak(:HIDDENPOWER, type: :QMARKS)
-
+move_tweak(:UNLEASHEDPOWER, desc: "The user unleashes their Hidden Power in whichever category will be most effective, shattering all barriers.")
+move_tweak(:BLINDINGSPEED, desc: "The user intercepts the opponent in whichever category will be most effective, drawing their allies with them.")
+move_tweak(:ELYSIANSHIELD, desc: "The user cloaks themself in the flow of Fate, making a defense of blooming hope.")
+move_tweak(:CHTHONICMALADY, desc: "The user twists the flow of Fate, withering the target's basis for being.")
+move_tweak(:DOMAINSHIFT, desc: "The user disrupts the flow of Fate, forcing the Core to redictate the field.")
 
 
 
