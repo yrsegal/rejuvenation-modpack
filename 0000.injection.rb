@@ -580,7 +580,7 @@ module InjectionHelper
   end
 
   def self.applyCommonPatches
-    $cache.RXevents.each_value { |eventid, event|
+    $cache.RXevents.each_with_index { |event, eventid|
       if COMMON_PATCHES[eventid]
         for cepatch in COMMON_PATCHES[eventid]
           cepatch.apply(event)
@@ -684,7 +684,7 @@ $PREVIOUS_APPLIED_PATCHES = [] if !defined?($PREVIOUS_APPLIED_PATCHES)
 
 # Compile after mod load
 
-class Cache_Game
+class Game_System
   alias :injectionhelper_old_initialize :initialize
 
   def initialize(*args, **kwargs)
@@ -692,7 +692,9 @@ class Cache_Game
     InjectionHelper.applyCommonPatches
     return ret
   end
+end
 
+class Cache_Game
   alias :injectionhelper_old_map_load :map_load
   def map_load(mapid)
     if @cachedmaps && $PREVIOUS_APPLIED_PATCHES.include?(mapid) && !InjectionHelper::APPLIED_PATCHES.include?(mapid)
