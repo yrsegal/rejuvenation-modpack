@@ -11,7 +11,7 @@ module MusicSignpostDisplay
 
   LIGHT_ICONS = ["Battle", "Music"]
 
-  ICONS = ["Awakening", "BadMood", "LightBattle", "Battle", "LightMusic", "Music", "Rampage", "Night"]
+  ICONS = ["Awakening", "AwakeningBase", "BadMood", "LightBattle", "Battle", "LightMusic", "Music", "Rampage", "Night"]
 
   MAPPING = {
     "Bad Mood - Club REM Part 2" => "[BadMood] Club REM (Panic)",
@@ -133,7 +133,7 @@ module MusicSignpostDisplay
     "GSC - Trouble" => "\\gsc[Music] Trouble",
     "Gym Battle Victory GS" => "\\gsc[Music] Gym Battle Victory",
     "Gym Battle Victory" => "[Music] Gym Battle Victory",
-    "Her_Awakening_1" => "[Awakening] Her Awakening",
+    "Her_Awakening_1" => "[AwakeningBase] Her Awakening",
     "Her_Awakening_2" => "[Awakening] <c3=F8C471,8a461e>Her Awakening</c3>",
     "It Changes" => "[Awakening] It Changes",
     "Keep Marching on!" => "[Music] Keep Marching On!",
