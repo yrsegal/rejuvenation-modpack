@@ -353,7 +353,7 @@ module MusicSignpostDisplay
   end
 
   def self.frameUpdate
-    @@displaybox.update if @@displaybox && @@displaybox.animated_icons.size > 0
+    @@displaybox.update if defined?(@@displaybox) && @@displaybox && @@displaybox.animated_icons.size > 0
   end
 
   def self.updateMusic(createBox=true)
@@ -474,7 +474,7 @@ module MusicSignpostDisplay
           @frame += 1
           @subframe = 0
         end
-        
+
         if @frame % 10 == 0
           refresh
           return
