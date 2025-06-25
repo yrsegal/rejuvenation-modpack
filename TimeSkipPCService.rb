@@ -124,7 +124,7 @@ class TimeSkipPCService
 
     if ServicePCList.distantTime? 
       if !$game_screen.timeskippc_distant
-        Kernel.pbMessage(celebi("Bicel cel <i>cel!</i> (Oh, this is a poor timeline...)\1"))
+        Kernel.pbMessage(celebi("Bicel cel <i>cel!</i>  (Oh, this is a poor timeline...)\1"))
         celebiSound(40, 50)
         $game_screen.timeskippc_distant = true
       end
@@ -171,11 +171,7 @@ class TimeSkipPCService
     choice = Kernel.pbMessage(celebi("Pribi! (When do you want to jump forwards to?)"), [_INTL("Morning"), _INTL("Midday"), _INTL("Nightfall"), _INTL("Midnight")], -1, nil, 0)
     if choice == -1
       celebiSound(80, 100)
-      if ServicePCList.distantTime?
-        Kernel.pbMessage(celebi("CELEBI: Priiil... (If you don't need me, I'll... just be off then.)"))
-      else 
-        Kernel.pbMessage(celebi("CELEBI: Priiil. (If you don't need me, I'll be off then!)"))
-      end
+      Kernel.pbMessage(celebi("CELEBI: Priiil. (If you don't need me, I'll be off then!)"))
       return
     elsif choice < 4
       celebiSound(80, 100)
