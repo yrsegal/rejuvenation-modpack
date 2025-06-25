@@ -109,8 +109,13 @@ class TimeSkipPCService
       return
     end
 
-    celebiSound(80, 100)
-    Kernel.pbMessage(celebi("CELEBI: Cele bii! (Hello!)\1"))
+    if ServicePCList.distantTime? 
+      celebiSound(80, 50)
+      Kernel.pbMessage(celebi("CELEBI: Cele- <i>bii...</i> (Hel- Oh.)\1"))
+    else
+      celebiSound(80, 100)
+      Kernel.pbMessage(celebi("CELEBI: Cele bii! (Hello!)\1"))
+    end
 
     if ServicePCList.darchlightCaves? && !$game_screen.timeskippc_darchlight
       Kernel.pbMessage(_INTL("(\\..\\..\\..\\. Isn't there supposed to be some kind of interference in Darchlight Caves?)\1"))
