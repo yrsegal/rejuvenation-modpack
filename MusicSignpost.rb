@@ -336,9 +336,12 @@ module MusicSignpostDisplay
     end
   end
 
-  def self.positionBox
+  def self.visibleBox
     @@displaybox.visible = !!(@@displaybox.text != '' && $game_system.playing_bgm && !@@disabled && 
       !($game_system.message_position == 0 && $game_temp.message_window_showing))
+  end
+
+  def self.positionBox
 
     @@displaybox.resizeToFit(@@displaybox.text,Graphics.width)
     # Style: bottom corner
@@ -360,6 +363,7 @@ module MusicSignpostDisplay
     return if !createBox && (!defined?(@@displaybox) || @@displaybox.contents.disposed?)
 
     ensureBox
+    visibleBox
     frameUpdate
     if $game_system.defaultBGM || $game_system.playing_bgm
       musicCurrent, animicons = msg($game_system.defaultBGM || $game_system.playing_bgm)
@@ -378,6 +382,7 @@ module MusicSignpostDisplay
         @@displaybox.text=musicCurrent
         @@displaybox.animated_icons=animicons
         positionBox
+        visibleBox
       end
     end
   end
