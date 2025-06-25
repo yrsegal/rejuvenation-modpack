@@ -7,8 +7,8 @@ class PokeBattle_Battler
 
     ret = restocking_old_pbDisposeItem(*args, **kwargs)
 
-    if itemToCheck && $PokemonBag.pbHasItem?(self.item)
-      $PokemonBag.pbDeleteItem(self.item)
+    if itemToCheck && $PokemonBag.pbQuantity(itemToCheck) > 0
+      $PokemonBag.pbDeleteItem(itemToCheck)
       self.pokemon.itemInitial = itemToCheck
     end
 
