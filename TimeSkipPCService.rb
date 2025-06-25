@@ -117,10 +117,12 @@ class TimeSkipPCService
       $game_screen.timeskippc_darchlight = true
     end
 
-    if ServicePCList.distantTime? && !$game_screen.timeskippc_distant
-      Kernel.pbMessage(celebi("Bicel cel <i>cel!</i> (Oh, this is a poor timeline...)\1"))
-      celebiSound(40, 50)
-      $game_screen.timeskippc_distant = true
+    if ServicePCList.distantTime? 
+      if !$game_screen.timeskippc_distant
+        Kernel.pbMessage(celebi("Bicel cel <i>cel!</i> (Oh, this is a poor timeline...)\1"))
+        celebiSound(40, 50)
+        $game_screen.timeskippc_distant = true
+      end
     elsif inPast? && !$game_screen.timeskippc_past
       Kernel.pbMessage(_INTL("(It makes sense that Celebi would answer even in the past...)\1"))
       $game_screen.timeskippc_past = true
@@ -136,10 +138,17 @@ class TimeSkipPCService
     end
 
     if $game_switches[:Forced_Time_of_Day]
-      celebiSound(80, 80)
-      Kernel.pbMessage(celebi("Bipri... (Looks like time's been locked in place for a bit. That happens sometimes!)\1"))
-      celebiSound(80, 100)
-      Kernel.pbMessage(celebi("Cece prici! (So I can't do much about that. I'll be off, then!)"))
+      if ServicePCList.distantTime?
+        celebiSound(80, 50)
+        Kernel.pbMessage(celebi("Bepri... (Time is all tangled up and cracked here. Might as well be locked in place.)\1"))
+        celebiSound(80, 80)
+        Kernel.pbMessage(celebi("Cepreci. (I can't do much about that. I'll just leave you be.)"))
+      else 
+        celebiSound(80, 80)
+        Kernel.pbMessage(celebi("Bipri... (Looks like time's been locked in place for a bit. That happens sometimes!)\1"))
+        celebiSound(80, 100)
+        Kernel.pbMessage(celebi("Cece prici! (So I can't do much about that. I'll be off, then!)"))
+      end
       return
     end
 
@@ -148,7 +157,11 @@ class TimeSkipPCService
     choice = Kernel.pbMessage(celebi("Pribi! (When do you want to jump forwards to?)"), [_INTL("Morning"), _INTL("Midday"), _INTL("Nightfall"), _INTL("Midnight")], -1, nil, 0)
     if choice == -1
       celebiSound(80, 100)
-      Kernel.pbMessage(celebi("CELEBI: Priiil. (If you don't need me, I'll be off then!)"))
+      if ServicePCList.distantTime?
+        Kernel.pbMessage(celebi("CELEBI: Priiil... (If you don't need me, I'll... just be off then.)"))
+      else 
+        Kernel.pbMessage(celebi("CELEBI: Priiil. (If you don't need me, I'll be off then!)"))
+      end
       return
     elsif choice < 4
       celebiSound(80, 100)
