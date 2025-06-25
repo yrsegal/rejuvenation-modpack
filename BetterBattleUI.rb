@@ -260,7 +260,7 @@ class BetterBattleUI_PokeballThrowButtonDisplay
 
   def throwBall(scene)
     ball = @display.pokeball
-    if pbIsPokeBall?(ball) && ItemHandlers.hasBattleUseOnBattler(ball)
+    if pbIsPokeBall?(ball) && ItemHandlers.hasBattleUseOnBattler(ball) && @display.canCatch(@battle)
       scene.betterBattleUI_autoselectitem = ball
       return true
     end
@@ -473,11 +473,15 @@ class PokeBattle_Scene
         cw.index=3
         update_menu=true
       elsif Input.trigger?(Input::L) # Throw Pokeball Directly
-        pbPlayDecisionSE()
-        return 1 if bw.throwBall(self)
+        if bw.throwBall(self)
+          pbPlayDecisionSE()
+          return 1 
+        end
       elsif Input.trigger?(Input::R) # Change Pokeball
-        pbPlayDecisionSE()
-        bw.changeBall(index)
+        if $PokemonBag.pockets[3].length > 1
+          pbPlayDecisionSE()
+          bw.changeBall(index)
+        end
       ### /MODDED
       elsif Input.trigger?(Input::Y)  #Show Battle Stats feature made by DemICE
         statstarget=pbStatInfo(index)
