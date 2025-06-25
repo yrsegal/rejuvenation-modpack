@@ -267,6 +267,11 @@ class BetterBattleUI_PokeballThrowButtonDisplay
     return false
   end
 
+  def changeBall(index)
+    $PokemonBag.setChoice(3, ($PokemonBag.getChoice(3) + 1) % $PokemonBag.pockets[3].length)
+    updateData(index)
+  end
+
   def x; @display.x; end
   def x=(value)
     @display.x=value
@@ -470,6 +475,9 @@ class PokeBattle_Scene
       elsif Input.trigger?(Input::L) # Throw Pokeball Directly
         pbPlayDecisionSE()
         return 1 if bw.throwBall(self)
+      elsif Input.trigger?(Input::R) # Change Pokeball
+        pbPlayDecisionSE()
+        bw.changeBall(index)
       ### /MODDED
       elsif Input.trigger?(Input::Y)  #Show Battle Stats feature made by DemICE
         statstarget=pbStatInfo(index)

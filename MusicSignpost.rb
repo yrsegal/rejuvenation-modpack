@@ -385,16 +385,14 @@ module MusicSignpostDisplay
   def self.adjustForMode(window, trackName, animicons)
     if !isDarkWindowskin(window.windowskin)
       for replacement in MusicSignpostDisplay::LIGHT_ICONS
-        if trackName.include?("[#{replacement}]")
-          icon = "Light#{replacement}"
-          trackName.gsub!("<img=#{pbResolveBitmap("Data/Mods/MusicTypes/#{replacement}")}>", 
-            "<img=#{pbResolveBitmap("Data/Mods/MusicTypes/#{icon}")}>")
-          if MusicSignpostDisplay::ANIM_ICONS.include?(replacement)
-            animicons.delete(replacement)
-          end
-          if MusicSignpostDisplay::ANIM_ICONS.include?(icon)
-            animicons.push(icon) unless animicons.include?(icon)
-          end
+        icon = "Light#{replacement}"
+        trackName.gsub!("<img=#{pbResolveBitmap("Data/Mods/MusicTypes/#{replacement}")}>", 
+          "<img=#{pbResolveBitmap("Data/Mods/MusicTypes/#{icon}")}>")
+        if MusicSignpostDisplay::ANIM_ICONS.include?(replacement)
+          animicons.delete(replacement)
+        end
+        if MusicSignpostDisplay::ANIM_ICONS.include?(icon)
+          animicons.push(icon) unless animicons.include?(icon)
         end
       end
     end
