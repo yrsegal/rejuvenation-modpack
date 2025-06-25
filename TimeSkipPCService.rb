@@ -150,18 +150,19 @@ class TimeSkipPCService
       $game_screen.timeskippc_used = true
     end
 
+    if ServicePCList.distantTime?
+      celebiSound(80, 50)
+      Kernel.pbMessage(celebi("Bepri... (Time is all tangled up and cracked here. Might as well be locked in place.)\1"))
+      celebiSound(80, 80)
+      Kernel.pbMessage(celebi("Cepreci. (I can't do much about that. I'll just leave you be.)"))
+      return
+    end
+
     if $game_switches[:Forced_Time_of_Day]
-      if ServicePCList.distantTime?
-        celebiSound(80, 50)
-        Kernel.pbMessage(celebi("Bepri... (Time is all tangled up and cracked here. Might as well be locked in place.)\1"))
-        celebiSound(80, 80)
-        Kernel.pbMessage(celebi("Cepreci. (I can't do much about that. I'll just leave you be.)"))
-      else 
-        celebiSound(80, 80)
-        Kernel.pbMessage(celebi("Bipri... (Looks like time's been locked in place for a bit. That happens sometimes!)\1"))
-        celebiSound(80, 100)
-        Kernel.pbMessage(celebi("Cece prici! (So I can't do much about that. I'll be off, then!)"))
-      end
+      celebiSound(80, 80)
+      Kernel.pbMessage(celebi("Bipri... (Looks like time's been locked in place for a bit. That happens sometimes!)\1"))
+      celebiSound(80, 100)
+      Kernel.pbMessage(celebi("Cece prici! (So I can't do much about that. I'll be off, then!)"))
       return
     end
 
