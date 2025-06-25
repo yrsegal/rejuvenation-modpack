@@ -134,11 +134,19 @@ class TimeSkipPCService
     end
 
     if !$game_screen.timeskippc_used
-      celebiSound(80, 100)
-      Kernel.pbMessage(celebi("Bici lee cel ebi. (I can help you control the flow of time.)\1"))
-      celebiSound(80, 100)
-      Kernel.pbMessage(celebi("Ceeeeeeeeeeeeeeel. (Call me anytime! Time travelers have all the time in the world.)\1"))
-      Kernel.pbMessage(_INTL("(\\..\\..\\..\\.Wait.\\| You understood that?!)\1"))
+      if ServicePCList.distantTime? 
+        celebiSound(80, 50)
+        Kernel.pbMessage(celebi("Lici lee cel ebi. (Normally, I would help you control the flow of time.)\1"))
+        celebiSound(80, 50)
+        Kernel.pbMessage(celebi("Ebi ceeeel. (You can call me whenever you want... I've got time to spare.)\1"))
+        Kernel.pbMessage(_INTL("(Somehow, you understood that...)\1"))
+      else
+        celebiSound(80, 100)
+        Kernel.pbMessage(celebi("Bici lee cel ebi. (I can help you control the flow of time.)\1"))
+        celebiSound(80, 100)
+        Kernel.pbMessage(celebi("Ceeeeeeeeeeeeeeel. (Call me anytime! Time travelers have all the time in the world.)\1"))
+        Kernel.pbMessage(_INTL("(\\..\\..\\..\\.Wait.\\| You understood that?!)\1"))
+      end
       $game_screen.timeskippc_used = true
     end
 
