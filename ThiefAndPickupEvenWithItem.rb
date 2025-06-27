@@ -40,7 +40,7 @@ class PokeBattle_Battler
     end
 
     tochange = nil
-    if user.ability == :MAGICIAN
+    if user.ability == :MAGICIAN && !@battle.opponent && !@battle.pbIsOpposing?(target.index)
       tochange = user
     elsif target.ability == :PICKPOCKET && !@battle.opponent && !@battle.pbIsOpposing?(target.index)
       tochange = target
