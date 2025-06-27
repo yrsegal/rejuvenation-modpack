@@ -18,6 +18,7 @@ class Game_Screen
   attr_accessor :genderpc_doneSwap
   attr_accessor :genderpc_triedToFeed
   attr_accessor :genderpc_angy
+  attr_accessor :genderpc_delpha
 end
 
 class GenderPCService
@@ -101,6 +102,10 @@ class GenderPCService
     return "male" if $game_switches[:Aevis] || $game_switches[:Axel] || $game_switches[:Alain] # She assumed Alain was female during ToTH
     return "female" if $game_switches[:Aevia] || $game_switches[:Ariana] || $game_switches[:Aero] # She assumed Aero was male during ToTH
     return "nonbinary" # Shouldn't be possible without debug
+  end
+
+  def delpha(pkmn)
+    return pkmn.species == :DELPHOX && pkmn.form == 1
   end
 
   def access
@@ -198,7 +203,7 @@ class GenderPCService
         if subChoice == 0
           result = 0
           while result != -1
-            pbChoosePokemon(1,3,proc{|p| !p.isEgg? && p.gender != 2 && !CANNOT_SWAP_RATIOS.include?($cache.pkmn[p.species].GenderRatio) },true)
+            pbChoosePokemon(1,3,proc{|p| !p.isEgg? && !(p.isShadow? rescue false) && p.gender != 2 && !delpha(p) && !CANNOT_SWAP_RATIOS.include?($cache.pkmn[p.species].GenderRatio) },true)
             result = pbGet(1)
             if result != -1
               pkmn = $Trainer.party[result]
@@ -212,6 +217,20 @@ class GenderPCService
                   Kernel.pbMessage(confused("ODESSA: Do {1} even have a gender?", getMonName(pkmn.species)))
                   next
                 end
+
+                if delpha(pkmn)
+                  if $game_screen.genderpc_delpha
+                    Kernel.pbMessage(angry("ODESSA: She already refused, \\PN. That <i>will</i> be that."))
+                  else
+                    Kernel.pbMessage(confused("ODESSA: Uh. This {1} can... talk? And she's objecting. Strenuously.\1", getMonName(pkmn.species)))
+                    ServicePCList.playerTalk
+                    ServicePCList.exclaimSound
+                    Kernel.pbMessage(blush("Ah. A history with mind controllers? That makes sense. My apologies, {1}.", pkmn.name))
+                    $game_screen.genderpc_delpha = true
+                  end
+                  next
+                end
+
 
                 case $cache.pkmn[pkmn.species].GenderRatio
                   when :Genderless
