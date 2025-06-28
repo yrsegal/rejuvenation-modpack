@@ -133,10 +133,10 @@ module DarkAnaCutscene
     22 => 20,
     24 => {
       0 => ["ANA: An elevator? I could take it...",
-        "But I can't risk leaving Melia behind."]
+        "But that would risk leaving Melia behind."]
     },
     26 => {
-      0 => ["ANA: And of course it's broken <i>too.</i>"],
+      0 => ["ANA: And of course <i>it's</i> broken too."],
       -8 => ["ANA: Ah! It moved!"]
     },
     29 => {
