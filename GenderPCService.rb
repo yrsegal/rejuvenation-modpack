@@ -184,6 +184,12 @@ class GenderPCService
       Kernel.pbMessage(odessa("So, that being said...\1"))
       $game_screen.genderpc_used = true
     else
+      if odessaAngy
+        Kernel.pbMessage(angry("ODESSA: ...\1"))
+        Kernel.pbMessage(_INTL("(She hung up?)"))
+        $game_screen.genderpc_angy = true
+        return
+      end
       Kernel.pbMessage(odessa("ODESSA: Hello, \\PN. How are you?\1"))
       manaphySound
       Kernel.pbMessage(manaphy("MANAPHY: Mana!\1"))
