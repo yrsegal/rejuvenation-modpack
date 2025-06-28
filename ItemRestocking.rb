@@ -1,21 +1,15 @@
-class PokeBattle_Battler
+class PokeBattle_Battle
+  alias :restocking_old_pbEndOfBattle :pbEndOfBattle
 
-  attr_accessor :restocking_consumedItem
-
-  alias :restocking_old_pbDisposeItem :pbDisposeItem
-
-  def pbDisposeItem(*args, **kwargs)
-    itemToCheck = self.item
-    itemToCheck = nil if itemToCheck != self.pokemon.itemInitial
-
-    ret = restocking_old_pbDisposeItem(*args, **kwargs)
-
-    if itemToCheck && (restocking_consumedItem == itemToCheck || $PokemonBag.pbQuantity(itemToCheck) > 0)
-      $PokemonBag.pbDeleteItem(itemToCheck) unless restocking_consumedItem
-      restocking_consumedItem = true
-      self.pokemon.itemInitial = itemToCheck
+  def pbEndOfBattle(*args, **kwargs)
+    for i in $Trainer.party
+      itemToCheck = i.itemReallyInitialHonestlyIMeanItThisTime
+      if !itemToCheck.nil? && $PokemonBag.pbQuantity(itemToCheck) > 0 && i.itemInitial.nil?
+        $PokemonBag.pbDeleteItem(itemToCheck)
+        i.itemInitial = itemToCheck
+      end
     end
-
-    return ret
+    return restocking_old_pbEndOfBattle(*args, **kwargs)
   end
+
 end
