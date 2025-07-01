@@ -35,6 +35,7 @@ end
 
 $cache.items[:BALMMUSHROOM].flags[:justsell] = true
 $cache.items[:AMPLIFIELDROCK].flags[:battlehold] = true
+$cache.items[:BELLMCHN].flags[:keyitem] = true
 
 for rod in [:OLDROD, :GOODROD, :SUPERROD]
   $cache.items[rod].flags[:important] = true
