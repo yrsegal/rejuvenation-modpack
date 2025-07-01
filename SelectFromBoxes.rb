@@ -40,7 +40,7 @@ alias :selectfromboxes_old_pbChoosePokemon :pbChoosePokemon
 
 def pbChoosePokemon(variableNumber,nameVarNumber,ableProc=nil,allowIneligible=false,giveAway=false,*args,
   ### MODDED/
-  selectfromboxes_commandText: "Select", selectfromboxes_partyOpen: false, 
+  selectfromboxes_commandText: "Select", selectfromboxes_partyOpen: ableProc.nil?, 
   selectfromboxes_tutorPartialAble: nil, selectfromboxes_tutorMove: nil, **kwargs)
 
   if Rejuv && $game_switches[:NotPlayerCharacter] && !$game_switches[:InterceptorsWish]

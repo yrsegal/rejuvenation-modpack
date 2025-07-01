@@ -157,7 +157,7 @@ def relearnerService_relearnerConversation(evt, sister)
       subchoice = 0
       Kernel.pbMessage(_I("Which Pokemon needs tutoring?"))
       while subchoice >= 0
-        pbChoosePokemon(1,3,proc{|p| pbHasRelearnableMove?(p)},true)
+        pbChoosePokemon(1,3,proc{|p| !p.isEgg? && !(p.isShadow? rescue false) && pbHasRelearnableMove?(p)},true)
         subchoice = pbGet(1)
         if subchoice < 0
           if noScaleNeeded
@@ -208,7 +208,7 @@ def relearnerService_relearnerConversation(evt, sister)
       window.dispose
       Kernel.pbMessage(_I("Which Pokemon needs to forget a move?"))
       while subchoice >= 0
-        pbChoosePokemon(1,3,proc{|p| pbHasRelearnableMove?(p)},true)
+        pbChoosePokemon(1,3,proc{|p| !p.isEgg? && !(p.isShadow? rescue false) && p.moves.length > 1},true)
         subchoice = pbGet(1)
         if subchoice < 0
           Kernel.pbMessage(_I("Come back any time!"))
@@ -239,7 +239,7 @@ def relearnerService_relearnerConversation(evt, sister)
       subchoice = 0
       Kernel.pbMessage(_I("Which Pokemon needs tutoring?"))
       while subchoice >= 0
-        pbChoosePokemon(1,3,proc{|p| moverelearnerpc_getEggMoveList(p).size > 0},true)
+        pbChoosePokemon(1,3,proc{|p| !p.isEgg? && !(p.isShadow? rescue false) && moverelearnerpc_getEggMoveList(p).size > 0},true)
         subchoice = pbGet(1)
         if subchoice < 0
           if noScaleNeeded
@@ -405,7 +405,7 @@ class RelearnerPCService
       Kernel.pbMessage(relearner("Which Pokemon needs tutoring?"))
 
       loop do
-        pbChoosePokemon(1,3,proc{|p| pbHasRelearnableMove?(p)},true)
+        pbChoosePokemon(1,3,proc{|p| !p.isEgg? && !(p.isShadow? rescue false) && pbHasRelearnableMove?(p)},true)
         result = pbGet(1)
         if result < 0
           Kernel.pbMessage(relearner("BRIE: Ah, okay. Changed your mind?\1"))
@@ -453,7 +453,7 @@ class RelearnerPCService
       Kernel.pbMessage(sister("SAMANTHA: Which Pokemon needs to forget a move?"))
 
       loop do
-        pbChoosePokemon(1,3)
+        pbChoosePokemon(1,3,proc{|p| !p.isEgg? && !(p.isShadow? rescue false) && p.moves.length > 1},true)
         result = pbGet(1)
         if result < 0
           Kernel.pbMessage(sister("SAMANTHA: Changed your mind? That's fine.\1"))
@@ -498,7 +498,7 @@ class RelearnerPCService
       Kernel.pbMessage(relearner("Which Pokemon needs tutoring?"))
 
       loop do
-        pbChoosePokemon(1,3,proc{|p| moverelearnerpc_getEggMoveList(p).size > 0},true)
+        pbChoosePokemon(1,3,proc{|p| !p.isEgg? && !(p.isShadow? rescue false) && moverelearnerpc_getEggMoveList(p).size > 0},true)
         result = pbGet(1)
         if result < 0
           Kernel.pbMessage(relearner("BRIE: Ah, okay. Changed your mind?\1"))
