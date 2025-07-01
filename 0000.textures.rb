@@ -39,6 +39,7 @@ module TextureOverrides
     TextureOverrides::ICONS + "gathercube" => TextureOverrides::MOD + "ItemReplace/ZygardeCube",
     TextureOverrides::ICONS + "puzzlebox" => TextureOverrides::MOD + "ItemReplace/PuzzleBox",
     TextureOverrides::ICONS + "ancientbook" => TextureOverrides::MOD + "ItemReplace/AncientBook",
+    TextureOverrides::ICONS + "bikev" => TextureOverrides::MOD + "ItemReplace/BikeVoucher",
 
   }
 
