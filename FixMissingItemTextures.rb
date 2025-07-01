@@ -40,4 +40,6 @@ TextureOverrides.registerTextureOverrides({
   TextureOverrides::ICONS + "puzzlebox" => $ITEM_REPLACE_FOLDER + "PuzzleBox",
   TextureOverrides::ICONS + "ancientbook" => $ITEM_REPLACE_FOLDER + "AncientBook",
   TextureOverrides::ICONS + "bikev" => $ITEM_REPLACE_FOLDER + "BikeVoucher",
+  TextureOverrides::ICONS + "interceptorwish" => $ITEM_REPLACE_FOLDER + "InterceptorWish",
+  TextureOverrides::ICONS + "emotionpowder" => $ITEM_REPLACE_FOLDER + "EmotionPowder",
 })
