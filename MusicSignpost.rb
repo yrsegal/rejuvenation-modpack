@@ -73,7 +73,7 @@ module MusicSignpostDisplay
     "Cryptic Feelings" => "[Music] Cryptic Feelings",
     "Evolution" => "[Music] Evolution",
     "Feeling - Amazing" => "[Music] Feeling - Amazing",
-    "Feeling - Attacked Part 2" => "[Music] Feeling - Attacked II",
+    "Feeling - Attacked Part 2" => "[Music] Feeling - Attacked!",
     "Feeling - Attacked" => "[Music] Feeling - Attacked",
     "Feeling - Conflict" => "[Music] Feeling - Conflict",
     "Feeling - Dark and Sinister" => "[Music] Feeling - Dark and Sinister",

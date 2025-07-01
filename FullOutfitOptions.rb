@@ -203,6 +203,22 @@ def outfitoptions_override_outfit_choice(event)
   }
 end
 
+def outfitoptions_restore_sprite(event)
+  insns = event.list
+  InjectionHelper.patch(insns, :outfitoptions_restore_sprite) {
+    matched = InjectionHelper.lookForSequence(insns,
+      [:Script, 'characterRestore'])
+
+    if matched
+      insns.insert(insns.index(matched) + 1, 
+        *InjectionHelper.parseEventCommands(
+          [:Script, '$game_player.character_name=pbGetPlayerCharset(:walk)'],
+          baseIndent: matched.indent))
+    end
+    next matched
+  }
+end
+
 
 # Clothing select
 
@@ -276,6 +292,9 @@ end
 
 InjectionHelper.defineCommonPatch(29) { |event| # Player Dupe
   outfitoptions_injectBeforeOutfit0(event, 0, [4], false)
+}
+InjectionHelper.defineCommonPatch(32) { |event| # Change Back player
+  outfitoptions_restore_sprite(event)
 }
 InjectionHelper.defineCommonPatch(81) { |event| # Player Dupe 2
   outfitoptions_injectBeforeOutfit0(event, 2, [4], false)

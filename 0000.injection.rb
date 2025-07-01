@@ -581,14 +581,18 @@ module InjectionHelper
 
   def self.applyCommonPatches
     $cache.RXevents.each_with_index { |event, eventid|
-      if COMMON_PATCHES[eventid]
-        for cepatch in COMMON_PATCHES[eventid]
-          cepatch.apply(event)
+      if event.is_a?(RPG::CommonEvent)
+        event.injectionhelper_restore_list
+
+        if COMMON_PATCHES[eventid]
+          for cepatch in COMMON_PATCHES[eventid]
+            cepatch.apply(event)
+          end
         end
-      end
-      if COMMON_PATCHES[-1]
-        for cepatch in COMMON_PATCHES[-1]
-          cepatch.apply(event)
+        if COMMON_PATCHES[-1]
+          for cepatch in COMMON_PATCHES[-1]
+            cepatch.apply(event)
+          end
         end
       end
     }
@@ -681,6 +685,26 @@ module InjectionHelper
 end
 
 $PREVIOUS_APPLIED_PATCHES = [] if !defined?($PREVIOUS_APPLIED_PATCHES)
+
+# Restore common events from original source
+
+module RPG
+  class CommonEvent
+    attr_accessor :injectionhelper_original_list
+
+    def injectionhelper_restore_list
+      unless injectionhelper_original_list
+        injectionhelper_original_list = list
+      end
+
+      list = []
+
+      for insn in injectionhelper_original_list
+        list.push(RPG::EventCommand.new(insn.code, insn.indent, insn.parameters.clone))
+      end
+    end
+  end
+end
 
 # Compile after mod load
 
