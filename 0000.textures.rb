@@ -29,18 +29,9 @@ module TextureOverrides
     TextureOverrides::BATTLEICON + 'BEASTBALL_open' => TextureOverrides::MOD + 'Pokeballs/BeastBallOpen',
 
     # Fix typos
-    TextureOverrides::ICONS + "datachip" => TextureOverrides::ICONS + "datad",
     TextureOverrides::ICONS + "jynnobikey" => TextureOverrides::ICONS + "lightkey",
     TextureOverrides::ICONS + "blackshard2" => TextureOverrides::ICONS + "blackshard",
     TextureOverrides::ICONS + "blkapricorn" => TextureOverrides::ICONS + "blackapricorn",
-
-    TextureOverrides::ICONS + "magstone" => TextureOverrides::MOD + "ItemReplace/EarthHeart",
-    TextureOverrides::ICONS + "megaring" => TextureOverrides::MOD + "ItemReplace/MegaZRing",
-    TextureOverrides::ICONS + "gathercube" => TextureOverrides::MOD + "ItemReplace/ZygardeCube",
-    TextureOverrides::ICONS + "puzzlebox" => TextureOverrides::MOD + "ItemReplace/PuzzleBox",
-    TextureOverrides::ICONS + "ancientbook" => TextureOverrides::MOD + "ItemReplace/AncientBook",
-    TextureOverrides::ICONS + "bikev" => TextureOverrides::MOD + "ItemReplace/BikeVoucher",
-
   }
 
 

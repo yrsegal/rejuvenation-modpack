@@ -1,5 +1,6 @@
 
 $MISSING_TEXTURE_FOLDER = TextureOverrides::MOD + "MissingTextures/"
+$ITEM_REPLACE_FOLDER = TextureOverrides::MOD + "ItemReplace/"
 
 # Based on Caruban's gen 9 compilation
 TextureOverrides.registerTextureOverrides({
@@ -29,5 +30,14 @@ TextureOverrides.registerTextureOverrides({
   TextureOverrides::ICONS + "concerttck" => $MISSING_TEXTURE_FOLDER + "ConcertTickets",
   TextureOverrides::ICONS + "robocloak" => $MISSING_TEXTURE_FOLDER + "RoboRensCloak",
   TextureOverrides::ICONS + "masterkey" => $MISSING_TEXTURE_FOLDER + "MasterKey",
-  TextureOverrides::ICONS + "bellmchn" => $MISSING_TEXTURE_FOLDER + "bellmachine"
+  TextureOverrides::ICONS + "bellmchn" => $MISSING_TEXTURE_FOLDER + "BellMachine",
+  TextureOverrides::ICONS + "datachip" => $MISSING_TEXTURE_FOLDER + "DataDrive",
+
+
+  TextureOverrides::ICONS + "magstone" => $ITEM_REPLACE_FOLDER + "EarthHeart",
+  TextureOverrides::ICONS + "megaring" => $ITEM_REPLACE_FOLDER + "MegaZRing",
+  TextureOverrides::ICONS + "gathercube" => $ITEM_REPLACE_FOLDER + "ZygardeCube",
+  TextureOverrides::ICONS + "puzzlebox" => $ITEM_REPLACE_FOLDER + "PuzzleBox",
+  TextureOverrides::ICONS + "ancientbook" => $ITEM_REPLACE_FOLDER + "AncientBook",
+  TextureOverrides::ICONS + "bikev" => $ITEM_REPLACE_FOLDER + "BikeVoucher",
 })
