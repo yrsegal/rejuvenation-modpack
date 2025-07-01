@@ -450,7 +450,7 @@ module DarkAnaCutscene
         "MELIA: ...",
         "I'll come back for you.",
         "I promise I will.",
-        "ANA: Then \\|<i>I</i> \\|will be waiting.",
+        "ANA: Then \\.<i>I</i> \\.\\.will be waiting.",
         "It's your turn to carry our hope, got it?",
         "Now go, Melia.",
         "With \\PN, go and make a new path for all of us.",
