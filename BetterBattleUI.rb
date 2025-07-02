@@ -347,8 +347,8 @@ class BetterBattleUI_PokeballThrowButton < BitmapSprite
   def updateData(index, battle)
     @index = index
 
-    ball = $PokemonBag.pockets[3][$PokemonBag.getChoice(3)] || :POKEBALL # Pokeballs
-    if pbIsPokeBall?(ball) && (ball != @pokeball || !@pokeballbitmap)
+    ball = $PokemonBag.pockets[3][$PokemonBag.getChoice(3)] || $PokemonBag.pockets[3][0]  # Pokeballs
+    if !ball.nil? && pbIsPokeBall?(ball) && (ball != @pokeball || !@pokeballbitmap)
       @pokeball = ball
       @pokeballbitmap = AnimatedBitmap.new(sprintf("Graphics/Icons/" + @pokeball.to_s.downcase))
     end

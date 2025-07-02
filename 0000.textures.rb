@@ -1,6 +1,7 @@
 module TextureOverrides
   MOD = 'Data/Mods/TextureOverrides/'
   SERVICE = 'Data/Mods/ServiceIcons/'
+  SKINS = 'Data/Mods/Windowskins/'
   NPCICONS = 'Graphics/Pictures/'
   MAP = 'Graphics/Pictures/RegionMap/'
   SUMMARY = 'Graphics/Pictures/Summary/'
@@ -27,6 +28,10 @@ module TextureOverrides
     TextureOverrides::SUMMARY + 'summaryballBEASTBALL' => TextureOverrides::MOD + 'Pokeballs/BeastBallSummary',
     TextureOverrides::BATTLEICON + 'BEASTBALL' => TextureOverrides::MOD + 'Pokeballs/BeastBallThrow',
     TextureOverrides::BATTLEICON + 'BEASTBALL_open' => TextureOverrides::MOD + 'Pokeballs/BeastBallOpen',
+    # Fix some misshappen/miscolored summary sprites
+    TextureOverrides::SUMMARY + 'summaryballMINERALBALL' => TextureOverrides::MOD + 'Pokeballs/MineralBallSummary',
+    TextureOverrides::SUMMARY + 'summaryballNETBALL' => TextureOverrides::MOD + 'Pokeballs/NetBallSummary',
+    TextureOverrides::SUMMARY + 'summaryballSTEAMBALL' => TextureOverrides::MOD + 'Pokeballs/SteamBallSummary',
 
     # Fix typos
     TextureOverrides::ICONS + "jynnobikey" => TextureOverrides::ICONS + "lightkey",

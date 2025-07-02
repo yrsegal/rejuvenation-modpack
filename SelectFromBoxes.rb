@@ -255,13 +255,13 @@ class Selectfromboxes_PokemonStorageScreen < PokemonStorageScreen
   end
 end
 
-def selectfromboxes_tone(pokemon, ableProc, tutorPartialAble)
+def selectfromboxes_tone(prevtone, pokemon, ableProc, tutorPartialAble)
   if tutorPartialAble && tutorPartialAble.call(pokemon)
-    return Tone.new(0, 0, -128)
+    return Tone.new(0, 0, -128, prevtone.gray)
   elsif ableProc && !ableProc.call(pokemon)
     return Tone.new(0, 0, 0, 255)
   else
-    return Tone.new(0, 0, 0)
+    return Tone.new(0, 0, 0, prevtone.gray)
   end
 end
 
@@ -450,7 +450,7 @@ class Selectfromboxes_PokemonBoxPartySprite < PokemonBoxPartySprite
         if @pokemonsprites[i] && !@pokemonsprites[i].disposed?
           pokemon = @party[i]
           if pokemon
-            @pokemonsprites[i].tone = selectfromboxes_tone(pokemon, ableProc, tutorPartialAble)
+            @pokemonsprites[i].tone = selectfromboxes_tone(@pokemonsprites[i].tone, pokemon, ableProc, tutorPartialAble)
           end
         end
       end
@@ -480,7 +480,7 @@ class Selectfromboxes_PokemonBoxSprite < PokemonBoxSprite
         if @pokemonsprites[i] && !@pokemonsprites[i].disposed?
           pokemon = @storage[@boxnumber,i]
           if pokemon
-            @pokemonsprites[i].tone = selectfromboxes_tone(pokemon, ableProc, tutorPartialAble)
+            @pokemonsprites[i].tone = selectfromboxes_tone(@pokemonsprites[i].tone, pokemon, ableProc, tutorPartialAble)
           end
         end
       end

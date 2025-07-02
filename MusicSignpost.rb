@@ -1,8 +1,7 @@
 
-
 TextureOverrides.registerTextureOverrides({
-  TextureOverrides::SPEECH + "choice 34" => $MISSING_TEXTURE_FOLDER + "choice 34",
-  TextureOverrides::SPEECH + "choice rse" => $MISSING_TEXTURE_FOLDER + "choice rse"
+  TextureOverrides::SPEECH + "choice 34" => TextureOverrides::SKINS + "choice 34",
+  TextureOverrides::SPEECH + "choice rse" => TextureOverrides::SKINS + "choice rse"
 })
 
 module MusicSignpostDisplay

@@ -8,6 +8,8 @@ Libraries:
   Supports code injection mods.
 - 0000.textures.rb  
   A framework for texture overrides, which also includes a couple misc overrides.
+- 0001.boundedentry.rb (depends on 0000.textures.rb)  
+  Adds "bounded" text entries, which allow you to choose from a preexisting set.
 - 0001.pcservices.rb (depends on 0000.textures.rb)  
   Adds a "service directory" to the PC, which lets you call NPCs for various services. Also makes the Rotom Phone a Remote PC.
 
@@ -75,6 +77,8 @@ QoL mods:
   Show types and stat boosts visually in battle. In addition:  
   Hitting the "back" button when selecting a command in battle will move your cursor over "Run". 
   There's a keybind for Q (which is L) in wild battle to throw the last ball you've used.
+- BoxExtensions.rb (depends on 0001.boundedentry.rb)  
+  Expand the "Find" functionality of Pokemon boxes, and make Pokéballs visible from the box.
 - CleanerPrismPower.rb  
   Makes a Rejuvenation-exclusive ability cleaner.
 - DeleteEndWaits.rb (depends on 0000.injection.rb)  
