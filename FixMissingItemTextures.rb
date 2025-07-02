@@ -42,4 +42,5 @@ TextureOverrides.registerTextureOverrides({
   TextureOverrides::ICONS + "bikev" => $ITEM_REPLACE_FOLDER + "BikeVoucher",
   TextureOverrides::ICONS + "interceptorwish" => $ITEM_REPLACE_FOLDER + "InterceptorWish",
   TextureOverrides::ICONS + "emotionpowder" => $ITEM_REPLACE_FOLDER + "EmotionPowder",
+  TextureOverrides::ICONS + "achievementcard" => $ITEM_REPLACE_FOLDER + "AchievementCard",
 })
