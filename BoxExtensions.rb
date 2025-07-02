@@ -49,7 +49,7 @@ module BoxExtensions
     end
 
     def filter(screen, pkmn, params)
-      screen.pbNameContains(pkmn.name.downcase, params)
+      !pkmn.isEgg? && screen.pbNameContains(pkmn.name.downcase, params)
     end
   end
 
@@ -77,7 +77,7 @@ module BoxExtensions
     end
 
     def filter(screen, pkmn, params)
-      pkmn.item == params
+      !pkmn.isEgg? && pkmn.item == params
     end
   end
 
@@ -91,7 +91,7 @@ module BoxExtensions
     end
 
     def filter(screen, pkmn, params)
-      pkmn.ability == params
+      !pkmn.isEgg? && pkmn.ability == params
     end
   end
 
@@ -123,7 +123,7 @@ module BoxExtensions
     end
 
     def filter(screen, pkmn, params)
-      pkmn.moves.any? { |mv| mv.move == params }
+      !pkmn.isEgg? && pkmn.moves.any? { |mv| mv.move == params }
     end
   end
 end
