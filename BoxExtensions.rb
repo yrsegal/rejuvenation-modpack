@@ -164,6 +164,17 @@ class PokemonBoxSprite
       end
     end
   end
+
+  alias :boxextensions_old_grabPokemon :grabPokemon
+
+  def grabPokemon(index,arrow)
+    for sprite in @pokemonsprites
+      if sprite
+        sprite.tone = Tone.new(0,0,0)
+      end
+    end
+    return boxextensions_old_grabPokemon(index,arrow)
+  end
 end
 
 class PokemonStorageScreen
