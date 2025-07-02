@@ -105,8 +105,11 @@ module BoxExtensions
     end
 
     def filter(screen, pkmn, params)
+      if params.length == 2
+        return pkmn.type1 == params[0] && pkmn.type2.nil? if params[0] == params[1]
+        return (pkmn.type1 == params[0] && pkmn.type2 == params[1]) || (pkmn.type2 == params[0] && pkmn.type1 == params[1]) 
+      end
       return pkmn.type1 == params[0] || pkmn.type2 == params[0] if params.length == 1
-      return (pkmn.type1 == params[0] && pkmn.type2 == params[1]) || (pkmn.type2 == params[0] && pkmn.type1 == params[1]) if params.length == 2
     end
   end
 

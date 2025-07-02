@@ -242,6 +242,9 @@ class PokemonTypeReel < BitmapSprite
     super(68,32,@viewport)
     @reel=[]
     @reel.push(nil) if allownil
+    for type in $cache.types.keys
+      @reel.push(type) if type != :QMARKS && type != :SHADOW
+    end
     @reel.push(*$cache.types.keys)
     @icons=@reel.map { |type| 
       next AnimatedBitmap.new("Data/Mods/BoxExtensions/TypeBlank") unless type
@@ -348,7 +351,7 @@ class PokemonTypeSelectionScreen
         type1 = @sprites["type1"].selected
         type2 = @sprites["type2"].selected
         ret = [type1]
-        ret.push(type2) if type2 && type2 != type1
+        ret.push(type2) if type2
         break
       elsif Input.triggerex?(:LEFT) || Input.repeatex?(:LEFT) || Input.triggerex?(:RIGHT) || Input.repeatex?(:RIGHT)
         @sprites["type1"].toggleSelect
