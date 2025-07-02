@@ -126,6 +126,40 @@ module BoxExtensions
       !pkmn.isEgg? && pkmn.moves.any? { |mv| mv.move == params }
     end
   end
+
+  class CanLearnMoveSearchType
+    def name
+      _INTL("Learns Move")
+    end
+
+    def gatherParameters(screen)
+      boundedentry_textEntry("Name of the move?", SearchTypes.gather { |p| 
+        compats = p.formCheck(:compatiblemoves)
+        compats = $cache.pkmn[p.species].compatiblemoves if !compats
+        exceptions = p.formCheck(:moveexceptions)
+        exceptions = $cache.pkmn[p.species].moveexceptions if !exceptions
+        eggmoves = p.getEggMoveList
+        learnset = p.getMoveList.map { |it| it[1] }
+        next compats + (PBStuff::UNIVERSALTMS - exceptions) + eggmoves + learnset
+      }, &method(:getMoveName))
+    end
+
+    def filter(screen, pkmn, params)
+      return false if pkmn.isEgg?
+      compats = pkmn.formCheck(:compatiblemoves)
+      compats = $cache.pkmn[pkmn.species].compatiblemoves if !compats
+      return true if compats.include?(params)
+      exceptions = pkmn.formCheck(:moveexceptions)
+      exceptions = $cache.pkmn[pkmn.species].moveexceptions if !exceptions
+      return true if PBStuff::UNIVERSALTMS.include?(params) && !exceptions.include?(params)
+      eggmoves = pkmn.getEggMoveList
+      return true if eggmoves.include?(params)
+      pbEachNaturalMove(pkmn) { |mv, lv|
+        return true if mv == params
+      }
+      return false
+    end
+  end
 end
 
 class PokemonStorageScene
@@ -243,3 +277,4 @@ BoxExtensions::SearchTypes.registerType(BoxExtensions::ItemSearchType.new)
 BoxExtensions::SearchTypes.registerType(BoxExtensions::AbilitySearchType.new)
 BoxExtensions::SearchTypes.registerType(BoxExtensions::TypeSearchType.new)
 BoxExtensions::SearchTypes.registerType(BoxExtensions::MoveSearchType.new)
+BoxExtensions::SearchTypes.registerType(BoxExtensions::CanLearnMoveSearchType.new)
