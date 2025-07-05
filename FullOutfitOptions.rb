@@ -293,18 +293,12 @@ end
 InjectionHelper.defineCommonPatch(29) { |event| # Player Dupe
   outfitoptions_injectBeforeOutfit0(event, 0, [4], false)
 }
-InjectionHelper.defineCommonPatch(32) { |event| # Change Back player
-  outfitoptions_restore_sprite(event)
-}
+InjectionHelper.defineCommonPatch(32, &method(:outfitoptions_restore_sprite)) # Change Back player
 InjectionHelper.defineCommonPatch(81) { |event| # Player Dupe 2
   outfitoptions_injectBeforeOutfit0(event, 2, [4], false)
 }
-InjectionHelper.defineCommonPatch(131) { |event| # Outfit Management
-  outfitoptions_patch_outfit_management(event)
-}
-InjectionHelper.defineCommonPatch(133) { |event| # Choose Outfit
-  outfitoptions_override_outfit_choice(event)
-}
+InjectionHelper.defineCommonPatch(131, &method(:outfitoptions_patch_outfit_management)) # Outfit Management
+InjectionHelper.defineCommonPatch(133, &method(:outfitoptions_override_outfit_choice)) # Choose Outfit
 
 InjectionHelper.defineMapPatch(53) { |map| # I Nightmare Realm
   # Mirror match
@@ -331,10 +325,6 @@ InjectionHelper.defineMapPatch(57) { |map| # Land of Broken Dreams
   outfitoptions_set_icep_outfit_fight(map.events[103])
 }
 
-InjectionHelper.defineMapPatch(495, 78) { |event| # Decompression Lab, Elevator
-  outfitoptions_replace_outfits_with_darchflag(event)
-}
+InjectionHelper.defineMapPatch(495, 78, &method(:outfitoptions_replace_outfits_with_darchflag)) # Decompression Lab, Elevator
 
-InjectionHelper.defineMapPatch(609, 42) { |event| # ??? .KF P, Paradox Gate
-  outfitoptions_arbitrary_outfit(event)
-}
+InjectionHelper.defineMapPatch(609, 42, &method(:outfitoptions_arbitrary_outfit)) # ??? .KF P, Paradox Gate

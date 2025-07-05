@@ -51,9 +51,7 @@ module TextureOverrides
   end
 
   def self.registerTextureOverrides(hashOf)
-    hashOf.each_pair { |k, v|
-      registerTextureOverride(k, v)
-    }
+    hashOf.each_pair { |from, to| registerTextureOverride(from, to) }
   end
 
   # Replacing Trainer Classes to get a different sprite
@@ -236,8 +234,8 @@ RPG::Cache.instance_eval do
     return textureoverride_old_load_bitmap(TextureOverrides::mapKey(filename), hue)
   end
 
-  def tileEx(filename, tile_id, hue, width = 1, height = 1)
-    return textureoverride_old_tileEx(TextureOverrides::mapKey(filename), tile_id, hue, width, height) { |it| yield it }
+  def tileEx(filename, tile_id, hue, width = 1, height = 1, &block)
+    return textureoverride_old_tileEx(TextureOverrides::mapKey(filename), tile_id, hue, width, height, &block)
   end
   
   def fromCache(i)

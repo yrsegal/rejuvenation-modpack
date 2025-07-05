@@ -717,7 +717,7 @@ module DarkAnaCutscene
   end
 
   def self.makeSingleDialoguePage(originalPage, dialogue)
-    playerMatcher = InjectionHelper.parseMatcher([:ConditionalBranch, :Switch, proc {|switch| DarkAnaCutscene::CHAR_SWITCHES.include?(switch) }, true])
+    playerMatcher = InjectionHelper.parseMatcher([:ConditionalBranch, :Switch, DarkAnaCutscene::CHAR_SWITCHES.method(:include?), true])
     spriteMatcher = InjectionHelper.parseMatcher([:SetCharacter, /trChar001_5/i, nil, nil, nil], mapper=InjectionHelper::MOVE_INSNS)
 
     page = RPG::Event::Page.new
@@ -809,7 +809,7 @@ module DarkAnaCutscene
           :Done,
           baseIndent: insn.indent))
       elsif insn.code == InjectionHelper::EVENT_INSNS[:SetMoveRoute]
-        if insn.parameters[1].list.any? {|movecommand| spriteMatcher.matches?(movecommand) }
+        if insn.parameters[1].list.any?(&spriteMatcher.method(:matches?))
 
           page.list.push(*InjectionHelper.parseEventCommands(
             [:ConditionalBranch, :Variable, :Outfit, :Constant, 2, :Less],

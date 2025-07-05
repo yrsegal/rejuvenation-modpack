@@ -16,12 +16,6 @@ InjectionHelper.defineMapPatch(208, 83) { |event| # Deep Terajuma Jungle, Pikipe
   encounterablepikipek_patchEncounter(event, false)
 }
 
-InjectionHelper.defineMapPatch(301, 94) { |event| # Route 5, Pikipek
-  encounterablepikipek_patchEncounter(event)
-}
-InjectionHelper.defineMapPatch(301, 95) { |event| # Route 5, Pikipek
-  encounterablepikipek_patchEncounter(event)
-}
-InjectionHelper.defineMapPatch(301, 96) { |event| # Route 5, Pikipek
-  encounterablepikipek_patchEncounter(event)
-}
+InjectionHelper.defineMapPatch(301, 94, &method(:encounterablepikipek_patchEncounter)) # Route 5, Pikipek
+InjectionHelper.defineMapPatch(301, 95, &method(:encounterablepikipek_patchEncounter)) # Route 5, Pikipek
+InjectionHelper.defineMapPatch(301, 96, &method(:encounterablepikipek_patchEncounter)) # Route 5, Pikipek

@@ -570,11 +570,7 @@ InjectionHelper.defineMapPatch(425) { |map| # Sheridan Interiors
   selectfromboxes_patch_daycarelady(map.events[1]) # Day Care Lady
   selectfromboxes_patch_partycheck(map.events[59]) # Day Care Man
 }
-InjectionHelper.defineMapPatch(9, 14) { |event| # Dream District, pseudo-Day Care Man
-  selectfromboxes_patch_partycheck(event)
-}
-InjectionHelper.defineMapPatch(282, 13) { |event| # Dream District Interiors, pseudo-Day Care Lady
-  selectfromboxes_patch_daycarelady(event)
-}
+InjectionHelper.defineMapPatch(9, 14, &method(:selectfromboxes_patch_partycheck)) # Dream District, pseudo-Day Care Man
+InjectionHelper.defineMapPatch(282, 13, &method(:selectfromboxes_patch_daycarelady)) # Dream District Interiors, pseudo-Day Care Lady
 
 ######

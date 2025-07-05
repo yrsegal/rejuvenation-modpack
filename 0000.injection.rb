@@ -350,7 +350,7 @@ module InjectionHelper
   def self.lookForSequence(insns, *insnMatchers)
     return [] if !insnMatchers
 
-    insnMatchers = insnMatchers.map { |matcher| parseMatcher(matcher) }
+    insnMatchers = insnMatchers.map(&method(:parseMatcher))
 
     matches = insnMatchers.map { |matcher| -1 }
     currentTargetIdx = 0

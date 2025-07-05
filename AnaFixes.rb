@@ -247,10 +247,10 @@ TextureOverrides.registerTextureOverrides({
     TextureOverrides::CHARS + 'BattyFriends_Ana_4' => TextureOverrides::MOD + 'Ana/Darchlight/BattyFriends'
 })
 
-InjectionHelper.defineCommonPatch(23) { |event| anafixes_fix_darchsprite(event) } # Player Dupe (D)
+InjectionHelper.defineCommonPatch(23, &method(:anafixes_fix_darchsprite)) # Player Dupe (D)
 InjectionHelper.defineCommonPatch(49) { |event| anafixes_inject_special_sprite(event, 'PlayerHeadache_8') } # Player Dupe Distress
 InjectionHelper.defineCommonPatch(50) { |event| anafixes_inject_special_sprite(event, 'PlayerKnockedOut_8') } # Player Dupe Knocked
-InjectionHelper.defineCommonPatch(136) { |event| anafixes_hotfix_battyfriends(event) } # Batty Friends
+InjectionHelper.defineCommonPatch(136, &method(:anafixes_hotfix_battyfriends)) # Batty Friends
 
 InjectionHelper.defineMapPatch(53, 2) { |event| # I Nightmare Realm, Aevis/Dupe
   anapage = event.pages[1] # if Ana on
@@ -262,8 +262,5 @@ InjectionHelper.defineMapPatch(53, 2) { |event| # I Nightmare Realm, Aevis/Dupe
   next true
 }
 
-InjectionHelper.defineMapPatch(231, 40, 1) { |page| # Somniam Mall, Melia, Crescent Conversation
-  anafixes_fix_protagname(page)
-}
-
-InjectionHelper.defineMapPatch(291, 72) { |event| anafixes_addLegacyRedCarpet(event) } # Pokestar Studios, Red Carpet Event
+InjectionHelper.defineMapPatch(231, 40, 1, &method(:anafixes_fix_protagname)) # Somniam Mall, Melia, Crescent Conversation
+InjectionHelper.defineMapPatch(291, 72, &method(:anafixes_addLegacyRedCarpet)) # Pokestar Studios, Red Carpet Event

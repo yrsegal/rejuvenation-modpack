@@ -68,9 +68,9 @@ class HealPCService
         Kernel.pbMessage(sec("SEC: Hi! You've reached SEC! Were you expecting someone else?\1"))
         Kernel.pbMessage(secAnnoyed("You know that putting your Pokemon into the PC will heal them, right?\1"))
         secAnnoyedWait(30) 
-        lockOn { |i| secAnnoyedWait(i) }
+        lockOn(&method(:secAnnoyedWait))
         Kernel.pbMessage(sec("Oh, well. You're in my sights. Here's your easy and convenient heal. Enjoy."))
-        heal { |i| secWait(i) }
+        heal(&method(:secWait))
       end
       return
     end
@@ -109,13 +109,13 @@ class HealPCService
       Kernel.pbMessage(bladestarJoy("Yes, I work for Bladestar. What of it? They need healing too!\1"))
       if Kernel.pbConfirmMessage(bladestarJoy("Would you like me to heal your Pokemon?\1"))
         bladestarJoyWait(30)
-        lockOn { |i| bladestarJoyWait(i)}
+        lockOn(&method(:bladestarJoyWait))
         if ServicePCList.darchlightCaves?
           Kernel.pbMessage(bladestarJoy("Ok, Smeargle, adjust for Darchlight interference...\1"))
         else
           Kernel.pbMessage(bladestarJoy("Ok, Smeargle, ready, aim...\1"))
         end
-        heal { |i| bladestarJoyWait(i)}
+        heal(&method(:bladestarJoyWait))
         ServicePCList.happySound
         Kernel.pbMessage(bladestarJoy("JOY: Thank you for waiting, \\PN.\1"))
         Kernel.pbMessage(bladestarJoy("Your Pokemon have been healed. Go Bladestar!"))
@@ -141,9 +141,9 @@ class HealPCService
     if Kernel.pbConfirmMessage(nurseJoy("Would you like me to heal your Pokemon?"))
       Kernel.pbMessage(nurseJoy("We'll restore your Pokemon to full health! Just wait a few seconds...\1"))
       nurseJoyWait(30)
-      lockOn { |i| nurseJoyWait(i)}
+      lockOn(&method(:nurseJoyWait))
       Kernel.pbMessage(nurseJoy("Our specially trained Smeargle have a bead on your location. Now, Heal Pulse!\1"))
-      heal { |i| nurseJoyWait(i)}
+      heal(&method(:nurseJoyWait))
       ServicePCList.happySound if !inPast?
       Kernel.pbMessage(nurseJoy("JOY: Thank you for waiting, \\PN!\1"))
       Kernel.pbMessage(nurseJoy("We've successfully restored your Pokemon to full health.\1"))

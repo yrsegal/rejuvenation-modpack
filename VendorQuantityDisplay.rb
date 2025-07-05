@@ -127,7 +127,9 @@ module VendorQuantityDisplay
           [:ShowText, /^CAIRO: Very well\./])
 
         showRE = InjectionHelper.lookForAll(insns,
-          [:ShowText, /^CAIRO: I see that you have Red Essence\./])
+          [:ShowText, /^CAIRO: I see that you have Red Essence\./]) + 
+        InjectionHelper.lookForAll(insns,
+          [:ShowText, /^CAIRO: Darkness need not hide from me\./])
 
         for insn in showMoney
           insn.parameters[0] = "\\G" + insn.parameters[0]
@@ -137,7 +139,6 @@ module VendorQuantityDisplay
           targetIdx = insns.index(insn)
           insns.insert(targetIdx, InjectionHelper.parseEventCommand(insn.indent, :Script, 'vendorquantity_show_redessence_window'))
         end
-
 
         next showRE.length > 0 || showMoney.length > 0 
       }
@@ -345,18 +346,12 @@ InjectionHelper.defineMapPatch(-1) { |map, mapid| # Apply to all maps
   end
 }
 
-InjectionHelper.defineMapPatch(168, 16) { |event| # Route 4, Cairo
-  VendorQuantityDisplay.injectCairo(event)
-} 
+InjectionHelper.defineMapPatch(168, 16, &VendorQuantityDisplay.method(:injectCairo)) # Route 4, Cairo
 
-InjectionHelper.defineMapPatch(201, 5) { |event| # Helojak Island, Beldum Den
-  VendorQuantityDisplay.injectBeldumRaidDen(event)
-} 
+InjectionHelper.defineMapPatch(201, 5, &VendorQuantityDisplay.method(:injectBeldumRaidDen)) # Helojak Island, Beldum Den
 
 InjectionHelper.defineMapPatch(117, 9) { |event| # Help Plaza (Gearen), Ayuda
   VendorQuantityDisplay.injectAtStart(event, 'vendorquantity_show_zcell_window')
 } 
 
-InjectionHelper.defineMapPatch(329, 90) { |event| # Kristiline Town, Nerta
-  VendorQuantityDisplay.injectNerta(event)
-}
+InjectionHelper.defineMapPatch(329, 90, &VendorQuantityDisplay.method(:injectNerta)) # Kristiline Town, Nerta

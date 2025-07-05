@@ -1,13 +1,9 @@
 
-Events.onMapChange+=proc {
-  zygardecaffeine_patch_z_cells
-}
-
 class Game_Event < Game_Character
   attr_reader :event
 end
 
-def zygardecaffeine_patch_z_cells
+Events.onMapChange+=proc {
   for event in $game_map.events.values
 
     for page in event.event.pages
@@ -19,4 +15,4 @@ def zygardecaffeine_patch_z_cells
       end
     end
   end
-end
+}

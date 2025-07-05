@@ -17,5 +17,5 @@ def fixbluemic_patchShop(event)
   end
 end
 
-InjectionHelper.defineMapPatch(28, 26) { |event| fixbluemic_patchShop(event) } # Festival Plaza, Ice Cream Seller
-InjectionHelper.defineMapPatch(69, 5) { |event| fixbluemic_patchShop(event) } # Route 3, Ice Cream Seller
+InjectionHelper.defineMapPatch(28, 26, &method(:fixbluemic_patchShop)) # Festival Plaza, Ice Cream Seller
+InjectionHelper.defineMapPatch(69, 5, &method(:fixbluemic_patchShop)) # Route 3, Ice Cream Seller
