@@ -88,7 +88,7 @@ class PokemonValuesPCService
     elsif value == 0
       return negativeColor # blue, negative here
     else
-      return grayColor
+      return "<o=128>"
     end
   end
 
@@ -104,6 +104,16 @@ class PokemonValuesPCService
     return color(7)
   end
 
+  def lesserPositiveColor(darkWindow)
+    return shadowc3tag(MessageConfig::LIGHTTEXTBASE, Color.new(136,96,72)) if darkWindow
+    return shadowc3tag(MessageConfig::DARKTEXTBASE, Color.new(123,36,28))
+  end
+
+  def lesserNegativeColor(darkWindow)
+    return shadowc3tag(MessageConfig::LIGHTTEXTBASE, Color.new(64,120,152)) if darkWindow
+    return shadowc3tag(MessageConfig::DARKTEXTBASE, Color.new(27,79,114))
+  end
+
   def createStatText(pkmn, origstats, window)
     pkmn.calcStats
     statvals = [pkmn.hp, pkmn.attack, pkmn.defense, pkmn.spatk, pkmn.spdef, pkmn.speed]
@@ -111,40 +121,37 @@ class PokemonValuesPCService
     natup=nature.incStat
     natdn=nature.decStat
 
-    if natup != natdn
-      if isDarkWindowskin(window.windowskin)
-        textColors = [shadowc3tag(MessageConfig::LIGHTTEXTBASE, Color.new(136,96,72)), 
-          shadowc3tag(MessageConfig::LIGHTTEXTBASE, Color.new(64,120,152))]
-      else
-        textColors = [shadowc3tag(MessageConfig::DARKTEXTBASE, Color.new(123,36,28)), 
-          shadowc3tag(MessageConfig::DARKTEXTBASE, Color.new(27,79,114))]
-      end
-    end
+    darkWindow = isDarkWindowskin(window.windowskin)
+    offsets = []
+    longest = STAT_NAMES.map { |name| window.contents.text_size(name).width }.max
+    spaceWidth = window.contents.text_size(" ").width
+    offsets = STAT_NAMES.map { |name| " " * ((longest - window.contents.text_size(name).width) / spaceWidth) }
+
     return STAT_NAMES.each_with_index.map { |name,i| 
       color = nil
-      if textColors
-        color = textColors[0] if natup == i
-        color = textColors[1] if natdn == i
+      if natup != natdn
+        color = lesserPositiveColor(darkWindow) if natup == i
+        color = lesserNegativeColor(darkWindow) if natdn == i
       end
       statcolor = nil
       statcolor = positiveColor if statvals[i] > origstats[i]
       statcolor = negativeColor if statvals[i] < origstats[i]
       statname = _INTL(name)
       statname = color + statname + "</c3>" if color
-      statvalue = statvals[i]
-      statvalue = "#{statcolor}#{statvalue}</c3>" if statcolor
-      next _INTL("{1}<r>{2}", statname, statvalue)
+      next _INTL("{1}{2}<r>{3} {4}-> {5}</c3>", statname, offsets[i], origstats[i], statcolor, statvals[i]) if statcolor
+      next _INTL("{1}{2}<r>{3}", statname, offsets[i], statvals[i]) unless statcolor
     }.join("\n")
   end
 
-  def createSummaryText(pkmn)
+  def createSummaryText(pkmn, window)
     buildNatures
 
-    ivs = _INTL("{1}   {2}   {3}   {4}   {5}   {6}", *pkmn.iv.map {|iv| colorForStat(iv, 31) + iv.to_s + "</c3>" })
-    evs = _INTL("{1}   {2}   {3}   {4}   {5}   {6}", *pkmn.ev.map {|ev| colorForStat(ev, 252) + ev.to_s + "</c3>" })
+    ivs = _INTL("{1}   {2}   {3}   {4}   {5}   {6}", *pkmn.iv.map {|iv| colorForStat(iv, 31) + iv.to_s + "</c3></o>" })
+    evs = _INTL("{1}   {2}   {3}   {4}   {5}   {6}", *pkmn.ev.map {|ev| colorForStat(ev, 252) + ev.to_s + "</c3></o>" })
     natureidx = $builtNatures.index(pkmn.nature)
     natureidx = 0 if natureidx.nil?
-    nature = $builtCommands[natureidx]
+    natures = isDarkWindowskin(window.windowskin) ? $builtCommandsDarkWindow : $builtCommandsLightWindow
+    nature = natures[natureidx]
     ability = getAbilityName(pkmn.ability)
     return _INTL("{5}IVs:</c3>\n<ar>{1}</ar>\n{5}EVs:</c3>\n<ar>{2}</ar>\n{5}Nature:</c3>\n<ar>{3}</ar>\n{5}Ability:</c3>\n<ar>{4}</ar>", ivs, evs, nature, ability, color(6))
   end
@@ -160,17 +167,18 @@ class PokemonValuesPCService
   def tweaking(pkmn)
     command = 0
     backups = [pkmn.iv.clone, pkmn.ev.clone, pkmn.nature, pkmn.ability]
+    origstats = [pkmn.hp, pkmn.attack, pkmn.defense, pkmn.spatk, pkmn.spdef, pkmn.speed]
     while command >= 0
       commands=makeOptions(anyChange(pkmn, backups))
-      summarywindow = ServicePCList.createCornerWindow(createSummaryText(pkmn))
+      summarywindow = ServicePCList.createCornerWindow { |window| window.text=createSummaryText(pkmn, window) }
       command=Kernel.advanced_pbMessage(_INTL("Tweak which?"), commands, -1, nil, command)
       summarywindow.dispose
       case command
         when 0
-          ivs(pkmn) if $game_screen.pokemonvaluespc_unlocked_iv
+          ivs(pkmn, origstats) if $game_screen.pokemonvaluespc_unlocked_iv
           ServicePCList.buzzer if !$game_screen.pokemonvaluespc_unlocked_iv
         when 1
-          evs(pkmn) if $game_screen.pokemonvaluespc_unlocked_ev
+          evs(pkmn, origstats) if $game_screen.pokemonvaluespc_unlocked_ev
           ServicePCList.buzzer if !$game_screen.pokemonvaluespc_unlocked_ev
         when 2
           natures(pkmn) if $game_screen.pokemonvaluespc_unlocked_nature
@@ -206,9 +214,8 @@ class PokemonValuesPCService
     return anyChange(pkmn, backups)
   end
 
-  def ivs(pkmn)
+  def ivs(pkmn, origstats)
     command = 0
-    origstats = [pkmn.hp, pkmn.attack, pkmn.defense, pkmn.spatk, pkmn.spdef, pkmn.speed]
 
     while command >= 0
       commands=makeStatOptions(false, pkmn.iv, 31)
@@ -216,7 +223,7 @@ class PokemonValuesPCService
         commands.push(color(2) + _INTL("Maximize all"))
       end
       summarywindow = ServicePCList.createCornerWindow { |window| 
-        window.text=createStatText(pkmn, origstats, window) 
+        window.text=createStatText(pkmn, origstats, window)
       }
       command=Kernel.advanced_pbMessage(_INTL("Change which IV?"), commands, -1, nil, command)
       summarywindow.dispose
@@ -237,7 +244,7 @@ class PokemonValuesPCService
   end
 
 
-  def evs(pkmn)
+  def evs(pkmn, origstats)
     command = 0
     evMax = $game_switches[:No_Total_EV_Cap] ? 255 : 252
     evTotalMax = $game_switches[:No_Total_EV_Cap] ? 255 * 6 : 510
@@ -249,8 +256,6 @@ class PokemonValuesPCService
     end
 
     unlockedEvs = EV_CARDS.map { |item| $PokemonBag.pbQuantity(item) > 0 }
-
-    origstats = [pkmn.hp, pkmn.attack, pkmn.defense, pkmn.spatk, pkmn.spdef, pkmn.speed]
 
     while command >= 0
       commands=makeStatOptions(true, pkmn.ev, evMax)
@@ -265,7 +270,7 @@ class PokemonValuesPCService
       summarywindow = ServicePCList.createCornerWindow { |window| 
         window.text=createStatText(pkmn, origstats, window) 
       }
-      command=Kernel.advanced_pbMessage(_INTL("Change which EV? (Total: {1}, max. {3}{2}</c3>)", 
+      command=Kernel.advanced_pbMessage(_INTL("Change which EV? (Total: {1}, max. {3}{2}</c3></o>)", 
         currentTotal, evTotalMax, colorForStat(currentTotal, evTotalMax)), commands, -1, nil, command)
       summarywindow.dispose
       if command >= 0
@@ -294,21 +299,27 @@ class PokemonValuesPCService
     end
   end
 
-  if !defined?($builtCommands) || !defined?($builtNatures)
-    $builtCommands = nil
+  if !defined?($builtCommandsLightWindow) || !defined?($builtCommandsDarkWindow) || !defined?($builtNatures)
+    $builtCommandsLightWindow = nil
+    $builtCommandsDarkWindow = nil
     $builtNatures = nil
   end
 
   def buildNatures
-    if !$builtNatures || !$builtCommands
-      $builtCommands = []
+    if !$builtNatures || !$builtCommandsLightWindow || $builtCommandsDarkWindow
+      $builtCommandsLightWindow = []
+      $builtCommandsDarkWindow = []
       $builtNatures = []
       $cache.natures.each_with_index { |(natureKey, nature), idx|
         if !nature.incStat && !nature.decStat
-          $builtCommands.push(_INTL("{1}  {3}±{2}</c3>", nature.name, STAT_NAMES_SHORT[FLAVORS_TO_STATS.index(nature.like)], grayColor))
+          natureText = _INTL("{1}  <o=128>±{2}</o>", nature.name, STAT_NAMES_SHORT[FLAVORS_TO_STATS.index(nature.like)])
+          $builtCommandsLightWindow.push(natureText)
+          $builtCommandsDarkWindow.push(natureText)
         else
-          $builtCommands.push(_INTL("{1}  {4}+{2}</c3> {5}-{3}</c3>", nature.name, STAT_NAMES_SHORT[nature.incStat], STAT_NAMES_SHORT[nature.decStat],
-            positiveColor, negativeColor))
+          $builtCommandsLightWindow.push(_INTL("{1}  {4}+{2}</c3> {5}-{3}</c3>", nature.name, STAT_NAMES_SHORT[nature.incStat], STAT_NAMES_SHORT[nature.decStat],
+            lesserPositiveColor(false), lesserNegativeColor(false)))
+          $builtCommandsDarkWindow.push(_INTL("{1}  {4}+{2}</c3> {5}-{3}</c3>", nature.name, STAT_NAMES_SHORT[nature.incStat], STAT_NAMES_SHORT[nature.decStat],
+            lesserPositiveColor(true), lesserNegativeColor(true)))
         end
         $builtNatures.push(natureKey)
       }
@@ -323,10 +334,19 @@ class PokemonValuesPCService
     command = $builtNatures.index(pkmn.nature)
     command = 0 if command.nil?
 
-
     while command >= 0
       msg=_INTL("{1} is {2}'s current nature.",getNatureName(pkmn.nature),pkmn.name)
-      command=Kernel.advanced_pbMessage(msg,$builtCommands, -1, nil, command)
+
+      msgwindow=Kernel.pbCreateMessageWindow(nil,nil)
+      commands = isDarkWindowskin(msgwindow.windowskin) ? $builtCommandsDarkWindow : $builtCommandsLightWindow
+
+      command=Kernel.pbMessageDisplay(msgwindow,msg,true,
+         proc {|msgwindow|
+            next Kernel.advanced_pbShowCommands(msgwindow,commands,-1,command)
+      })
+      Kernel.pbDisposeMessageWindow(msgwindow)
+      Input.update
+
       if command >= 0 && command < $builtNatures.size
         pkmn.setNature(nil)
         pkmn.nature = $builtNatures[command]
@@ -335,7 +355,7 @@ class PokemonValuesPCService
   end
 
   def abilities(pkmn)
-    abils=pkmn.getAbilityList # Dedupe
+    abils=pkmn.getAbilityList
     command = 0
 
     commands=[]
