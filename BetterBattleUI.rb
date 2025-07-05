@@ -1355,8 +1355,8 @@ class PokeBattle_Move
       return 0
     end
 
-    if @priority > 0 && (!opponent.moldbroken && (opponent.ability == :DAZZLING || opponent.ability == :QUEENLYMAJESTY)) &&
-      (!otherOpponent || (!otherOpponent.moldbroken && (otherOpponent.ability == :DAZZLING || otherOpponent.ability == :QUEENLYMAJESTY)))
+    if @priority > 0 && (!opponent.moldbroken && (opponent.ability == :DAZZLING || opponent.ability == :QUEENLYMAJESTY)) ||
+      (otherOpponent && (!otherOpponent.moldbroken && (otherOpponent.ability == :DAZZLING || otherOpponent.ability == :QUEENLYMAJESTY)))
       return 0
     end
 
