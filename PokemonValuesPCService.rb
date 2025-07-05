@@ -47,7 +47,7 @@ class PokemonValuesPCService
   end
 
   EV_CARDS = [:HPCARD, :ATKCARD, :DEFCARD, :SPATKCARD, :SPDEFCARD, :SPEEDCARD]
-  STAT_NAMES = ["HP", "Attack", "Defense", "Special Attack", "Special Defense", "Speed"]
+  STAT_NAMES = ["HP", "Attack", "Defense", "Sp. Atk", "Sp. Def", "Speed"]
   STAT_NAMES_SHORT = [nil, "ATK", "DEF", "SPATK", "SPDEF", "SPEED"]
   FLAVORS_TO_STATS = [nil, 'spicy', 'sour', 'sweet', 'dry', 'bitter']
 
@@ -102,6 +102,39 @@ class PokemonValuesPCService
 
   def grayColor
     return color(7)
+  end
+
+  def createStatText(pkmn, origstats, window)
+    pkmn.calcStats
+    statvals = [pkmn.hp, pkmn.attack, pkmn.defense, pkmn.spatk, pkmn.spdef, pkmn.speed]
+    nature = $cache.natures[pkmn.nature]
+    natup=nature.incStat
+    natdn=nature.decStat
+
+    if natup != natdn
+      if isDarkWindowskin(window.windowskin)
+        textColors = [shadowc3tag(MessageConfig::LIGHTTEXTBASE, Color.new(136,96,72)), 
+          shadowc3tag(MessageConfig::LIGHTTEXTBASE, Color.new(64,120,152))]
+      else
+        textColors = [shadowc3tag(MessageConfig::DARKTEXTBASE, Color.new(123,36,28)), 
+          shadowc3tag(MessageConfig::DARKTEXTBASE, Color.new(27,79,114))]
+      end
+    end
+    return STAT_NAMES.each_with_index.map { |name,i| 
+      color = nil
+      if textColors
+        color = textColors[0] if natup == i
+        color = textColors[1] if natdn == i
+      end
+      statcolor = nil
+      statcolor = positiveColor if statvals[i] > origstats[i]
+      statcolor = negativeColor if statvals[i] < origstats[i]
+      statname = _INTL(name)
+      statname = color + statname + "</c3>" if color
+      statvalue = statvals[i]
+      statvalue = "#{statcolor}#{statvalue}</c3>" if statcolor
+      next _INTL("{1}<r>{2}", statname, statvalue)
+    }.join("\n")
   end
 
   def createSummaryText(pkmn)
@@ -175,13 +208,18 @@ class PokemonValuesPCService
 
   def ivs(pkmn)
     command = 0
+    origstats = [pkmn.hp, pkmn.attack, pkmn.defense, pkmn.spatk, pkmn.spdef, pkmn.speed]
 
     while command >= 0
       commands=makeStatOptions(false, pkmn.iv, 31)
       if pkmn.iv != [31, 31, 31, 31, 31, 31]
         commands.push(color(2) + _INTL("Maximize all"))
       end
+      summarywindow = ServicePCList.createCornerWindow { |window| 
+        window.text=createStatText(pkmn, origstats, window) 
+      }
       command=Kernel.advanced_pbMessage(_INTL("Change which IV?"), commands, -1, nil, command)
+      summarywindow.dispose
       if command == 6
         for i in 0...6
           pkmn.iv[i] = 31
@@ -212,6 +250,8 @@ class PokemonValuesPCService
 
     unlockedEvs = EV_CARDS.map { |item| $PokemonBag.pbQuantity(item) > 0 }
 
+    origstats = [pkmn.hp, pkmn.attack, pkmn.defense, pkmn.spatk, pkmn.spdef, pkmn.speed]
+
     while command >= 0
       commands=makeStatOptions(true, pkmn.ev, evMax)
       allowedToEditTotal = 0
@@ -222,8 +262,12 @@ class PokemonValuesPCService
       if allowedToEditTotal != 0
         commands.push(color(1) + _INTL("Reset all"))
       end
+      summarywindow = ServicePCList.createCornerWindow { |window| 
+        window.text=createStatText(pkmn, origstats, window) 
+      }
       command=Kernel.advanced_pbMessage(_INTL("Change which EV? (Total: {1}, max. {3}{2}</c3>)", 
         currentTotal, evTotalMax, colorForStat(currentTotal, evTotalMax)), commands, -1, nil, command)
+      summarywindow.dispose
       if command >= 0
         if command == 6
           for i in 0...6
@@ -233,12 +277,13 @@ class PokemonValuesPCService
           next
         end
 
-        if !unlockedEvs[command]
+        currentMax = [evMax, evTotalMax - currentTotal + pkmn.ev[command]].min
+
+        if !unlockedEvs[command] || currentMax == 0
           ServicePCList.buzzer
           next
         end
 
-        currentMax = [evMax, evTotalMax - currentTotal + pkmn.ev[command]].min
         params=ChooseNumberParams.new
         params.setRange(0,999)
         params.setDefaultValue(pkmn.ev[command])

@@ -237,8 +237,9 @@ module ServicePCList
     return createCornerWindow(quantityText(item), viewport, z, windowAbove: windowAbove)
   end
 
-  def self.createCornerWindow(text, viewport=nil, z=99999, windowAbove: nil)
+  def self.createCornerWindow(text="", viewport=nil, z=99999, windowAbove: nil)
     window=Window_AdvancedTextPokemon.new(text)
+    yield window if block_given?
     @@cleanupSprites.push(window)
     window.resizeToFit(window.text,Graphics.width)
     window.width=160 if window.width<=160
