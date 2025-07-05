@@ -138,26 +138,18 @@ module BoxExtensions
         compats = $cache.pkmn[p.species].compatiblemoves if !compats
         exceptions = p.formCheck(:moveexceptions)
         exceptions = $cache.pkmn[p.species].moveexceptions if !exceptions
-        eggmoves = p.getEggMoveList
-        learnset = p.getMoveList.map { |it| it[1] }
-        next compats + (PBStuff::UNIVERSALTMS - exceptions) + eggmoves + learnset
+        eggmoves = p.getEggMoveList # Should be covered by compatible moves, but just in case
+        learnset = p.getMoveList.map { |it| it[1] } # Should be covered by compatible moves, but just in case
+        totallist = compats + PBStuff::UNIVERSALTMS + eggmoves + learnset
+        totallist.uniq!
+        totallist -= exceptions
+        next totallist
       }, &method(:getMoveName))
     end
 
     def filter(screen, pkmn, params)
       return false if pkmn.isEgg?
-      compats = pkmn.formCheck(:compatiblemoves)
-      compats = $cache.pkmn[pkmn.species].compatiblemoves if !compats
-      return true if compats.include?(params)
-      exceptions = pkmn.formCheck(:moveexceptions)
-      exceptions = $cache.pkmn[pkmn.species].moveexceptions if !exceptions
-      return true if PBStuff::UNIVERSALTMS.include?(params) && !exceptions.include?(params)
-      eggmoves = pkmn.getEggMoveList
-      return true if eggmoves.include?(params)
-      pbEachNaturalMove(pkmn) { |mv, lv|
-        return true if mv == params
-      }
-      return false
+      return pkmn.SpeciesCompatible?(params)
     end
   end
 end
