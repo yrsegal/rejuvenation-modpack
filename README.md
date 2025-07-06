@@ -111,6 +111,8 @@ QoL mods:
   Move Tutors and other vendors will show the resources they ask for.
 - ZygardeCaffeine.rb  
   Zygarde Cells become indifferent to time of day.
+- ZZRenBetterDialogue.rb (depends on 0000.injection.rb)  
+  Fix some deliberately poorly formatted dialogue from being unintentionally poorly formatted.
 
 Other mods:
 - BoostPickupOdds.rb  
