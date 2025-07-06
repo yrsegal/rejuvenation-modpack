@@ -3,11 +3,15 @@ TextureOverrides.registerTextureOverride(TextureOverrides::SPEECH + "speech nami
 
 class Bounded_Window_TextEntry_Keyboard < Window_TextEntry
   attr_reader :matchingnames
+  attr_accessor :highlightindex
+  attr_accessor :highlightoffset
 
   def initialize(text,names,x,y,width,height,heading=nil,usedarkercolor=false)
     @names = names
     @backnames = []
     @matchingnames = names
+    @highlightindex = -1
+    @highlightoffset = 0
     calculateNextchar(0)
     super(text,x,y,width,height,heading,usedarkercolor)
   end
@@ -27,15 +31,41 @@ class Bounded_Window_TextEntry_Keyboard < Window_TextEntry
     elsif Input.triggerex?(:RETURN) || Input.triggerex?(:ESCAPE)
       return
     elsif Input.triggerex?(:TAB)
-      for c in 0...@nextchars.length
-        @backnames.push([@matchingnames, @nextchars[c..@nextchars.length]])
+      if @highlightindex > 0 && @highlightindex <= @matchingnames.length
+        nextdisplay = @matchingnames[@highlightindex - 1]
+        nextdisplay = nextdisplay[self.text.length..nextdisplay.length]
+
+        for c in nextdisplay.chars
+          c = c.downcase
+          matches = @matchingnames.select { |n| n[self.text.length] && n[self.text.length].downcase == c }
+          if matches.length > 0
+            reup = @matchingnames.all? { |n| n[self.text.length].upcase == n[self.text.length] }
+            @backnames.push([@matchingnames, @nextchars])
+            @matchingnames = matches
+            calculateNextchar(self.text.length)
+            c = c.upcase if reup
+            insert(c)
+          end
+          recapitalize
+        end
+      else
+        for c in 0...@nextchars.length
+          @backnames.push([@matchingnames, @nextchars[c..@nextchars.length]])
+        end
+        complete = @nextchars
+        @nextchars = ""
+        for c in complete.chars
+          insert(c)
+        end
+        recapitalize
       end
-      complete = @nextchars
-      @nextchars = ""
-      for c in complete.chars
-        insert(c)
-      end
-      recapitalize
+    elsif (Input.triggerex?(:UP) || Input.repeatex?(:UP)) && @highlightindex > 0
+      @highlightindex -= 1
+      @highlightindex = @matchingnames.length if @highlightindex == 0
+    elsif Input.triggerex?(:DOWN) || Input.repeatex?(:DOWN)
+      @highlightindex += 1 if @highlightindex == -1
+      @highlightindex += 1
+      @highlightindex = 1 if @highlightindex > @matchingnames.length
     end
 
     Input.gets.each_char { |c| 
@@ -51,6 +81,12 @@ class Bounded_Window_TextEntry_Keyboard < Window_TextEntry
       end
       recapitalize
     }
+  end
+
+  def insert(c)
+    super(c)
+    @highlightindex = -1
+    @highlightoffset = 0
   end
 
   def recapitalize
@@ -127,8 +163,13 @@ class Bounded_Window_TextEntry_Keyboard < Window_TextEntry
       bitmap.fill_rect(x,y+4,2,24,cursorcolor)
     end
     ### MODDED/
-    textwidth=bitmap.text_size(@nextchars).width
-    pbDrawShadowText(bitmap,x,y, textwidth+4, 32, @nextchars, @shadowColor,nil)
+    nextdisplay = @nextchars
+    if @highlightindex > 0 && @highlightindex <= @matchingnames.length
+      nextdisplay = @matchingnames[@highlightindex - 1]
+      nextdisplay = nextdisplay[self.text.length..nextdisplay.length]
+    end
+    textwidth=bitmap.text_size(nextdisplay).width
+    pbDrawShadowText(bitmap,x,y, textwidth+4, 32, nextdisplay, @shadowColor,nil)
     ### /MODDED
   end
 end
@@ -158,33 +199,66 @@ class BoundedPokemonEntryScene
     @sprites["helpwindow"].baseColor=Color.new(16,24,32)
     @sprites["helpwindow"].shadowColor=Color.new(168,184,184)
 
-    addBackgroundPlane(@sprites,"background","naming2bg",@viewport)
-
-    # After background plane so that the box still renders
     hintwidth = names.map { |n| @sprites["entry"].contents.text_size(n).width }.max
     @sprites["matchwindow"] = Window_UnformattedTextPokemon.newWithSize("", 32, 96, hintwidth + 64, Graphics.height-192,@viewport)
-    @sprites["matchwindow"].setSkin("Graphics/Windowskins/speech naming")
-    @sprites["matchwindow"].text=updatematches
+
+    matchtxt, overlay_y, overlaytxt = updatematches
+
+    @sprites["matchwindow"].text=matchtxt
     @sprites["matchwindow"].visible = true
     @sprites["matchwindow"].viewport=@viewport
     @sprites["matchwindow"].letterbyletter=false
     @sprites["matchwindow"].baseColor=Color.new(16,24,32)
     @sprites["matchwindow"].shadowColor=Color.new(168,184,184)
 
+    @sprites["matchoverlay"] = Window_UnformattedTextPokemon.newWithSize("", 48, overlay_y, hintwidth + 64, 96,@viewport)
+    @sprites["matchoverlay"].text=overlaytxt
+    @sprites["matchoverlay"].visible = true
+    @sprites["matchoverlay"].viewport=@viewport
+    @sprites["matchoverlay"].letterbyletter=false
+    @sprites["matchoverlay"].baseColor=Color.new(52, 152, 219)
+    @sprites["matchoverlay"].shadowColor=Color.new(27, 79, 114)
+
+    addBackgroundPlane(@sprites,"background","naming2bg",@viewport)
+
+    # After background plane so that the box still renders
+    @sprites["matchwindow"].setSkin("Graphics/Windowskins/speech naming")
+
     pbFadeInAndShow(@sprites)
   end
 
   def updatematches
-    limit = @sprites["matchwindow"].height - @sprites["matchwindow"].borderY
+    limit = 5
     matchesdisplayed = []
-    for i in @sprites["entry"].matchingnames
-      height = @sprites["entry"].contents.text_size(i).height
-      if height <= limit
-        limit -= height
-        matchesdisplayed.push(i)
+    heights = []
+    totalheight = 0
+
+    skipped = 0
+
+    if @sprites["entry"].highlightindex == -1
+      @sprites["entry"].highlightoffset = 0
+    else
+      while @sprites["entry"].highlightoffset + limit < @sprites["entry"].highlightindex
+        @sprites["entry"].highlightoffset += 1
+      end
+
+      while @sprites["entry"].highlightoffset > @sprites["entry"].highlightindex - 1
+        @sprites["entry"].highlightoffset -= 1
       end
     end
-    return matchesdisplayed.join("\n")
+
+    for i in @sprites["entry"].matchingnames[@sprites["entry"].highlightoffset,limit]
+      height = @sprites["entry"].contents.text_size(i).height
+      heights.push(totalheight)
+      totalheight += height + 2
+      matchesdisplayed.push(i)
+    end
+
+    if @sprites["entry"].highlightindex > 0
+      idx = @sprites["entry"].highlightindex - 1 - @sprites["entry"].highlightoffset
+      return matchesdisplayed.join("\n"), @sprites["matchwindow"].y + heights[idx], matchesdisplayed[idx]
+    end
+    return matchesdisplayed.join("\n"), @sprites["matchwindow"].y, ""
   end
 
   def pbEntry
@@ -195,14 +269,25 @@ class BoundedPokemonEntryScene
       if Input.triggerex?(:ESCAPE)
         ret=""
         break
-      elsif Input.triggerex?(:RETURN) && @sprites["entry"].isMatch?
-        ret=@sprites["entry"].matchingnames[0]
-        break
+      elsif Input.triggerex?(:RETURN) 
+        if @sprites["entry"].isMatch?
+          ret=@sprites["entry"].matchingnames[0]
+          break
+        elsif @sprites["entry"].highlightindex > 0 && @sprites["entry"].highlightindex <= @sprites["entry"].matchingnames.length
+          ret=@sprites["entry"].matchingnames[@sprites["entry"].highlightindex - 1]
+          break
+        end
       end
       @sprites["helpwindow"].update
       lastmatchnames = @sprites["entry"].matchingnames
+      lasthighlightindex = @sprites["entry"].highlightindex
       @sprites["entry"].update
-      @sprites["matchwindow"].text=updatematches if lastmatchnames != @sprites["entry"].matchingnames
+      if lastmatchnames != @sprites["entry"].matchingnames || lasthighlightindex != @sprites["entry"].highlightindex
+        matchtxt, overlay_y, overlaytxt = updatematches
+        @sprites["matchwindow"].text=matchtxt
+        @sprites["matchoverlay"].y=overlay_y
+        @sprites["matchoverlay"].text=overlaytxt
+      end
     end
     Input.update
     return ret

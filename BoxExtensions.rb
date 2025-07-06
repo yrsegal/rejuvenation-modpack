@@ -21,17 +21,23 @@ module BoxExtensions
       return allfound
     end
 
+    def self.registerTopType(search)
+      @@searchtypes.unshift(search)
+    end
+
     def self.registerType(search)
       @@searchtypes.push(search)
     end
 
-    def self.commands
+    def self.commands(screen)
       commands=[]
       types=[]
 
       for st in @@searchtypes
-        commands.push(st.name)
-        types.push(st)
+        if st.shouldShow(screen)
+          commands.push(st.name)
+          types.push(st)
+        end
       end
       return [commands, types]
     end
@@ -40,6 +46,10 @@ module BoxExtensions
   class NameSearchType
     def name
       _INTL("Name")
+    end
+
+    def shouldShow(screen)
+      true
     end
 
     def gatherParameters(screen)
@@ -58,6 +68,10 @@ module BoxExtensions
       _INTL("Species")
     end
 
+    def shouldShow(screen)
+      true
+    end
+
     def gatherParameters(screen)
       boundedentry_textEntry("Name of the species?", SearchTypes.gather(&:species), &method(:getMonName))
     end
@@ -70,6 +84,10 @@ module BoxExtensions
   class ItemSearchType
     def name
       _INTL("Item")
+    end
+
+    def shouldShow(screen)
+      true
     end
 
     def gatherParameters(screen)
@@ -86,6 +104,10 @@ module BoxExtensions
       _INTL("Ability")
     end
 
+    def shouldShow(screen)
+      true
+    end
+
     def gatherParameters(screen)
       boundedentry_textEntry("Name of the ability?", SearchTypes.gather(&:ability), &method(:getAbilityName))
     end
@@ -98,6 +120,10 @@ module BoxExtensions
   class TypeSearchType
     def name
       _INTL("Type")
+    end
+
+    def shouldShow(screen)
+      true
     end
 
     def gatherParameters(screen)
@@ -118,6 +144,10 @@ module BoxExtensions
       _INTL("Move")
     end
 
+    def shouldShow(screen)
+      true
+    end
+
     def gatherParameters(screen)
       boundedentry_textEntry("Name of the move?", SearchTypes.gather { |p| p.moves.map(&:move) }, &method(:getMoveName))
     end
@@ -130,6 +160,10 @@ module BoxExtensions
   class CanLearnMoveSearchType
     def name
       _INTL("Learns Move")
+    end
+
+    def shouldShow(screen)
+      true
     end
 
     def gatherParameters(screen)
@@ -209,7 +243,7 @@ end
 class PokemonStorageScreen
   # Complete override
   def pbFindPokemon
-    commands, searchtypes = BoxExtensions::SearchTypes.commands
+    commands, searchtypes = BoxExtensions::SearchTypes.commands(self)
 
     searchtype = pbShowCommands(_INTL("Search by what?"), commands)
     

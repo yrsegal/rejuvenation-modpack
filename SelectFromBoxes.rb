@@ -191,6 +191,14 @@ class Selectfromboxes_PokemonStorageScreen < PokemonStorageScreen
     @choseFromParty = scene.partyOpen
   end
 
+  def hasProc
+    !@scene.ableProc.nil?
+  end
+
+  def isEligible(pkmn)
+    hasProc && @scene.ableProc.call(pkmn)
+  end
+
   def pbChoosePokemon(party=nil)
     @heldpkmn=nil
     @scene.pbStartBox(self,2)
@@ -574,3 +582,27 @@ InjectionHelper.defineMapPatch(9, 14, &method(:selectfromboxes_patch_partycheck)
 InjectionHelper.defineMapPatch(282, 13, &method(:selectfromboxes_patch_daycarelady)) # Dream District Interiors, pseudo-Day Care Lady
 
 ######
+
+###### INTEGRATION WITH BoxExtensions
+
+class EligibleSearchType
+  def name
+    _INTL("Eligible")
+  end
+
+  def shouldShow(screen)
+    screen.is_a?(Selectfromboxes_PokemonStorageScreen) && screen.hasProc
+  end
+
+  def gatherParameters(screen)
+    return true
+  end
+
+  def filter(screen, pkmn, params)
+    screen.isEligible(pkmn)
+  end
+end
+
+BoxExtensions::SearchTypes.registerTopType(EligibleSearchType.new) if defined?(BoxExtensions)
+
+###### 
