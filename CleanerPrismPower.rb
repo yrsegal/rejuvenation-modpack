@@ -18,4 +18,16 @@ class PokeBattle_Battler
       end
     end
   end
+
+  alias :cleanerprismpower_old_pbInitPokemon :pbInitPokemon
+
+  def pbInitPokemon(pkmn, pkmnIndex)
+    cleanerprismpower_old_pbInitPokemon(pkmn, pkmnIndex)
+    # My soul weeps in pain - this if statement has an !
+    if @pokemon.prismPower
+      @pokemon.prismPower = false
+    end
+  end
 end
+
+
