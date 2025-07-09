@@ -1,5 +1,23 @@
 
 module BoxExtensions
+  @@currentsearch = nil
+
+  def self.clearSearch
+    @@currentsearch = nil
+  end
+
+  def self.setSearch(&block)
+    @@currentsearch = block
+  end
+
+  def self.hasSearch
+    !@@currentsearch.nil?
+  end
+
+  def self.matchesSearch(pkmn)
+    @@currentsearch.call(pkmn)
+  end
+
   module SearchTypes
     @@searchtypes=[]
 
@@ -211,17 +229,39 @@ class PokemonStorageScene
     end
   end
 
-  def boxextensions_applyTone(&block)
-    @sprites["box"].boxextensions_applyTone(&block)
+  def boxextensions_applyTone
+    @sprites["box"].boxextensions_applyTone
+  end
+
+  alias :boxextensions_old_pbCloseBox :pbCloseBox
+
+  def pbCloseBox
+    boxextensions_old_pbCloseBox
+    BoxExtensions::clearSearch
   end
 end
 
 class PokemonBoxSprite
-  def boxextensions_applyTone(&block)
+  attr_accessor :applied_tone
+
+  def boxextensions_clearTone
     for i in 0...30
       if @pokemonsprites[i] && !@pokemonsprites[i].disposed?
         pokemon = @storage[@boxnumber,i]
-        if pokemon && !block.call(pokemon)
+        if pokemon
+          @pokemonsprites[i].tone = Tone.new(0,0,0)
+        end
+      end
+    end
+  end
+
+  def boxextensions_applyTone
+    return unless BoxExtensions.hasSearch
+
+    for i in 0...30
+      if @pokemonsprites[i] && !@pokemonsprites[i].disposed?
+        pokemon = @storage[@boxnumber,i]
+        if pokemon && !BoxExtensions.matchesSearch(pokemon)
           @pokemonsprites[i].tone = Tone.new(0,0,0,255)
         end
       end
@@ -231,12 +271,26 @@ class PokemonBoxSprite
   alias :boxextensions_old_grabPokemon :grabPokemon
 
   def grabPokemon(index,arrow)
-    for sprite in @pokemonsprites
-      if sprite
-        sprite.tone = Tone.new(0,0,0)
-      end
+    if BoxExtensions.hasSearch
+      BoxExtensions::clearSearch
+      boxextensions_clearTone
+      update
     end
-    return boxextensions_old_grabPokemon(index,arrow)
+    return boxextensions_old_grabPokemon(index, arrow)
+  end
+
+  alias :boxextensions_old_initialize :initialize
+
+  def initialize(*args, **kwargs)
+    boxextensions_old_initialize(*args, **kwargs)
+    boxextensions_applyTone
+  end
+
+  alias :boxextensions_old_update :update
+
+  def update(*args, **kwargs)
+    boxextensions_old_update(*args, **kwargs)
+    boxextensions_applyTone
   end
 end
 
@@ -289,8 +343,9 @@ class PokemonStorageScreen
       end
       
       box = pbShowCommands(boxesStr, commandsFound)
+      BoxExtensions.setSearch { |p| searchtype.filter(self, p, params) }
+      @scene.boxextensions_applyTone
       @scene.pbJumpToBox(boxesFound[box]) if box >= 0
-      @scene.boxextensions_applyTone { |p| searchtype.filter(self, p, params) }
     else
       pbDisplay(_INTL("No match was found."))
     end

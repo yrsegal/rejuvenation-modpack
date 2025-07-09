@@ -46,7 +46,6 @@ def pbChoosePokemon(variableNumber,nameVarNumber,ableProc=nil,allowIneligible=fa
   if Rejuv && $game_switches[:NotPlayerCharacter] && !$game_switches[:InterceptorsWish]
     return selectfromboxes_old_pbChoosePokemon(variableNumber,nameVarNumber,ableProc,allowIneligible,giveAway,*args,**kwargs)
   end
-  ### /MODDED
 
   if !ableProc.nil?
     for mon in $Trainer.party
