@@ -21,12 +21,12 @@ module MoveHelpDisplay
   #-----------------------------------------------------------------------------
   # Green text. Used to display bonuses.
   #-----------------------------------------------------------------------------
-  BASE_RAISED    = Color.new(50, 205, 50)
+  BASE_RAISED    = Color.new(40, 201, 48)
   SHADOW_RAISED  = Color.new(9, 32, 32)
   #-----------------------------------------------------------------------------
   # Red text. Used to display penalties.
   #-----------------------------------------------------------------------------
-  BASE_LOWERED   = Color.new(248, 72, 72)
+  BASE_LOWERED   = Color.new(201, 56, 40)
   SHADOW_LOWERED = Color.new(48, 32, 32)
 
   FLAGS_TO_CHECK = [
