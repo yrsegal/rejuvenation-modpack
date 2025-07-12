@@ -1,11 +1,7 @@
 
-
-
 # TODO
-# More comprehensive field boost displays
 # Replace selection with [002] selection menu
 # Replace inspect with [003] battler info ui
-# Possibly make background image less opaque?
 
 module MoveHelpDisplay
   #-----------------------------------------------------------------------------
