@@ -245,7 +245,7 @@ class BossPokemonDataBox < SpriteWrapper
   end
 
 end
-    
+
 ### Command Menu Throw Ball
 
 class BetterBattleUI_PokeballThrowButtonDisplay
@@ -395,6 +395,9 @@ class PokeBattle_Scene
     betterBattleUI_old_pbStartBattle(battle)
     @sprites["bbui_ballwindow"]=BetterBattleUI_PokeballThrowButtonDisplay.new(@battle,@viewport)
     @sprites["bbui_ballwindow"].z=100
+    @sprites["bbui_moveinfo"]=BitmapSprite.new(Graphics.width, Graphics.height, @viewport)
+    @sprites["bbui_moveinfo"].z=100
+    pbSetSmallFont(@sprites["bbui_moveinfo"].bitmap)
   end
 
   alias :betterBattleUI_old_pbEndBattle :pbEndBattle
@@ -410,11 +413,11 @@ class PokeBattle_Scene
   def pbShowWindow(windowtype)
     betterBattleUI_old_pbShowWindow(windowtype)
     @sprites["bbui_ballwindow"].visible=windowtype==COMMANDBOX if @sprites["bbui_ballwindow"]
+    @sprites["bbui_moveinfo"].visible=false if windowtype != FIGHTBOX && @sprites["bbui_moveinfo"]
   end
 
-  alias :betterBattleUI_old_pbItemMenu :pbItemMenu
-
   attr_accessor :betterBattleUI_autoselectitem
+  alias :betterBattleUI_old_pbItemMenu :pbItemMenu
 
   def pbItemMenu(i)
     if @betterBattleUI_autoselectitem
@@ -502,6 +505,127 @@ class PokeBattle_Scene
       end
     end
   end
+
+  ### MOVE INFO
+
+  ###### PLANNED: Implement move info window, potentially rework inspect window a la https://eeveeexpo.com/threads/7796/
+
+  alias :betterBattleUI_old_pbFrameUpdate :pbFrameUpdate
+
+  def pbFrameUpdate(cw, update_cw=true)
+    betterBattleUI_old_pbFrameUpdate(cw, update_cw)
+    pbUpdateMoveInfoWindow(cw.battler, cw) if cw && @sprites["bbui_moveinfo"] && update_cw && @sprites["bbui_moveinfo"].visible
+  end
+
+  def pbFightMenu(index)
+    pbShowWindow(FIGHTBOX)
+    cw = @sprites["fightwindow"]
+    battler=@battle.battlers[index]
+    cw.battler=battler
+    lastIndex=@lastmove[index]
+    if battler.moves[lastIndex]
+      cw.setIndex(lastIndex)
+    else
+      cw.setIndex(0)
+    end
+    cw.megaButton=0
+    cw.megaButton=1 if (@battle.pbCanMegaEvolve?(index) && !@battle.pbCanZMove?(index))
+    cw.megaButton=2 if @battle.megaEvolution[(@battle.pbIsOpposing?(index)) ? 1 : 0][@battle.pbGetOwnerIndex(index)] == index && @battle.battlers[index].hasMega?
+    cw.ultraButton=0
+    cw.ultraButton=1 if @battle.pbCanUltraBurst?(index)
+    cw.ultraButton=2 if @battle.ultraBurst[(@battle.pbIsOpposing?(index)) ? 1 : 0][@battle.pbGetOwnerIndex(index)] == index && @battle.battlers[index].hasUltra?
+    cw.zButton=0 
+    cw.zButton=1 if @battle.pbCanZMove?(index)
+    #cw.zButton=2 if @battle.zMove[(@battle.pbIsOpposing?(index)) ? 1 : 0][@battle.pbGetOwnerIndex(index)] == index && @battle.battlers[index].hasZMove?
+    pbSelectBattler(index)
+    pbRefresh
+    update_menu = true
+    loop do
+        Graphics.update
+        Input.update
+        pbFrameUpdate(cw,update_menu)
+        update_menu = false
+      # Update selected command
+      if Input.trigger?(Input::LEFT) && (cw.index&1)==1
+        pbPlayCursorSE() if cw.setIndex(cw.index-1)
+          update_menu=true
+      elsif Input.trigger?(Input::RIGHT) &&  (cw.index&1)==0
+        pbPlayCursorSE() if cw.setIndex(cw.index+1)
+          update_menu=true
+      elsif Input.trigger?(Input::UP) &&  (cw.index&2)==2
+        pbPlayCursorSE() if cw.setIndex(cw.index-2)
+          update_menu=true
+      elsif Input.trigger?(Input::DOWN) &&  (cw.index&2)==0
+        pbPlayCursorSE() if cw.setIndex(cw.index+2)
+        update_menu=true
+      ### MODDED/ replace battle stats in fight menu with move info
+      elsif Input.trigger?(Input::Y)
+        pbPlayCursorSE()
+        pbToggleMoveInfo(battler, cw) if defined?(pbToggleMoveInfo)
+        update_menu=true
+      ### /MODDED
+      end
+      if Input.trigger?(Input::C)   # Confirm choice
+        ret=cw.index
+        if cw.zButton==2
+          if battler.pbCompatibleZMoveFromMove?(ret,true)
+            pbPlayDecisionSE()     
+            @lastmove[index]=ret
+            return ret
+          else
+            @battle.pbDisplay(_INTL("{1} is not compatible with {2}!",battler.moves[ret].name,getItemName(battler.item)))
+            @lastmove[index]=cw.index     
+            return -1
+          end
+        else
+          pbPlayDecisionSE() 
+          @lastmove[index]=ret   
+          return ret
+        end          
+      elsif Input.trigger?(Input::X)   # Use Mega Evolution 
+        if @battle.pbCanMegaEvolve?(index) && !pbIsZCrystal?(battler.item)
+          if cw.megaButton==2
+            @battle.pbUnRegisterMegaEvolution(index)
+            cw.megaButton=1
+            pbPlayCancelSE()
+          else
+            @battle.pbRegisterMegaEvolution(index)
+            cw.megaButton=2
+            pbPlayDecisionSE()
+          end
+        end
+          if @battle.pbCanUltraBurst?(index)
+            if cw.ultraButton==2
+              @battle.pbUnRegisterUltraBurst(index)
+              cw.ultraButton=1
+              pbPlayCancelSE()
+            else
+              @battle.pbRegisterUltraBurst(index)
+              cw.ultraButton=2
+              pbPlayDecisionSE()
+            end
+          end
+        if @battle.pbCanZMove?(index)  # Use Z Move
+          if cw.zButton==2
+            @battle.pbUnRegisterZMove(index)
+            cw.zButton=1
+            pbPlayCancelSE()
+          else
+            @battle.pbRegisterZMove(index)
+            cw.zButton=2
+            pbPlayDecisionSE()
+          end
+        end        
+        update_menu=true
+      elsif Input.trigger?(Input::B)   # Cancel fight menu
+        @lastmove[index]=cw.index
+        pbPlayCancelSE()
+        return -1
+      end
+    end
+  end
+
+  ###
 end
 
 ###
