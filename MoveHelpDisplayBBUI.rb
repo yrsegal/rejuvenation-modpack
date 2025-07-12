@@ -270,7 +270,7 @@ class PokeBattle_Scene
         flags.push(flag) if move.hasFlag?(flag)
       end
     end
-    flags.push(:bypassprotect) if move.move == :FIRSTIMPRESSION && @battler.battle.FE == :COLOSSEUM
+    flags.push(:bypassprotect) if move.move == :FIRSTIMPRESSION && battler.battle.FE == :COLOSSEUM
     flags.delete(:zmove) if flags.include?(:intercept)
     flags.each do |flag|
       break if icons > 8
