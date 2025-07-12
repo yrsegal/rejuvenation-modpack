@@ -137,6 +137,7 @@ class PokeBattle_Scene
       power = defined?(hpSummary_trueDamage) ? hpSummary_trueDamage(move, battler.pokemon) : move.basedamage
     else
       power = move.pbBaseDamage(basePower, battler, knownFoe)
+      power *= move.pbBaseDamageMultiplier(1, battler, knownFoe)
       if move.function == 0x91 && battler.effects[:FuryCutter] < 4 # Fury Cutter
         power *= 2
       end
