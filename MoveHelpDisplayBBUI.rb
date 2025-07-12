@@ -34,14 +34,15 @@ module MoveHelpDisplay
     [:pulsemove, [:AURASPHERE,:DRAGONPULSE,:DARKPULSE,:WATERPULSE,:ORIGINPULSE,:TERRAINPULSE]],
     [:bitemove, PBStuff::BITEMOVE], 
     [:bulletmove, PBStuff::BULLETMOVE], 
-    :bypassprotect, :contact, 
+    [:bypassprotect, PBStuff::PROTECTIGNORINGMOVE], 
+    :contact, 
     [:dancemove, PBStuff::DANCEMOVE], 
     [:defrost, PBStuff::UNFREEZEMOVE], 
     [:healingmove, [], PBStuff::HEALFUNCTIONS], 
     :highcrit, 
-    :nonmirror, 
-    :punchmove, 
-    :sharpmove, 
+    [:nocopy, PBStuff::NOCOPYMOVE], 
+    :punchmove, :sharpmove, 
+    [:stabmove, PBStuff::STABBINGMOVE],
     :soundmove, 
     [:tramplemove, [:BODYSLAM, :FLYINGPRESS, :MALICIOUSMOONSAULT], [0x10, 0x137, 0x9B]], 
     :windmove, :intercept, :zmove]
@@ -69,6 +70,323 @@ module MoveHelpDisplay
 end
 
 class PokeBattle_Move
+  def movehelpdisplay_typeMod(type,attacker,opponent)
+    secondtype = getSecondaryType(attacker)
+    if opponent.ability == :SAPSIPPER && !(opponent.moldbroken) && (type == :GRASS || (!secondtype.nil? && secondtype.include?(:GRASS)))
+      ### MODDED/ No actual effects
+      # if opponent.pbCanIncreaseStatStage?(PBStats::ATTACK)
+      #   opponent.pbIncreaseStatBasic(PBStats::ATTACK,1)
+      #   @battle.pbCommonAnimation("StatUp",opponent,nil)
+      #   @battle.pbDisplay(_INTL("{1}'s {2} raised its Attack!",
+      #      opponent.pbThis,getAbilityName(opponent.ability)))
+      # else
+      #   @battle.pbDisplay(_INTL("{1}'s {2} made {3} ineffective!",
+      #      opponent.pbThis,getAbilityName(opponent.ability),self.name))
+      # end
+      ### /MODDED
+      return 0
+    end
+    if ((opponent.ability == :STORMDRAIN && (type == :WATER || (!secondtype.nil? && secondtype.include?(:WATER)))) ||
+       (opponent.ability == :LIGHTNINGROD && (type == :ELECTRIC || (!secondtype.nil? && secondtype.include?(:ELECTRIC))))) && !(opponent.moldbroken)
+      ### MODDED/ No actual effects
+      # if opponent.pbCanIncreaseStatStage?(PBStats::SPATK)
+      #   if (Rejuv && @battle.FE == :SHORTCIRCUIT) && opponent.ability == :LIGHTNINGROD
+      #     damageroll = @battle.field.getRoll(maximize_roll: (@battle.state.effects[:ELECTERRAIN] > 0))
+      #     statboosts = [1,2,0,1,3]
+      #     arrStatTexts=[_INTL("{1}'s {2} raised its Special Attack!",opponent.pbThis,getAbilityName(opponent.ability)), _INTL("{1}'s {2} sharply raised its Special Attack!",opponent.pbThis,getAbilityName(opponent.ability)),
+      #       _INTL("{1}'s {2} drastically raised its Special Attack!",opponent.pbThis,getAbilityName(opponent.ability))]
+      #     statboost = statboosts[PBStuff::SHORTCIRCUITROLLS.find_index(damageroll)]
+      #     if statboost != 0
+      #       opponent.pbIncreaseStatBasic(PBStats::SPATK,statboost)
+      #       @battle.pbCommonAnimation("StatUp",opponent,nil)
+      #       @battle.pbDisplay(arrStatTexts[statboost-1])
+      #     else
+      #       @battle.pbDisplay(_INTL("{1}'s {2} made {3} ineffective!",
+      #         opponent.pbThis,getAbilityName(opponent.ability),self.name))
+      #     end
+      #   else
+      #     opponent.pbIncreaseStatBasic(PBStats::SPATK,1)
+      #     @battle.pbCommonAnimation("StatUp",opponent,nil)
+      #     @battle.pbDisplay(_INTL("{1}'s {2} raised its Special Attack!",
+      #       opponent.pbThis,getAbilityName(opponent.ability)))
+      #   end
+      # else
+      #   @battle.pbDisplay(_INTL("{1}'s {2} made {3} ineffective!",
+      #      opponent.pbThis,getAbilityName(opponent.ability),self.name))
+      # end
+      # if @function==0xCB #Dive
+      #   @battle.scene.pbUnVanishSprite(attacker)
+      # end
+      ### /MODDED
+      return 0
+    end
+    if ((opponent.ability == :MOTORDRIVE && !opponent.moldbroken) ||
+      (Rejuv && @battle.FE == :GLITCH && opponent.species == :GENESECT && opponent.hasWorkingItem(:SHOCKDRIVE))) &&
+      (type == :ELECTRIC || (!secondtype.nil? && secondtype.include?(:ELECTRIC)))
+      ### MODDED/ No actual effects
+      # negator = getAbilityName(opponent.ability)
+      # negator = getItemName(opponent.item) if (Rejuv && @battle.FE == :GLITCH && opponent.species == :GENESECT && opponent.hasWorkingItem(:SHOCKDRIVE))
+      # if opponent.pbCanIncreaseStatStage?(PBStats::SPEED)
+      #   if (!Rejuv && @battle.FE == :SHORTCIRCUIT) || (Rejuv && @battle.FE == :FACTORY)
+      #     opponent.pbIncreaseStatBasic(PBStats::SPEED,2)
+      #     @battle.pbCommonAnimation("StatUp",opponent,nil)
+      #     @battle.pbDisplay(_INTL("{1}'s {2} sharply raised its Speed!",
+      #     opponent.pbThis,negator))
+      #   elsif (Rejuv && @battle.FE == :SHORTCIRCUIT)
+      #     damageroll = @battle.field.getRoll(maximize_roll: (@battle.state.effects[:ELECTERRAIN] > 0))
+      #     statboosts = [1,2,0,1,3]
+      #     arrStatTexts=[_INTL("{1}'s {2} raised its Speed!",opponent.pbThis,negator), _INTL("{1}'s {2} sharply raised its Speed!",opponent.pbThis,negator),
+      #       _INTL("{1}'s {2} drastically raised its Speed!",opponent.pbThis,negator)]
+      #     statboost = statboosts[PBStuff::SHORTCIRCUITROLLS.find_index(damageroll)]
+      #     if statboost != 0
+      #       opponent.pbIncreaseStatBasic(PBStats::SPEED,statboost)
+      #       @battle.pbCommonAnimation("StatUp",opponent,nil)
+      #       @battle.pbDisplay(arrStatTexts[statboost-1])
+      #     else
+      #       @battle.pbDisplay(_INTL("{1}'s {2} made {3} ineffective!",
+      #         opponent.pbThis,negator,self.name))
+      #     end
+      #   else
+      #     opponent.pbIncreaseStatBasic(PBStats::SPEED,1)
+      #     @battle.pbCommonAnimation("StatUp",opponent,nil)
+      #     @battle.pbDisplay(_INTL("{1}'s {2} raised its Speed!",
+      #     opponent.pbThis,negator))
+      #   end
+      # else
+      #   @battle.pbDisplay(_INTL("{1}'s {2} made {3} ineffective!",
+      #   opponent.pbThis,negator,self.name))
+      # end
+      ### /MODDED
+      return 0
+    end
+    if ((opponent.ability == :DRYSKIN && !(opponent.moldbroken)) && (type == :WATER || (!secondtype.nil? && secondtype.include?(:WATER)))) ||
+      (opponent.ability == :VOLTABSORB && !(opponent.moldbroken) && (type == :ELECTRIC || (!secondtype.nil? && secondtype.include?(:ELECTRIC)))) ||
+      (opponent.ability == :WATERABSORB && !(opponent.moldbroken) && (type == :WATER || (!secondtype.nil? && secondtype.include?(:WATER)))) ||
+      ((Rejuv && @battle.FE == :GLITCH && opponent.species == :GENESECT && opponent.hasWorkingItem(:DOUSEDRIVE)) && (type == :WATER || (!secondtype.nil? && secondtype.include?(:WATER)))) ||
+      ((Rejuv && @battle.FE == :GLITCH && opponent.species == :GENESECT && opponent.hasWorkingItem(:CHILLDRIVE)) && (type == :ICE || (!secondtype.nil? && secondtype.include?(:ICE)))) ||
+      ((Rejuv && @battle.FE == :DESERT) && (opponent.hasType?(:GRASS) || opponent.hasType?(:WATER)) && @battle.pbWeather == :SUNNYDAY && (type == :WATER || (!secondtype.nil? && secondtype.include?(:WATER))))
+      if opponent.effects[:HealBlock]==0
+        ### MODDED/ No actual effects
+        # negator = getAbilityName(opponent.ability)
+        # if ![:WATERABSORB,:VOLTABSORB,:DRYSKIN].include?(opponent.ability)
+        #   negator = getItemName(opponent.item) if (Rejuv && @battle.FE == :GLITCH && opponent.species == :GENESECT && (opponent.item == :DOUSEDRIVE || opponent.item == :CHILLDRIVE))
+        #   negator = "unquenchable thirst" if (Rejuv && @battle.FE == :DESERT) && (opponent.hasType?(:GRASS) || opponent.hasType?(:WATER)) && @battle.pbWeather == :SUNNYDAY
+        # end
+        # if (Rejuv && @battle.FE == :SHORTCIRCUIT) && opponent.ability == :VOLTABSORB
+        #   damageroll = @battle.field.getRoll(maximize_roll: (@battle.state.effects[:ELECTERRAIN] > 0))
+        #   if opponent.pbRecoverHP(((opponent.totalhp/4.0)*damageroll).floor,true)>0
+        #     @battle.pbDisplay(_INTL("{1}'s {2} restored its HP!",
+        #       opponent.pbThis,negator))
+        #   else
+        #     @battle.pbDisplay(_INTL("{1}'s {2} made {3} useless!",
+        #     opponent.pbThis,negator,@name))
+        #   end
+        # elsif opponent.pbRecoverHP((opponent.totalhp/4.0).floor,true)>0
+        #   @battle.pbDisplay(_INTL("{1}'s {2} restored its HP!",
+        #       opponent.pbThis,negator))
+        # else
+        #   @battle.pbDisplay(_INTL("{1}'s {2} made {3} useless!",
+        #   opponent.pbThis,negator,@name))
+        # end
+        # if @function==0xCB #Dive
+        #   @battle.scene.pbUnVanishSprite(attacker)
+        # end
+        ### /MODDED
+        return 0
+      end
+    end
+    # Immunity Crests
+    case opponent.crested
+      when :SKUNTANK
+        if (type == :GROUND || (!secondtype.nil? && secondtype.include?(:GROUND)))
+          ### MODDED/ No actual effects
+          # if opponent.pbCanIncreaseStatStage?(PBStats::ATTACK)
+          #   opponent.pbIncreaseStatBasic(PBStats::ATTACK,1)
+          #   @battle.pbCommonAnimation("StatUp",opponent,nil)
+          #   @battle.pbDisplay(_INTL("{1}'s {2} raised its Attack!",
+          #      opponent.pbThis,getItemName(opponent.item)))
+          # else
+          #   @battle.pbDisplay(_INTL("{1}'s {2} made {3} ineffective!",
+          #      opponent.pbThis,getItemName(opponent.item),self.name))
+          # end
+          ### /MODDED
+          return 0
+        end
+      when :DRUDDIGON
+        if (type == :FIRE || (!secondtype.nil? && secondtype.include?(:FIRE)))
+          if opponent.effects[:HealBlock]==0
+            ### MODDED/ No actual effects
+            # if opponent.pbRecoverHP((opponent.totalhp/4.0).floor,true)>0
+            #   @battle.pbDisplay(_INTL("{1}'s {2} restored its HP!",
+            #       opponent.pbThis,getItemName(opponent.item)))
+            # else
+            #   @battle.pbDisplay(_INTL("{1}'s {2} made {3} useless!",
+            #   opponent.pbThis,getItemName(opponent.item),@name))
+            # end
+            ### /MODDED
+            return 0
+          end
+        end
+      when :WHISCASH
+        if (type == :GRASS || (!secondtype.nil? && secondtype.include?(:GRASS)))
+          ### MODDED/ No actual effects
+          # if opponent.pbCanIncreaseStatStage?(PBStats::ATTACK)
+          #   opponent.pbIncreaseStatBasic(PBStats::ATTACK,1)
+          #   @battle.pbCommonAnimation("StatUp",opponent,nil)
+          #   @battle.pbDisplay(_INTL("{1}'s {2} raised its Attack!",
+          #      opponent.pbThis,getItemName(opponent.item)))
+          # else
+          #   @battle.pbDisplay(_INTL("{1}'s {2} made {3} ineffective!",
+          #      opponent.pbThis,getItemName(opponent.item),self.name))
+          # end
+          ### /MODDED
+          return 0
+        end
+    end
+    if (opponent.ability == :BULLETPROOF) && !(opponent.moldbroken)
+      if (PBStuff::BULLETMOVE).include?(@move)
+        ### MODDED/ No actual effects
+        # @battle.pbDisplay(_INTL("{1}'s {2} blocked the attack!",
+        # opponent.pbThis,getAbilityName(opponent.ability),self.name))
+        ### /MODDED
+        return 0
+      end
+    end
+    if @battle.FE == :ROCKY && (opponent.effects[:Substitute]>0 || opponent.stages[PBStats::DEFENSE] > 0)
+      if (PBStuff::BULLETMOVE).include?(@move)
+        ### MODDED/ No actual effects
+        # @battle.pbDisplay(_INTL("{1} hid behind a rock to dodge the attack!",
+        # opponent.pbThis,getAbilityName(opponent.ability),self.name))
+        ### /MODDED
+        return 0
+      end
+    end
+    if ((opponent.ability == :FLASHFIRE && !opponent.moldbroken) || 
+      (Rejuv && @battle.FE == :GLITCH && opponent.species == :GENESECT && opponent.hasWorkingItem(:BURNDRIVE))) && 
+      (type == :FIRE || (!secondtype.nil? && secondtype.include?(:FIRE))) && @battle.FE != :FROZENDIMENSION
+      ### MODDED/ No actual effects
+      # negator = getAbilityName(opponent.ability)
+      # negator = getItemName(opponent.item) if (Rejuv && @battle.FE == :GLITCH && opponent.species == :GENESECT && opponent.hasWorkingItem(:BURNDRIVE))
+      # if !opponent.effects[:FlashFire]
+      #   opponent.effects[:FlashFire]=true
+      #   @battle.pbDisplay(_INTL("{1}'s {2} activated!",
+      #      opponent.pbThis,negator))
+      # else
+      #   @battle.pbDisplay(_INTL("{1}'s {2} made {3} ineffective!",
+      #      opponent.pbThis,negator,self.name))
+      # end
+      ### /MODDED
+      return 0
+    end
+    if opponent.ability == :MAGMAARMOR && (type == :FIRE || (!secondtype.nil? && secondtype.include?(:FIRE))) &&
+      (@battle.FE == :DRAGONSDEN || @battle.FE == :VOLCANICTOP || @battle.FE == :INFERNAL) && !(opponent.moldbroken)
+      ### MODDED/ No actual effects
+      # @battle.pbDisplay(_INTL("{1}'s {2} made {3} ineffective!",
+      #  opponent.pbThis,getAbilityName(opponent.ability),self.name))
+      ### /MODDED
+      return 0
+    end
+    #Telepathy
+    if ((opponent.ability == :TELEPATHY  && !opponent.moldbroken) || @battle.FE == :HOLY) && @basedamage>0
+      if opponent.index == attacker.pbPartner.index
+        ### MODDED/ No actual effects
+        # @battle.pbDisplay(_INTL("{1} avoids attacks by its ally Pokémon!",opponent.pbThis))
+        ### /MODDED
+        return 0
+      end
+    end
+    # UPDATE Implementing Flying Press + Freeze Dry
+    typemod=pbTypeModifier(type,attacker,opponent)
+    typemod2= nil
+    typemod3= nil
+    if type == :FIRE && opponent.effects[:TarShot]
+      typemod*=2
+    end
+    # Resistance-changing Crests
+    if opponent.crested
+      case opponent.species
+      when :LUXRAY
+        typemod /= 2 if (type == :GHOST || type == :DARK)
+        typemod = 0 if type == :PSYCHIC 
+      when :SAMUROTT
+        typemod /= 2 if (type == :BUG || type == :DARK || type == :ROCK)
+      when :LEAFEON
+        typemod /= 4 if (type == :FIRE || type == :FLYING)
+      when :GLACEON
+        typemod /= 4 if (type == :ROCK || type == :FIGHTING)
+      when :SIMISEAR
+        typemod /= 2 if [:STEEL, :FIRE,:ICE].include?(type)
+        typemod /= 2 if type == :WATER && @battle.FE != :UNDERWATER
+      when :SIMIPOUR
+        typemod /= 2 if [:GROUND,:WATER,:GRASS,:ELECTRIC].include?(type)
+      when :SIMISAGE
+        typemod /= 2 if [:BUG,:STEEL,:FIRE,:GRASS,:FAIRY].include?(type)
+        typemod /= 2 if type == :ICE && @battle.FE != :GLITCH
+      when :TORTERRA
+        if !($game_switches[:Inversemode] ^ (@battle.FE == :INVERSE))
+          typemod = 16 / typemod if typemod != 0
+        end
+      end
+    end
+    typemod *= 4 if @move == :FREEZEDRY && opponent.hasType?(:WATER)
+    if @move == :CUT && opponent.hasType?(:GRASS) && ((!Rejuv && @battle.FE == :FOREST) || @battle.ProgressiveFieldCheck(PBFields::FLOWERGARDEN,2,5))
+      typemod *= 2
+    end
+    if @move == :FLYINGPRESS
+      if @battle.FE == :SKY
+        if ((PBTypes.oneTypeEff(:FLYING, opponent.type1) > 2) || (PBTypes.oneTypeEff(:FLYING, opponent.type1) < 2 && $game_switches[:Inversemode]))
+          typemod*=2
+        end
+        if ((PBTypes.oneTypeEff(:FLYING, opponent.type2) > 2) || (PBTypes.oneTypeEff(:FLYING, opponent.type2) < 2 && $game_switches[:Inversemode]))
+          typemod*=2
+        end
+      else
+        typemod2=pbTypeModifier(:FLYING,attacker,opponent)
+        typemod3= ((typemod*typemod2)/4)
+        typemod=typemod3
+      end
+    end
+
+    # Field Effect second type changes 
+    typemod=fieldTypeChange(attacker,opponent,typemod,false)
+    typemod=overlayTypeChange(attacker,opponent,typemod,false)
+
+    # Cutting typemod in half
+    if @battle.pbWeather==:STRONGWINDS && (opponent.hasType?(:FLYING) && !opponent.effects[:Roost]) &&
+      ((PBTypes.oneTypeEff(type, :FLYING) > 2) || (PBTypes.oneTypeEff(type, :FLYING) < 2 && ($game_switches[:Inversemode] || (@battle.FE == :INVERSE))))
+       typemod /= 2
+    end
+    if @battle.FE == :SNOWYMOUNTAIN && opponent.ability == :ICESCALES && opponent.hasType?(:ICE) && !(opponent.moldbroken) &&
+      ((PBTypes.oneTypeEff(type, :ICE) > 2) || (PBTypes.oneTypeEff(type, :ICE) < 2 && ($game_switches[:Inversemode] || (@battle.FE == :INVERSE))))
+      typemod /= 2
+    end
+    if @battle.FE == :DRAGONSDEN && opponent.ability == :MULTISCALE && opponent.hasType?(:DRAGON) && !(opponent.moldbroken) &&
+      ((PBTypes.oneTypeEff(type, :DRAGON) > 2) || (PBTypes.oneTypeEff(type, :DRAGON) < 2 && ($game_switches[:Inversemode] || (@battle.FE == :INVERSE))))
+       typemod /= 2
+    end
+    if @battle.ProgressiveFieldCheck(PBFields::FLOWERGARDEN,4,5) && opponent.hasType?(:GRASS) && 
+      ((PBTypes.oneTypeEff(type, :GRASS) > 2) || (PBTypes.oneTypeEff(type, :GRASS) < 2 && ($game_switches[:Inversemode] || (@battle.FE == :INVERSE))))
+       typemod /= 2
+    end
+    if @battle.FE == :BEWITCHED && opponent.hasType?(:FAIRY) && (opponent.ability == :PASTELVEIL || opponent.pbPartner.ability == :PASTELVEIL) && !(opponent.moldbroken) &&
+      ((PBTypes.oneTypeEff(type, :FAIRY) > 2) || (PBTypes.oneTypeEff(type, :FAIRY) < 2 && ($game_switches[:Inversemode] || (@battle.FE == :INVERSE))))
+      typemod /= 2
+    end
+    if typemod==0
+      if @function==0x111
+        return 1
+      else
+        ### MODDED/ No actual effects
+        # @battle.pbDisplay(_INTL("It doesn't affect {1}...",opponent.pbThis(true)))
+        # if PBStuff::TWOTURNMOVE.include?(@move)
+        #   @battle.scene.pbUnVanishSprite(attacker)
+        # end
+        ### /MODDED
+      end
+    end
+    return typemod
+  end
+
   def movehelpdisplay_calcPower(attacker,opponent,options=0, hitnum: 0) # Based on PokeBattle_Move pbCalcPower
     ### MODDED/ no damagestate
     # opponent.damagestate.critical=false
@@ -900,7 +1218,9 @@ class PokeBattle_Move
       end
     end
     # Type effectiveness
-    typemod=pbTypeModMessages(type,attacker,opponent)
+    ### MODDED/ use non-messaging equivalent
+    typemod=movehelpdisplay_typeMod(type,attacker,opponent)
+    ### /MODDED
     damage=(damage*typemod/4.0)
     ### MODDED/ no damage state
     # opponent.damagestate.typemod=typemod
