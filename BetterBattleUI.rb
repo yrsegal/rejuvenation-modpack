@@ -1129,6 +1129,47 @@ class PokemonDataBox < SpriteWrapper
   end
 end
 
+def betterBattleUI_withForm(attacker)
+  if !attacker.isMega? && attacker.hasMega?
+    side=(attacker.battle.pbIsOpposing?(attacker.index)) ? 1 : 0
+    owner=attacker.battle.pbGetOwnerIndex(attacker.index)
+    if attacker.battle.megaEvolution[side][owner] == attacker.index
+      attacker.pokemon.makeMega
+      prevAbility = attacker.ability
+      prevType1 = attacker.type1
+      prevType2 = attacker.type2
+      attacker.ability = attacker.pokemon.ability
+      attacker.type1 = attacker.pokemon.type1
+      attacker.type2 = attacker.pokemon.type2
+      ret = yield
+      attacker.pokemon.makeUnmega
+      attacker.ability = prevAbility
+      attacker.type1 = prevType1
+      attacker.type2 = prevType2
+      return ret
+    end
+  elsif !attacker.isUltra? && attacker.hasUltra?
+    side=(attacker.battle.pbIsOpposing?(attacker.index)) ? 1 : 0
+    owner=attacker.battle.pbGetOwnerIndex(attacker.index)
+    if attacker.battle.ultraBurst[side][owner] == attacker.index
+      attacker.pokemon.makeMega
+      prevAbility = attacker.ability
+      prevType1 = attacker.type1
+      prevType2 = attacker.type2
+      attacker.ability = attacker.pokemon.ability
+      attacker.type1 = attacker.pokemon.type1
+      attacker.type2 = attacker.pokemon.type2
+      ret = yield
+      attacker.pokemon.makeUnmega
+      attacker.ability = prevAbility
+      attacker.type1 = prevType1
+      attacker.type2 = prevType2
+      return ret
+    end
+  end
+  return yield
+end
+
 class FightMenuButtons < BitmapSprite
 
   alias :betterBattleUI_old_initialize :initialize
@@ -1150,44 +1191,9 @@ class FightMenuButtons < BitmapSprite
   end
 
   def betterBattleUI_pbType(move, attacker)
-    if !attacker.isMega? && attacker.hasMega?
-      side=(attacker.battle.pbIsOpposing?(attacker.index)) ? 1 : 0
-      owner=attacker.battle.pbGetOwnerIndex(attacker.index)
-      if attacker.battle.megaEvolution[side][owner] == attacker.index
-        attacker.pokemon.makeMega
-        prevAbility = attacker.ability
-        prevType1 = attacker.type1
-        prevType2 = attacker.type2
-        attacker.ability = attacker.pokemon.ability
-        attacker.type1 = attacker.pokemon.type1
-        attacker.type2 = attacker.pokemon.type2
-        ret = move.pbType(attacker, move.type)
-        attacker.pokemon.makeUnmega
-        attacker.ability = prevAbility
-        attacker.type1 = prevType1
-        attacker.type2 = prevType2
-        return ret
-      end
-    elsif !attacker.isUltra? && attacker.hasUltra?
-      side=(attacker.battle.pbIsOpposing?(attacker.index)) ? 1 : 0
-      owner=attacker.battle.pbGetOwnerIndex(attacker.index)
-      if attacker.battle.ultraBurst[side][owner] == attacker.index
-        attacker.pokemon.makeMega
-        prevAbility = attacker.ability
-        prevType1 = attacker.type1
-        prevType2 = attacker.type2
-        attacker.ability = attacker.pokemon.ability
-        attacker.type1 = attacker.pokemon.type1
-        attacker.type2 = attacker.pokemon.type2
-        ret = move.pbType(attacker, move.type)
-        attacker.pokemon.makeUnmega
-        attacker.ability = prevAbility
-        attacker.type1 = prevType1
-        attacker.type2 = prevType2
-        return ret
-      end
-    end
-    return move.pbType(attacker)
+    betterBattleUI_withForm(attacker) {
+      move.pbType(attacker, move.type)
+    }
   end
     
 
@@ -1464,6 +1470,10 @@ class PokeBattle_Move
 
 
     if opponent.item == nil && @function == 0x315
+      return 0
+    end
+
+    if @move == :BELCH && attacker.pokemon.belch != true && attacker.crested != :SWALOT
       return 0
     end
 
