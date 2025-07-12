@@ -42,7 +42,7 @@ module MoveHelpDisplay
     :punchmove, 
     :sharpmove, 
     :soundmove, 
-    [:tramplemove, [:BODYSLAM, :MALICIOUSMOONSAULT], [0x10, 0x137, 0x9B]], 
+    [:tramplemove, [:BODYSLAM, :FLYINGPRESS, :MALICIOUSMOONSAULT], [0x10, 0x137, 0x9B]], 
     :windmove, :intercept, :zmove]
 
   USES_SMART_DAMAGE_CATEGORY = [0x309, 0x20D, 0x80A, 0x80B] # Shell Side Arm, Super UMD Move, Unleashed Power, Blinding Speed
@@ -165,21 +165,28 @@ class PokeBattle_Scene
     end
 
     # Draws images.
-    imagePos = [[sprintf("Data/Mods/BetterBattleUI/MoveBGs/moveBg%s", type), xpos, ypos, 0, 0, 512, 168]]
-
     if secondtype.nil?
-      imagePos.push([sprintf("Graphics/Icons/type%s", type),              xpos + 282, ypos + 8, 0, 0,            64, 28],
-                    ["Graphics/Pictures/category",                        xpos + 350, ypos + 8, 0, cattype * 28, 64, 28])
+      imagePos = [[sprintf("Data/Mods/BetterBattleUI/MoveBGs/moveBg%s", type),          xpos,       ypos,     0, 0,            512, 168],
+                  [sprintf("Data/Mods/BetterBattleUI/MoveBGs/moveBg%s", type),          xpos,       ypos,     0, 168,          512, 168],
+                  [sprintf("Data/Mods/BetterBattleUI/MoveBGs/moveBg%s", type),          xpos,       ypos,     0, 336,          512, 168],
+                  [sprintf("Graphics/Icons/type%s", type),                              xpos + 282, ypos + 8, 0, 0,            64,  28],
+                  ["Graphics/Pictures/category",                                        xpos + 350, ypos + 8, 0, cattype * 28, 64,  28]]
     elsif secondtype.length == 1
-      imagePos.push([sprintf("Graphics/Icons/type%s", type),              xpos + 284, ypos + 8, 0, 0,            64, 28],
-                    [sprintf("Graphics/Icons/minitype%s", secondtype[0]), xpos + 348, ypos + 8, 0, 0,            28, 28],
-                    ["Data/Mods/BetterBattleUI/minicategory",              xpos + 384, ypos + 8, 0, cattype * 28, 28, 28])
+      imagePos = [[sprintf("Data/Mods/BetterBattleUI/MoveBGs/moveBg%s", type),          xpos,       ypos,     0, 0,            512, 168],
+                  [sprintf("Data/Mods/BetterBattleUI/MoveBGs/moveBg%s", secondtype[0]), xpos,       ypos,     0, 168,          512, 168],
+                  [sprintf("Data/Mods/BetterBattleUI/MoveBGs/moveBg%s", secondtype[0]), xpos,       ypos,     0, 336,          512, 168],
+                  [sprintf("Graphics/Icons/type%s", type),                              xpos + 284, ypos + 8, 0, 0,            64,  28],
+                  [sprintf("Graphics/Icons/minitype%s", secondtype[0]),                 xpos + 348, ypos + 8, 0, 0,            28,  28],
+                  ["Data/Mods/BetterBattleUI/minicategory",                             xpos + 384, ypos + 8, 0, cattype * 28, 28,  28]]
     else
 
-      imagePos.push([sprintf("Graphics/Icons/minitype%s", type),          xpos + 282, ypos + 8, 0, 0,            28, 28],
-                    [sprintf("Graphics/Icons/minitype%s", secondtype[0]), xpos + 310, ypos + 8, 0, 0,            28, 28],
-                    [sprintf("Graphics/Icons/minitype%s", secondtype[1]), xpos + 338, ypos + 8, 0, 0,            28, 28],
-                    ["Data/Mods/BetterBattleUI/minicategory",     xpos + 386, ypos + 8, 0, cattype * 28, 28, 28])
+      imagePos = [[sprintf("Data/Mods/BetterBattleUI/MoveBGs/moveBg%s", type),          xpos,       ypos,     0, 0,            512, 168],
+                  [sprintf("Data/Mods/BetterBattleUI/MoveBGs/moveBg%s", secondtype[0]), xpos,       ypos,     0, 168,          512, 168],
+                  [sprintf("Data/Mods/BetterBattleUI/MoveBGs/moveBg%s", secondtype[1]), xpos,       ypos,     0, 336,          512, 168],
+                  [sprintf("Graphics/Icons/minitype%s", type),                          xpos + 282, ypos + 8, 0, 0,            28,  28],
+                  [sprintf("Graphics/Icons/minitype%s", secondtype[0]),                 xpos + 310, ypos + 8, 0, 0,            28,  28],
+                  [sprintf("Graphics/Icons/minitype%s", secondtype[1]),                 xpos + 338, ypos + 8, 0, 0,            28,  28],
+                  ["Data/Mods/BetterBattleUI/minicategory",                             xpos + 386, ypos + 8, 0, cattype * 28, 28,  28]]
     end
 
     pbDrawMoveFlagIcons(battler, xpos, ypos, move, imagePos)
@@ -240,7 +247,11 @@ class PokeBattle_Scene
     # textPos.push([bonus[0], xpos + 8, ypos + 132, 0, bonus[1], bonus[2], true]) if bonus
     pbDrawTextPositions(bm, textPos)
 
-    normtext=getLineBrokenChunks(bm,getMoveDesc(move.move),Graphics.width - 12,nil,true)
+    desc = getMoveDesc(move.move)
+    desc.gsub! /—/, '-'
+    desc.strip!
+
+    normtext=getLineBrokenChunks(bm,desc,Graphics.width - 12,nil,true)
     linecount = normtext[-1][2] / 32 + 1
     textheight = 26
     textheight = 21 if linecount > 3
