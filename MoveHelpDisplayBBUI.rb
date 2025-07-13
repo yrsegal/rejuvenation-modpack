@@ -1467,6 +1467,20 @@ class PokeBattle_Move
     return [100, baseaccuracy*accuracy/evasion].min
     ### /MODDED
   end
+
+  def movehelpdisplay_effectMod(user)
+    # From Battler.pbProcessMoveAgainstTarget
+    addleffect=effect
+    addleffect=20 if move == :OMINOUSWIND && @battle.FE == :HAUNTED
+    addleffect*=2 if user.ability == (:SERENEGRACE) || @battle.FE == :RAINBOW
+    addleffect=100 if move == :MIRRORSHOT && @battle.FE == :MIRROR
+    addleffect=100 if move == :STRANGESTEAM && @battle.FE == :FAIRYTALE
+    addleffect=100 if move == :LICK && @battle.FE == :HAUNTED
+    addleffect=100 if move == :DIRECLAW && @battle.FE == :WASTELAND
+    addleffect=100 if move == :INFERNALPARADE && @battle.FE == :INFERNAL
+    addleffect=0 if user.ability == :SHEERFORCE
+    return addleffect
+  end
 end
 
 
@@ -1605,8 +1619,8 @@ class PokeBattle_Scene
       # Final move attribute calculations.
       acc = move.movehelpdisplay_calcAccuracy(battler, knownFoe)
       pri = move.priorityCheck(battler)
-      chance = move.effect
-      baseChance = chance
+      baseChance = move.effect
+      chance = move.movehelpdisplay_effectMod(battler)
       if basePower > 1
         if power > basePower
           powBase, powShadow = MoveHelpDisplay::BASE_RAISED, MoveHelpDisplay::SHADOW_RAISED
@@ -1633,7 +1647,7 @@ class PokeBattle_Scene
         end
       end
 
-      if chance > 0
+      if baseChance > 0
         if chance > baseChance
           effBase, effShadow = MoveHelpDisplay::BASE_RAISED, MoveHelpDisplay::SHADOW_RAISED
         elsif chance < baseChance
@@ -1643,10 +1657,10 @@ class PokeBattle_Scene
       #---------------------------------------------------------------------------
       # Draws text.
       textPos = []
-      displayPower    = (power  == 0 && basePower == 0) ? "-" : (power == 1) ? "?" : power.ceil.to_s
-      displayAccuracy = (acc    <= 0)                   ? "-" : acc.ceil.to_s
-      displayPriority = (pri    == 0)                   ? "-" : (pri > 0) ? "+" + pri.to_s : pri.to_s
-      displayChance   = (chance == 0 || chance == 100)  ? "-" : chance.ceil.to_s + "%"
+      displayPower    = (power  == 0 && basePower == 0)    ? "-" : (power == 1) ? "?" : power.ceil.to_s
+      displayAccuracy = (acc    <= 0)                      ? "-" : acc.ceil.to_s
+      displayPriority = (pri    == 0)                      ? "-" : (pri > 0) ? "+" + pri.to_s : pri.to_s
+      displayChance   = (baseChance == 0 || chance == 100) ? "-" : chance.ceil.to_s + "%"
       textPos.push(
         [move.getMoveUseName, xpos + 10,  ypos + 14, 0, MoveHelpDisplay::BASE_LIGHT, MoveHelpDisplay::SHADOW_LIGHT, true],
         [_INTL("Pow"),        xpos + 256, ypos + 44, 0, MoveHelpDisplay::BASE_LIGHT, MoveHelpDisplay::SHADOW_LIGHT],
