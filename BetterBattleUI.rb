@@ -397,6 +397,7 @@ class PokeBattle_Scene
     @sprites["bbui_ballwindow"].z=100
     @sprites["bbui_moveinfo"]=BitmapSprite.new(Graphics.width, Graphics.height, @viewport)
     @sprites["bbui_moveinfo"].z=100
+    @sprites["bbui_moveinfo"].visible=false
     pbSetSmallFont(@sprites["bbui_moveinfo"].bitmap)
   end
 

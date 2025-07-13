@@ -1,6 +1,5 @@
 
 # TODO
-# Replace selection with [002] selection menu
 # Replace inspect with [003] battler info ui
 
 module MoveHelpDisplay

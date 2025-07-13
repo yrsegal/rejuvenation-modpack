@@ -1,0 +1,1 @@
+ItemHandlers::MultipleAtOnce.push(:REVERSECANDY)
