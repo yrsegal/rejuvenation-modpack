@@ -457,7 +457,7 @@ class PokeBattle_Scene
     pbDrawImagePositions(@sprites["bbui_inspect"].bitmap, imagePos)
     pbDrawTextPositions(@sprites["bbui_inspect"].bitmap, textPos)
     desc = effects[idxEffect][2]
-    drawFormattedTextEx_lh(@sprites["bbui_inspect"].bitmap, xpos + 246, ypos + 262, 208, desc, InspectMenuDisplay::BASE_DARK, InspectMenuDisplay::SHADOW_DARK, 18)
+    drawFormattedTextEx_lh(@sprites["bbui_inspect"].bitmap, xpos + 246, ypos + 264, 208, desc, InspectMenuDisplay::BASE_DARK, InspectMenuDisplay::SHADOW_DARK, 18)
   end
 
   #-----------------------------------------------------------------------------
