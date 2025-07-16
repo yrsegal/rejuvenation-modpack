@@ -336,7 +336,7 @@ module MusicSignpostDisplay
   end
 
   def self.visibleBox
-    @@displaybox.visible = !!(@@displaybox.text != '' && $game_system.playing_bgm && !@@disabled && 
+    @@displaybox.visible = !!(@@displaybox.text != '' && $game_system.playing_bgm && !@@disabled &&
       !($game_system.message_position == 0 && $game_temp.message_window_showing))
   end
 
@@ -367,7 +367,7 @@ module MusicSignpostDisplay
     if $game_system.defaultBGM || $game_system.playing_bgm
       musicCurrent, animicons = msg($game_system.defaultBGM || $game_system.playing_bgm)
       if musicCurrent.nil?
-        @@displaybox.visible = false 
+        @@displaybox.visible = false
       elsif @@lastText != musicCurrent
         @@lastText = musicCurrent
 
@@ -390,7 +390,7 @@ module MusicSignpostDisplay
     if !isDarkWindowskin(window.windowskin)
       for replacement in MusicSignpostDisplay::LIGHT_ICONS
         icon = "Light#{replacement}"
-        trackName.gsub!("<img=#{pbResolveBitmap("Data/Mods/MusicTypes/#{replacement}")}>", 
+        trackName.gsub!("<img=#{pbResolveBitmap("Data/Mods/MusicTypes/#{replacement}")}>",
           "<img=#{pbResolveBitmap("Data/Mods/MusicTypes/#{icon}")}>")
         if MusicSignpostDisplay::ANIM_ICONS.include?(replacement)
           animicons.delete(replacement)
@@ -430,7 +430,7 @@ module MusicSignpostDisplay
       return
     end
     @@lastTrackDisplayed = track
-    @@signpostWaiting = track  
+    @@signpostWaiting = track
   end
 
   def self.disabled=(value)

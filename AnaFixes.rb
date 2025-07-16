@@ -155,7 +155,7 @@ def anafixes_hotfix_battyfriends(event)
       [:ConditionalBranch, :Switch, :Ana, true])
 
     if matched
-      insns.insert(insns.index(matched) + 1, 
+      insns.insert(insns.index(matched) + 1,
         *InjectionHelper.parseEventCommands(
           *anafixes_batty_section(3),
           *anafixes_batty_section(4),
@@ -186,7 +186,7 @@ def anafixes_fix_protagname(page)
       [:Label, 'point1'])
 
     textMatches = InjectionHelper.lookForAll(insns,
-      [:ShowText, /\\v\[701\]/]) + 
+      [:ShowText, /\\v\[701\]/]) +
     InjectionHelper.lookForAll(insns,
       [:ShowTextContinued, /\\v\[701\]/])
 

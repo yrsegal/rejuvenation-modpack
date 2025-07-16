@@ -11,7 +11,7 @@ TextureOverrides.registerTrainerClass(:CANDIDGIRLDARCH, {
 })
 
 # This is the only time Florin is a battle partner, so we can replace the base sprite)
-TextureOverrides.registerTextureOverride(TextureOverrides::CHARS + 'trBack144', TextureOverrides::MOD + 'Darch/FlorinBack') 
+TextureOverrides.registerTextureOverride(TextureOverrides::CHARS + 'trBack144', TextureOverrides::MOD + 'Darch/FlorinBack')
 
-TextureOverrides.replaceTrainerClass("Erin", :CANDIDGIRL, 0, 
+TextureOverrides.replaceTrainerClass("Erin", :CANDIDGIRL, 0,
   newTrainerClass: :CANDIDGIRLDARCH)

@@ -1,5 +1,5 @@
 Variables[:V2Story] = 359
-Switches[:EarlyIncubator] = 1776 
+Switches[:EarlyIncubator] = 1776
 
 TextureOverrides.registerServiceSprites('DayCareLady', 'DayCareMan')
 
@@ -21,11 +21,11 @@ class DayCarePCService
     return _INTL("Remotely access the Day Care.")
   end
 
-  def lady(text, *args) 
+  def lady(text, *args)
     return _INTL("\\f[service_DayCareLady]" + text, *args)
   end
 
-  def man(text, *args) 
+  def man(text, *args)
     return _INTL("\\f[service_DayCareMan]" + text, *args)
   end
 
@@ -52,7 +52,7 @@ class DayCarePCService
     return false
   end
 
-  BABIES = [ 
+  BABIES = [
     :PICHU, :CLEFFA, :IGGLYBUFF, :TOGEPI, :TYROGUE, :SMOOCHUM, :ELEKID, :MAGBY, # Gen 2
     :AZURILL, :WYNAUT, # Gen 3
     :BUDEW, :CHINGLING, :BONSLY, :MIMEJR, :HAPPINY, :MUNCHLAX, :RIOLU, :MANTYKE, # Gen 4
@@ -86,7 +86,7 @@ class DayCarePCService
     return false if !daycarePoke
     daycareEggGroups = daycarePoke.eggGroups
     return false if daycareEggGroups.include?(:Undiscovered)
-    return ((pokeEggGroups & daycareEggGroups) || poke.species == :DITTO || daycarePoke.species == :DITTO) && 
+    return ((pokeEggGroups & daycareEggGroups) || poke.species == :DITTO || daycarePoke.species == :DITTO) &&
       pbDayCareCompatibleGender(poke, daycarePoke)
   end
 
@@ -129,7 +129,7 @@ class DayCarePCService
         Kernel.pbMessage(lady("Which Pokémon should we raise for you?"))
         loop do
           pbChoosePokemon(1,3,proc {|poke|
-             !poke.isEgg? && 
+             !poke.isEgg? &&
              !(poke.isShadow? rescue false) &&
              compatCheck(poke)
           }, true)

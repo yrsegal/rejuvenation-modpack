@@ -151,7 +151,7 @@ module BoxExtensions
     def filter(screen, pkmn, params)
       if params.length == 2
         return pkmn.type1 == params[0] && pkmn.type2.nil? if params[0] == params[1]
-        return (pkmn.type1 == params[0] && pkmn.type2 == params[1]) || (pkmn.type2 == params[0] && pkmn.type1 == params[1]) 
+        return (pkmn.type1 == params[0] && pkmn.type2 == params[1]) || (pkmn.type2 == params[0] && pkmn.type1 == params[1])
       end
       return pkmn.type1 == params[0] || pkmn.type2 == params[0] if params.length == 1
     end
@@ -185,7 +185,7 @@ module BoxExtensions
     end
 
     def gatherParameters(screen)
-      boundedentry_textEntry("Name of the move?", SearchTypes.gather { |p| 
+      boundedentry_textEntry("Name of the move?", SearchTypes.gather { |p|
         compats = p.formCheck(:compatiblemoves)
         compats = $cache.pkmn[p.species].compatiblemoves if !compats
         exceptions = p.formCheck(:moveexceptions)
@@ -300,7 +300,7 @@ class PokemonStorageScreen
     commands, searchtypes = BoxExtensions::SearchTypes.commands(self)
 
     searchtype = pbShowCommands(_INTL("Search by what?"), commands)
-    
+
     return if searchtype == -1 # Cancel
 
     searchtype = searchtypes[searchtype]
@@ -330,18 +330,18 @@ class PokemonStorageScreen
         end
       end
     end
-    
+
     if commandsFound.length > 0
       for i in 0...commandsFound.length
         commandsFound[i] = _INTL("{1} ({2})", commandsFound[i], boxesCount[i])
       end
-      
+
       if commandsFound.length == 1
         boxesStr = _INTL("Match found in {1} box.", commandsFound.length)
       else
         boxesStr = _INTL("Matches found in {1} boxes.", commandsFound.length)
       end
-      
+
       box = pbShowCommands(boxesStr, commandsFound)
       BoxExtensions.setSearch { |p| searchtype.filter(self, p, params) }
       @scene.boxextensions_applyTone

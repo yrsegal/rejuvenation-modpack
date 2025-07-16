@@ -40,7 +40,7 @@ alias :selectfromboxes_old_pbChoosePokemon :pbChoosePokemon
 
 def pbChoosePokemon(variableNumber,nameVarNumber,ableProc=nil,allowIneligible=false,giveAway=false,*args,
   ### MODDED/
-  selectfromboxes_commandText: "Select", selectfromboxes_partyOpen: ableProc.nil?, 
+  selectfromboxes_commandText: "Select", selectfromboxes_partyOpen: ableProc.nil?,
   selectfromboxes_tutorPartialAble: nil, selectfromboxes_tutorMove: nil, **kwargs)
 
   if Rejuv && $game_switches[:NotPlayerCharacter] && !$game_switches[:InterceptorsWish]
@@ -65,7 +65,7 @@ def pbChoosePokemon(variableNumber,nameVarNumber,ableProc=nil,allowIneligible=fa
       if chosen.nil?
        chosen = -1
       end
-  }  
+  }
   ### /MODDED
   pbSet(variableNumber, chosen)
   if chosen != -1
@@ -89,7 +89,7 @@ def pbHasSpecies?(species)
       next if !mon || mon.isEgg?
       if mon.species==species
         pbSet(1,[box, idx])
-        return true 
+        return true
       end
     end
   end
@@ -132,12 +132,12 @@ def pbMoveTutorChoose(move,movelist=nil,bymachine=false,bytutor=false,*args,**kw
   if $Trainer.tutorlist.length>0 && ($Trainer.tutorlist.include?(move)) && bytutor==false
     Kernel.pbMessage('(' + _INTL("You've already bought {1}. Check out the app on the Cybernav!",getMoveName(move)) + ')')
   else
-    pbChoosePokemon(1, 2, proc {|pkmn| 
-      !pkmn.isEgg? && 
-      !(pkmn.isShadow? rescue false) && 
-      !(movelist && !movelist.any?{|j| j==pkmn.species }) && 
+    pbChoosePokemon(1, 2, proc {|pkmn|
+      !pkmn.isEgg? &&
+      !(pkmn.isShadow? rescue false) &&
+      !(movelist && !movelist.any?{|j| j==pkmn.species }) &&
       pkmn.SpeciesCompatible?(move)
-    }, 
+    },
     selectfromboxes_commandText: "Teach",
     selectfromboxes_partyOpen: PokemonBag.pbPartyCanLearnThisMove?(move),
     selectfromboxes_tutorPartialAble: proc {|pkmn|
@@ -241,7 +241,7 @@ class Selectfromboxes_PokemonStorageScreen < PokemonStorageScreen
           when 0 # Move/Shift/Place
             if pokemon
 
-              if @scene.giveAway && 
+              if @scene.giveAway &&
                selected[0] == -1 && # Party
                $Trainer.ablePokemonCount == 1 &&
                $Trainer.ablePokemonParty.include?(pokemon)
@@ -386,7 +386,7 @@ class Selectfromboxes_PokemonStorageScene < PokemonStorageScene
 
   def pbSwitchBoxToRight(newbox)
     iNewBox = newbox # Multi-Select
-    
+
     ### MODDED/
     newbox=Selectfromboxes_PokemonBoxSprite.new(@ableProc,@tutorPartialAble,@storage,newbox,@boxviewport)
     ### /MODDED
@@ -403,13 +403,13 @@ class Selectfromboxes_PokemonStorageScene < PokemonStorageScene
     newbox.x=184; @sprites["box"].x-=diff
     @sprites["box"].dispose
     @sprites["box"]=newbox
-    
+
     aUpdateMultiSelectOverlay(iNewBox) # Multi-Select
   end
 
   def pbSwitchBoxToLeft(newbox)
     iNewBox = newbox # Multi-Select
-    
+
     ### MODDED/
     newbox=Selectfromboxes_PokemonBoxSprite.new(@ableProc,@tutorPartialAble,@storage,newbox,@boxviewport)
     ### /MODDED
@@ -426,7 +426,7 @@ class Selectfromboxes_PokemonStorageScene < PokemonStorageScene
     newbox.x=184; @sprites["box"].x-=diff
     @sprites["box"].dispose
     @sprites["box"]=newbox
-    
+
     aUpdateMultiSelectOverlay(iNewBox) # Multi-Select
   end
 end
@@ -528,7 +528,7 @@ end
 
 class Selectfromboxes_SelectionArray < Array
   include Comparable
-  
+
   def <=>(other)
     0.01 <=> other
   end
@@ -538,8 +538,8 @@ end
 
 ###### PATCHING DAY CARE
 
-def selectfromboxes_patch_partycheck(event) 
-  for page in event.pages      
+def selectfromboxes_patch_partycheck(event)
+  for page in event.pages
     insns = page.list
     InjectionHelper.patch(insns, :selectfromboxes_patch_partycheck) {
       matched = InjectionHelper.lookForAll(insns,
@@ -560,7 +560,7 @@ def selectfromboxes_patch_daycarelady(event)
   for page in event.pages
     insns = page.list
     InjectionHelper.patch(insns, :selectfromboxes_patch_daycarelady) {
-      matched = InjectionHelper.lookForSequence(insns, 
+      matched = InjectionHelper.lookForSequence(insns,
         [:Script, 'pbDayCareWithdraw(pbGet(1))'],
         [:ShowText, "\\GExcellent\\nHere's your Pokémon."])
 
@@ -604,4 +604,4 @@ end
 
 BoxExtensions::SearchTypes.registerTopType(EligibleSearchType.new) if defined?(BoxExtensions)
 
-###### 
+######

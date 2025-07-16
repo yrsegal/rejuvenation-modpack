@@ -110,7 +110,7 @@ module PokeBattle_BattleCommon
     ### /MODDED
   end
 end
-  
+
 
 class Event
   attr_reader :callbacks

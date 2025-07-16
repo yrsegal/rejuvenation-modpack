@@ -1,6 +1,6 @@
 # QoL Passwords (not just the "qol" password)
 BULK_PASSWORDS["wirepack"] = BULK_PASSWORDS["qol"] + [
-  "freeremotepc", 
+  "freeremotepc",
   "fullivs",
   "powerpack",
   "mintyfresh",
@@ -25,7 +25,7 @@ module ModPasswordOptions
     "nopoisondam" => ["No Overworld Poison", "Poison damage in the overworld is disabled."],
     "nodamageroll" => ["No Rolls", "Damage rolls are always consistent at 92%."],
     "pinata" => ["Pinata", "Repeatable Breeder trainers just give you candy directly instead."],
- 
+
     "litemode" => ["Lite Mode", "All opposing trainers have 0 EVs/IVs."],
     "nopenny" => ["Penniless", "Money gain is reduced by 80%."],
     "fullevs" => ["Pulse-2", "All opposing trainers have 252 EVs and 31 IVs in ALL stats."],
@@ -40,7 +40,7 @@ module ModPasswordOptions
     "noexp" => ["No EXP", "Your Pokemon cannot gain EXP."],
     "flatevs" => ["Flat EVs", "All opposing Pokemon have exactly 85 EVs in every stat."],
     "noevcap" => ["Gen 2 EVs", "Disables the 510 cap on EVs, allowing you to get 255 in all stats."],
- 
+
     "gen5weather" => ["Gen 5 Weather", "Weather set by abilities lasts indefinitely."],
     "unrealtime" => ["Unreal Time", "Game time can be separate from clock time, configurable to pass up to 60x faster."],
     "eeveepls" => ["Eevee Pls", "Lets an Eevee into the Starter selection room."],
@@ -68,7 +68,7 @@ module ModPasswordOptions
 
   def self.passwords
     buildPasswords if @@passwordOptions.size == 0
-    return @@passwordOptions 
+    return @@passwordOptions
   end
 
   def self.buildPasswords
@@ -94,7 +94,7 @@ module ModPasswordOptions
       id = Switches[id] if Switches[id]
 
       if !variableMapping[id]
-        passwordOrder.push(id) 
+        passwordOrder.push(id)
         variableMapping[id] = []
       end
 
@@ -116,7 +116,7 @@ module ModPasswordOptions
     return true if !PASSWORDS_BADGE_DATA[pw]
 
     knownPasswords = $Unidata[:knownPasswords] ? $Unidata[:knownPasswords] : []
-    
+
     return true if !BULK_PASSWORDS[pw] && knownPasswords.include?(pw)
     return true if BULK_PASSWORDS[pw] && BULK_PASSWORDS[pw].none? { |subPw| !knownPasswords.include?(subPw) }
 
@@ -158,7 +158,7 @@ module ModPasswordOptions
       choices.push(mark + descs[0])
       helps.push(descs[1])
     end
-    
+
     return pws,choices,helps
   end
 
@@ -178,7 +178,7 @@ module ModPasswordOptions
       choices.push(mark + descs[0])
       helps.push(descs[1])
     end
-    
+
     return pws,choices,helps
   end
 
@@ -219,7 +219,7 @@ $mod_passwordoptions_lastcommand = 0 if !defined?($mod_passwordoptions_lastcomma
 
 def mod_passwordoptions_scene
   allPasswords=pbGetKnownOrActivePasswords()
-  loop do 
+  loop do
     command = Kernel.pbMessage(_INTL("Which kind of password do you want to enter?"), [_INTL("Bulk"), _INTL("From List"), _INTL("Manual")], -1, nil, $mod_passwordoptions_lastcommand)
 
     if command < 0

@@ -33,11 +33,11 @@ class PokemonValuesPCService
     return _INTL("Tune the stats and abilities of a Pokemon.")
   end
 
-  def gearen(text, *args) 
+  def gearen(text, *args)
     return _INTL("\\f[service_GearenLabs]" + text, *args)
   end
 
-  def gdc(text, *args) 
+  def gdc(text, *args)
     return _INTL("\\f[service_GDCCentral]" + text, *args)
   end
 
@@ -127,7 +127,7 @@ class PokemonValuesPCService
     spaceWidth = window.contents.text_size(" ").width
     offsets = STAT_NAMES.map { |name| " " * ((longest - window.contents.text_size(name).width) / spaceWidth) }
 
-    return STAT_NAMES.each_with_index.map { |name,i| 
+    return STAT_NAMES.each_with_index.map { |name,i|
       color = nil
       if natup != natdn
         color = lesserPositiveColor(darkWindow) if natup == i
@@ -222,7 +222,7 @@ class PokemonValuesPCService
       if pkmn.iv != [31, 31, 31, 31, 31, 31]
         commands.push(color(2) + _INTL("Maximize all"))
       end
-      summarywindow = ServicePCList.createCornerWindow { |window| 
+      summarywindow = ServicePCList.createCornerWindow { |window|
         window.text=createStatText(pkmn, origstats, window)
       }
       command=Kernel.advanced_pbMessage(_INTL("Change which IV?"), commands, -1, nil, command)
@@ -267,10 +267,10 @@ class PokemonValuesPCService
       if allowedToEditTotal != 0
         commands.push(color(1) + _INTL("Reset all"))
       end
-      summarywindow = ServicePCList.createCornerWindow { |window| 
-        window.text=createStatText(pkmn, origstats, window) 
+      summarywindow = ServicePCList.createCornerWindow { |window|
+        window.text=createStatText(pkmn, origstats, window)
       }
-      command=Kernel.advanced_pbMessage(_INTL("Change which EV? (Total: {1}, max. {3}{2}</c3></o>)", 
+      command=Kernel.advanced_pbMessage(_INTL("Change which EV? (Total: {1}, max. {3}{2}</c3></o>)",
         currentTotal, evTotalMax, colorForStat(currentTotal, evTotalMax)), commands, -1, nil, command)
       summarywindow.dispose
       if command >= 0
@@ -328,7 +328,7 @@ class PokemonValuesPCService
 
   def natures(pkmn)
     command = 0
-    
+
     buildNatures
 
     command = $builtNatures.index(pkmn.nature)
@@ -424,8 +424,8 @@ class PokemonValuesPCService
         Kernel.pbMessage(lab("If I'm not mistaken, those are EV Cards! Let me get you set up with EV Tweaking!\1"))
         wait(25)
         ServicePCList.happySound
-        Kernel.pbMessage(lab("Done! You're now registered for EV Tweaking. You can only tweak EVs you have the cards for, so get that AP!\1"))        
-        $game_screen.pokemonvaluespc_unlocked_ev = true  
+        Kernel.pbMessage(lab("Done! You're now registered for EV Tweaking. You can only tweak EVs you have the cards for, so get that AP!\1"))
+        $game_screen.pokemonvaluespc_unlocked_ev = true
         unlockedAny = true
       end
     end
@@ -434,7 +434,7 @@ class PokemonValuesPCService
     if !$game_screen.pokemonvaluespc_unlocked_nature && $PokemonBag.pbQuantity(naturePower.item) > 0
       ServicePCList.exclaimSound
         wait(5)
-      Kernel.pbMessage(lab("If I'm not mistaken, that's {1} \\c[6]{2}\\c[0]! Let me get you set up with Nature Tweaking!\1", 
+      Kernel.pbMessage(lab("If I'm not mistaken, that's {1} \\c[6]{2}\\c[0]! Let me get you set up with Nature Tweaking!\1",
       naturePower.name,getMoveName(:NATUREPOWER)))
       wait(25)
       ServicePCList.happySound
@@ -461,7 +461,7 @@ class PokemonValuesPCService
 
     Kernel.pbMessage(lab("Now, with that sorted!\1")) if unlockedAny
 
-    return $game_screen.pokemonvaluespc_unlocked_iv || $game_screen.pokemonvaluespc_unlocked_ev || 
+    return $game_screen.pokemonvaluespc_unlocked_iv || $game_screen.pokemonvaluespc_unlocked_ev ||
       $game_screen.pokemonvaluespc_unlocked_ability || $game_screen.pokemonvaluespc_unlocked_nature
   end
 
@@ -472,7 +472,7 @@ class PokemonValuesPCService
       return
     end
 
-    if $game_variables[:QuestCrossover] >= 1 
+    if $game_variables[:QuestCrossover] >= 1
       if $game_screen.pokemonvaluespc_use_gdc
         Kernel.pbMessage(_INTL("(Since Gearen Labs is back up and running, you call them instead!)\1"))
         $game_screen.pokemonvaluespc_use_gdc = false

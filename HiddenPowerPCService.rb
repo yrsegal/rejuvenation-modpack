@@ -18,7 +18,7 @@ class HiddenPowerPCService
     return _INTL("Check or change a Pokemon's Hidden Power type.")
   end
 
-  def nerta(text, *args) 
+  def nerta(text, *args)
     return _INTL("\\f[service_Nerta]" + text, *args)
   end
 

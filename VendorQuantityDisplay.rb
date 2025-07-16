@@ -43,7 +43,7 @@ module VendorQuantityDisplay
       greenQuantity = $PokemonBag.pbQuantity(:GREENSHARD)
       yellowQuantity = $PokemonBag.pbQuantity(:YELLOWSHARD)
       next _INTL("Shards:             \n<ar>{5}{1}</c3>  {6}{2}</c3>  {7}{3}</c3>  {8}{4}</ar>",
-        redQuantity, blueQuantity, greenQuantity, yellowQuantity, 
+        redQuantity, blueQuantity, greenQuantity, yellowQuantity,
         getSkinColor(nil, 2, true), getSkinColor(nil, 1, true), getSkinColor(nil, 3, true), getSkinColor(nil, 6, true))
     }
     return createCornerWindow(textProc, viewport, z)
@@ -127,7 +127,7 @@ module VendorQuantityDisplay
           [:ShowText, /^CAIRO: Very well\./])
 
         showRE = InjectionHelper.lookForAll(insns,
-          [:ShowText, /^CAIRO: I see that you have Red Essence\./]) + 
+          [:ShowText, /^CAIRO: I see that you have Red Essence\./]) +
         InjectionHelper.lookForAll(insns,
           [:ShowText, /^CAIRO: Darkness need not hide from me\./])
 
@@ -140,7 +140,7 @@ module VendorQuantityDisplay
           insns.insert(targetIdx, InjectionHelper.parseEventCommand(insn.indent, :Script, 'vendorquantity_show_redessence_window'))
         end
 
-        next showRE.length > 0 || showMoney.length > 0 
+        next showRE.length > 0 || showMoney.length > 0
       }
       injectCleanup(page)
     end
@@ -205,7 +205,7 @@ module VendorQuantityDisplay
           insns.insert(targetIdx, InjectionHelper.parseEventCommand(insn.indent, :ShowText, "Let's spiffen them up, shall we?"))
         end
 
-        next choices.size > 0 || spiffen.size > 0 
+        next choices.size > 0 || spiffen.size > 0
       }
     end
   end
@@ -290,7 +290,7 @@ class Interpreter
   def vendorquantity_show_zcell_window
     $vendorquantity_window.dispose if $vendorquantity_window
     $vendorquantity_window = VendorQuantityDisplay.quantityWindowVariableWithOptional(
-      getSkinColor(nil, 3, true) + _INTL("Zygarde Cells:") + '</c3>', :Z_Cells, 
+      getSkinColor(nil, 3, true) + _INTL("Zygarde Cells:") + '</c3>', :Z_Cells,
       getSkinColor(nil, 3, true) + _INTL("Zygarde Cores:") + '</c3>', :Z_Cores)
   end
 
@@ -352,6 +352,6 @@ InjectionHelper.defineMapPatch(201, 5, &VendorQuantityDisplay.method(:injectBeld
 
 InjectionHelper.defineMapPatch(117, 9) { |event| # Help Plaza (Gearen), Ayuda
   VendorQuantityDisplay.injectAtStart(event, 'vendorquantity_show_zcell_window')
-} 
+}
 
 InjectionHelper.defineMapPatch(329, 90, &VendorQuantityDisplay.method(:injectNerta)) # Kristiline Town, Nerta

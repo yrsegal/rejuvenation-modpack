@@ -27,7 +27,7 @@ class PokemonTradeScene
     Kernel.pbMessageWaitForInput(@sprites["msgwindow"],100,true)
     pbPlayDecisionSE()
     pbScene1
-    
+
     Kernel.pbMessageDisplay(@sprites["msgwindow"],
        _INTL("Matthew tinkers with {1}'s Pokeball.", @pokemon.name))
     pbScene2
@@ -51,10 +51,10 @@ NON_INHERITABLE_BALLS.push(:GLITTERBALL) if !NON_INHERITABLE_BALLS.include?(:GLI
 
 class PokeballTransferPCService
 
-  def matt(text, *args) 
+  def matt(text, *args)
     return _INTL("\\f[service_Matthew]" + text, *args)
   end
-  def eizen(text, *args) 
+  def eizen(text, *args)
     return _INTL("\\f[service_Eizen]" + text, *args)
   end
 
@@ -126,7 +126,7 @@ class PokeballTransferPCService
         Kernel.pbMessage(matt("MATTHEW: That's really interesting? What's a 'shiny flag'?\1"))
         Kernel.pbMessage(eizen("EIZEN: \\PN knows.\1"))
         Kernel.pbMessage(matt("MATTHEW: Neat!\1"))
-      else 
+      else
         Kernel.pbMessage(matt("A Glitter Ball was involved... those can change a Pokemon's coloration.\1"))
       end
       $game_screen.pokeballtransferpc_explainshiny = true
@@ -263,7 +263,7 @@ class PokeballTransferPCService
         Kernel.pbMessage(matt("MATTHEW: That's not a Pokeball!"))
       elsif pkmn.ballused == item
         Kernel.pbMessage(matt("MATTHEW: {1} is already in a {2}!",pkmn.name,getItemName(item)))
-      elsif Kernel.pbConfirmMessage(matt("MATTHEW: Okay, so we'll be moving {1} from a {2} into a {3}?", 
+      elsif Kernel.pbConfirmMessage(matt("MATTHEW: Okay, so we'll be moving {1} from a {2} into a {3}?",
         pkmn.name,getItemName(pkmn.ballused || :POKEBALL),getItemName(item)))
         $PokemonBag.lastpocket = oldlastpocket
         transferBall(pkmn, item, itemscene)

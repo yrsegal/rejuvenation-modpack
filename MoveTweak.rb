@@ -102,7 +102,7 @@ module TweakMoveFunctions
   HIT_TWICE_AND_POISON = 0x0BE
   HIT_INCREASING_THRICE = 0x0BF
   MULTIHIT = 0x0C0
-  
+
   BIND = 0x0CF
   PIVOT = 0x0EE
   TRAP_WITH_USER = 0x0EF
@@ -162,7 +162,7 @@ class MoveData < DataObject
   attr_writer :priority
 end
 
-def move_tweak(id, power: nil, accuracy: nil, type: nil, category: nil, pp: nil, target: nil, priority: nil, function: nil, flags: nil, copyFlags: true, desc: nil, tmdesc: nil) 
+def move_tweak(id, power: nil, accuracy: nil, type: nil, category: nil, pp: nil, target: nil, priority: nil, function: nil, flags: nil, copyFlags: true, desc: nil, tmdesc: nil)
   move = $cache.moves[id]
   move.function = function if function != nil
   move.basedamage = power if power != nil
@@ -208,7 +208,7 @@ end
 
 # Tweaks
 
-move_tweak(:CUT, 
+move_tweak(:CUT,
   power: 65,
   accuracy: 100,
   type: :STEEL,
@@ -218,14 +218,14 @@ move_tweak(:CUT,
   tmdesc: "The target is cut with a scythe or a claw. Critical hits land more easily. It can also cut down thin trees.",
   desc: "The target is cut with a scythe or a claw. Critical hits land more easily.")
 
-move_tweak(:FLASH, 
-  power: 25, 
-  accuracy: 100, 
-  type: :ELECTRIC, 
-  category: :special, 
-  pp: 10, 
+move_tweak(:FLASH,
+  power: 25,
+  accuracy: 100,
+  type: :ELECTRIC,
+  category: :special,
+  pp: 10,
   target: :AllOpposing,
-  priority: 0, 
+  priority: 0,
   function: TweakMoveFunctions::LOWER_ACCURACY,
   flags: {
     :kingrock => true,
@@ -235,7 +235,7 @@ move_tweak(:FLASH,
   tmdesc: "The user emits a powerful blast of light that also cuts accuracy. It can also light up dark caves.",
   desc: "The user emits a powerful blast of light that also cuts accuracy.")
 
-move_tweak(:ROCKSMASH, 
+move_tweak(:ROCKSMASH,
   power: 55,
   flags: {
     :punchmove => true,
@@ -244,7 +244,7 @@ move_tweak(:ROCKSMASH,
   tmdesc: "The user attacks with a punch that lowers Defense. It can also break rocks.",
   desc: "The user attacks with a punch that lowers Defense.")
 
-move_tweak(:ROCKCLIMB, 
+move_tweak(:ROCKCLIMB,
   power: 80,
   accuracy: 100,
   type: :ROCK,
@@ -256,20 +256,20 @@ move_tweak(:ROCKCLIMB,
   tmdesc: "A charging attack that may also leave the foe confused. It can also scale rocky walls.",
   desc: "A charging attack that may also leave the foe confused.")
 
-move_tweak(:STRENGTH, 
+move_tweak(:STRENGTH,
   type: :FIGHTING)
 
-move_tweak(:COVET, 
+move_tweak(:COVET,
   type: :FAIRY,
   desc: "The user endearingly approaches the target, then steals the target's held item.")
 
-move_tweak(:PLAYROUGH, 
+move_tweak(:PLAYROUGH,
   accuracy: 100)
 
 move_tweak(:AIRSLASH,
   accuracy: 100)
 
-move_tweak(:FLY, 
+move_tweak(:FLY,
   power: 100,
   accuracy: 100)
 

@@ -48,7 +48,7 @@ def wllriolu_pbAddPokemonNoTimeSet(species,level=nil,seeform=true,form=0)
     Kernel.pbMessage(_INTL("{1} obtained {2}!\\se[itemlevel]\1",$Trainer.name,speciesname))
   end
   ### /MODDED
-  
+
   pbNicknameAndStore(pokemon)
   $Trainer.pokedex.setFormSeen(pokemon) if seeform
   return true
@@ -92,7 +92,7 @@ InjectionHelper.defineMapPatch(294, 70) { |event| # GDC Central, clerk
             # Chapter 3 occurs 10 years later.
             # Chapter 4 occurs 15 years later, when Aelita is 15.
             # Aelita is 17 going on 18 at start of story
-            # 8 + 10 + 15 + 2 or 3 = 35 or 36 
+            # 8 + 10 + 15 + 2 or 3 = 35 or 36
             [:ScriptContinued, '$Settings.unrealTimeDiverge = timediverge'],
             [:ScriptContinued, 'poke.obtainText = _INTL("Four Island")'],
             [:ScriptContinued, 'poke.obtainMode = 0'], # Caught

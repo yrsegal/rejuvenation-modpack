@@ -25,7 +25,7 @@ class Bounded_Window_TextEntry_Keyboard < Window_TextEntry
     if Input.triggerex?(:BACKSPACE) || Input.repeatex?(:BACKSPACE)
       if @helper.cursor>0
         @matchingnames, @nextchars = @backnames.pop
-        self.delete 
+        self.delete
       end
       return
     elsif Input.triggerex?(:RETURN) || Input.triggerex?(:ESCAPE)
@@ -68,7 +68,7 @@ class Bounded_Window_TextEntry_Keyboard < Window_TextEntry
       @highlightindex = 1 if @highlightindex > @matchingnames.length
     end
 
-    Input.gets.each_char { |c| 
+    Input.gets.each_char { |c|
       c = c.downcase
       matches = @matchingnames.select { |n| n[self.text.length] && n[self.text.length].downcase == c }
       if matches.length > 0
@@ -149,7 +149,7 @@ class Bounded_Window_TextEntry_Keyboard < Window_TextEntry
     for i in startpos...scanlength
       c=(@helper.passwordChar!="") ? @helper.passwordChar : textscan[i]
       textwidth=bitmap.text_size(c).width
-      next if c=="\n"  
+      next if c=="\n"
       # Draw text
       pbDrawShadowText(bitmap,x,y, textwidth+4, 32, c,@baseColor,@shadowColor)
       # Draw cursor if necessary
@@ -269,7 +269,7 @@ class BoundedPokemonEntryScene
       if Input.triggerex?(:ESCAPE)
         ret=""
         break
-      elsif Input.triggerex?(:RETURN) 
+      elsif Input.triggerex?(:RETURN)
         if @sprites["entry"].isMatch?
           ret=@sprites["entry"].matchingnames[0]
           break
@@ -331,7 +331,7 @@ class PokemonTypeReel < BitmapSprite
       @reel.push(type) if type != :QMARKS && type != :SHADOW
     end
     @reel.push(*$cache.types.keys)
-    @icons=@reel.map { |type| 
+    @icons=@reel.map { |type|
       next AnimatedBitmap.new("Data/Mods/BoxExtensions/TypeBlank") unless type
 
       next AnimatedBitmap.new(sprintf("Graphics/Icons/type%s",type))

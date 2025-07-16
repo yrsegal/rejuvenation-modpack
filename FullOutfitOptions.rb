@@ -127,8 +127,8 @@ def outfitoptions_wake_up(page)
         payload += outfitoptions_wakeup_section(outfit)
       end
 
-      insns.insert(insns.index(matched[1]) + 1, *InjectionHelper.parseEventCommands(*payload, 
-        baseIndent: matched[1].indent + 1)) 
+      insns.insert(insns.index(matched[1]) + 1, *InjectionHelper.parseEventCommands(*payload,
+        baseIndent: matched[1].indent + 1))
 
     end
     next matched
@@ -160,7 +160,7 @@ def outfitoptions_set_icep_outfit_fight(event)
         [:Script, '$Trainer.outfit=3'])
 
       for insn in matched
-        insns.insert(insns.index(insn) + 1, 
+        insns.insert(insns.index(insn) + 1,
           *InjectionHelper.parseEventCommands(
             [:ControlSwitch, :outfitoptions_IceptOutfit, true],
             baseIndent: insn.indent))
@@ -183,7 +183,7 @@ def outfitoptions_patch_outfit_management(event)
       [:ConditionalBranch, :Variable, :Outfit, :Constant, 4, :Equals])
 
     if matched
-      insns.insert(insns.index(matched) + 1, 
+      insns.insert(insns.index(matched) + 1,
         *InjectionHelper.parseEventCommands(
           [:ControlVariable, :Outfit, :Set, :Constant, 4],
           [:Script, '$Trainer.outfit=4'],
@@ -210,7 +210,7 @@ def outfitoptions_restore_sprite(event)
       [:Script, 'characterRestore'])
 
     if matched
-      insns.insert(insns.index(matched) + 1, 
+      insns.insert(insns.index(matched) + 1,
         *InjectionHelper.parseEventCommands(
           [:Script, '$game_player.character_name=pbGetPlayerCharset(:walk)'],
           baseIndent: matched.indent))

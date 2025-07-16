@@ -22,7 +22,7 @@ def hpSummary_trueType(move, pokemon)
     type = $game_switches[:RenegadeRoute] ? :SHADOW : :FAIRY
   end
 
-  if ((move.move == :JUDGMENT) && (pokemon.species == :ARCEUS)) || 
+  if ((move.move == :JUDGMENT) && (pokemon.species == :ARCEUS)) ||
     ((move.move == :MULTIATTACK) && (pokemon.species == :SILVALLY))
     type = $cache.pkmn[pokemon.species].forms[pokemon.form%19].upcase.intern
     type = :QMARKS if type == "???".intern
@@ -31,7 +31,7 @@ def hpSummary_trueType(move, pokemon)
   if pokemon.form<19
     if move.move == :TECHNOBLAST
       case pokemon.item
-        when :SHOCKDRIVE then type = :ELECTRIC  
+        when :SHOCKDRIVE then type = :ELECTRIC
         when :BURNDRIVE then type = :FIRE
         when :CHILLDRIVE then type = :ICE
         when :DOUSEDRIVE then type = :WATER
@@ -46,8 +46,8 @@ def hpSummary_trueType(move, pokemon)
       end
     end
   end
-  
-  case pokemon.ability 
+
+  case pokemon.ability
     when :NORMALIZE   then type = :NORMAL
     when :PIXILATE    then type = :FAIRY    if type==:NORMAL
     when :AERILATE    then type = :FLYING   if type==:NORMAL
@@ -80,7 +80,7 @@ def hpSummary_trueDamage(move, pokemon)
 
   if pokemon.species == :LUVDISC && pokemon.item == :LUVCREST
     return [250-pokemon.happiness,1].max if move.move == :FRUSTRATION
-    return [pokemon.happiness,250].min 
+    return [pokemon.happiness,250].min
   end
 
   if move.move == :NATURALGIFT && PBStuff::NATURALGIFTDAMAGE[pokemon.item]
@@ -150,7 +150,7 @@ class MoveRelearnerScene
     ### /MODDED
     category=selmovedata.category
     accuracy=selmovedata.accuracy
-    
+
     textpos.push([_INTL("CATEGORY"),272,114,0,Color.new(248,248,248),Color.new(0,0,0)])
     textpos.push([_INTL("POWER"),272,146,0,Color.new(248,248,248),Color.new(0,0,0)])
     textpos.push([basedamage<=1 ? basedamage==1 ? "???" : "---" : sprintf("%d",basedamage),
@@ -158,7 +158,7 @@ class MoveRelearnerScene
     textpos.push([_INTL("ACCURACY"),272,178,0,Color.new(248,248,248),Color.new(0,0,0)])
     textpos.push([accuracy==0 ? "---" : sprintf("%d",accuracy),
           468,178,2,Color.new(64,64,64),Color.new(176,176,176)])
-    pbDrawTextPositions(overlay,textpos) 
+    pbDrawTextPositions(overlay,textpos)
     case category
     when :physical then cattype = 0
     when :special  then cattype = 1
@@ -278,7 +278,7 @@ class PokemonSummaryScene < SpriteWrapper
         moveobject=pokemon.moves[i]
       end
       if moveobject
-        if moveobject.move != nil 
+        if moveobject.move != nil
           ### MODDED/
           imagepos.push([sprintf("Graphics/Icons/type%s",hpSummary_trueType(moveobject, pokemon)),248,yPos+2,0,0,64,28])
           ### /MODDED

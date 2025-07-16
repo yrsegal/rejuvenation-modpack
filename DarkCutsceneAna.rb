@@ -504,7 +504,7 @@ module DarkAnaCutscene
         "I don't know why you're so surprised by this.",
         "ANA: I am not surprised.",
         "Just... noting it."]
-    }, 
+    },
     # 4, for some reason, already has ana text
     16 => {
       5 => ["ANA: Railnet tracks.",
@@ -850,7 +850,7 @@ module DarkAnaCutscene
     return page
   end
 
-  def self.applyGraphic(legacy, darkOutfit, page) 
+  def self.applyGraphic(legacy, darkOutfit, page)
     if legacy
       page.condition.switch2_valid = true
       page.condition.switch2_id = Switches[:darkana_AnaLegacy]
@@ -883,7 +883,7 @@ module DarkAnaCutscene
     if blockToDelete
       event.pages[event.pages.index(blockToDelete)] = makeSingleDialoguePage(originalPage, dialogue[0])
     elsif idxToInsertAfter != -1
-      event.pages.insert(idxToInsertAfter + 1, 
+      event.pages.insert(idxToInsertAfter + 1,
         makeSingleDialoguePage(originalPage, dialogue))
     end
   end
@@ -917,11 +917,11 @@ module DarkAnaCutscene
       event.pages[event.pages.index(blockToDelete)] = makeAnaPage(originalPage, dialogue)
     elsif idxToInsertAfter != -1
       if originalPage.graphic.character_name[/trChar001_5/i]
-        event.pages.insert(idxToInsertAfter + 1, 
-          makeAnaPage(originalPage, dialogue, false), 
+        event.pages.insert(idxToInsertAfter + 1,
+          makeAnaPage(originalPage, dialogue, false),
           makeAnaPage(originalPage, dialogue, true))
       else
-        event.pages.insert(idxToInsertAfter + 1, 
+        event.pages.insert(idxToInsertAfter + 1,
           makeAnaPage(originalPage, dialogue))
       end
     end
@@ -947,7 +947,7 @@ module DarkAnaCutscene
     end
 
     if idxToInsertAfter != -1
-      event.pages.insert(idxToInsertAfter + 1, 
+      event.pages.insert(idxToInsertAfter + 1,
         makeGraphicPage(false, 5, originalPage), # Desolate
         makeGraphicPage(true, 66, originalPage)) # Desolate Legacy
     end
@@ -977,7 +977,7 @@ end
 def darkana_determine_outfit_desolate
   if $Trainer.metaID == 8 # Ana
     trueOutfit = $game_variables[:Outfit]
-    if 2 <= trueOutfit && trueOutfit < 6 
+    if 2 <= trueOutfit && trueOutfit < 6
       $game_switches[:darkana_AnaLegacy] = true
       $Trainer.outfit = 66
       return

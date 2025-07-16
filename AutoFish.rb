@@ -11,7 +11,7 @@ def pbFishing(hasencounter,rodtype=1)
   loop do
     time=2+rand(10)
     message=""
-    time.times do 
+    time.times do
       message+=".  "
     end
     ### MODDED/

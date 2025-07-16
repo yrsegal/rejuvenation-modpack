@@ -328,11 +328,11 @@ module InjectionHelper
     end
   end
 
-  def self.routeMatcher(matchers) 
+  def self.routeMatcher(matchers)
     return matchers.map { |matcher| parseMatcher(matcher, InjectionHelper::MOVE_INSNS) }
   end
 
-  def self.parseMatcher(matcher, mapper=InjectionHelper::EVENT_INSNS) 
+  def self.parseMatcher(matcher, mapper=InjectionHelper::EVENT_INSNS)
     if matcher.is_a?(Array)
       return InjectionHelper::InsnMatcher.new(matcher[0], mapper, matcher[1..])
     elsif matcher.is_a?(Symbol)

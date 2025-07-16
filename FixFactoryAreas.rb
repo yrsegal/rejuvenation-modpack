@@ -86,7 +86,7 @@ module FixFactoryAreas
   def self.pbFieldDamageElectric
     flashed=false
     for i in $Trainer.party
-      if i.hp>0 && !i.isEgg? && !(i.ability == :MAGICGUARD) && 
+      if i.hp>0 && !i.isEgg? && !(i.ability == :MAGICGUARD) &&
           !(i.ability == :VOLTABSORB || i.ability == :MOTORDRIVE || i.ability == :LIGHTNINGROD || i.hasType?(:GROUND))
         if !flashed
           $game_screen.start_flash(Color.new(255,0,0,128), 4)
@@ -96,9 +96,9 @@ module FixFactoryAreas
         i.hp-=(i.totalhp/8.0).floor
         i.hp=1 if i.hp==0
         pbCheckAllFainted()
-      elsif i.ability == :VOLTABSORB 
+      elsif i.ability == :VOLTABSORB
         i.hp+=(i.totalhp/16.0).floor
-        i.hp = i.totalhp if i.hp > i.totalhp 
+        i.hp = i.totalhp if i.hp > i.totalhp
       end
     end
   end
@@ -106,8 +106,8 @@ module FixFactoryAreas
   def self.pbFieldDamagePoison
     flashed=false
     for i in $Trainer.party
-      if i.hp>0 && !i.isEgg? && !(i.ability == :MAGICGUARD) && 
-          !(i.ability == :IMMUNITY || i.ability == :POISONHEAL || i.ability == :PASTELVEIL || 
+      if i.hp>0 && !i.isEgg? && !(i.ability == :MAGICGUARD) &&
+          !(i.ability == :IMMUNITY || i.ability == :POISONHEAL || i.ability == :PASTELVEIL ||
             (i.species == :ZANGOOSE && i.item == :ZANGCREST) || i.hasType?(:POISON) || i.hasType?(:STEEL))
         if !flashed
           $game_screen.start_flash(Color.new(255,0,0,128), 4)
@@ -117,9 +117,9 @@ module FixFactoryAreas
         i.hp-=(i.totalhp/8.0).floor
         i.hp=1 if i.hp==0
         pbCheckAllFainted()
-      elsif i.ability == :POISONHEAL 
+      elsif i.ability == :POISONHEAL
         i.hp+=(i.totalhp/16.0).floor
-        i.hp = i.totalhp if i.hp > i.totalhp 
+        i.hp = i.totalhp if i.hp > i.totalhp
       end
     end
   end
@@ -127,7 +127,7 @@ module FixFactoryAreas
   def self.pbFieldDamageFighting
     flashed=false
     for i in $Trainer.party
-      if i.hp>0 && !i.isEgg? && !(i.ability == :MAGICGUARD) && 
+      if i.hp>0 && !i.isEgg? && !(i.ability == :MAGICGUARD) &&
           !i.hasType?(:GHOST)
         if !flashed
           $game_screen.start_flash(Color.new(255,0,0,128), 4)

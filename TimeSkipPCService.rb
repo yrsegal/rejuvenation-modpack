@@ -13,7 +13,7 @@ end
 class TimeSkipPCService
 
   LIME = '<c3=63ED71,1c7a24>'
-  
+
   def shouldShow?
     return false if $game_variables[:PostCarotosQuest] < 3
     return false if !$game_switches[:Unreal_Time]
@@ -30,7 +30,7 @@ class TimeSkipPCService
     return _INTL("Invoke Celebi to advance the flow of time.")
   end
 
-  def celebi(text, *args) 
+  def celebi(text, *args)
     return _INTL("\\f[service_Celebi]" + text, *args)
   end
 
@@ -109,7 +109,7 @@ class TimeSkipPCService
       return
     end
 
-    if ServicePCList.distantTime? 
+    if ServicePCList.distantTime?
       celebiSound(80, 50)
       Kernel.pbMessage(celebi("CELEBI: Cele- <i>bii...</i> (Hel- Oh.)\1"))
     else
@@ -122,7 +122,7 @@ class TimeSkipPCService
       $game_screen.timeskippc_darchlight = true
     end
 
-    if ServicePCList.distantTime? 
+    if ServicePCList.distantTime?
       if !$game_screen.timeskippc_distant
         Kernel.pbMessage(celebi("Bicel cel <i>cel!</i>  (Oh, this is a poor timeline...)\1"))
         celebiSound(40, 50)
@@ -134,7 +134,7 @@ class TimeSkipPCService
     end
 
     if !$game_screen.timeskippc_used
-      if ServicePCList.distantTime? 
+      if ServicePCList.distantTime?
         celebiSound(80, 50)
         Kernel.pbMessage(celebi("Lici lee cel ebi. (Normally, I would help you control the flow of time.)\1"))
         celebiSound(80, 50)

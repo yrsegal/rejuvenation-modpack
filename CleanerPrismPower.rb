@@ -11,7 +11,7 @@ class PokeBattle_Battler
 
         self.pokemon.prismPower = true
         @battle.scene.pbChangePokemon(self,@pokemon)
-        
+
         @battle.pbCommonAnimation("StatUp",self)
         @battle.pbDisplay(_INTL("{1}'s {2} activated!", pbThis,getAbilityName(ability)))
         ### /MODDED

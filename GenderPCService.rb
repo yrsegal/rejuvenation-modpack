@@ -35,19 +35,19 @@ class GenderPCService
     return _INTL("Change the gender of your Pokemon or yourself.")
   end
 
-  def odessa(text, *args) 
+  def odessa(text, *args)
     return _INTL("\\f[service_Odessa]" + text, *args)
   end
 
-  def blush(text, *args) 
+  def blush(text, *args)
     return _INTL("\\f[service_OdessaBlush]" + text, *args)
   end
 
-  def angry(text, *args) 
+  def angry(text, *args)
     return _INTL("\\f[service_OdessaAngry]" + text, *args)
   end
 
-  def confused(text, *args) 
+  def confused(text, *args)
     return _INTL("\\f[service_OdessaConfused]" + text, *args)
   end
 
@@ -116,7 +116,7 @@ class GenderPCService
     end
 
     odessaAngy = $game_variables[:MissingChildren] >= 60 && $game_variables[:MissingChildren] < 64
-    
+
     skipFirstLine = false
 
     if $game_screen.genderpc_angy

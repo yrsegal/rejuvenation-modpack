@@ -40,7 +40,7 @@ def pbEachNaturalMove(pokemon)
   #####/MODDED
 end
 
-def moverelearnerpc_producePreEvolution(pokemon) 
+def moverelearnerpc_producePreEvolution(pokemon)
   prevoSpecies = pbGetPreviousForm(pokemon.species,pokemon.form)
   if prevoSpecies[0] == pokemon.species and prevoSpecies[1] == pokemon.form
     return nil
@@ -134,7 +134,7 @@ def moverelearnerpc_conversationTakeScale(evt, sister, window)
   return false
 end
 
-# To make it not strictly inferior but instead equivalent to service. 
+# To make it not strictly inferior but instead equivalent to service.
 # technically clashes with Vendor Quantity Display, but handled gracefully
 def relearnerService_relearnerConversation(evt, sister)
   $game_screen.relearnerpc_scales = 0 if !$game_screen.relearnerpc_scales
@@ -176,7 +176,7 @@ def relearnerService_relearnerConversation(evt, sister)
           elsif !pbHasRelearnableMove?(pkmn)
             Kernel.pbMessage(_I("Uhh...\1"))
             Kernel.pbMessage(_I("This Pokémon doesn't have any move that it can relearn. Sorry, \\v[3]."))
-          else 
+          else
             if pkmn.canRelearnAll?
               Kernel.pbMessage(_I("\\v[3] can already remember all its moves! Just do it from the party screen.\1"))
               if !noScaleNeeded
@@ -197,7 +197,7 @@ def relearnerService_relearnerConversation(evt, sister)
               end
               window.dispose
               return
-            else 
+            else
               Kernel.pbMessage(_I("Which Pokemon needs tutoring?"))
             end
           end
@@ -257,7 +257,7 @@ def relearnerService_relearnerConversation(evt, sister)
             Kernel.pbMessage(_I("What is this thing?! It isn't natural, get it out of here!"))
           elsif moverelearnerpc_getEggMoveList(pkmn).size == 0
             Kernel.pbMessage(_I("This Pokémon doesn't have any rare moves to learn. Sorry, \\v[3]."))
-          else 
+          else
             if pkmn.canRelearnAll? && Rejuv && $PokemonBag.pbHasItem?(:HM02)
               Kernel.pbMessage(_I("\\v[3] can already remember all its moves! Just do it from the party screen.\1"))
               if !noScaleNeeded
@@ -278,7 +278,7 @@ def relearnerService_relearnerConversation(evt, sister)
               end
               window.dispose
               return
-            else 
+            else
               Kernel.pbMessage(_I("Which Pokemon needs tutoring?"))
             end
           end
@@ -326,7 +326,7 @@ class RelearnerPCService
     return _INTL("Relearn moves, delete them, or learn egg moves.")
   end
 
-  def relearner(text, *args) 
+  def relearner(text, *args)
     return _INTL("\\f[service_MoveRelearner]" + text, *args)
   end
 
@@ -358,7 +358,7 @@ class RelearnerPCService
       return
     end
 
-    if !$game_screen.relearnerpc_scales || $game_screen.relearnerpc_scales < 10  
+    if !$game_screen.relearnerpc_scales || $game_screen.relearnerpc_scales < 10
       @heartscalewindow = ServicePCList.quantityWindow(:HEARTSCALE)
       @heartscalewindow.visible = true
     end
@@ -396,7 +396,7 @@ class RelearnerPCService
       if $game_screen.relearnerpc_scales < 10
         if $PokemonBag.pbQuantity(:HEARTSCALE)>0
           Kernel.pbMessage(relearner("You've got a Heart Scale, so I can teach a Pokemon.\1"))
-        elsif 
+        elsif
           Kernel.pbMessage(relearner("... Actually, sorry, you need to come back with a Heart Scale.\1"))
           Kernel.pbMessage(sister("SAMANTHA: Oh well! Talk to you later!"))
           return
@@ -489,7 +489,7 @@ class RelearnerPCService
       if $game_screen.relearnerpc_scales < 10
         if $PokemonBag.pbQuantity(:HEARTSCALE)>0
           Kernel.pbMessage(relearner("You've got a Heart Scale, so I can teach a Pokemon.\1"))
-        elsif 
+        elsif
           Kernel.pbMessage(relearner("... Actually, sorry, you need to come back with a Heart Scale.\1"))
           Kernel.pbMessage(sister("SAMANTHA: Oh well! Talk to you later!"))
           return

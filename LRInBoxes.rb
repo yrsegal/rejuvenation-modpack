@@ -16,7 +16,7 @@ class PokemonStorageScene
       key=Input::L if Input.repeat?(Input::L)
       key=Input::R if Input.repeat?(Input::R)
       ### /MODDED
-      
+
       if key>=0
         pbPlayCursorSE()
         selection=pbChangeSelection(key,selection)
@@ -57,13 +57,13 @@ class PokemonStorageScene
         if selection>=0
           @selection=selection
           return [@storage.currentBox,selection]
-        elsif selection==-1 # Box name 
+        elsif selection==-1 # Box name
           @selection=selection
           return [-4,-1]
-        elsif selection==-2 # Party Pokémon 
+        elsif selection==-2 # Party Pokémon
           @selection=selection
           return [-2,-1]
-        elsif selection==-3 # Close Box 
+        elsif selection==-3 # Close Box
           @selection=selection
           return [-3,-1]
         end

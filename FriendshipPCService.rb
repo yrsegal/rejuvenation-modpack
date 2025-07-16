@@ -20,7 +20,7 @@ class FriendshipPCService
     return _INTL("Send Pokemon to the Spa, or check their friendship.")
   end
 
-  def teila(text, *args) 
+  def teila(text, *args)
     return _INTL("\\f[service_TeilaStaff]" + text, *args)
   end
 
@@ -136,7 +136,7 @@ class FriendshipPCService
     time=pbGetTimeNow
     return ontime && (time.to_i - ontime).abs > secs
   end
-  
+
   def tsOn?(c)
     return $game_self_switches[[333,16,c]]
   end

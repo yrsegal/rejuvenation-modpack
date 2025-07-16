@@ -111,7 +111,7 @@ module TextureOverrides
       }
     }
 
-    TextureOverrides::TCLASS_REPLACEMENTS.each { |key, replacement| 
+    TextureOverrides::TCLASS_REPLACEMENTS.each { |key, replacement|
       symkey = key[1]
       namekey = key[0]
       idkey = key[2]
@@ -225,7 +225,7 @@ RPG::Cache.instance_eval do
   alias :textureoverride_old_setKey :setKey
   alias :textureoverride_old_load_bitmap :load_bitmap
   alias :textureoverride_old_tileEx :tileEx
-    
+
   def setKey(key, obj)
     return textureoverride_old_setKey(TextureOverrides::mapKey(key), obj)
   end
@@ -237,7 +237,7 @@ RPG::Cache.instance_eval do
   def tileEx(filename, tile_id, hue, width = 1, height = 1, &block)
     return textureoverride_old_tileEx(TextureOverrides::mapKey(filename), tile_id, hue, width, height, &block)
   end
-  
+
   def fromCache(i)
     return textureoverride_old_fromCache(TextureOverrides.mapKey(i))
   end

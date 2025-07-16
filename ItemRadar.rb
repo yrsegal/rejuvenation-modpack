@@ -34,7 +34,7 @@ end
 class Game_Screen
   ### MODDED/
   attr_accessor   :itemRadar_itemRadarIsOn
-  
+
   def itemRadar_updateItemRadar
     foundz = false
     biggestid = 0
@@ -79,7 +79,7 @@ class Game_Screen
     @itemRadar_itemRadarIsOn=false if !defined?(@itemRadar_itemRadarIsOn)
     return @itemRadar_itemRadarIsOn
   end
-  
+
   def itemRadar_toggleRadar
     @itemRadar_itemRadarIsOn=!@itemRadar_itemRadarIsOn
     itemRadar_updateItemRadar
@@ -93,7 +93,7 @@ class Game_Screen
 end
 
 class Game_Event < Game_Character
-  def itemRadar_green_ball 
+  def itemRadar_green_ball
     if @tile_id < 384 # Dunno why, but this is the threshold for "will override the sprite"
       @character_name = "Object ball_3"
       @opacity = 128
@@ -104,7 +104,7 @@ class Game_Event < Game_Character
       @through = false
     end
   end
-  
+
   def itemRadar_revert_ball
     if @tile_id < 384 # Dunno why, but this is the threshold for "will override the sprite"
       if @page == nil

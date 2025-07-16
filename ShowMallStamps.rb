@@ -37,13 +37,13 @@ class Window_SomniamMallStamps < Window_AdvancedTextPokemon
 
   def titleText
     stamps = $game_variables[:Stamps]
-    return _INTL("<ac>{4}{1}</c3></ac>\nStamps:\n<ar>{5}{2}</c3></ar>\nRequired:\n<ar>{3}</ar>", 
+    return _INTL("<ac>{4}{1}</c3></ac>\nStamps:\n<ar>{5}{2}</c3></ar>\nRequired:\n<ar>{3}</ar>",
       _INTL(title), stamps, stampsRequired, BLUE, stampTextColor(stamps))
   end
 
   def noTitleText
     stamps = $game_variables[:Stamps]
-    return _INTL("Stamps:\n<ar>{3}{1}</c3></ar>\nRequired:\n<ar>{2}</ar>", 
+    return _INTL("Stamps:\n<ar>{3}{1}</c3></ar>\nRequired:\n<ar>{2}</ar>",
       stamps, stampsRequired, stampTextColor(stamps))
   end
 

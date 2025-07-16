@@ -17,7 +17,7 @@ end
   oricorio = $cache.pkmn[:ORICORIO]
   oricorio = oricorio.formData[key] if key
   oricorio = oricorio.flags if !key
-  
+
   oricorio[:WildItemCommon] = value
   oricorio[:WildItemUncommon] = value
   oricorio[:WildItemRare] = value

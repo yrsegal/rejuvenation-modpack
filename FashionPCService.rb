@@ -23,7 +23,7 @@ class FashionPCService
     return _INTL("Swap your outfits via Teleport.")
   end
 
-  def xatu(text, *args) 
+  def xatu(text, *args)
     return _INTL("\\f[service_XatuFashion]" + text, *args)
   end
 
@@ -37,8 +37,8 @@ class FashionPCService
     Kernel.pbMessage(xatu("Hello, you've reached the Xatu Fashion Service. How may I help?\1"))
     if !$game_screen.fashionpc_used
       Kernel.pbMessage(xatu("Oh! Is this your first time using the service? Let me explain.\1"))
-      Kernel.pbMessage(xatu("We're a startup operating out of Coral Ward, Reborn City. We stock outfits for you and let you switch them at will!\1")) 
-      Kernel.pbMessage(xatu("We're subsidized by Adrienn, so the service is free to use. We've recently extended our operations to Aevium!\1")) 
+      Kernel.pbMessage(xatu("We're a startup operating out of Coral Ward, Reborn City. We stock outfits for you and let you switch them at will!\1"))
+      Kernel.pbMessage(xatu("We're subsidized by Adrienn, so the service is free to use. We've recently extended our operations to Aevium!\1"))
       $game_screen.fashionpc_used = true
     end
 

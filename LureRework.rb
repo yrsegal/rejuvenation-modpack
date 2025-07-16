@@ -14,9 +14,9 @@ class ItemData < DataObject
   attr_writer :desc
 end
 
-ItemHandlers::UseFromBag.add(:MAGNETICLURE,proc{|item| 
+ItemHandlers::UseFromBag.add(:MAGNETICLURE,proc{|item|
   $game_screen.lurerework_toggleLure
-  next 1 
+  next 1
 })
 
 ItemHandlers::UseInField.add(:MAGNETICLURE,proc{|item|
@@ -52,7 +52,7 @@ class PokemonBag_Scene
     if bag.pockets[1].include?(:MAGNETICLURE)
       bag.pockets[1].delete(:MAGNETICLURE)
 
-      bag.pockets[pbGetPocket(:MAGNETICLURE)].push(:MAGNETICLURE) 
+      bag.pockets[pbGetPocket(:MAGNETICLURE)].push(:MAGNETICLURE)
     end
 
     return lurerework_old_pbStartScene(bag)
@@ -130,7 +130,7 @@ class PokeBattle_Battle
     end
     ### MODDED
     if thispkmn.hasWorkingItem(:SMOKEBALL) || thispkmn.hasWorkingItem(:MAGNETICLURE) ||
-      thispkmn.hasWorkingItem(:MIRRORLURE) 
+      thispkmn.hasWorkingItem(:MIRRORLURE)
       ### /MODDED
       if duringBattle
         pbSEPlay("escape",100)

@@ -29,23 +29,23 @@ def miningoverhaul_getDrawnTextWOutline(outline, text, fontSize)
   bitmap.font.size=fontSize
   bitmap.font.color.set(0, 0, 0)
   bitmap.draw_text(0, 0, bitmap.width, bitmap.height, text, 0)
-  
+
   bitmap2=Bitmap.new(Graphics.width, height)
   for i in 0...(outline*2+1)
     bitmap2.blt(0, i, bitmap, bitmap.rect)
   end
-  
+
   bitmap3 = Bitmap.new(Graphics.width, height)
   bitmap3.blt(0, 0, bitmap2, bitmap2.rect)
-  
+
   for i in 0...(outline*2+1)
     bitmap2.blt(i, 0, bitmap3, bitmap3.rect)
   end
-  
+
   bitmap.font.color.set(255, 255, 255)
   bitmap.draw_text(outline, outline, bitmap.width, bitmap.height, text, 0)
   bitmap2.blt(0, 0, bitmap, bitmap.rect)
-  
+
   return bitmap2
 end
 
@@ -229,8 +229,8 @@ class MiningGameScene
      [:FAIRYGEM,10, 14,41, 2,2,[1,1,1,1]], # Canonically rarer
      [:NORMALGEM,20, 16,41, 2,2,[1,1,1,1]]
    ##       MODDED          ##
-  ] 
-  
+  ]
+
   def pbStartScene
     @sprites={}
     @viewport=Viewport.new(0,0,Graphics.width,Graphics.height)
@@ -290,7 +290,7 @@ class MiningGameScene
   end
 
 #mod
-  def miningoverhaul_displaymoney 
+  def miningoverhaul_displaymoney
     hits = miningoverhaul_getHitsCount(0, false)
     pickaxeHits=1
     hammerHits=2
@@ -308,7 +308,7 @@ class MiningGameScene
       show = false if foundall
       @wasDisplaying = show
     end
-    
+
     @sprites["moneywindow"].visible = show
     @sprites["costwindow"].visible = show
     @sprites["moneywindow"].text=_INTL("Money:\n<r>${1}",$Trainer.money)

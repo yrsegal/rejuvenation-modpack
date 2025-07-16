@@ -26,20 +26,20 @@ class HealPCService
   end
 
 
-  def bladestarJoy(text, *args) 
+  def bladestarJoy(text, *args)
     return _INTL("\\f[service_BladestarJoy]" + text, *args)
   end
 
-  def nurseJoy(text, *args) 
-    return _INTL("\\f[service_PastJoy]" + text, *args) if inPast? 
+  def nurseJoy(text, *args)
+    return _INTL("\\f[service_PastJoy]" + text, *args) if inPast?
     return _INTL("\\f[service_NurseJoy]" + text, *args)
   end
 
-  def sec(text, *args) 
+  def sec(text, *args)
     return _INTL("\\f[service_SEC]" + text, *args)
   end
 
-  def secAnnoyed(text, *args) 
+  def secAnnoyed(text, *args)
     return _INTL("\\f[service_SECAnnoyed]" + text, *args)
   end
 
@@ -67,7 +67,7 @@ class HealPCService
       else
         Kernel.pbMessage(sec("SEC: Hi! You've reached SEC! Were you expecting someone else?\1"))
         Kernel.pbMessage(secAnnoyed("You know that putting your Pokemon into the PC will heal them, right?\1"))
-        secAnnoyedWait(30) 
+        secAnnoyedWait(30)
         lockOn(&method(:secAnnoyedWait))
         Kernel.pbMessage(sec("Oh, well. You're in my sights. Here's your easy and convenient heal. Enjoy."))
         heal(&method(:secWait))
@@ -95,7 +95,7 @@ class HealPCService
       pbWait(20)
       Kernel.pbMessage(_INTL("<ac>Activating remote healing."))
       ServicePCList.restoreScreen(10)
-      
+
       $game_system.message_position = 2 # Bottom
       $game_system.message_frame = 0 # Show
       lockOn
@@ -133,8 +133,8 @@ class HealPCService
 
     Kernel.pbMessage(nurseJoy("JOY: Hi! You've reached the Joy Field Healing Service!\1"))
     if !inPast? && !$game_screen.healpc_used
-      Kernel.pbMessage(nurseJoy("We've been in service since before the Calamity, delivering healing wherever you go.\1")) 
-      Kernel.pbMessage(nurseJoy("Our Smeargle are powerful enough to Lock On to you from anywhere in the region!\1")) 
+      Kernel.pbMessage(nurseJoy("We've been in service since before the Calamity, delivering healing wherever you go.\1"))
+      Kernel.pbMessage(nurseJoy("Our Smeargle are powerful enough to Lock On to you from anywhere in the region!\1"))
       $game_screen.healpc_used = true
     end
 
@@ -154,7 +154,7 @@ class HealPCService
   def lockOn
     $game_player.animation_id = LOCK_ON_ANIMATION_ID
     yield 20 if block_given?
-    pbWait(20) if !block_given? 
+    pbWait(20) if !block_given?
   end
 
   def heal

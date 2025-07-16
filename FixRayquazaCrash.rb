@@ -27,7 +27,7 @@ class PokeBattle_Pokemon
         return false if !k.include?(@form)
       else
         return false if k != @form
-      end 
+      end
     end
     #check if conditions are met
     if @species==:RAYQUAZA && !pbIsZCrystal?(@item)
