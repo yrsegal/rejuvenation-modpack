@@ -23,7 +23,7 @@ $BBUI_FIXED_DAMAGE_FIELD = {
 
 TextureOverrides.registerTextureOverride(TextureOverrides::BATTLEICON + "battleFightButtonsFighting", "Data/Mods/BetterBattleUI/FightingButton") if defined?(TextureOverrides)
 
-module BBUIConsts 
+module BBUIConsts
   X_PAD = 50
   Y_PAD = 40
 end
@@ -387,6 +387,22 @@ class BetterBattleUI_PokeballThrowButton < BitmapSprite
   end
 end
 
+
+alias :betterBattleUI_old_pbStatInfo :pbStatInfo
+
+$BBUI_RESTORE_SELIDX = nil
+
+def pbStatInfo(index)
+  numwindows=@battle.doublebattle ? 4 : 2
+  $BBUI_RESTORE_SELIDX = -1
+  for i in 0...numwindows
+    next if !@sprites["pokemon#{i}"]
+    $BBUI_RESTORE_SELIDX = i if @sprites["pokemon#{i}"].selected != 0
+  end
+  return betterBattleUI_old_pbStatInfo(index)
+end
+
+
 class PokeBattle_Scene
 
   alias :betterBattleUI_old_pbStartBattle :pbStartBattle
@@ -399,6 +415,31 @@ class PokeBattle_Scene
     @sprites["bbui_moveinfo"].z=100
     @sprites["bbui_moveinfo"].visible=false
     pbSetSmallFont(@sprites["bbui_moveinfo"].bitmap)
+
+    @sprites["bbui_inspect"]=BitmapSprite.new(Graphics.width, Graphics.height, @viewport)
+    @sprites["bbui_inspect"].z=101
+    @sprites["bbui_inspect"].visible=false
+    pbSetSmallFont(@sprites["bbui_inspect"].bitmap)
+
+    @sprites["leftarrow"] = AnimatedSprite.new("Graphics/Pictures/leftarrow", 8, 40, 28, 2, @viewport)
+    @sprites["leftarrow"].x = -2
+    @sprites["leftarrow"].y = 71
+    @sprites["leftarrow"].z = 300
+    @sprites["leftarrow"].play
+    @sprites["leftarrow"].visible = false
+    @sprites["rightarrow"] = AnimatedSprite.new("Graphics/Pictures/rightarrow", 8, 40, 28, 2, @viewport)
+    @sprites["rightarrow"].x = Graphics.width - 38
+    @sprites["rightarrow"].y = 71
+    @sprites["rightarrow"].z = 300
+    @sprites["rightarrow"].play
+    @sprites["rightarrow"].visible = false
+    @battle.battlers.each do |b|
+      @sprites["info_icon#{b.index}"] = PokemonIconSprite.new(b.pokemon, @viewport)
+      # @sprites["info_icon#{b.index}"].setOffset(PictureOrigin::CENTER)
+      @sprites["info_icon#{b.index}"].visible = false
+      @sprites["info_icon#{b.index}"].z = 300
+      # pbAddSpriteOutline(["info_icon#{b.index}", @viewport, b.pokemon, PictureOrigin::CENTER])
+    end
   end
 
   alias :betterBattleUI_old_pbEndBattle :pbEndBattle
@@ -415,6 +456,7 @@ class PokeBattle_Scene
     betterBattleUI_old_pbShowWindow(windowtype)
     @sprites["bbui_ballwindow"].visible=windowtype==COMMANDBOX if @sprites["bbui_ballwindow"]
     @sprites["bbui_moveinfo"].visible=false if windowtype != FIGHTBOX && @sprites["bbui_moveinfo"]
+    @sprites["bbui_inspect"].visible=false if windowtype != COMMANDBOX && @sprites["bbui_inspect"]
   end
 
   attr_accessor :betterBattleUI_autoselectitem
@@ -479,7 +521,7 @@ class PokeBattle_Scene
       elsif Input.trigger?(Input::L) # Throw Pokeball Directly
         if bw.throwBall(self)
           pbPlayDecisionSE()
-          return 1 
+          return 1
         end
       elsif Input.trigger?(Input::R) # Change Pokeball
         if $PokemonBag.pockets[3].length > 1
@@ -489,7 +531,7 @@ class PokeBattle_Scene
       ### /MODDED
       elsif Input.trigger?(Input::Y)  #Show Battle Stats feature made by DemICE
         statstarget=pbStatInfo(index)
-        return -1 if statstarget==-1      
+        return -1 if statstarget==-1
         if !pbInSafari?
           pbShowBattleStats(statstarget)
         end
@@ -535,7 +577,7 @@ class PokeBattle_Scene
     cw.ultraButton=0
     cw.ultraButton=1 if @battle.pbCanUltraBurst?(index)
     cw.ultraButton=2 if @battle.ultraBurst[(@battle.pbIsOpposing?(index)) ? 1 : 0][@battle.pbGetOwnerIndex(index)] == index && @battle.battlers[index].hasUltra?
-    cw.zButton=0 
+    cw.zButton=0
     cw.zButton=1 if @battle.pbCanZMove?(index)
     #cw.zButton=2 if @battle.zMove[(@battle.pbIsOpposing?(index)) ? 1 : 0][@battle.pbGetOwnerIndex(index)] == index && @battle.battlers[index].hasZMove?
     pbSelectBattler(index)
@@ -570,20 +612,20 @@ class PokeBattle_Scene
         ret=cw.index
         if cw.zButton==2
           if battler.pbCompatibleZMoveFromMove?(ret,true)
-            pbPlayDecisionSE()     
+            pbPlayDecisionSE()
             @lastmove[index]=ret
             return ret
           else
             @battle.pbDisplay(_INTL("{1} is not compatible with {2}!",battler.moves[ret].name,getItemName(battler.item)))
-            @lastmove[index]=cw.index     
+            @lastmove[index]=cw.index
             return -1
           end
         else
-          pbPlayDecisionSE() 
-          @lastmove[index]=ret   
+          pbPlayDecisionSE()
+          @lastmove[index]=ret
           return ret
-        end          
-      elsif Input.trigger?(Input::X)   # Use Mega Evolution 
+        end
+      elsif Input.trigger?(Input::X)   # Use Mega Evolution
         if @battle.pbCanMegaEvolve?(index) && !pbIsZCrystal?(battler.item)
           if cw.megaButton==2
             @battle.pbUnRegisterMegaEvolution(index)
@@ -616,7 +658,7 @@ class PokeBattle_Scene
             cw.zButton=2
             pbPlayDecisionSE()
           end
-        end        
+        end
         update_menu=true
       elsif Input.trigger?(Input::B)   # Cancel fight menu
         @lastmove[index]=cw.index
@@ -664,7 +706,7 @@ class PokemonDataBox < SpriteWrapper
           @databox=AnimatedBitmap.new("Graphics/Pictures/Battle/battlePlayerBoxD")
           @spriteX=PBScene::PLAYERBOXD1_X
           @spriteY=PBScene::PLAYERBOXD1_Y
-        when 1 
+        when 1
           if @battler.issossmon
             @databox=AnimatedBitmap.new("Graphics/Pictures/Battle/boss_bar_sos")
             @spriteX=PBScene::FOEBOXD1_X-12
@@ -674,11 +716,11 @@ class PokemonDataBox < SpriteWrapper
             @spriteX=PBScene::FOEBOXD1_X
             @spriteY=PBScene::FOEBOXD1_Y
           end
-        when 2 
+        when 2
           @databox=AnimatedBitmap.new("Graphics/Pictures/Battle/battlePlayerBoxD")
           @spriteX=PBScene::PLAYERBOXD2_X
           @spriteY=PBScene::PLAYERBOXD2_Y
-        when 3 
+        when 3
           if @battler.issossmon
             @databox=AnimatedBitmap.new("Graphics/Pictures/Battle/boss_bar_sos")
             @spriteX=PBScene::FOEBOXD2_X+8
@@ -686,7 +728,7 @@ class PokemonDataBox < SpriteWrapper
           else
             @databox=AnimatedBitmap.new("Graphics/Pictures/Battle/battleFoeBoxD")
             @spriteX=PBScene::FOEBOXD2_X+4
-            @spriteY=PBScene::FOEBOXD2_Y 
+            @spriteY=PBScene::FOEBOXD2_Y
           end
       end
     else
@@ -697,7 +739,7 @@ class PokemonDataBox < SpriteWrapper
           @spriteY=PBScene::PLAYERBOX_Y
           @showhp=true
           @showexp=true
-        when 1 
+        when 1
           @databox=AnimatedBitmap.new("Graphics/Pictures/Battle/battleFoeBoxS")
           @spriteX=PBScene::FOEBOX_X+4
           @spriteY=PBScene::FOEBOX_Y
@@ -722,29 +764,29 @@ class PokemonDataBox < SpriteWrapper
     self.bitmap.clear
     return if !@battler.pokemon
     bIsFoe = ((@battler.index == 1) || (@battler.index == 3))
-    filename = @battler.issossmon && (battler.index != 2) ? "Graphics/Pictures/Battle/" : "Graphics/Pictures/Battle/battle" 
-    if @doublebattle  
-      case @battler.index % 2 
-        when 0  
+    filename = @battler.issossmon && (battler.index != 2) ? "Graphics/Pictures/Battle/" : "Graphics/Pictures/Battle/battle"
+    if @doublebattle
+      case @battler.index % 2
+        when 0
           if @battler.issossmon
-            filename += "PlayerBoxSOS"  
+            filename += "PlayerBoxSOS"
           else
-            filename += "PlayerBoxD"  
+            filename += "PlayerBoxD"
           end
-        when 1  
+        when 1
           if @battler.issossmon
-            filename += "boss_bar_sos" 
+            filename += "boss_bar_sos"
           else
-            filename += "FoeBoxD"  
+            filename += "FoeBoxD"
           end
-      end       
-    else  
-      case @battler.index 
-        when 0  
-          filename += "PlayerBoxS"  
-        when 1  
-          filename += "FoeBoxS" 
-      end 
+      end
+    else
+      case @battler.index
+        when 0
+          filename += "PlayerBoxS"
+        when 1
+          filename += "FoeBoxS"
+      end
     end
     filename += battlerStatus(@battler) if !@battler.issossmon || (@battler.issossmon && @battler.index==2)
     @databox=AnimatedBitmap.new(filename)
@@ -752,7 +794,7 @@ class PokemonDataBox < SpriteWrapper
     ### MODDED/
     self.bitmap.blt(BBUIConsts::X_PAD+@betterBattleUI_statBoosts_xShift,BBUIConsts::Y_PAD,@databox.bitmap,Rect.new(0,0,@databox.width,@databox.height))
     ### /MODDED
-    if @doublebattle  
+    if @doublebattle
       if !@battler.issossmon || (battler.issossmon && battler.index == 2)
         @hpbar = AnimatedBitmap.new("Graphics/Pictures/Battle/hpbardoubles")
       else
@@ -768,7 +810,7 @@ class PokemonDataBox < SpriteWrapper
     ### MODDED/ Add sbY
     sbY = @spritebaseY
     headerY = 18 + sbY
-    sbX = @spritebaseX 
+    sbX = @spritebaseX
     if bIsFoe
       headerY += 4
       sbX -= 12
@@ -861,14 +903,22 @@ class PokemonDataBox < SpriteWrapper
         imagepos.push(["Graphics/Pictures/Battle/battleCrest.png",sbX+megaX,sbY+megaY,0,0,-1,-1])
       end
       # Owned
-      if @battler.owned && (@battler.index&1)==1 
-        if @doublebattle  
+      if @battler.owned && (@battler.index&1)==1
+        if @doublebattle
           imagepos.push(["Graphics/Pictures/Battle/battleBoxOwned.png",sbX-12,sbY+4,0,0,-1,-1]) if (@battler.index)==3
           imagepos.push(["Graphics/Pictures/Battle/battleBoxOwned.png",sbX-18,sbY+4,0,0,-1,-1]) if (@battler.index)==1
-        else  
-          imagepos.push(["Graphics/Pictures/Battle/battleBoxOwned.png",sbX-12,sbY+20,0,0,-1,-1])  
-        end 
+        else
+          imagepos.push(["Graphics/Pictures/Battle/battleBoxOwned.png",sbX-12,sbY+20,0,0,-1,-1])
+        end
       end
+      ### MODDED/ crest display for sos
+    else
+      # Crest
+      illusion = !@battler.effects[:Illusion].nil?
+      if @battler.hasCrest?(illusion) || (@battler.crested && !illusion)
+        imagepos.push(["Graphics/Pictures/Battle/battleCrest.png",sbX+100,sbY,0,0,-1,-1])
+      end
+      ### /MODDED
     end
     pbDrawImagePositions(self.bitmap,imagepos)
     hpGaugeSize=PBScene::HPGAUGESIZE
@@ -972,7 +1022,7 @@ class PokemonDataBox < SpriteWrapper
     else        return @databox.width+66, @doublebattle ? BBUIConsts::Y_PAD : (BBUIConsts::Y_PAD + 20)
     end
   end
-  
+
 
   def betterBattleUI_statBoosts_drawTab
     statsBitmap=$betterBattleUI_statBoosts_data[:battlers][@battler.index][:bitmap]
@@ -1187,7 +1237,7 @@ class FightMenuButtons < BitmapSprite
     @betterBattleUI_movesupereffective_right=AnimatedBitmap.new(_INTL("Data/Mods/BetterBattleUI/SuperEffectiveRight"))
     @betterBattleUI_movedoublesuper_left=AnimatedBitmap.new(_INTL("Data/Mods/BetterBattleUI/SuperEffectiveDoubleLeft"))
     @betterBattleUI_movedoublesuper_right=AnimatedBitmap.new(_INTL("Data/Mods/BetterBattleUI/SuperEffectiveDoubleRight"))
-    
+
     return betterBattleUI_old_initialize(*args, **kwargs)
   end
 
@@ -1196,7 +1246,7 @@ class FightMenuButtons < BitmapSprite
       move.pbType(attacker, move.type)
     }
   end
-    
+
 
   alias :betterBattleUI_old_dispose :dispose
   def dispose
@@ -1338,8 +1388,8 @@ class FightMenuButtons < BitmapSprite
           end
         end
       end
-      typemodL = typemodL.clamp(1,16) if typemodL != 0 
-      typemodR = typemodR.clamp(1,16) if typemodR != 0 
+      typemodL = typemodL.clamp(1,16) if typemodL != 0
+      typemodR = typemodR.clamp(1,16) if typemodR != 0
       if move.betterBattleUI_fixedDamageMove?
         typemodL = 4 if typemodL != 0
         typemodR = 4 if typemodR != 0
@@ -1388,11 +1438,11 @@ class FightMenuButtons < BitmapSprite
   end
 
   def betterBattleUI_showMoveEffectivenessStatus (move, battler, opponent, otherOpponent, movetype, typemod = 4, zorovar = false)
-    if movetype == :WATER && ((!opponent.moldbroken && opponent.ability == :STORMDRAIN) || 
+    if movetype == :WATER && ((!opponent.moldbroken && opponent.ability == :STORMDRAIN) ||
       (otherOpponent && !otherOpponent.moldbroken && otherOpponent.ability == :STORMDRAIN))
       return 0
     end
-    if movetype == :ELECTRIC && ((!opponent.moldbroken && opponent.ability == :LIGHTNINGROD) || 
+    if movetype == :ELECTRIC && ((!opponent.moldbroken && opponent.ability == :LIGHTNINGROD) ||
       (otherOpponent && !otherOpponent.moldbroken && otherOpponent.ability == :LIGHTNINGROD))
       return 0
     end
@@ -1504,7 +1554,7 @@ class PokeBattle_Move
     end
     if otherOpponent && [:SingleNonUser, :RandomOpposing, :SingleOpposing, :OppositeOpposing].include?(@target) && !attacker.ability == :STALWART && !attacker.ability == :PROPELLERTAIL &&
       ((otherOpponent.ability == :STORMDRAIN && (type == :WATER || (!secondtype.nil? && secondtype.include?(:WATER)))) ||
-       (otherOpponent.ability == :LIGHTNINGROD && (type == :ELECTRIC || (!secondtype.nil? && secondtype.include?(:ELECTRIC))))) && !otherOpponent.moldbroken 
+       (otherOpponent.ability == :LIGHTNINGROD && (type == :ELECTRIC || (!secondtype.nil? && secondtype.include?(:ELECTRIC))))) && !otherOpponent.moldbroken
       return 0
     end
     if ((opponent.ability == :MOTORDRIVE && !opponent.moldbroken) ||
@@ -1554,8 +1604,8 @@ class PokeBattle_Move
         return 0
       end
     end
-    if ((opponent.ability == :FLASHFIRE && !opponent.moldbroken) || 
-      (Rejuv && @battle.FE == :GLITCH && opponent.species == :GENESECT && opponent.hasWorkingItem(:BURNDRIVE))) && 
+    if ((opponent.ability == :FLASHFIRE && !opponent.moldbroken) ||
+      (Rejuv && @battle.FE == :GLITCH && opponent.species == :GENESECT && opponent.hasWorkingItem(:BURNDRIVE))) &&
       (type == :FIRE || (!secondtype.nil? && secondtype.include?(:FIRE))) && @battle.FE != :FROZENDIMENSION
       return 0
     end
@@ -1572,8 +1622,8 @@ class PokeBattle_Move
 
     # Handle Lunar/Solar Idol, Deep Earth
     if !opponent.moldbroken
-      if (type == :GROUND && (opponent.ability == :SOLARIDOL || opponent.ability == :LUNARIDOL || 
-        (@battle.FE == :DEEPEARTH && [:UNAWARE,:OBLIVIOUS,:MAGNETPULL,:CONTRARY].include?(opponent.ability))) && 
+      if (type == :GROUND && (opponent.ability == :SOLARIDOL || opponent.ability == :LUNARIDOL ||
+        (@battle.FE == :DEEPEARTH && [:UNAWARE,:OBLIVIOUS,:MAGNETPULL,:CONTRARY].include?(opponent.ability))) &&
         @battle.FE != :CAVE && @move != :THOUSANDARROWS && opponent.isAirborne?)
         return 0
       end
@@ -1596,7 +1646,7 @@ class PokeBattle_Move
       case opponent.species
       when :LUXRAY
         typemod /= 2 if (type == :GHOST || type == :DARK)
-        typemod = 0 if type == :PSYCHIC 
+        typemod = 0 if type == :PSYCHIC
       when :SAMUROTT
         typemod /= 2 if (type == :BUG || type == :DARK || type == :ROCK)
       when :LEAFEON
@@ -1636,7 +1686,7 @@ class PokeBattle_Move
       end
     end
 
-    # Field Effect second type changes 
+    # Field Effect second type changes
     typemod=fieldTypeChange(attacker,opponent,typemod,false)
     typemod=overlayTypeChange(attacker,opponent,typemod,false)
 
@@ -1653,7 +1703,7 @@ class PokeBattle_Move
       ((PBTypes.oneTypeEff(type, :DRAGON) > 2) || (PBTypes.oneTypeEff(type, :DRAGON) < 2 && ($game_switches[:Inversemode] || (@battle.FE == :INVERSE))))
        typemod /= 2
     end
-    if @battle.ProgressiveFieldCheck(PBFields::FLOWERGARDEN,4,5) && opponent.hasType?(:GRASS) && 
+    if @battle.ProgressiveFieldCheck(PBFields::FLOWERGARDEN,4,5) && opponent.hasType?(:GRASS) &&
       ((PBTypes.oneTypeEff(type, :GRASS) > 2) || (PBTypes.oneTypeEff(type, :GRASS) < 2 && ($game_switches[:Inversemode] || (@battle.FE == :INVERSE))))
        typemod /= 2
     end
