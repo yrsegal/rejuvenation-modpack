@@ -1,7 +1,5 @@
 
-# TODO
-# Replace inspect with [003] battler info ui
-
+# Based on https://eeveeexpo.com/threads/7796/
 module MoveHelpDisplay
   #-----------------------------------------------------------------------------
   # White text.
@@ -43,25 +41,6 @@ module MoveHelpDisplay
     :windmove, :intercept, :zmove]
 
   USES_SMART_DAMAGE_CATEGORY = [0x309, 0x20D, 0x80A, 0x80B] # Shell Side Arm, Super UMD Move, Unleashed Power, Blinding Speed
-
-  @@currentIndex = -1
-  @@lastTargetIndex = -1
-
-  def self.currentIndex=(value)
-    @@currentIndex=value
-  end
-
-  def self.currentIndex
-    @@currentIndex
-  end
-
-  def self.lastTargetIndex=(value)
-    @@lastTargetIndex=value
-  end
-
-  def self.lastTargetIndex
-    @@lastTargetIndex
-  end
 end
 
 class PokeBattle_Move
@@ -1485,47 +1464,104 @@ end
 
 class PokeBattle_Scene
 
-  def pbToggleMoveInfo(battler, cw)
-    @sprites["bbui_moveinfo"].visible = !@sprites["bbui_moveinfo"].visible
-    pbUpdateMoveInfoWindow(battler, cw)
+  def bbui_pbToggleMoveInfo(battler, cw)
+    @bbui_displaymode = @bbui_displaymode == :move ? nil : :move
+    @sprites["bbui_canvas"].visible=!@bbui_displaymode.nil?
+    bbui_pbUpdateMoveInfoWindow(battler, cw)
   end
 
-  alias :movehelpdisplay_old_pbUpdateSelected :pbUpdateSelected
-
-  def pbUpdateSelected(index)
-    movehelpdisplay_old_pbUpdateSelected(index)
-
-    cw = @sprites["fightwindow"]
-    if index != -1 && cw.visible && MoveHelpDisplay.currentIndex != -1 && index != MoveHelpDisplay.lastTargetIndex
-      pbUpdateMoveInfoWindow(@battle.battlers[MoveHelpDisplay.currentIndex], cw, index)
+  def bbui_pbDrawPartialMoveInfo(xpos, ypos, battler, target, cw, imagePos, textPos)
+    move = battler.moves[cw.index].clone
+    if cw.zButton == 2 && !battler.zmoves.nil? && !battler.zmoves[cw.index].nil?
+      move = battler.zmoves[cw.index]
     end
-  end
+    powBase   = accBase   = priBase   = effBase   = MoveHelpDisplay::BASE_LIGHT
+    powShadow = accShadow = priShadow = effShadow = MoveHelpDisplay::SHADOW_LIGHT
+    basePower = move.basedamage
 
-  alias :movehelpdisplay_old_pbChooseTarget :pbChooseTarget
+    if basePower != 0 && battler.crested == :CINCCINO && !move.pbIsMultiHit
+      basePower *= 0.3
+    end
 
-  def pbChooseTarget(index)
-    MoveHelpDisplay.currentIndex = index
-    ret = movehelpdisplay_old_pbChooseTarget(index)
-    MoveHelpDisplay.currentIndex = -1
-    return ret
-  end
+    betterBattleUI_withForm(battler) do
+      basePower, power = move.movehelpdisplay_calcPower(battler, target)
 
-  alias :movehelpdisplay_old_pbChooseTargetAcupressure :pbChooseTargetAcupressure
-  def pbChooseTargetAcupressure(index)
-    MoveHelpDisplay.currentIndex = index
-    ret = movehelpdisplay_old_pbChooseTargetAcupressure(index)
-    MoveHelpDisplay.currentIndex = -1
-    return ret
+      if move.function == 0x91 && battler.effects[:FuryCutter] < 4 # Fury Cutter
+        basePower *= 2
+        power *= 2
+      end
+
+      category = move.betterCategory
+      if MoveHelpDisplay::USES_SMART_DAMAGE_CATEGORY.include?(move.function) # Moves which basically choose category but don't pretend to
+        if target.nil?
+          category = PokeBattle_Move.pbFromPBMove(battler.battle, PBMove.new(:PHOTONGEYSER), battler).betterCategory
+        else
+          tempMove = PokeBattle_Move.pbFromPBMove(battler.battle, PBMove.new(:UNLEASHEDPOWER), battler)
+          tempMove.smartDamageCategory(battler, target)
+          category = tempMove.betterCategory
+        end
+      end
+      imagePos.push(["Data/Mods/BetterBattleUI/Inspect/moveselectbg", xpos, ypos, 0, 0, -1, -1])
+
+      #---------------------------------------------------------------------------
+      cattype = 2
+      case category
+        when :physical then cattype = 0
+        when :special  then cattype = 1
+        when :status   then cattype = 2
+      end
+
+      imagePos.push(["Data/Mods/BetterBattleUI/minicategory", xpos + 480, ypos + 98, 0, cattype * 28, 64,  28])
+
+      acc = move.movehelpdisplay_calcAccuracy(battler, target)
+      pri = move.priorityCheck(battler)
+      if basePower > 1
+        if power > basePower
+          powBase, powShadow = MoveHelpDisplay::BASE_RAISED, MoveHelpDisplay::SHADOW_RAISED
+        elsif power < basePower
+          powBase, powShadow = MoveHelpDisplay::BASE_LOWERED, MoveHelpDisplay::SHADOW_LOWERED
+        end
+      end
+
+      if acc > 0
+        if acc > move.accuracy
+          accBase, accShadow = MoveHelpDisplay::BASE_RAISED, MoveHelpDisplay::SHADOW_RAISED
+        elsif acc < move.accuracy
+          accBase, accShadow = MoveHelpDisplay::BASE_LOWERED, MoveHelpDisplay::SHADOW_LOWERED
+        end
+      elsif move.accuracy != 0
+        accBase, accShadow = MoveHelpDisplay::BASE_RAISED, MoveHelpDisplay::SHADOW_RAISED
+      end
+
+      if pri != 0
+        if pri > move.priority
+          priBase, priShadow = MoveHelpDisplay::BASE_RAISED, MoveHelpDisplay::SHADOW_RAISED
+        elsif pri < move.priority
+          priBase, priShadow = MoveHelpDisplay::BASE_LOWERED, MoveHelpDisplay::SHADOW_LOWERED
+        end
+      end
+
+      displayPower    = (power  == 0 && basePower == 0)    ? "-" : (power == 1) ? "?" : power.ceil.to_s
+      displayAccuracy = (acc    <= 0)                      ? "-" : acc.ceil.to_s
+      displayPriority = (pri    == 0)                      ? "-" : (pri > 0) ? "+" + pri.to_s : pri.to_s
+      textPos.push(
+        [_INTL("Pow"),        xpos + 428, ypos + 14, 0, MoveHelpDisplay::BASE_LIGHT, MoveHelpDisplay::SHADOW_LIGHT],
+        [displayPower,        xpos + 481, ypos + 14, 2, powBase,                     powShadow],
+        [_INTL("Acc"),        xpos + 430, ypos + 44, 0, MoveHelpDisplay::BASE_LIGHT, MoveHelpDisplay::SHADOW_LIGHT],
+        [displayAccuracy,     xpos + 483, ypos + 44, 2, accBase,                     accShadow],
+        [_INTL("Pri"),        xpos + 444, ypos + 74, 0, MoveHelpDisplay::BASE_LIGHT, MoveHelpDisplay::SHADOW_LIGHT],
+        [displayPriority,     xpos + 486, ypos + 74, 2, priBase,                     priShadow]
+      )
+    end
   end
 
   #-----------------------------------------------------------------------------
   # Draws the Move Info UI.
   #-----------------------------------------------------------------------------
-  def pbUpdateMoveInfoWindow(battler, cw, foeindex=-1)
-    MoveHelpDisplay.lastTargetIndex = foeindex
-    bm = @sprites["bbui_moveinfo"].bitmap
+  def bbui_pbUpdateMoveInfoWindow(battler, cw)
+    bm = @sprites["bbui_canvas"].bitmap
     bm.clear
-    return if !@sprites["bbui_moveinfo"].visible
+    return if !@sprites["bbui_canvas"].visible || @bbui_displaymode != :move
     xpos = 0
     ypos = 76
     move = battler.moves[cw.index].clone
@@ -1543,9 +1579,6 @@ class PokeBattle_Scene
     knownFoe = nil
 
     if @battle.doublebattle
-      if foeindex != -1
-        knownFoe = @battle.battlers[foeindex]
-      end
       knownFoe = battler.pbOpposing2 if battler.pbOpposing1.isFainted?
       knownFoe = battler.pbOpposing1 if battler.pbOpposing2.isFainted?
     else
@@ -1553,16 +1586,20 @@ class PokeBattle_Scene
       knownFoe = battler.pbOpposing2 if knownFoe.isFainted? && !battler.pbOpposing2.isFainted?
     end
 
-    betterBattleUI_withForm(battler) do
-      if knownFoe.nil?
-        power = defined?(hpSummary_trueDamage) ? hpSummary_trueDamage(move, battler.pokemon) : move.basedamage
-      else
-        basePower, power = move.movehelpdisplay_calcPower(battler, knownFoe)
+    if !knownFoe # Make fake target
+      knownFoe = PokeBattle_Battler.new(battler.battle,1,true)
+      fakemon = PokeBattle_Pokemon.new(:RHYDON,battler.level,$Trainer,false)
+      knownFoe.pbInitPokemon(fakemon, 1)
+      knownFoe.type1 = :QMARKS
+      knownFoe.type2 = nil
+    end
 
-        if move.function == 0x91 && battler.effects[:FuryCutter] < 4 # Fury Cutter
-          basePower *= 2
-          power *= 2
-        end
+    betterBattleUI_withForm(battler) do
+      basePower, power = move.movehelpdisplay_calcPower(battler, knownFoe)
+
+      if move.function == 0x91 && battler.effects[:FuryCutter] < 4 # Fury Cutter
+        basePower *= 2
+        power *= 2
       end
 
       category = move.betterCategory
@@ -1612,7 +1649,7 @@ class PokeBattle_Scene
                     ["Data/Mods/BetterBattleUI/minicategory",                             xpos + 386, ypos + 8, 0, cattype * 28, 28,  28]]
       end
 
-      pbDrawMoveFlagIcons(battler, xpos, ypos, move, imagePos)
+      bbui_pbDrawMoveFlagIcons(battler, xpos, ypos, move, imagePos)
       pbDrawImagePositions(bm, imagePos)
       #---------------------------------------------------------------------------
       # Final move attribute calculations.
@@ -1663,13 +1700,13 @@ class PokeBattle_Scene
       textPos.push(
         [move.getMoveUseName, xpos + 10,  ypos + 14, 0, MoveHelpDisplay::BASE_LIGHT, MoveHelpDisplay::SHADOW_LIGHT, true],
         [_INTL("Pow"),        xpos + 256, ypos + 44, 0, MoveHelpDisplay::BASE_LIGHT, MoveHelpDisplay::SHADOW_LIGHT],
-        [displayPower,        xpos + 309, ypos + 44, 2, powBase,                  powShadow],
+        [displayPower,        xpos + 309, ypos + 44, 2, powBase,                     powShadow],
         [_INTL("Acc"),        xpos + 348, ypos + 44, 0, MoveHelpDisplay::BASE_LIGHT, MoveHelpDisplay::SHADOW_LIGHT],
-        [displayAccuracy,     xpos + 401, ypos + 44, 2, accBase,                  accShadow],
+        [displayAccuracy,     xpos + 401, ypos + 44, 2, accBase,                     accShadow],
         [_INTL("Pri"),        xpos + 442, ypos + 44, 0, MoveHelpDisplay::BASE_LIGHT, MoveHelpDisplay::SHADOW_LIGHT],
-        [displayPriority,     xpos + 484, ypos + 44, 2, priBase,                  priShadow],
+        [displayPriority,     xpos + 484, ypos + 44, 2, priBase,                     priShadow],
         [_INTL("Eff"),        xpos + 428, ypos + 14, 0, MoveHelpDisplay::BASE_LIGHT, MoveHelpDisplay::SHADOW_LIGHT],
-        [displayChance,       xpos + 484, ypos + 14, 2, effBase,                  effShadow]
+        [displayChance,       xpos + 484, ypos + 14, 2, effBase,                     effShadow]
       )
       # textPos.push([bonus[0], xpos + 8, ypos + 132, 0, bonus[1], bonus[2], true]) if bonus
       pbDrawTextPositions(bm, textPos)
@@ -1693,7 +1730,7 @@ class PokeBattle_Scene
   #-----------------------------------------------------------------------------
   # Draws the move flag icons for each move in the Move Info UI.
   #-----------------------------------------------------------------------------
-  def pbDrawMoveFlagIcons(battler, xpos, ypos, move, imagePos)
+  def bbui_pbDrawMoveFlagIcons(battler, xpos, ypos, move, imagePos)
     flagX = xpos + 6
     flagY = ypos + 40
     icons = 0

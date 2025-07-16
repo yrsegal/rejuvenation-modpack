@@ -153,7 +153,7 @@ class PokeBattle_Battle
       @decision=3
       return 1
     end
-    if !duringBattle && !pbCanSwitch?(idxPokemon,-1,false, running: true) # TODO: Use real messages
+    if !duringBattle && !pbCanSwitch?(idxPokemon,-1,false, running: true)
       pbDisplayPaused(_INTL("Can't escape!"))
       return 0
     end

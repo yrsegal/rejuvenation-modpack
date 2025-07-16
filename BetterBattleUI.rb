@@ -162,8 +162,6 @@ def betterBattleUI_statBoosts_createDisplayRect(stageId)
   return Rect.new(x, y, stageWidth, stageHeight)
 end
 
-# todo - dynamic extensions for all?
-
 class BossPokemonDataBox < SpriteWrapper
   def betterBattleUI_statBoosts_tabCoords
     rect=$betterBattleUI_statBoosts_data[:battlers][@battlerindex][:bitmap].rect
@@ -387,58 +385,64 @@ class BetterBattleUI_PokeballThrowButton < BitmapSprite
   end
 end
 
-
-alias :betterBattleUI_old_pbStatInfo :pbStatInfo
-
-$BBUI_RESTORE_SELIDX = nil
-
-def pbStatInfo(index)
-  numwindows=@battle.doublebattle ? 4 : 2
-  $BBUI_RESTORE_SELIDX = -1
-  for i in 0...numwindows
-    next if !@sprites["pokemon#{i}"]
-    $BBUI_RESTORE_SELIDX = i if @sprites["pokemon#{i}"].selected != 0
-  end
-  return betterBattleUI_old_pbStatInfo(index)
-end
-
-
 class PokeBattle_Scene
 
   alias :betterBattleUI_old_pbStartBattle :pbStartBattle
 
   def pbStartBattle(battle)
     betterBattleUI_old_pbStartBattle(battle)
+    @bbui_displaymode = nil
     @sprites["bbui_ballwindow"]=BetterBattleUI_PokeballThrowButtonDisplay.new(@battle,@viewport)
     @sprites["bbui_ballwindow"].z=100
-    @sprites["bbui_moveinfo"]=BitmapSprite.new(Graphics.width, Graphics.height, @viewport)
-    @sprites["bbui_moveinfo"].z=100
-    @sprites["bbui_moveinfo"].visible=false
-    pbSetSmallFont(@sprites["bbui_moveinfo"].bitmap)
+    @sprites["bbui_canvas"]=BitmapSprite.new(Graphics.width, Graphics.height, @viewport)
+    @sprites["bbui_canvas"].z=101
+    @sprites["bbui_canvas"].visible=false
+    pbSetSmallFont(@sprites["bbui_canvas"].bitmap)
 
-    @sprites["bbui_inspect"]=BitmapSprite.new(Graphics.width, Graphics.height, @viewport)
-    @sprites["bbui_inspect"].z=101
-    @sprites["bbui_inspect"].visible=false
-    pbSetSmallFont(@sprites["bbui_inspect"].bitmap)
-
-    @sprites["leftarrow"] = AnimatedSprite.new("Graphics/Pictures/leftarrow", 8, 40, 28, 2, @viewport)
-    @sprites["leftarrow"].x = -2
-    @sprites["leftarrow"].y = 71
-    @sprites["leftarrow"].z = 300
-    @sprites["leftarrow"].play
-    @sprites["leftarrow"].visible = false
-    @sprites["rightarrow"] = AnimatedSprite.new("Graphics/Pictures/rightarrow", 8, 40, 28, 2, @viewport)
-    @sprites["rightarrow"].x = Graphics.width - 38
-    @sprites["rightarrow"].y = 71
-    @sprites["rightarrow"].z = 300
-    @sprites["rightarrow"].play
-    @sprites["rightarrow"].visible = false
+    @sprites["bbui_leftarrow"] = AnimatedSprite.new("Graphics/Pictures/leftarrow", 8, 40, 28, 2, @viewport)
+    @sprites["bbui_leftarrow"].x = -2
+    @sprites["bbui_leftarrow"].y = 71
+    @sprites["bbui_leftarrow"].z = 300
+    @sprites["bbui_leftarrow"].play
+    @sprites["bbui_leftarrow"].visible = false
+    @sprites["bbui_rightarrow"] = AnimatedSprite.new("Graphics/Pictures/rightarrow", 8, 40, 28, 2, @viewport)
+    @sprites["bbui_rightarrow"].x = Graphics.width - 38
+    @sprites["bbui_rightarrow"].y = 71
+    @sprites["bbui_rightarrow"].z = 300
+    @sprites["bbui_rightarrow"].play
+    @sprites["bbui_rightarrow"].visible = false
     @battle.battlers.each do |b|
-      @sprites["info_icon#{b.index}"] = PokemonIconSprite.new(b.pokemon, @viewport)
-      # @sprites["info_icon#{b.index}"].setOffset(PictureOrigin::CENTER)
-      @sprites["info_icon#{b.index}"].visible = false
-      @sprites["info_icon#{b.index}"].z = 300
-      # pbAddSpriteOutline(["info_icon#{b.index}", @viewport, b.pokemon, PictureOrigin::CENTER])
+      @sprites["bbui_info_icon#{b.index}"] = PokemonIconSprite.new(b.pokemon, @viewport)
+      # @sprites["bbui_info_icon#{b.index}"].setOffset(PictureOrigin::CENTER)
+      @sprites["bbui_info_icon#{b.index}"].visible = false
+      @sprites["bbui_info_icon#{b.index}"].z = 300
+      # pbAddSpriteOutline(["bbui_info_icon#{b.index}", @viewport, b.pokemon, PictureOrigin::CENTER])
+    end
+  end
+
+  def bbui_pbUpdateBattlerIcons
+    @battle.battlers.each do |b|
+      next if !b
+      poke = b.pokemon
+      if @battle.pbIsOpposing?(b.index)
+        poke = b.effects[:Illusion] ? b.effects[:Illusion] : poke
+      end
+      if !b.isFainted?
+        @sprites["bbui_info_icon#{b.index}"].pokemon = poke
+        @sprites["bbui_info_icon#{b.index}"].visible = @bbui_displaymode == :battler || @bbui_displaymode == :select
+      else
+        @sprites["bbui_info_icon#{b.index}"].visible = false
+      end
+    end
+  end
+
+  def bbui_pbUpdateInfoSprites
+    @sprites["bbui_leftarrow"].update
+    @sprites["bbui_rightarrow"].update
+    @sprites.each_key do |key|
+      next if !key.include?("bbui_info_icon")
+      next if @sprites[key].disposed?
+      @sprites[key].update
     end
   end
 
@@ -455,8 +459,8 @@ class PokeBattle_Scene
   def pbShowWindow(windowtype)
     betterBattleUI_old_pbShowWindow(windowtype)
     @sprites["bbui_ballwindow"].visible=windowtype==COMMANDBOX if @sprites["bbui_ballwindow"]
-    @sprites["bbui_moveinfo"].visible=false if windowtype != FIGHTBOX && @sprites["bbui_moveinfo"]
-    @sprites["bbui_inspect"].visible=false if windowtype != COMMANDBOX && @sprites["bbui_inspect"]
+    @bbui_displaymode = nil if @bbui_displaymode == :move && windowtype != FIGHTBOX
+    @sprites["bbui_canvas"].visible=!@bbui_displaymode.nil? if @sprites["bbui_canvas"]
   end
 
   attr_accessor :betterBattleUI_autoselectitem
@@ -551,13 +555,11 @@ class PokeBattle_Scene
 
   ### MOVE INFO
 
-  ###### PLANNED: Implement move info window, potentially rework inspect window a la https://eeveeexpo.com/threads/7796/
-
   alias :betterBattleUI_old_pbFrameUpdate :pbFrameUpdate
 
   def pbFrameUpdate(cw, update_cw=true)
     betterBattleUI_old_pbFrameUpdate(cw, update_cw)
-    pbUpdateMoveInfoWindow(cw.battler, cw) if cw && @sprites["bbui_moveinfo"] && update_cw && @sprites["bbui_moveinfo"].visible
+    pbUpdateMoveInfoWindow(cw.battler, cw) if cw && @sprites["bbui_canvas"] && update_cw && @bbui_displaymode == :move
   end
 
   def pbFightMenu(index)

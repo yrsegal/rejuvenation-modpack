@@ -1,3 +1,5 @@
+
+# Based on https://eeveeexpo.com/threads/7796/
 module InspectMenuDisplay
   #-----------------------------------------------------------------------------
   # White text.
@@ -152,59 +154,31 @@ end
 
 
 class PokeBattle_Scene
-  def pbUpdateInfoSprites
-    @sprites["leftarrow"].update
-    @sprites["rightarrow"].update
-    @sprites.each_key do |key|
-      next if !key.include?("info_icon")
-      next if @sprites[key].disposed?
-      @sprites[key].update
-    end
-  end
-  def pbUpdateBattlerIcons
-    @battle.battlers.each do |b|
-      next if !b
-      poke = b.pokemon
-      if @battle.pbIsOpposing?(b.index)
-        poke = b.effects[:Illusion] ? b.effects[:Illusion] : poke
-      end
-      if !b.isFainted?
-        @sprites["info_icon#{b.index}"].pokemon = poke
-        # @sprites["info_icon#{b.index}"].visible = @enhancedUIToggle == :battler
-        # @sprites["info_icon#{b.index}"].setOffset(PictureOrigin::CENTER)
-      else
-        @sprites["info_icon#{b.index}"].visible = false
-      end
-      # pbUpdateOutline("info_icon#{b.index}", poke)
-      # pbColorOutline("info_icon#{b.index}", color)
-      # pbShowOutline("info_icon#{b.index}", false)
-    end
-  end
-
   #-----------------------------------------------------------------------------
   # Handles the controls for the Battle Info UI.
   #-----------------------------------------------------------------------------
-  def pbShowBattleStats(battler)
-    @sprites["bbui_inspect"].visible = true
+  def bbui_pbShowBattleStats(battler)
+    @sprites["bbui_canvas"].visible = true
+    @bbui_displaymode = :battler
     idx = battler.index
     allBattlers = @battle.battlers.select { |b| b && b.pokemon }
     maxSize = allBattlers.length - 1
     idxEffect = 0
-    effects = pbGetDisplayEffects(battler)
+    effects = bbui_pbGetDisplayEffects(battler)
     effctSize = effects.length - 1
-    pbUpdateBattlerInfo(battler, effects, idxEffect)
-    cw = @sprites["fightWindow"]
-    @sprites["leftarrow"].x = -2
-    @sprites["leftarrow"].y = 71
-    @sprites["leftarrow"].visible = true
-    @sprites["rightarrow"].x = Graphics.width - 38
-    @sprites["rightarrow"].y = 71
-    @sprites["rightarrow"].visible = true
+    bbui_pbUpdateBattlerInfo(battler, effects, idxEffect)
+    cw = @sprites["fightwindow"]
+    @sprites["bbui_leftarrow"].x = -2
+    @sprites["bbui_leftarrow"].y = 71
+    @sprites["bbui_leftarrow"].visible = true
+    @sprites["bbui_rightarrow"].x = Graphics.width - 38
+    @sprites["bbui_rightarrow"].y = 71
+    @sprites["bbui_rightarrow"].visible = true
     loop do
       pbGraphicsUpdate
       Input.update
       pbFrameUpdate(cw)
-      pbUpdateInfoSprites
+      bbui_pbUpdateInfoSprites
       break if Input.trigger?(Input::B)
       if Input.trigger?(Input::LEFT)
         idx -= 1
@@ -225,36 +199,33 @@ class PokeBattle_Scene
       end
       if doFullRefresh
         battler = allBattlers[idx]
-        effects = pbGetDisplayEffects(battler)
+        effects = bbui_pbGetDisplayEffects(battler)
         effctSize = effects.length - 1
         idxEffect = 0
         doRefresh = true
       end
       if doRefresh
         pbPlayCursorSE
-        pbUpdateBattlerInfo(battler, effects, idxEffect)
+        bbui_pbUpdateBattlerInfo(battler, effects, idxEffect)
         doRefresh = false
         doFullRefresh = false
       end
     end
-    @sprites["leftarrow"].visible = false
-    @sprites["rightarrow"].visible = false
-    @sprites["bbui_inspect"].visible = false
+    @bbui_displaymode = nil
+    @sprites["bbui_leftarrow"].visible = false
+    @sprites["bbui_rightarrow"].visible = false
+    @sprites["bbui_canvas"].visible = false
     @battle.battlers.each do |b|
-      @sprites["info_icon#{b.index}"].visible = false
-    end
-    if $BBUI_RESTORE_SELIDX
-      pbSelectBattler($BBUI_RESTORE_SELIDX)
-      $BBUI_RESTORE_SELIDX = nil
+      @sprites["bbui_info_icon#{b.index}"].visible = false
     end
   end
 
   #-----------------------------------------------------------------------------
   # Draws the Battle Info UI.
   #-----------------------------------------------------------------------------
-  def pbUpdateBattlerInfo(battler, effects, idxEffect = 0)
-    @sprites["bbui_inspect"].bitmap.clear
-    pbUpdateBattlerIcons
+  def bbui_pbUpdateBattlerInfo(battler, effects, idxEffect = 0)
+    @sprites["bbui_canvas"].bitmap.clear
+    bbui_pbUpdateBattlerIcons
     xpos = 28
     ypos = 24
     iconX = xpos + 28
@@ -285,9 +256,9 @@ class PokeBattle_Scene
     #---------------------------------------------------------------------------
     # Battler icon.
     @battle.battlers.each do |b|
-      @sprites["info_icon#{b.index}"].x = iconX - 28
-      @sprites["info_icon#{b.index}"].y = iconY - 40
-      @sprites["info_icon#{b.index}"].visible = (b.index == battler.index)
+      @sprites["bbui_info_icon#{b.index}"].x = iconX - 28
+      @sprites["bbui_info_icon#{b.index}"].y = iconY - 40
+      @sprites["bbui_info_icon#{b.index}"].visible = (b.index == battler.index)
     end
     #---------------------------------------------------------------------------
     # Owner
@@ -316,8 +287,8 @@ class PokeBattle_Scene
     if @battle.pbOwnedByPlayer?(battler.index)
       imagePos.push(
         ["Data/Mods/BetterBattleUI/Inspect/owner", xpos + 36, iconY + 10, 0, 0, 128, 20],
-        ["Data/Mods/BetterBattleUI/Inspect/cursor", panelX, 62, 0, 0, 218, 26],
-        ["Data/Mods/BetterBattleUI/Inspect/cursor", panelX, 86, 0, 0, 218, 26]
+        ["Data/Mods/BetterBattleUI/Inspect/effects", panelX, 62, 0, 0, 218, 26],
+        ["Data/Mods/BetterBattleUI/Inspect/effects", panelX, 86, 0, 0, 218, 26]
       )
       textPos.push(
         [_INTL("Abil."), xpos + 272, ypos + 44, 2, InspectMenuDisplay::BASE_LIGHT, InspectMenuDisplay::SHADOW_LIGHT],
@@ -346,16 +317,16 @@ class PokeBattle_Scene
     end
 
     #---------------------------------------------------------------------------
-    pbAddStatsDisplay(xpos, ypos, battler, imagePos, textPos)
-    pbDrawImagePositions(@sprites["bbui_inspect"].bitmap, imagePos)
-    pbDrawTextPositions(@sprites["bbui_inspect"].bitmap, textPos)
-    pbAddEffectsDisplay(xpos, ypos, panelX, effects, idxEffect)
+    bbui_pbAddStatsDisplay(xpos, ypos, battler, imagePos, textPos)
+    pbDrawImagePositions(@sprites["bbui_canvas"].bitmap, imagePos)
+    pbDrawTextPositions(@sprites["bbui_canvas"].bitmap, textPos)
+    bbui_pbAddEffectsDisplay(xpos, ypos, panelX, effects, idxEffect)
   end
 
   #-----------------------------------------------------------------------------
   # Draws the battler's stats and stat stages.
   #-----------------------------------------------------------------------------
-  def pbAddStatsDisplay(xpos, ypos, battler, imagePos, textPos)
+  def bbui_pbAddStatsDisplay(xpos, ypos, battler, imagePos, textPos)
     [[PBStats::ATTACK,   _INTL("Attack")],
      [PBStats::DEFENSE,  _INTL("Defense")],
      [PBStats::SPATK,    _INTL("Sp. Atk")],
@@ -394,7 +365,7 @@ class PokeBattle_Scene
   #-----------------------------------------------------------------------------
   # Draws the effects in play that are affecting the battler.
   #-----------------------------------------------------------------------------
-  def pbAddEffectsDisplay(xpos, ypos, panelX, effects, idxEffect)
+  def bbui_pbAddEffectsDisplay(xpos, ypos, panelX, effects, idxEffect)
     return if effects.empty?
     idxLast = effects.length - 1
     offset = idxLast - 1
@@ -415,7 +386,7 @@ class PokeBattle_Scene
     end
     textPos = []
     imagePos = [
-      ["Data/Mods/BetterBattleUI/Inspect/effects", xpos + 240, ypos + 256, 0, 0, -1, -1],
+      ["Data/Mods/BetterBattleUI/Inspect/effectdesc", xpos + 240, ypos + 256, 0, 0, -1, -1],
       ["Data/Mods/BetterBattleUI/Inspect/slider_base", panelX + 222, ypos + 132, 0, 0, -1, -1]
     ]
     #---------------------------------------------------------------------------
@@ -446,24 +417,24 @@ class PokeBattle_Scene
     effects[idxStart..idxEnd].each_with_index do |effect, i|
       real_idx = effects.find_index(effect)
       if i == idxDisplay || idxEffect == real_idx
-        imagePos.push(["Data/Mods/BetterBattleUI/Inspect/cursor", panelX, ypos + 132 + (i * 24), 0, 52, 218, 26])
+        imagePos.push(["Data/Mods/BetterBattleUI/Inspect/effects", panelX, ypos + 132 + (i * 24), 0, 52, 218, 26])
         textPos.push([effect[0], xpos + 322, ypos + 138 + (i * 24), 2, InspectMenuDisplay::BASE_LIGHT, InspectMenuDisplay::SHADOW_LIGHT, true])
       else
-        imagePos.push(["Data/Mods/BetterBattleUI/Inspect/cursor", panelX, ypos + 132 + (i * 24), 0, 26, 218, 26])
+        imagePos.push(["Data/Mods/BetterBattleUI/Inspect/effects", panelX, ypos + 132 + (i * 24), 0, 26, 218, 26])
         textPos.push([effect[0], xpos + 322, ypos + 138 + (i * 24), 2, InspectMenuDisplay::BASE_DARK, InspectMenuDisplay::SHADOW_DARK])
       end
       textPos.push([effect[1], xpos + 426, ypos + 138 + (i * 24), 2, InspectMenuDisplay::BASE_LIGHT, InspectMenuDisplay::SHADOW_LIGHT])
     end
-    pbDrawImagePositions(@sprites["bbui_inspect"].bitmap, imagePos)
-    pbDrawTextPositions(@sprites["bbui_inspect"].bitmap, textPos)
+    pbDrawImagePositions(@sprites["bbui_canvas"].bitmap, imagePos)
+    pbDrawTextPositions(@sprites["bbui_canvas"].bitmap, textPos)
     desc = effects[idxEffect][2]
-    drawFormattedTextEx_lh(@sprites["bbui_inspect"].bitmap, xpos + 246, ypos + 264, 208, desc, InspectMenuDisplay::BASE_DARK, InspectMenuDisplay::SHADOW_DARK, 18)
+    drawFormattedTextEx_lh(@sprites["bbui_canvas"].bitmap, xpos + 246, ypos + 264, 208, desc, InspectMenuDisplay::BASE_DARK, InspectMenuDisplay::SHADOW_DARK, 18)
   end
 
   #-----------------------------------------------------------------------------
   # Utility for getting an array of all effects that may be displayed.
   #-----------------------------------------------------------------------------
-  def pbGetDisplayEffects(battler)
+  def bbui_pbGetDisplayEffects(battler)
     display_effects = []
     #---------------------------------------------------------------------------
     # Damage gates for scripted battles.
@@ -500,7 +471,7 @@ class PokeBattle_Scene
       else                   name, desc = nil, nil
       end
       if !name.nil?
-        tick = (weather == @battle.field.weather) ? @battle.field.weatherDuration : 0
+        tick = (weather == @weatherbackup) ? @battle.field.weatherDuration : 0
         tick = (tick > 0) ? sprintf("%d/%d", tick, 5) : "--"
         display_effects.push([name, tick, desc])
       end

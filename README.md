@@ -77,6 +77,12 @@ QoL mods:
   Show types and stat boosts visually in battle. In addition:  
   Hitting the "back" button when selecting a command in battle will move your cursor over "Run". 
   There's a keybind for Q (which is L) in wild battle to throw the last ball you've used.
+  - InspectMenuBBUI.rb (depends on BetterBattleUI.rb)  
+    Improves the inspect-a-pokemon menu.
+  - SelectMenuBBUI.rb (depends on BetterBattleUI.rb)  
+    Improves the select-a-pokemon menu.
+  - MoveHelpDisplayBBUI.rb (depends on BetterBattleUI.rb)  
+    Adds a move-info display controlled by the Inspect key (A).
 - BoxExtensions.rb (depends on 0001.boundedentry.rb)  
   Expand the "Find" functionality of Pokemon boxes, and make Pokéballs visible from the box.
 - CleanerPrismPower.rb  
