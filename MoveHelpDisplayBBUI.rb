@@ -1493,13 +1493,9 @@ class PokeBattle_Scene
 
       category = move.betterCategory
       if MoveHelpDisplay::USES_SMART_DAMAGE_CATEGORY.include?(move.function) # Moves which basically choose category but don't pretend to
-        if target.nil?
-          category = PokeBattle_Move.pbFromPBMove(battler.battle, PBMove.new(:PHOTONGEYSER), battler).betterCategory
-        else
-          tempMove = PokeBattle_Move.pbFromPBMove(battler.battle, PBMove.new(:UNLEASHEDPOWER), battler)
-          tempMove.smartDamageCategory(battler, target)
-          category = tempMove.betterCategory
-        end
+        tempMove = PokeBattle_Move.pbFromPBMove(battler.battle, PBMove.new(:UNLEASHEDPOWER), battler)
+        tempMove.smartDamageCategory(battler, target)
+        category = tempMove.betterCategory
       end
       imagePos.push(["Data/Mods/BetterBattleUI/Inspect/moveselectbg", xpos, ypos, 0, 0, -1, -1])
 
@@ -1515,6 +1511,12 @@ class PokeBattle_Scene
 
       acc = move.movehelpdisplay_calcAccuracy(battler, target)
       pri = move.priorityCheck(battler)
+
+      if move.move == :POLLENPUFF && (target.index & 2) == (battler.index & 2) && power != 0
+        basePower = 0
+        power = 0
+      end
+
       if basePower > 1
         if power > basePower
           powBase, powShadow = MoveHelpDisplay::BASE_RAISED, MoveHelpDisplay::SHADOW_RAISED
