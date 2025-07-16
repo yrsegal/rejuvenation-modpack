@@ -157,7 +157,7 @@ class PokeBattle_Scene
   #-----------------------------------------------------------------------------
   # Handles the controls for the Battle Info UI.
   #-----------------------------------------------------------------------------
-  def bbui_pbShowBattleStats(battler)
+  def pbShowBattleStats(battler)
     @sprites["bbui_canvas"].visible = true
     @bbui_displaymode = :battler
     idx = battler.index

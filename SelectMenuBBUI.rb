@@ -72,9 +72,9 @@ class PokeBattle_Scene
           imagePos.push(["Data/Mods/BetterBattleUI/Inspect/owner", bgX + 36, iconY + 12, 0, 0, 128, 20])
           textPos.push([owner.name, nameX - 10, iconY + 14, 2, SelectMenuBBUI::BASE_LIGHT, SelectMenuBBUI::SHADOW_LIGHT])
           if @battle.pbIsOpposing?(i)
-            oppTrainers.push([owner, i & 1]) if oppTrainers.none? { |tr| tr[0] == owner }
+            oppTrainers.push([owner, i]) if oppTrainers.none? { |tr| tr[0] == owner }
           else
-            plyTrainers.push([owner, i & 1]) if plyTrainers.none? { |tr| tr[0] == owner }
+            plyTrainers.push([owner, i]) if plyTrainers.none? { |tr| tr[0] == owner }
           end
         end
       end
@@ -91,6 +91,7 @@ class PokeBattle_Scene
           trainer, idxTrainer = *array
           ballXFirst = 35
           ballXLast = Graphics.width - (16 * PokeBattle_Battle::MAXPARTYSIZE) - 35
+          party = @battle.pbPartySingleOwner(idxTrainer)
           if @battle.pbIsOpposing?(idxTrainer)
             ballY = ypos - 17
             ballOffset = 3
@@ -108,9 +109,9 @@ class PokeBattle_Scene
           imagePos.push(["Data/Mods/BetterBattleUI/Inspect/owner", ballX - 16, ballY - ballOffset, 0, 0, 128, 20])
           PokeBattle_Battle::MAXPARTYSIZE.times do |slot|
             idx = 0
-            if !trainer.party[slot]                then idx = 3 # Empty
-            elsif trainer.party[slot].hp <= 0      then idx = 2 # Fainted
-            elsif !trainer.party[slot].status.nil? then idx = 1 # Status
+            if !party[slot]                then idx = 3 # Empty
+            elsif party[slot].hp <= 0      then idx = 2 # Fainted
+            elsif !party[slot].status.nil? then idx = 1 # Status
             end
             imagePos.push(["Data/Mods/BetterBattleUI/Inspect/party", ballX + (slot * 16), ballY, idx * 15, 0, 15, 15])
           end
@@ -174,7 +175,7 @@ class PokeBattle_Scene
       pbGraphicsUpdate
       pbFrameUpdate(cw)
       Input.update
-      pbUpdateInfoSprites
+      bbui_pbUpdateInfoSprites
       if Input.trigger?(Input::B)
         result = prevselectmode
         break
