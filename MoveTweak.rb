@@ -139,6 +139,8 @@ module TweakMoveFunctions
   SCATTER_MONEY = 0x109
   HEAL_ALLIES_NOT_DAMAGE = 0x167
   IGNORE_REDIRECTION = 0x179
+
+  DOUBLE_IRON_BASH = 0x778
 end
 
 # For setting TM desc
@@ -162,8 +164,9 @@ class MoveData < DataObject
   attr_writer :priority
 end
 
-def move_tweak(id, power: nil, accuracy: nil, type: nil, category: nil, pp: nil, target: nil, priority: nil, function: nil, flags: nil, copyFlags: true, desc: nil, tmdesc: nil)
+def move_tweak(id, name: nil, power: nil, accuracy: nil, type: nil, category: nil, pp: nil, target: nil, priority: nil, function: nil, flags: nil, copyFlags: true, desc: nil, tmdesc: nil)
   move = $cache.moves[id]
+  move.name = name if name != nil
   move.function = function if function != nil
   move.basedamage = power if power != nil
   move.type = type if type != nil
@@ -273,16 +276,21 @@ move_tweak(:FLY,
   power: 100,
   accuracy: 100)
 
+# This is... actually the function the move is SUPPOSED to have.
+move_tweak(:DOUBLEIRONBASH,
+  function: TweakMoveFunctions::DOUBLE_IRON_BASH)
+
+# Note: The following tweaks are disabled because they prevent the Normalium/Steelium-Z from interacting with the move!
+# move_tweak(:MIRRORBEAM, type: :QMARKS)
+# move_tweak(:REVELATIONDANCE, type: :QMARKS)
+# move_tweak(:HIDDENPOWER, type: :QMARKS)
+
 # These are mostly cosmetic
-move_tweak(:MIRRORBEAM, type: :QMARKS)
-move_tweak(:REVELATIONDANCE, type: :QMARKS)
-move_tweak(:HIDDENPOWER, type: :QMARKS)
 move_tweak(:UNLEASHEDPOWER, desc: "The user channels the flow of Fate, unleashing their Hidden Power in whichever category will be most effective, shattering all barriers in their path.")
 move_tweak(:BLINDINGSPEED, desc: "The user rides the flow of Fate, intercepting the opponent with their type in whichever category will be most effective, drawing their allies with them.")
 move_tweak(:ELYSIANSHIELD, desc: "The user cloaks themself in the flow of Fate, building a virtually impenetrable defense of blooming hope.")
 move_tweak(:CHTHONICMALADY, desc: "The user twists the flow of Fate, withering the basis for the target's existence to ash and stone.")
 move_tweak(:DOMAINSHIFT, desc: "The user disrupts the flow of Fate, forcing the Core to redictate the field to meet the user's parameters.")
-
 
 
 

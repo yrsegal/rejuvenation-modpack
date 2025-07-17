@@ -43,6 +43,8 @@ Fix/hotfix mods:
   Reclassifies some items that are improperly classified.
 - BlackBoxFix.rb (depends on 0000.injection.rb)  
   Fixes some logic errors in a cutscene that leaves key items which are intended to be deleted.
+- ExcludeAnimationsFromCallable.rb  
+  Excludes all moves that are purely for animation purposes from being called by Metronome.
 - FixBasculegionForms.rb  
   Fixes Basculegion's forms on evolution. (Currently, female basculegion does not recieve the proper icon or stats.)
 - FixBlueMIC.rb (depends on 0000.injection.rb)  
@@ -61,6 +63,8 @@ Fix/hotfix mods:
   Fixes Rayquaza crashing the game by simple existence.
 - FixSuperLuck.rb  
   Super Luck increases held item chances on wild pokemon, as it's supposed to.
+- FixUnderpoweredZMoves.rb  
+  Z-upgraded attacks which should have higher base power now do. Moves such as Hidden Power can be upgraded into differently typed Z-Moves.
 - RelearnPreShadowMoves.rb  
   Shadow Pokemon regain their old moves over time, as they're supposed to.
 - Route4GlobalChange.rb  

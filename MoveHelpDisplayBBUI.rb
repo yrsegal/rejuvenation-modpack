@@ -41,6 +41,108 @@ module MoveHelpDisplay
     :windmove, :intercept, :zmove]
 
   USES_SMART_DAMAGE_CATEGORY = [0x309, 0x20D, 0x80A, 0x80B] # Shell Side Arm, Super UMD Move, Unleashed Power, Blinding Speed
+
+  # Copied from pbZStatus in PokeBattle_Battler
+  Z_STATUS_TYPES = pbHashForwardizer({
+      [PBStats::ATTACK,1] => [:BULKUP,:HONECLAWS,:HOWL,:LASERFOCUS,:LEER,:MEDITATE,:ODORSLEUTH,:POWERTRICK,:ROTOTILLER,:SCREECH,:SHARPEN,
+        :TAILWHIP, :TAUNT,:TOPSYTURVY,:WILLOWISP,:WORKUP,:COACHING,:POWERSHIFT,:DESERTSMARK],
+      [PBStats::ATTACK,2] =>   [:MIRRORMOVE,:OCTOLOCK],
+      [PBStats::ATTACK,3] =>   [:SPLASH],
+      [PBStats::DEFENSE,1] =>   [:AQUARING,:BABYDOLLEYES,:BANEFULBUNKER,:BLOCK,:CHARM,:DEFENDORDER,:FAIRYLOCK,:FEATHERDANCE,
+        :FLOWERSHIELD,:GRASSYTERRAIN,:GROWL,:HARDEN,:MATBLOCK,:NOBLEROAR,:PAINSPLIT,:PLAYNICE,:POISONGAS,
+        :POISONPOWDER,:QUICKGUARD,:REFLECT,:ROAR,:SPIDERWEB,:SPIKES,:SPIKYSHIELD,:STEALTHROCK,:STRENGTHSAP,
+        :TEARFULLOOK,:TICKLE,:TORMENT,:TOXIC,:TOXICSPIKES,:VENOMDRENCH,:WIDEGUARD,:WITHDRAW,:ARENITEWALL],
+      [PBStats::SPATK,1] => [:CONFUSERAY,:ELECTRIFY,:EMBARGO,:FAKETEARS,:GEARUP,:GRAVITY,:GROWTH,:INSTRUCT,:IONDELUGE,
+        :METALSOUND,:MINDREADER,:MIRACLEEYE,:NIGHTMARE,:PSYCHICTERRAIN,:REFLECTTYPE,:SIMPLEBEAM,:SOAK,:SWEETKISS,
+        :TEETERDANCE,:TELEKINESIS,:MAGICPOWDER],
+      [PBStats::SPATK,2] => [:HEALBLOCK,:PSYCHOSHIFT,:TARSHOT],
+      [PBStats::SPATK,3] => [],
+      [PBStats::SPDEF,1] => [:CHARGE,:CONFIDE,:COSMICPOWER,:CRAFTYSHIELD,:EERIEIMPULSE,:ENTRAINMENT,:FLATTER,:GLARE,:INGRAIN,
+        :LIGHTSCREEN,:MAGICROOM,:MAGNETICFLUX,:MEANLOOK,:MISTYTERRAIN,:MUDSPORT,:SPOTLIGHT,:STUNSPORE,:THUNDERWAVE,
+        :WATERSPORT,:WHIRLWIND,:WISH,:WONDERROOM,:CORROSIVEGAS,:SHELTER],
+      [PBStats::SPDEF,2] => [:AROMATICMIST,:CAPTIVATE,:IMPRISON,:MAGICCOAT,:POWDER],
+      [PBStats::SPEED,1] => [:AFTERYOU,:AURORAVEIL,:ELECTRICTERRAIN,:ENCORE,:GASTROACID,:GRASSWHISTLE,:GUARDSPLIT,:GUARDSWAP,
+        :HAIL,:HYPNOSIS,:LOCKON,:LOVELYKISS,:POWERSPLIT,:POWERSWAP,:QUASH,:RAINDANCE,:ROLEPLAY,:SAFEGUARD,
+        :SANDSTORM,:SCARYFACE,:SING,:SKILLSWAP,:SLEEPPOWDER,:SPEEDSWAP,:STICKYWEB,:STRINGSHOT,:SUNNYDAY,
+        :SUPERSONIC,:TOXICTHREAD,:WORRYSEED,:YAWN],
+      [PBStats::SPEED,2] => [:ALLYSWITCH,:BESTOW,:MEFIRST,:RECYCLE,:SNATCH,:SWITCHEROO,:TRICK],
+      [PBStats::ACCURACY,1]   => [:COPYCAT,:DEFENSECURL,:DEFOG,:FOCUSENERGY,:MIMIC,:SWEETSCENT,:TRICKROOM],
+      [PBStats::EVASION,1]   => [:CAMOUFLAGE,:DETECT,:FLASH,:KINESIS,:LUCKYCHANT,:MAGNETRISE,:SANDATTACK,:SMOKESCREEN],
+      [:allstat1]  => [:CONVERSION,:FORESTSCURSE,:GEOMANCY,:PURIFY,:SKETCH,:TRICKORTREAT,:CELEBRATE,:TEATIME,:STUFFCHEEKS, :HAPPYHOUR],
+      [:crit1]  => [:ACUPRESSURE,:FORESIGHT,:HEARTSWAP,:SLEEPTALK,:TAILWIND],
+      [:reset]  => [:ACIDARMOR,:AGILITY,:AMNESIA,:ATTRACT,:AUTOTOMIZE,:BARRIER,:BATONPASS,:CALMMIND,:COIL,:COTTONGUARD,
+        :COTTONSPORE,:DARKVOID,:DISABLE,:DOUBLETEAM,:DRAGONDANCE,:ENDURE,:FLORALHEALING,:FOLLOWME,:HEALORDER,
+        :HEALPULSE,:HELPINGHAND,:IRONDEFENSE,:KINGSSHIELD,:LEECHSEED,:MILKDRINK,:MINIMIZE,:MOONLIGHT,:MORNINGSUN,
+        :NASTYPLOT,:PERISHSONG,:PROTECT,:QUIVERDANCE,:RAGEPOWDER,:RECOVER,:REST,:ROCKPOLISH,:ROOST,:SHELLSMASH,
+        :SHIFTGEAR,:SHOREUP,:SHELLSMASH,:SHIFTGEAR,:SHOREUP,:SLACKOFF,:SOFTBOILED,:SPORE,:SUBSTITUTE,:SWAGGER,
+        :SWALLOW,:SWORDSDANCE,:SYNTHESIS,:TAILGLOW,:CLANGOROUSSOUL,:NORETREAT,:OBSTRUCT,:COURTCHANGE,:JUNGLEHEALING,
+        :VICTORYDANCE,:AQUABATICS],
+      [:heal]   => [:AROMATHERAPY,:BELLYDRUM,:CONVERSION2,:HAZE,:HEALBELL,:MIST,:PSYCHUP,:REFRESH,:SPITE,:STOCKPILE,
+        :TELEPORT,:TRANSFORM,:DECORATE,:LIFEDEW,:LUNARBLESSING],
+      [:heal2]  => [:MEMENTO,:PARTINGSHOT],
+      [:centre] => [:DESTINYBOND,:GRUDGE],
+    })
+  Z_STATUS_TYPES.default = []
+  MOVES_WHICH_CALL_MOVES = [:MEFIRST, :METRONOME, :NATUREPOWER, :ASSIST, :SLEEPTALK, :MIRRORMOVE, :COPYCAT]
+
+  # Copied from pbGetStatName PokeBattle_Battler
+  def self.pbGetStatName(stat)
+    return ["HP","Attack", "Defense", "Sp. Attack", "Sp. Defense", "Speed", "Accuracy", "Evasion"][stat]
+  end
+
+  def self.getZText(attacker, move)
+    z_effect = Z_STATUS_TYPES[move]
+    if move == :CURSE
+      if attacker.hasType?(:GHOST) || attacker.ability == :PROTEAN || attacker.ability == :LIBERO
+        z_effect = [:heal]
+      else
+        z_effect = [PBStats::ATTACK,1]
+      end
+    end
+    if z_effect.length == 2
+      stat, num = *z_effect
+      num = 0 if num < 0
+      statname = pbGetStatName(stat)
+      case num
+      when 0 then desc = "Z-Power effect: Doesn't raise #{statname}." # Shouldn't be possible but let's handle this case
+      when 1 then desc = "Z-Power effect: Raises #{statname} by one stage."
+      when 2 then desc = "Z-Power effect: Raises #{statname} by two stages."
+      when 3 then desc = "Z-Power effect: Raises #{statname} by three stages."
+      when 4 then desc = "Z-Power effect: Raises #{statname} by four stages."
+      when 5 then desc = "Z-Power effect: Raises #{statname} by five stages."
+      else        desc = "Z-Power effect: Maximizes #{statname}."
+      end
+    else
+      case z_effect[0]
+      when :allstat1
+        if (attacker.battle.FE == :CITY && [:CONVERSION,:HAPPYHOUR,:CELEBRATE].include?(move)) || (attacker.battle.FE == :BACKALLEY && move == :CONVERSION)
+          desc = "Z-Power effect: Raises all stats by two stages."
+        else
+          desc = "Z-Power effect: Raises all stats by one stage."
+        end
+      when :crit1  then desc = "Z-Power effect: Raises the user's Critical Hit rate."
+      when :reset  then desc = "Z-Power effect: Resets the user's lowered stats."
+      when :heal   then desc = "Z-Power effect: Fully restores the user's HP."
+      when :heal2  then desc = "Z-Power effect: Fully restores the HP of the Pokémon that switches in."
+      when :centre then desc = "Z-Power effect: The user becomes the center of attention."
+      else              desc = "Z-Power effect: "
+      end
+    end
+
+    if MOVES_WHICH_CALL_MOVES.include?(move)
+      if desc.end_with?(".")
+        desc = desc.chomp(".") + ", then calls a Z-Move."
+      else
+        desc += "Calls a Z-Move."
+      end
+    end
+
+    if desc.end_with?(": ")
+      desc += "None."
+    end
+
+    return desc
+  end
 end
 
 class PokeBattle_Move
@@ -1725,19 +1827,28 @@ class PokeBattle_Scene
       # textPos.push([bonus[0], xpos + 8, ypos + 132, 0, bonus[1], bonus[2], true]) if bonus
       pbDrawTextPositions(bm, textPos)
 
-      desc = getMoveDesc(move.move)
-      desc.gsub! /—/, '-'
-      desc.strip!
+      desc = move.desc.gsub(/—/, '-').strip
 
       normtext=getLineBrokenChunks(bm,desc,Graphics.width - 12,nil,true)
-      linecount = normtext[-1][2] / 32 + 1
+      ztext = []
+      zlinecount = linecount = normtext[-1][2] / 32 + 1
+
+      if move.zmove && move.category == :status
+        ztext=getLineBrokenChunks(bm,MoveHelpDisplay.getZText(battler, move.move),Graphics.width - 12,nil,true)
+        linecount += ztext[-1][2] / 32 + 1
+      end
       textheight = 26
       textheight = 21 if linecount > 3
       for i in normtext
-        i[2] = (i[2] >> 5) * textheight
+        i[2] = (i[2] / 32) * textheight
       end
       renderLineBrokenChunksWithShadow(bm,xpos + 8,ypos+70,normtext,84,
          MoveHelpDisplay::BASE_LIGHT, MoveHelpDisplay::SHADOW_LIGHT)
+      if zlinecount != linecount && zlinecount < 4 # Too much to display in the text box
+        normheight = zlinecount * textheight
+        renderLineBrokenChunksWithShadow(bm,xpos + 8,ypos+70 + normheight,ztext,84 - normheight,
+           MoveHelpDisplay::BASE_RAISED, MoveHelpDisplay::SHADOW_RAISED)
+      end
     end
   end
 
@@ -1761,6 +1872,7 @@ class PokeBattle_Scene
       end
     end
     flags.push(:bypassprotect) if move.move == :FIRSTIMPRESSION && battler.battle.FE == :COLOSSEUM
+    flags.push(:zmove) if !flags.include?(:zmove) && move.zmove
     flags.delete(:zmove) if flags.include?(:intercept)
     flags.each do |flag|
       break if icons > 8
