@@ -239,6 +239,8 @@ class PokeBattle_Scene
     if @battle.pbIsOpposing?(battler.index)
       poke = battler.effects[:Illusion] ? battler.effects[:Illusion] : poke
       name = poke.name if battler.effects[:Illusion]
+    elsif battler.effects[:Illusion]
+      name = poke.name
     end
     level = (battler.isbossmon) ? "???" : battler.level.to_s
     movename = $cache.moves[battler.lastMoveUsed] ? $cache.moves[battler.lastMoveUsed].name : "---"
@@ -301,7 +303,7 @@ class PokeBattle_Scene
     end
 
     # Gets display types (considers Illusion)
-    if battler.effects[:Illusion]
+    if battler.effects[:Illusion] && !@battle.pbOwnedByPlayer?(battler.index)
       # Zorua
       type1=battler.effects[:Illusion].type1
       type2=battler.effects[:Illusion].type2
@@ -473,7 +475,7 @@ class PokeBattle_Scene
       when :RAINDANCE
         name, desc = _INTL("Rain"), _INTL("Boosts Water moves and weakens Fire moves.")
         name, desc = _INTL("Torrential Rain"), _INTL("Boosts Water moves and negates Fire moves.") if @battle.state.effects[:HeavyRain]
-      when :SANDSTORM   then name, desc = _INTL("Sandstorm"), _INTL("Boosts Rock Sp. Def. Damage each turn unless Rock/Ground/Steel.")
+      when :SANDSTORM   then name, desc = _INTL("Sandstorm"), _INTL("Boosts Rock Sp. Def. Chip damage unless Rock/Ground/Steel.")
       when :HAIL        then name, desc = _INTL("Hail"), _INTL("Non-Ice types take damage each turn. Blizzard always hits.")
       when :STRONGWINDS then name, desc = _INTL("Strong Winds"), _INTL("Flying types have no weaknesses.")
       when :SHADOWSKY   then name, desc = _INTL("Shadow Sky"), _INTL("Boosts Shadow moves. Non-Shadow Pokémon damaged each turn.")

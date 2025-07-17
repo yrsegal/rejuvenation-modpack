@@ -83,7 +83,13 @@ class PokeBattle_Scene
           imagePos.push(["Data/Mods/BetterBattleUI/Inspect/gender", bgX + 148, iconY - 34, b.gender * 22, 0, 22, 22])
         end
         name = b.name
-        name = b.effects[:Illusion].name if b.effects[:Illusion]
+        if b.effects[:Illusion]
+          if @battle.pbIsOpposing?(battler.index)
+            name = b.effects[:Illusion].name
+          else
+            name = b.pokemon.name
+          end
+        end
         textPos.push([_INTL("{1}", name), nameX, iconY - 16, 2, base, shadow])
         owner = @battle.pbGetOwner(b.index)
         if owner
