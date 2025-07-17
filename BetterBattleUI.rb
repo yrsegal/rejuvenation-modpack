@@ -559,7 +559,7 @@ class PokeBattle_Scene
 
   def pbFrameUpdate(cw, update_cw=true)
     betterBattleUI_old_pbFrameUpdate(cw, update_cw)
-    pbUpdateMoveInfoWindow(cw.battler, cw) if cw && @sprites["bbui_canvas"] && update_cw && @bbui_displaymode == :move
+    bbui_pbUpdateMoveInfoWindow(cw.battler, cw) if cw && @sprites["bbui_canvas"] && update_cw && @bbui_displaymode == :move
   end
 
   def pbFightMenu(index)
@@ -606,7 +606,7 @@ class PokeBattle_Scene
       ### MODDED/ replace battle stats in fight menu with move info
       elsif Input.trigger?(Input::Y)
         pbPlayCursorSE()
-        pbToggleMoveInfo(battler, cw) if defined?(pbToggleMoveInfo)
+        bbui_pbToggleMoveInfo(battler, cw) if defined?(bbui_pbToggleMoveInfo)
         update_menu=true
       ### /MODDED
       end
@@ -891,7 +891,7 @@ class PokemonDataBox < SpriteWrapper
       if @battler.pokemon.isPulse?
         imagepos.push(["Graphics/Pictures/Battle/battlePulseEvoBox.png",sbX+megaX,sbY+megaY,0,0,-1,-1])
       elsif @battler.pokemon.isRift?
-        imagepos.push(["Graphics/Pictures/Battle/battleRiftEvoBox.png",sbX+megaX,sbYmegaY,0,0,-1,-1])
+        imagepos.push(["Graphics/Pictures/Battle/battleRiftEvoBox.png",sbX+megaX,sbY+megaY,0,0,-1,-1])
       elsif @battler.pokemon.isPerfection?
         imagepos.push(["Graphics/Pictures/Battle/battlePerfectionEvoBox.png",sbX+megaX,sbY+megaY,0,0,-1,-1])
       elsif @battler.isMega?

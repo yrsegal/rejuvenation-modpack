@@ -1483,6 +1483,12 @@ class PokeBattle_Scene
       basePower *= 0.3
     end
 
+    if target.effects[:Illusion] && @battle.pbIsOpposing?(target.index)
+      fakeFoe = PokeBattle_Battler.new(battler.battle,target.index,true)
+      fakeFoe.pbInitPokemon(target.effects[:Illusion], target.index)
+      target = fakeFoe
+    end
+
     betterBattleUI_withForm(battler) do
       basePower, power = move.movehelpdisplay_calcPower(battler, target)
 
@@ -1594,6 +1600,12 @@ class PokeBattle_Scene
       knownFoe.pbInitPokemon(fakemon, 1)
       knownFoe.type1 = :QMARKS
       knownFoe.type2 = nil
+    end
+
+    if knownFoe.effects[:Illusion] && @battle.pbIsOpposing?(knownFoe.index)
+      fakeFoe = PokeBattle_Battler.new(battler.battle,knownFoe.index,true)
+      fakeFoe.pbInitPokemon(knownFoe.effects[:Illusion], knownFoe.index)
+      knownFoe = fakeFoe
     end
 
     betterBattleUI_withForm(battler) do

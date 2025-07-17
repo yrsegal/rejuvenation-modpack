@@ -18,6 +18,13 @@ module SelectMenuBBUI
     2 => 2, # Player pkmn 2
     3 => 1  # Opp pkmn 2
   }
+
+  INPUT_MAPPING = {
+    Input::LEFT => [2, 1, 0],
+    Input::RIGHT => [2, 3, 2],
+    Input::UP => [1, 2, 0],
+    Input::DOWN => [1, 3, 2]
+  }
 end
 
 #===============================================================================
@@ -41,32 +48,43 @@ class PokeBattle_Scene
     moveShift = prevselectmode == :move && defined?(bbui_pbDrawPartialMoveInfo)
 
     for i in 0...(count * 2)
+      b = @battle.battlers[i]
+      trueidx = i
       case count
       when 1 then iconX, bgX = 202, 173
       when 2
-        iconX, bgX = 96 + (104 * (i & 2)), 68 + (104 * (i & 2))
+        i = SelectMenuBBUI::VISUAL_MAPPING[i]
+        if i == 3 && b && b.isbossmon && (!b.pbPartner || b.pbPartner.isFainted?)
+          iconX, bgX = 202, 173
+        elsif i == 1 && b && b.isFainted? && b.pbPartner.isbossmon
+          next
+        else
+          iconX, bgX = 96 + (104 * (i & 2)), 68 + (104 * (i & 2))
+        end
         iconX -= 48 if moveShift
         bgX -= 48 if moveShift
       end
-      i = SelectMenuBBUI::VISUAL_MAPPING[i] if @battle.doublebattle
       iconY = ypos + 38
       iconY += 76 unless @battle.pbIsOpposing?(i)
       nameX = iconX + 82
-      if idxPoke == i
+      if idxPoke == trueidx
         base, shadow = SelectMenuBBUI::BASE_LIGHT, SelectMenuBBUI::SHADOW_LIGHT
         imagePos.push(["Data/Mods/BetterBattleUI/Inspect/cursor", bgX, iconY - 28, 0, 52, 166, 52])
       else
         base, shadow = SelectMenuBBUI::BASE_DARK, SelectMenuBBUI::SHADOW_DARK
         imagePos.push(["Data/Mods/BetterBattleUI/Inspect/cursor", bgX, iconY - 28, 0, 0, 166, 52])
       end
-      @sprites["bbui_info_icon#{i}"].x = iconX - 28
-      @sprites["bbui_info_icon#{i}"].y = iconY - 40
-      @sprites["bbui_info_icon#{i}"].visible = true
-      b = @battle.battlers[i]
+      @sprites["bbui_info_icon#{trueidx}"].x = iconX - 28
+      @sprites["bbui_info_icon#{trueidx}"].y = iconY - 40
+      @sprites["bbui_info_icon#{trueidx}"].visible = true
       # pbSetWithOutline("info_icon#{b.index}", [iconX, iconY, 300])
       if b && !b.isFainted?
-        imagePos.push(["Data/Mods/BetterBattleUI/Inspect/gender", bgX + 148, iconY - 34, b.gender * 22, 0, 22, 22])
-        textPos.push([_INTL("{1}", b.pokemon.name), nameX, iconY - 16, 2, base, shadow])
+        unless b.form > 0 && $cache.pkmn[b.species].formData.keys[b.form - 1] == 'Amalgamation'
+          imagePos.push(["Data/Mods/BetterBattleUI/Inspect/gender", bgX + 148, iconY - 34, b.gender * 22, 0, 22, 22])
+        end
+        name = b.name
+        name = b.effects[:Illusion].name if b.effects[:Illusion]
+        textPos.push([_INTL("{1}", name), nameX, iconY - 16, 2, base, shadow])
         owner = @battle.pbGetOwner(b.index)
         if owner
           imagePos.push(["Data/Mods/BetterBattleUI/Inspect/owner", bgX + 36, iconY + 12, 0, 0, 128, 20])
@@ -142,6 +160,8 @@ class PokeBattle_Scene
   end
 
   def bbui_isAcceptable(index, origIndex, mode)
+    index = SelectMenuBBUI::VISUAL_MAPPING[index] if @battle.doublebattle
+    origIndex = SelectMenuBBUI::VISUAL_MAPPING[origIndex] if @battle.doublebattle
     return false unless @battle.battlers[index] && !@battle.battlers[index].isFainted?
     case mode
     when :UserOrPartner then return (index & 1) == (origIndex & 1)
@@ -193,28 +213,36 @@ class PokeBattle_Scene
           prevselectmode = prevselectmode == :move ? nil : :move
           oldPoke = -1
         end
-      elsif Input.trigger?(Input::LEFT) || Input.trigger?(Input::RIGHT)
-        idxPoke = SelectMenuBBUI::VISUAL_MAPPING[idxPoke] if @battle.doublebattle
-        target = idxPoke ^ 2
-        if bbui_isAcceptable(target, index, mode)
-          idxPoke = target
-        else
-          target = target ^ 1
-          idxPoke = target if bbui_isAcceptable(target, index, mode)
+      end
+      for inp, consts in SelectMenuBBUI::INPUT_MAPPING
+        if Input.trigger?(inp)
+          idxPoke = SelectMenuBBUI::VISUAL_MAPPING[idxPoke] if @battle.doublebattle
+          if idxPoke == 3 && battler && battler.isbossmon && (!battler.pbPartner || battler.pbPartner.isFainted?)
+            target = consts[2]
+            if bbui_isAcceptable(target, index, mode)
+              idxPoke = target
+            else
+              target = target ^ 2
+              idxPoke = target if bbui_isAcceptable(target, index, mode)
+            end
+          else
+            target = idxPoke ^ consts[0]
+            if bbui_isAcceptable(target, index, mode)
+              idxPoke = target
+            else
+              target = target ^ consts[1]
+              if bbui_isAcceptable(target, index, mode)
+                idxPoke = target
+              else
+                target = target ^ consts[0]
+                idxPoke = target if bbui_isAcceptable(target, index, mode)
+              end
+            end
+          end
+          idxPoke = SelectMenuBBUI::VISUAL_MAPPING.invert[idxPoke] if @battle.doublebattle
+          pbPlayCursorSE
+          break
         end
-        idxPoke = SelectMenuBBUI::VISUAL_MAPPING.invert[idxPoke] if @battle.doublebattle
-        pbPlayCursorSE
-      elsif Input.trigger?(Input::UP) || Input.trigger?(Input::DOWN)
-        idxPoke = SelectMenuBBUI::VISUAL_MAPPING[idxPoke] if @battle.doublebattle
-        target = idxPoke ^ 1
-        if bbui_isAcceptable(target, index, mode)
-          idxPoke = target
-        else
-          target = target ^ 2
-          idxPoke = target if bbui_isAcceptable(target, index, mode)
-        end
-        idxPoke = SelectMenuBBUI::VISUAL_MAPPING.invert[idxPoke] if @battle.doublebattle
-        pbPlayCursorSE
       end
       if oldPoke != idxPoke
         bbui_pbUpdateBattlerSelection(idxPoke, trueBattler, cw, prevselectmode)
@@ -231,7 +259,7 @@ class PokeBattle_Scene
       @sprites["bbui_info_icon#{b.index}"].visible = false
     end
     if result == :move
-      pbToggleMoveInfo(trueBattler, cw)
+      bbui_pbToggleMoveInfo(trueBattler, cw)
     elsif result.is_a?(Numeric)
       return result
     end

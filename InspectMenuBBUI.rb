@@ -234,9 +234,11 @@ class PokeBattle_Scene
     #---------------------------------------------------------------------------
     # General UI elements.
     poke = battler.pokemon
+    name = battler.name
 
     if @battle.pbIsOpposing?(battler.index)
       poke = battler.effects[:Illusion] ? battler.effects[:Illusion] : poke
+      name = poke.name if battler.effects[:Illusion]
     end
     level = (battler.isbossmon) ? "???" : battler.level.to_s
     movename = $cache.moves[battler.lastMoveUsed] ? $cache.moves[battler.lastMoveUsed].name : "---"
@@ -246,9 +248,11 @@ class PokeBattle_Scene
       ["Data/Mods/BetterBattleUI/Inspect/bg_data", 0, 0, 0, 0, -1, -1],
       ["Data/Mods/BetterBattleUI/Inspect/level", xpos + 16, ypos + 106, 0, 0, -1, -1]
     ]
-    imagePos.push(["Data/Mods/BetterBattleUI/Inspect/gender", xpos + 148, ypos + 22, poke.gender * 22, 0, 22, 22])
+    unless poke.form > 0 && $cache.pkmn[poke.species].formData.keys[poke.form - 1] == 'Amalgamation'
+      imagePos.push(["Data/Mods/BetterBattleUI/Inspect/gender", xpos + 148, ypos + 22, poke.gender * 22, 0, 22, 22])
+    end
     textPos  = [
-      [_INTL("{1}", poke.name), iconX + 82, iconY - 20, 2, InspectMenuDisplay::BASE_DARK, InspectMenuDisplay::SHADOW_DARK],
+      [_INTL("{1}", name), iconX + 82, iconY - 20, 2, InspectMenuDisplay::BASE_DARK, InspectMenuDisplay::SHADOW_DARK],
       [_INTL("{1}", level), xpos + 38, ypos + 104, 0, InspectMenuDisplay::BASE_LIGHT, InspectMenuDisplay::SHADOW_LIGHT],
       [_INTL("Used: {1}", movename), xpos + 349, ypos + 104, 2, InspectMenuDisplay::BASE_LIGHT, InspectMenuDisplay::SHADOW_LIGHT],
       [_INTL("Turn {1}", @battle.turncount), Graphics.width - xpos - 32, ypos + 8, 2, InspectMenuDisplay::BASE_DARK, InspectMenuDisplay::SHADOW_DARK]
@@ -287,27 +291,32 @@ class PokeBattle_Scene
     if @battle.pbOwnedByPlayer?(battler.index)
       imagePos.push(
         ["Data/Mods/BetterBattleUI/Inspect/owner", xpos + 36, iconY + 10, 0, 0, 128, 20],
-        ["Data/Mods/BetterBattleUI/Inspect/effects", panelX, 62, 0, 0, 218, 26],
         ["Data/Mods/BetterBattleUI/Inspect/effects", panelX, 86, 0, 0, 218, 26]
       )
       textPos.push(
-        [_INTL("Abil."), xpos + 272, ypos + 44, 2, InspectMenuDisplay::BASE_LIGHT, InspectMenuDisplay::SHADOW_LIGHT],
         [_INTL("Item"), xpos + 272, ypos + 68, 2, InspectMenuDisplay::BASE_LIGHT, InspectMenuDisplay::SHADOW_LIGHT],
-        [_INTL("{1}", battler.ability ? getAbilityName(battler.ability) : _INTL("No ability")), xpos + 376, ypos + 44, 2, InspectMenuDisplay::BASE_DARK, InspectMenuDisplay::SHADOW_DARK],
         [_INTL("{1}", battler.item ? getItemName(battler.item) : _INTL("No item")), xpos + 376, ypos + 68, 2, InspectMenuDisplay::BASE_DARK, InspectMenuDisplay::SHADOW_DARK],
         [sprintf("%d/%d", battler.hp, battler.totalhp), iconX + 74, iconY + 12, 2, InspectMenuDisplay::BASE_LIGHT, InspectMenuDisplay::SHADOW_LIGHT]
       )
     end
-    #---------------------------------------------------------------------------
+
     # Gets display types (considers Illusion)
     if battler.effects[:Illusion]
       # Zorua
       type1=battler.effects[:Illusion].type1
       type2=battler.effects[:Illusion].type2
+      ability = battler.effects[:Illusion].ability
     else
       type1=battler.type1
       type2=battler.type2
+      ability = battler.ability
     end
+
+    imagePos.push(["Data/Mods/BetterBattleUI/Inspect/effects", panelX, 62, 0, 0, 218, 26])
+    textPos.push([_INTL("Abil."), xpos + 272, ypos + 44, 2, InspectMenuDisplay::BASE_LIGHT, InspectMenuDisplay::SHADOW_LIGHT],
+                 [_INTL("{1}", ability ? getAbilityName(ability) : _INTL("No ability")), xpos + 376, ypos + 44, 2, InspectMenuDisplay::BASE_DARK, InspectMenuDisplay::SHADOW_DARK])
+    #---------------------------------------------------------------------------
+
 
     typeY = ypos + 34
 
