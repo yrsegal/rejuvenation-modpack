@@ -95,10 +95,10 @@ class PokeBattle_Scene
         if owner
           imagePos.push(["Data/Mods/BetterBattleUI/Inspect/owner", bgX + 36, iconY + 12, 0, 0, 128, 20])
           textPos.push([owner.name, nameX - 10, iconY + 14, 2, SelectMenuBBUI::BASE_LIGHT, SelectMenuBBUI::SHADOW_LIGHT])
-          if @battle.pbIsOpposing?(i)
-            oppTrainers.push([owner, i]) if oppTrainers.none? { |tr| tr[0] == owner }
+          if @battle.pbIsOpposing?(b.index)
+            oppTrainers.push([owner, b.index]) if oppTrainers.none? { |tr| tr[0] == owner }
           else
-            plyTrainers.push([owner, i]) if plyTrainers.none? { |tr| tr[0] == owner }
+            plyTrainers.push([owner, b.index]) if plyTrainers.none? { |tr| tr[0] == owner }
           end
         end
       end
