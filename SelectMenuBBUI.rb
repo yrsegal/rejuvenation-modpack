@@ -84,7 +84,7 @@ class PokeBattle_Scene
         end
         name = b.name
         if b.effects[:Illusion]
-          if @battle.pbIsOpposing?(battler.index)
+          if @battle.pbIsOpposing?(b.index)
             name = b.effects[:Illusion].name
           else
             name = b.pokemon.name
