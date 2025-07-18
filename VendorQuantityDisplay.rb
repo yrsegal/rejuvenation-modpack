@@ -71,13 +71,17 @@ module VendorQuantityDisplay
     insns = page.list
     InjectionHelper.patch(insns, :VendorQuantityDisplay) {
       textMatches = InjectionHelper.lookForAll(insns,
-        [:ShowText, /\\ch\[/])
+        [:ShowText, /\\ch\[/]) + InjectionHelper.lookForAll(insns,
+        [:ShowTextContinued, /\\ch\[/])
 
       choiceMatches = InjectionHelper.lookForAll(insns,
         [:ShowChoices, nil, nil])
 
       for insn in textMatches
         targetIdx = insns.index(insn)
+        while targetIdx > 0 && insns[targetIdx].code == InjectionHelper::EVENT_INSNS[:ShowTextContinued]
+          targetIdx -= 1
+        end
         insns.insert(targetIdx, InjectionHelper.parseEventCommand(insn.indent, :Script, script))
       end
 
