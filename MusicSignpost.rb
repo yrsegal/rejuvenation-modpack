@@ -559,11 +559,13 @@ class PokeBattle_Battle
   def pbSendOut(*args, **kwargs)
     MusicSignpostDisplay.disabled = @doublebattle
     MusicSignpostDisplay.ensureBox
+    MusicSignpostDisplay.visibleBox
     return musicSignpost_old_pbSendOut(*args, **kwargs)
   end
   def pbEndOfBattle(*args, **kwargs)
     MusicSignpostDisplay.disabled = false
     MusicSignpostDisplay.ensureBox
+    MusicSignpostDisplay.visibleBox
     return musicSignpost_old_pbEndOfBattle(*args, **kwargs)
   end
 end
