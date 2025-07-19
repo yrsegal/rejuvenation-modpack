@@ -65,7 +65,7 @@ $zzren_multiline_patches = {
   ["hahahahahahahahahahahahahahaaahH", ".resal a dah I hsiw YLLAER I won"] => [".resal a dah I hsiw YLLAER I won", "hahahahahahahahahahahahahahaaahH"],
   ["REN: .liava\non ot tub ,reilrae ti gninepo deirt I .saw tI"] => ["REN: .liava on ot tub ,reilrae ti gninepo deirt I .saw tI"],
   ["REN: .era segamad eht evisnetxe woh", "no sdneped tI .etamitse na uoy evig t'ndluoc I"] => 3,
-  ["REN: .muminim sruoh 3 naht erom ekat lliw", "ylbaborP .thguoht I naht esrow s'ti ebyaM", "...mmmH"] => 3
+  ["REN: .muminim sruoh 3 naht erom ekat lliw", "ylbaborP .thguoht I naht esrow s'ti ebyaM", "...mmmH"] => 3,
   ["!", "evah I naht regnol raf devil ev'uoY", ".evil em tel tsuJ ...gnol os rof ereh gnirednaw ", "neeb ev'I"] => [
     "\\l[3]!evah I naht regnol raf devil ev'uoY", ".evil em tel tsuJ ...gnol os rof ereh gnirednaw ", "neeb ev'I"]
 }
