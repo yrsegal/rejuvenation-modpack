@@ -78,31 +78,33 @@ class PokeBattle_Scene
       @sprites["bbui_info_icon#{trueidx}"].y = iconY - 40
       @sprites["bbui_info_icon#{trueidx}"].visible = true
       # pbSetWithOutline("info_icon#{b.index}", [iconX, iconY, 300])
-      owner = @battle.pbGetOwner(b.index)
-      if owner
-        if @battle.pbIsOpposing?(b.index)
-          oppTrainers.push([owner, b.index]) if oppTrainers.none? { |tr| tr[0] == owner }
-        else
-          plyTrainers.push([owner, b.index]) if plyTrainers.none? { |tr| tr[0] == owner }
-        end
-      end
-      if b && !b.isFainted?
-        unless b.form > 0 && $cache.pkmn[b.species].formData.keys[b.form - 1] == 'Amalgamation'
-          imagePos.push(["Data/Mods/BetterBattleUI/Inspect/gender", bgX + 148, iconY - 34, b.gender * 22, 0, 22, 22])
-        end
-        name = b.name
-        if b.effects[:Illusion]
+      if b
+        owner = @battle.pbGetOwner(b.index)
+        if owner
           if @battle.pbIsOpposing?(b.index)
-            name = b.effects[:Illusion].name
+            oppTrainers.push([owner, b.index]) if oppTrainers.none? { |tr| tr[0] == owner }
           else
-            name = b.pokemon.name
+            plyTrainers.push([owner, b.index]) if plyTrainers.none? { |tr| tr[0] == owner }
           end
         end
-        textPos.push([_INTL("{1}", name), nameX, iconY - 16, 2, base, shadow])
-        
-        if owner
-          imagePos.push(["Data/Mods/BetterBattleUI/Inspect/owner", bgX + 36, iconY + 12, 0, 0, 128, 20])
-          textPos.push([owner.name, nameX - 10, iconY + 14, 2, SelectMenuBBUI::BASE_LIGHT, SelectMenuBBUI::SHADOW_LIGHT])
+        if !b.isFainted?
+          unless b.form > 0 && $cache.pkmn[b.species].formData.keys[b.form - 1] == 'Amalgamation'
+            imagePos.push(["Data/Mods/BetterBattleUI/Inspect/gender", bgX + 148, iconY - 34, b.gender * 22, 0, 22, 22])
+          end
+          name = b.name
+          if b.effects[:Illusion]
+            if @battle.pbIsOpposing?(b.index)
+              name = b.effects[:Illusion].name
+            else
+              name = b.pokemon.name
+            end
+          end
+          textPos.push([_INTL("{1}", name), nameX, iconY - 16, 2, base, shadow])
+          
+          if owner
+            imagePos.push(["Data/Mods/BetterBattleUI/Inspect/owner", bgX + 36, iconY + 12, 0, 0, 128, 20])
+            textPos.push([owner.name, nameX - 10, iconY + 14, 2, SelectMenuBBUI::BASE_LIGHT, SelectMenuBBUI::SHADOW_LIGHT])
+          end
         end
       end
     end
