@@ -34,10 +34,10 @@ def zzren_multiline_patch(event)
         if mapping
           if mapping.is_a?(Array) && mapping.length == usinglines.length - 1 && crushed
             idx = insns.index(insn)
-            for i in 1..mapping.length
+            insns.delete_at(idx)
+            for i in 0...mapping.length
               insns[idx + i].parameters[0] = mapping[i]
             end
-            insns.delete_at(idx)
             doneAny = true
           elsif mapping.is_a?(Array) && mapping.length == usinglines.length
             idx = insns.index(insn)
