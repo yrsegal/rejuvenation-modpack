@@ -7,15 +7,39 @@ def zzren_multiline_patch(event)
       doneAny = false
       for insn in showTexts
         lines = [insn.parameters[0]]
+        crushlines = lines.clone
+        crushed = false
         idx = insns.index(insn)
+        if insns.size > idx + 1 && insns[idx + 1].code == InjectionHelper::EVENT_INSNS[:ShowText]
+          idx += 1
+          crushlines.push(insns[idx].parameters[0])
+          crushed = true
+        end
         while insns.size > idx + 1 && insns[idx + 1].code == InjectionHelper::EVENT_INSNS[:ShowTextContinued]
           idx += 1
-          lines.push(insns[idx].parameters[0])
+          crushlines.push(insns[idx].parameters[0])
+          lines.push(insns[idx].parameters[0]) unless crushed
         end
 
-        mapping = $zzren_multiline_patches[lines]
+
+        usinglines = lines
+        mapping = $zzren_multiline_patches[usinglines]
+        if !mapping && crushed
+          usinglines = crushedlines
+          mapping = $zzren_multiline_patches[usinglines]
+        else
+          crushed = false
+        end
+
         if mapping
-          if mapping.is_a?(Array) && mapping.length == lines.length
+          if mapping.is_a?(Array) && mapping.length == usinglines.length - 1 && crushed
+            idx = insns.index(insn)
+            for i in 1..mapping.length
+              insns[idx + i].parameters[0] = mapping[i]
+            end
+            insns.delete_at(idx)
+            doneAny = true
+          elsif mapping.is_a?(Array) && mapping.length == usinglines.length
             idx = insns.index(insn)
             for i in 0...mapping.length
               insns[idx + i].parameters[0] = mapping[i]
@@ -42,6 +66,8 @@ $zzren_multiline_patches = {
   ["REN: .liava\non ot tub ,reilrae ti gninepo deirt I .saw tI"] => ["REN: .liava on ot tub ,reilrae ti gninepo deirt I .saw tI"],
   ["REN: .era segamad eht evisnetxe woh", "no sdneped tI .etamitse na uoy evig t'ndluoc I"] => 3,
   ["REN: .muminim sruoh 3 naht erom ekat lliw", "ylbaborP .thguoht I naht esrow s'ti ebyaM", "...mmmH"] => 3
+  ["!", "evah I naht regnol raf devil ev'uoY", ".evil em tel tsuJ ...gnol os rof ereh gnirednaw ", "neeb ev'I"] => [
+    "\\l[3]!evah I naht regnol raf devil ev'uoY", ".evil em tel tsuJ ...gnol os rof ereh gnirednaw ", "neeb ev'I"]
 }
 
 
@@ -52,3 +78,5 @@ InjectionHelper.defineMapPatch(576, 8, &method(:zzren_multiline_patch))
 # 574: zz interiors
 InjectionHelper.defineMapPatch(574, 88, &method(:zzren_multiline_patch))
 InjectionHelper.defineMapPatch(574, 90, &method(:zzren_multiline_patch))
+# 83: 3rd Layer 
+InjectionHelper.defineMapPatch(83, 14, &method(:zzren_multiline_patch))
