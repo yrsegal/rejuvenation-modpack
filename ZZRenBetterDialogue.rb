@@ -25,7 +25,7 @@ def zzren_multiline_patch(event)
         usinglines = lines
         mapping = $zzren_multiline_patches[usinglines]
         if !mapping && crushed
-          usinglines = crushedlines
+          usinglines = crushlines
           mapping = $zzren_multiline_patches[usinglines]
         else
           crushed = false
