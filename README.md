@@ -171,5 +171,7 @@ Other mods:
   Replaces Repel in Pickup tables, as it is effectively useless with the Spice Scent.
 - SkipTitleSoftResets.rb  
   Skips the intro scene for soft resets, making it easier to get back into the game.
+- TorchicEvent.rb (depends on 0000.injection.rb)  
+  Makes Dyre's Torchic doll an actual Torchic event.
 - WLLRiolu.rb (depends on 0000.injection.rb)  
   Adds the Where Love Lies password Riolu back into GDC Central.
