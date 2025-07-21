@@ -127,6 +127,8 @@ QoL mods:
   Fix some deliberately poorly formatted dialogue from being unintentionally poorly formatted.
 
 Other mods:
+- AevianLarvestaEgg.rb (depends on 0000.textures.rb, 0000.injection.rb)  
+  Adds an Aevian Larvesta egg to the Rose Theatre post Badge 13.
 - AshGreninja.rb (depends on 0000.textures.rb)  
   Adds Battle Bond and Ash-Greninja.
 - BoostPickupOdds.rb  
