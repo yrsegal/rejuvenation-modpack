@@ -52,8 +52,8 @@ class PokeBattle_Battler
   end
 
   alias :ashgreninja_old_pbProcessMoveAgainstTarget :pbProcessMoveAgainstTarget
-  def pbProcessMoveAgainstTarget(basemove,user,target,numhits,flags={totaldamage: 0},nocheck=false,alltargets=nil,showanimation=true)
-    ret = ashgreninja_old_pbProcessMoveAgainstTarget(basemove,user,target,numhits,flags,nocheck,alltargets,showanimation)
+  def pbProcessMoveAgainstTarget(basemove,user,target,*args,**kwargs)
+    ret = ashgreninja_old_pbProcessMoveAgainstTarget(basemove,user,target,*args,**kwargs)
     if !user.isFainted? && target.isFainted?
       if self.species == :GRENINJA && self.form == 1 && self.ability == :BATTLEBOND
         @battle.pbDisplay(_INTL("{1} became fully charged due to its bond with its Trainer!", pbThis))
