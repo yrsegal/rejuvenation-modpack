@@ -127,6 +127,8 @@ QoL mods:
   Fix some deliberately poorly formatted dialogue from being unintentionally poorly formatted.
 
 Other mods:
+- AshGreninja.rb (depends on 0000.textures.rb)  
+  Adds Battle Bond and Ash-Greninja.
 - BoostPickupOdds.rb  
   Makes Pickup more likely (33%) to trigger after battle.
 - DarchlightTrainerSprites.rb (depends on 0000.textures.rb)  
