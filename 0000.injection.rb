@@ -461,20 +461,29 @@ module InjectionHelper
         mapValue(params, 1, InjectionHelper::TRUTH)
       when :TransferPlayer
         if mapValue(params, 0, InjectionHelper::APPOINTMENT_METHODS) == :Variable
-            mapValue(params, 1, Variables)
-            mapValue(params, 2, Variables)
-            mapValue(params, 3, Variables)
-            mapValue(params, 4, Variables)
+          mapValue(params, 1, Variables)
+          mapValue(params, 2, Variables)
+          mapValue(params, 3, Variables)
+          mapValue(params, 4, Variables)
         end
       when :SetEventLocation
         if mapValue(params, 1, InjectionHelper::APPOINTMENT_METHODS) == :Variable
-            mapValue(params, 2, Variables)
-            mapValue(params, 3, Variables)
+          mapValue(params, 2, Variables)
+          mapValue(params, 3, Variables)
         end
       when :ShowPicture, :MovePicture
         if mapValue(params, 3, InjectionHelper::APPOINTMENT_METHODS) == :Variable
-            mapValue(params, 4, Variables)
-            mapValue(params, 5, Variables)
+          mapValue(params, 4, Variables)
+          mapValue(params, 5, Variables)
+        end
+      when :PlaySoundEvent, :PlayMusicEvent, :PlayBackgroundMusic, :PlayBackgroundSound, :ChangeBattleBackgroundMusic, :ChangeBattleEndME
+        if params[0].is_a?(String)
+          audio = params[0]
+          volume = 100
+          volume = params[1] if params[1].is_a?(Numeric)
+          pitch = 100
+          pitch = params[2] if params[2].is_a?(Numeric)
+          params[0] = RPG::AudioFile.new(audio, volume, pitch)
         end
     end
     return params
@@ -599,29 +608,34 @@ module InjectionHelper
   end
 
   def self.applyMapPatches(mapid, map)
-    doneAny = false
-    if PATCHES[mapid]
-      for mappatch in PATCHES[mapid]
-        if !mappatch.eventid
-          doneAny |= mappatch.applyToMap(map, mapid)
-        elsif !mappatch.pageid
-          doneAny |= mappatch.applyToEvent(map.events[mappatch.eventid])
-        else
-          doneAny |= mappatch.applyToPage(map.events[mappatch.eventid].pages[mappatch.pageid])
+    begin
+      doneAny = false
+      if PATCHES[mapid]
+        for mappatch in PATCHES[mapid]
+          if !mappatch.eventid
+            doneAny |= mappatch.applyToMap(map, mapid)
+          elsif !mappatch.pageid
+            doneAny |= mappatch.applyToEvent(map.events[mappatch.eventid])
+          else
+            doneAny |= mappatch.applyToPage(map.events[mappatch.eventid].pages[mappatch.pageid])
+          end
         end
       end
-    end
 
-    if PATCHES[-1]
-      for mappatch in PATCHES[-1]
-        if !mappatch.eventid
-          doneAny |= mappatch.applyToMap(map, mapid)
-        elsif !mappatch.pageid
-          doneAny |= mappatch.applyToEvent(map.events[mappatch.eventid])
-        else
-          doneAny |= mappatch.applyToPage(map.events[mappatch.eventid].pages[mappatch.pageid])
+      if PATCHES[-1]
+        for mappatch in PATCHES[-1]
+          if !mappatch.eventid
+            doneAny |= mappatch.applyToMap(map, mapid)
+          elsif !mappatch.pageid
+            doneAny |= mappatch.applyToEvent(map.events[mappatch.eventid])
+          else
+            doneAny |= mappatch.applyToPage(map.events[mappatch.eventid].pages[mappatch.pageid])
+          end
         end
       end
+    rescue
+      pbPrintException($!)
+      doneAny = true
     end
 
     if doneAny

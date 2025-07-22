@@ -12,7 +12,7 @@ InjectionHelper.defineMapPatch(294) { |map| # GDC Central
         [:ShowText, "Check your reputation standings?"],
         [:ShowChoices, ["Yes", "No"], 2],
         [:When, 0, "Yes"],
-          [:PlaySoundEvent, RPG::AudioFile.new("accesspc")],
+          [:PlaySoundEvent, "accesspc"],
           [:ShowText, "*CHECKING...*"],
           [:ShowText, "Current reputation standings for \\PN: \\v[#{Variables[:GDCReputation]}]."],
           [:ShowText, "Creating evaluation..."],
