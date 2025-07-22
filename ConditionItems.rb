@@ -67,7 +67,20 @@ module StatusConditionItems
     else
       pokemon.status=data[:status]
       pokemon.statusCount=data[:statusCount]
-      pokemon.changeHappiness("powder")
+      unless [:GUTS, :QUICKFEET, :MARVELSCALE].include?(checkTarget.ability)
+        case data[:status]
+        when :POISON
+          unless [:MAGICGUARD, :TOXICBOOST].include?(checkTarget.ability)
+            if checkTarget.ability == :POISONHEAL
+              pokemon.changeHappiness("candy")
+            else
+              pokemon.changeHappiness("powder")
+            end
+          end
+        when :BURN then pokemon.changeHappiness("powder") unless [:MAGICGUARD, :FLAREBOOST].include?(checkTarget.ability)
+        else pokemon.changeHappiness("powder")
+        end
+      end
       data[:battlerApply].call(checkTarget) if checkTarget != pokemon
       scene.pbRefresh
       scene.pbDisplay(_INTL("{1} was {2}.", pokemon.name, data[:afflict]))
