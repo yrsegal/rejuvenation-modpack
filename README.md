@@ -133,6 +133,8 @@ Other mods:
   Adds Battle Bond and Ash-Greninja.
 - BoostPickupOdds.rb  
   Makes Pickup more likely (33%) to trigger after battle.
+- ConditionItems.rb (depends on 0000.injection.rb, 0000.textures.rb)  
+  Adds items which cause status conditions.
 - DarchlightTrainerSprites.rb (depends on 0000.textures.rb)  
   Adds some relevant sprites to the Darchlight Caves segment.
 - DarkCutsceneAna.rb (depends on 0000.injection.rb)  
