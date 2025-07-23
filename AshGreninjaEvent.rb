@@ -519,7 +519,7 @@ InjectionHelper.defineMapPatch(44) { |map| # Neo East Gearen (east)
       [:ShowAnimation, :This, LYRICAL_ANIMATION_ID],
       [:ShowText, "ASH: Eager? I get it. He's really something."],
       [:ShowText, "But he wants you to show him who he'd team up with first."],
-      [:ShowText, "His condition is that he'll join you if you can \c[6]beat me."],
+      [:ShowText, "His condition is that he'll join you if you can \\c[6]beat me."],
     :Done,
     [:ShowText, "I'll be staying for a while in Aevium. I'll be ready for you all, so just let me know when."],
     [:ControlSelfSwitch, "A", true],
