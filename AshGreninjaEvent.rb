@@ -352,8 +352,9 @@ ELIPSES_ANIMATION_ID = 16
 HEART_ANIMATION_ID = 17
 LYRICAL_ANIMATION_ID = 18
 HAPPY_ANIMATION_ID = 19
-SWEAT_DROP_ANIMATION_ID = 21
 LAUGH_ANIMATION_ID = 29
+SWEAT_DROP_ANIMATION_ID = 33
+
 POKE_COME_IN_ANIMATION_ID = 46
 POKE_COME_OUT_ANIMATION_ID = 47
 
@@ -418,7 +419,7 @@ InjectionHelper.defineMapPatch(44) { |map| # Neo East Gearen (east)
       :Done,
       [:ShowText, "???: You haven't heard of me? Hah! That's new!"],
       [:ShowText, "Let me introduce myself, then!"],
-      [:ShowText, "My name is \\c[6]Ash Ketchum.\n\\|\\c[0]The \\c[6]World Champion."],
+      [:ShowText, "My name is \\c[6]Ash Ketchum.\n\\|\\c[0]The \\c[6]World Champion.\1"],
       [:ShowAnimation, :Player, EXCLAMATION_ANIMATION_ID],
       [:Wait, 20],
       [:SetMoveRoute, :Player, [false,
@@ -447,7 +448,7 @@ InjectionHelper.defineMapPatch(44) { |map| # Neo East Gearen (east)
     :Done,
     [:When, 1, "Who are you?"],
       [:ShowText, "???: Really? That's surprising. I figure everyone would have heard."],
-      [:ShowText, "My name is \\c[6]Ash Ketchum.\n\\|\\c[0]The \\c[6]World Champion."],
+      [:ShowText, "My name is \\c[6]Ash Ketchum.\n\\|\\c[0]The \\c[6]World Champion.\1"],
       [:ShowAnimation, :Player, EXCLAMATION_ANIMATION_ID],
       [:Wait, 20],
       [:SetMoveRoute, :Player, [false,
@@ -473,19 +474,27 @@ InjectionHelper.defineMapPatch(44) { |map| # Neo East Gearen (east)
       :Done]],
     :WaitForMovement,
     [:ShowText, "ASH: ... I know what you're wondering. I can't."],
+    [:ShowAnimation, :This, SWEAT_DROP_ANIMATION_ID],
     [:ShowText, "Evil teams really are everywhere, huh?"],
     [:ShowText, "I'd love to help, it's just... \\c[6]I'm not the one who needs to do this."],
     [:SetMoveRoute, pikachu.id, [false,
       :FaceRight,
       :Done]],
     [:ShowAnimation, pikachu.id, HEART_ANIMATION_ID],
+    [:SetMoveRoute, :This, [false,
+      [:Wait, 5],
+      :FaceLeft,
+      :Done]],
     [:Wait, 20],
     [:SetMoveRoute, pikachu.id, [false,
       :FaceDown,
       :Done]],
     :WaitForMovement,
+    [:SetMoveRoute, :This, [false,
+      :FaceTowardsPlayer,
+      :Done]],
     [:ShowText, "ASH: Thanks, Pikachu. I know, I know, there's nothing I can do about it."],
-    [:ShowText, "But.\\| One of my partners wants to lend a bit of aid."],
+    [:ShowText, "But.\\| One of my partners wants to lend a bit of aid.\1"],
     [:ConditionalBranch, :Character, :Player, :Left],
       [:SetMoveRoute, :Player, [false,
         :MoveDown,
