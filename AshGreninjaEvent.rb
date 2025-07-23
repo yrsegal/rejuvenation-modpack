@@ -899,7 +899,7 @@ $cache.trainers[:ASHKETCHUM] = {
     {
       :species => :LUCARIO,
       :level => 85,
-      :moves => [:SWORDSDANCE,:METEORMASH,:CLOSECOMBAT,:BULLETPUNCH],
+      :moves => [:EARTHQUAKE,:METEORMASH,:CLOSECOMBAT,:BULLETPUNCH],
       :ability => :JUSTIFIED,
       :item => :LUCARIONITE,
       :gender => "M",
