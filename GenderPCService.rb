@@ -108,6 +108,10 @@ class GenderPCService
     return pkmn.species == :DELPHOX && pkmn.form == 1
   end
 
+  def ashgreninja(pkmn)
+    return pkmn.species == :GRENINJA && pkmn.form >= 1
+  end
+
   def access
     if ServicePCList.offMap? || ServicePCList.inRift? || inPast? || ServicePCList.darchlightCaves?
       Kernel.pbMessage(_INTL("\\se[SFX - Dialtone:60]...\1"))
@@ -209,7 +213,7 @@ class GenderPCService
         if subChoice == 0
           result = 0
           while result != -1
-            pbChoosePokemon(1,3,proc{|p| !p.isEgg? && !(p.isShadow? rescue false) && p.gender != 2 && !delpha(p) && !CANNOT_SWAP_RATIOS.include?($cache.pkmn[p.species].GenderRatio) },true)
+            pbChoosePokemon(1,3,proc{|p| !p.isEgg? && !(p.isShadow? rescue false) && p.gender != 2 && !delpha(p) && !ashgreninja(p) && !CANNOT_SWAP_RATIOS.include?($cache.pkmn[p.species].GenderRatio) },true)
             result = pbGet(1)
             if result != -1
               pkmn = $Trainer.party[result]
@@ -235,8 +239,14 @@ class GenderPCService
                     $game_screen.genderpc_delpha = true
                   end
                   next
+                elsif ashgreninja(pkmn)
+                  ServicePCList.exclaimSound
+                  Kernel.pbMessage(odessa("ODESSA: Is this... Ash's Greninja?"))
+                  Kernel.pbMessage(odessa("You met Ash?"))
+                  Kernel.pbMessage(odessa("Amazing."))
+                  Kernel.pbMessage(odessa("It feels like a trespass to do anything without Ash's permission, though..."))
+                  next
                 end
-
 
                 case $cache.pkmn[pkmn.species].GenderRatio
                   when :Genderless

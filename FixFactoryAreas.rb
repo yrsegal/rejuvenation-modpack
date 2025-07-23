@@ -164,6 +164,7 @@ module FixFactoryAreas
     end
 
     rawev = RPG::Event.new(x, y)
+    rawev.name = "Factory field event message"
     rawev.id = maxid + 1
     rawev.pages[0].list = InjectionHelper.parseEventCommands(
       [:ConditionalBranch, :Variable, :QuestStolenCargo, :Constant, 3, :GreaterOrEquals],
@@ -185,6 +186,7 @@ module FixFactoryAreas
     end
 
     rawev = RPG::Event.new(x, y)
+    rawev.name = "Toggle field event message"
     rawev.pages.push(RPG::Event::Page.new, RPG::Event::Page.new, RPG::Event::Page.new)
     rawev.id = maxid + 1
 
@@ -226,6 +228,7 @@ module FixFactoryAreas
     end
 
     rawev = RPG::Event.new(x, y)
+    rawev.name = "Field event controller"
     rawev.pages.push(RPG::Event::Page.new)
     rawev.id = maxid + 1
     rawev.pages[0].list = InjectionHelper.parseEventCommands(

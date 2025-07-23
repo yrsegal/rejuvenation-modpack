@@ -2,10 +2,11 @@
 
 Switches[:Gym_13] = 296
 
-TextureOverrides.registerTextureOverride("Graphics/Characters/egg_aevian_larvesta", "Data/Mods/LarvestaEgg")
+TextureOverrides.registerTextureOverride(TextureOverrides::CHARS + "egg_aevian_larvesta", TextureOverrides::MODBASE + "LarvestaEgg")
 
 InjectionHelper.defineMapPatch(315) { |map| # Rose Theatre
   rawev = RPG::Event.new(4, 25)
+  rawev.name = "Larvesta Egg"
   rawev.pages.push(RPG::Event::Page.new)
   rawev.id = map.events.values.max { |a, b| a.id <=> b.id }.id + 1
   rawev.pages[1].condition.self_switch_valid = true
@@ -27,10 +28,10 @@ InjectionHelper.defineMapPatch(315) { |map| # Rose Theatre
       [:PlaySoundEvent, "itemlevel", 100, 100],
       [:ShowText, "\\PN got the egg!"],
       [:ControlSelfSwitch, "A", true],
-      :Done,
+    :Done,
     [:When, 1, "No"],
       [:ShowText, "You left the egg alone."],
-      :Done,
+    :Done,
     :Done)
   map.events[rawev.id] = rawev
   next true

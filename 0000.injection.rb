@@ -428,8 +428,19 @@ module InjectionHelper
         end
       when :InputNumber
         mapValue(params, 0, Variables)
-      when :ShowAnimation, :SetEventLocation
+      when :ShowAnimation
         mapValue(params, 0, InjectionHelper::SPECIAL_EVENT_IDS)
+      when :SetEventLocation
+        mapValue(params, 0, InjectionHelper::SPECIAL_EVENT_IDS)
+        case mapValue(params, 1, InjectionHelper::APPOINTMENT_METHODS) 
+        when :Variable
+          mapValue(params, 2, Variables)
+          mapValue(params, 3, Variables)
+        when :Constant
+        else
+          mapValue(params, 2, InjectionHelper::SPECIAL_EVENT_IDS)
+        end
+        mapValue(params, 4, InjectionHelper::FACING_DIRECTIONS)
       when :SetMoveRoute
         mapValue(params, 0, InjectionHelper::SPECIAL_EVENT_IDS)
         if matcher
@@ -484,6 +495,8 @@ module InjectionHelper
           pitch = 100
           pitch = params[2] if params[2].is_a?(Numeric)
           params[0] = RPG::AudioFile.new(audio, volume, pitch)
+          params.delete_at(2) if params[2].is_a?(Numeric)
+          params.delete_at(1) if params[1].is_a?(Numeric)
         end
     end
     return params

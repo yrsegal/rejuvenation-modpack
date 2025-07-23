@@ -5,19 +5,76 @@ $cache.abil[:BATTLEBOND] = AbilityData.new(:BATTLEBOND, {
 })
 
 TextureOverrides.registerTextureOverrides({
-  "Graphics/Icons/icon658" => "Data/Mods/AshGreninja/Icon",
-  "Graphics/Battlers/658" => "Data/Mods/AshGreninja/Battler"
+  TextureOverrides::ICONS + "icon658_2" => TextureOverrides::MODBASE + "AshGreninja/Icon",
+  TextureOverrides::BATTLER + "Graphics/Battlers/658_2" => TextureOverrides::MODBASE + "AshGreninja/GreninjaFront",
+  TextureOverrides::BATTLER + "658b_2" => TextureOverrides::MODBASE + "AshGreninja/GreninjaBack",
+  TextureOverrides::BATTLER + "658s_2" => TextureOverrides::MODBASE + "AshGreninja/GreninjaSFront",
+  TextureOverrides::BATTLER + "658sb_2" => TextureOverrides::MODBASE + "AshGreninja/GreninjaSBack",
+  TextureOverrides::BATTLER + "658b_2" => TextureOverrides::MODBASE + "AshGreninja/Battler"
 })
 
 PBStuff::ABILITYBLACKLIST.push(:BATTLEBOND)
 
+alias :ashgreninja_old_pbIconBitmap :pbIconBitmap
+alias :ashgreninja_old_pbPokemonIconBitmap :pbPokemonIconBitmap
+
+def pbPokemonIconBitmap(pokemon,egg=false)
+  if (pokemon.species == :GRENINJA && pokemon.form == 2) || (pokemon.species == :PIKACHU && pokemon.form == 3)
+    shiny = pokemon.isShiny?
+    girl = pokemon.isFemale? ? "f" : ""
+    form = pokemon.form
+    egg = egg ? "egg" : ""
+    species = $cache.pkmn[pokemon.species].dexnum 
+    name = pokemon.species.downcase
+    filename=sprintf("Graphics/Icons/icon%03d%s%s_%s",species,girl,egg,form)
+    filename=sprintf("Graphics/Icons/icon%03d%s_%s", species,egg,form) if !pbResolveBitmap(filename)
+    filename=sprintf("Graphics/Icons/%s%s%s_%s",name,girl,egg,form) if !pbResolveBitmap(filename)
+    filename=sprintf("Graphics/Icons/%s%s_%s",name,egg,form) if !pbResolveBitmap(filename)
+    if pbResolveBitmap(filename)
+      iconbitmap = RPG::Cache.load_bitmap(filename)
+      bitmap=Bitmap.new(128,64)
+      x = shiny ? 128 : 0
+      y = 0 # No form differentiation
+      y = 0 if iconbitmap.height <= y
+      rectangle = Rect.new(x,y,128,64)
+      bitmap.blt(0,0,iconbitmap,rectangle)
+      bitmap = makeShadowBitmap(bitmap, 128, 64) if pokemon.isShadow?
+      return bitmap
+    end
+  end
+
+  return ashgreninja_old_pbPokemonIconBitmap(pokemon,egg)
+end
+
+
+def pbIconBitmap(species,form=0,shiny=false,girl=false,egg=false)
+  if (species == :GRENINJA && form == 2) || (species == :PIKACHU && form == 3)
+    filename=sprintf("Graphics/Icons/icon%03d%s%s_%s",species,girl,egg,form)
+    filename=sprintf("Graphics/Icons/icon%03d%s_%s", species,egg,form) if !pbResolveBitmap(filename)
+    filename=sprintf("Graphics/Icons/icon%03d_%s",species, form) if !pbResolveBitmap(filename)
+    if pbResolveBitmap(filename)
+      iconbitmap = RPG::Cache.load_bitmap(filename)
+      bitmap=Bitmap.new(128,64)
+      x = shiny ? 128 : 0
+      y = 0 # No form differentiation
+      y = 0 if iconbitmap.height <= y
+      rectangle = Rect.new(x,y,128,64)
+      return bitmap
+    end
+  end
+
+  return ashgreninja_old_pbIconBitmap(species,form,shiny,girl,egg)
+end
+
 $cache.pkmn[:GRENINJA].formData["Battle Bond"] = {
-  Abilities: [:BATTLEBOND]
+  Abilities: [:BATTLEBOND],
+  :ExcludeDex => true,
 }
 
 $cache.pkmn[:GRENINJA].formData["Ash-Greninja"] = {
   Abilities: [:BATTLEBOND],
-  :BaseStats => [72, 145, 67, 153, 71, 132]
+  :BaseStats => [72, 145, 67, 153, 71, 132],
+  :toobig => true,
 }
 
 $cache.pkmn[:GRENINJA].forms[1] = "Battle Bond"

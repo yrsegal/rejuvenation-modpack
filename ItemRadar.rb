@@ -60,6 +60,7 @@ class Game_Screen
 
     if foundz && itemRadar_checkIsItemRadarOn?
       rawev = RPG::Event.new(0, 0)
+      rawev.name = "ping"
       rawev.id = biggestid + 1
       rawev.pages[0].list = InjectionHelper.parseEventCommands(
         [:PlaySoundEvent, 'MiningPing', 80, 60],

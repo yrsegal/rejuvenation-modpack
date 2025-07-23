@@ -1004,6 +1004,8 @@ class PokeBattle_Move
         when :THICKCLUB then atkmult*=2.0 if attacker.pokemon.species == :CUBONE || attacker.pokemon.species == :MAROWAK && pbIsPhysical?(type)
         when :DEEPSEATOOTH then atkmult*=2.0 if attacker.pokemon.species == :CLAMPERL && pbIsSpecial?(type) && @battle.FE != :GLITCH
         when :LIGHTBALL then atkmult*=2.0 if attacker.pokemon.species == :PIKACHU && @battle.FE != :GLITCH
+        # Mod Compat with AshGreninjaEvent
+        when :PIKASHUNIUMZ then atkmult*=2.0 if attacker.pokemon.species == :PIKACHU && attacker.pokemon.form == 3 && @battle.FE != :GLITCH
         when :CHOICEBAND then atkmult*=1.5 if pbIsPhysical?(type)
         when :CHOICESPECS then atkmult*=1.5 if pbIsSpecial?(type) && @battle.FE != :GLITCH
       end

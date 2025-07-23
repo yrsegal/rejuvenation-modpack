@@ -100,7 +100,7 @@ module StatusConditionItems
         status: true
       })
 
-      TextureOverrides.registerTextureOverride("Graphics/Icons/#{item.to_s.downcase!}", "Data/Mods/ConditionItems/#{item.to_s.downcase!}")
+      TextureOverrides.registerTextureOverride(TextureOverrides::ICONS + "#{item.to_s.downcase!}", TextureOverrides::MODBASE + "ConditionItems/#{item.to_s.downcase!}")
 
       ItemHandlers::UseOnPokemon.add(item,proc{|item,pokemon,scene|
         itemUse(data, item, pokemon, pokemon, scene)
@@ -114,6 +114,7 @@ module StatusConditionItems
 
   def self.createSomniamSeller(map)
     rawev = RPG::Event.new(37, 24)
+    rawev.name = "Status Item seller"
     rawev.id = map.events.values.max { |a, b| a.id <=> b.id }.id + 1
 
     rawev.pages[0].graphic.direction = 2
@@ -134,6 +135,7 @@ module StatusConditionItems
 
   def self.createGoldenleafSeller(map)
     rawev = RPG::Event.new(60, 49)
+    rawev.name = "Status Item seller"
     rawev.id = map.events.values.max { |a, b| a.id <=> b.id }.id + 1
 
     rawev.pages[0].graphic.direction = 2
