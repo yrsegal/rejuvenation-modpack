@@ -131,6 +131,8 @@ Other mods:
   Adds an Aevian Larvesta egg to the Rose Theatre post Badge 13.
 - AshGreninja.rb (depends on 0000.textures.rb)  
   Adds Battle Bond and Ash-Greninja.
+  - AshGreninjaFight.rb (depends on AshGreninja.rb)  
+    Adds an Ash boss fight in Neo Gearen which rewards you with Battle Bond Greninja.
 - BoostPickupOdds.rb  
   Makes Pickup more likely (33%) to trigger after battle.
 - ConditionItems.rb (depends on 0000.injection.rb, 0000.textures.rb)  
