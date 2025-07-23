@@ -24,6 +24,39 @@ def findWLLSave(path=File.dirname(System.data_directory))
   return false
 end
 
+def checkForCompletion(file)
+    File.open("Scripts/ConversionClasses.rb"){|f| eval(f.read) }
+    #file needed to check old classes
+    trainer=nil
+    framecount=nil
+    game_system=nil
+    pokemonSystem=nil
+    mapid=nil
+    switches = []
+    variables = []
+    File.open(file){|f|
+        trainer         =Marshal.load(f)
+        framecount      =Marshal.load(f)
+        game_system     =Marshal.load(f)
+        pokemonSystem   =Marshal.load(f)
+        mapid           =Marshal.load(f)
+        switches        =Marshal.load(f)
+        variables       =Marshal.load(f)
+    }
+    return false if !trainer.is_a?(PokeBattle_Trainer)
+    return false if !framecount.is_a?(Numeric)
+    return false if !game_system.is_a?(Game_System)
+    return false if !pokemonSystem.is_a?(PokemonSystem)
+    return false if !mapid.is_a?(Numeric)
+    if switches[88] || variables[7] >= 139
+        ### MODDED/ do not set switch directly
+        # $game_switches[:Finished_WLL] = true
+        ### /MODDED
+        return true
+    end
+    return false
+end
+
 def wllriolu_pbAddPokemonNoTimeSet(species,level=nil,seeform=true,form=0)
   return if !species || !$Trainer
   if pbBoxesFull?
