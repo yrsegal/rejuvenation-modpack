@@ -63,7 +63,7 @@ class Game_Screen
       rawev.name = "ping"
       rawev.id = biggestid + 1
       rawev.pages[0].list = InjectionHelper.parseEventCommands(
-        [:PlaySoundEvent, 'MiningPing', 80, 60],
+        [:PlaySoundEvent, 'MiningPing', 60, 80],
         :EraseEvent,
         :Done)
       rawev.pages[0].trigger = 3 # as soon as map is loaded
