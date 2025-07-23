@@ -34,7 +34,11 @@ class PokeBattle_Battle
         pbDisplayPaused(ace_text)
         pkmn = @battlers[1]
         pkmn = @battlers[3] if pkmn.isFainted?
-        pbDisplayPaused(_INTL("We won't be left behind, {1}!", pkmn.pokemon.name))
+        side = 1
+        owner=pbGetOwnerIndex(pkmn.index)
+        if $game_switches[:No_Mega_Evolution]!=true && !pkmn.isMega? && pkmn.hasMega? && pbHasMegaRing(pkmn.index) && @megaEvolution[side][owner]!=-1
+          pbDisplayPaused(_INTL("We won't be left behind, {1}!", pkmn.pokemon.name))
+        end
         @scene.pbHideOpponent
       end
       @ace_message_handled = true
