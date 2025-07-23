@@ -930,7 +930,10 @@ TextureOverrides.registerTextureOverrides({
   TextureOverrides::CHARS + 'NPC AshKetchum' => TextureOverrides::MODBASE + 'AshGreninja/AshNPC',
   TextureOverrides::CHARS + 'pkmn_pikachu_ash' => TextureOverrides::MODBASE + 'AshGreninja/AshPikachuNPC',
   TextureOverrides::CHARS + 'pkmn_greninja_ashfight' => TextureOverrides::MODBASE + 'AshGreninja/OverworldGreninja',
-  TextureOverrides::BATTLER + '025_3' => TextureOverrides::MODBASE + 'AshGreninja/AshPikachu',
+  TextureOverrides::BATTLER + '025_3' => TextureOverrides::MODBASE + 'AshGreninja/AshPikachuFront',
+  TextureOverrides::BATTLER + '025b_3' => TextureOverrides::MODBASE + 'AshGreninja/AshPikachuBack',
+  TextureOverrides::BATTLER + '025s_3' => TextureOverrides::MODBASE + 'AshGreninja/AshPikachuSFront',
+  TextureOverrides::BATTLER + '025sb_3' => TextureOverrides::MODBASE + 'AshGreninja/AshPikachuSBack',
   TextureOverrides::ICONS + 'icon025_3' => TextureOverrides::MODBASE + 'AshGreninja/AshPikachuIcon',
   TextureOverrides::ICONS + 'pikashuniumz' => TextureOverrides::MODBASE + 'AshGreninja/PikashuniumZ'
 })
@@ -965,7 +968,6 @@ PBStuff::CRYSTALTOZMOVE[:PIKASHUNIUMZ] = :ASHTHUNDERBOLT
 
 $cache.pkmn[:PIKACHU].formData["World Cap"] = {
   :BaseStats => [55, 80, 50, 75, 60, 120],
-  :ExcludeDex => true,
   :toobig => true,
   :evolutions => [],
 }
