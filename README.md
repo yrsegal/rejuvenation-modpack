@@ -97,6 +97,8 @@ QoL mods:
   Generally remove end-of-message waits, whichcan cause you to accidentally select an option when you didn't mean to.
 - FLHUDStatus.rb  
   Makes the in-menu party HUD show if a Pokemon is statused.
+- FlyExpansion.rb  
+  Makes more fly points exist, makes you able to fly to Neo areas you've been to the old versions of, and you can fly from the penthouse.
 - ItemRadar.rb (depends on 0000.injection.rb)  
   The Itemfinder becomes a toggleable overlay rather than an item you have to use repeatedly. Also pings you when entering a map with a Zygarde Cell you haven't collected.
 - ItemRestocking.rb  
