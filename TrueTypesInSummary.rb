@@ -101,6 +101,14 @@ def hpSummary_trueDamage(move, pokemon)
   return damage
 end
 
+class MoveData
+  if !defined?(isSoundBased?)
+    def isSoundBased?
+      return checkFlag?(:soundmove)
+    end
+  end
+end
+
 class PBMove
   if !defined?(isSoundBased?)
     def isSoundBased?
