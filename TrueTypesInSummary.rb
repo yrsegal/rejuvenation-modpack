@@ -101,6 +101,14 @@ def hpSummary_trueDamage(move, pokemon)
   return damage
 end
 
+class PBMove
+  if !defined?(isSoundBased?)
+    def isSoundBased?
+      return $cache.moves[@move].checkFlag?(:soundmove)
+    end
+  end
+end
+
 class MoveRelearnerScene
   def pbDrawMoveList
     overlay=@sprites["overlay"].bitmap
