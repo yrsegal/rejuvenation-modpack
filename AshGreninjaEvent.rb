@@ -787,7 +787,6 @@ InjectionHelper.defineMapPatch(44) { |map| # Neo East Gearen (east)
   greninja.pages[1].condition.variable_value = 30
   greninja.pages[1].condition.self_switch_valid = true
   greninja.pages[1].condition.self_switch_ch = "A"
-  greninja.pages[1].move_speed = 2 # Slower
   greninja.pages[1].trigger = 0 # Action button
   greninja.pages[1].list = InjectionHelper.parseEventCommands(
     [:PlaySoundEvent, '658Cry', 80, 100],
@@ -800,7 +799,6 @@ InjectionHelper.defineMapPatch(44) { |map| # Neo East Gearen (east)
   greninja.pages[2].condition.variable_value = 30
   greninja.pages[2].condition.self_switch_valid = true
   greninja.pages[2].condition.self_switch_ch = "C"
-  greninja.pages[2].move_speed = 2 # Slower
   greninja.pages[2].trigger = 0 # Action button
   greninja.pages[2].list = InjectionHelper.parseEventCommands(
     [:PlaySoundEvent, '658Cry', 80, 100],

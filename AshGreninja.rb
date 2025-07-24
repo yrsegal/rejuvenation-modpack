@@ -9,8 +9,7 @@ TextureOverrides.registerTextureOverrides({
   TextureOverrides::BATTLER + "658_2" => TextureOverrides::MODBASE + "AshGreninja/GreninjaFront",
   TextureOverrides::BATTLER + "658b_2" => TextureOverrides::MODBASE + "AshGreninja/GreninjaBack",
   TextureOverrides::BATTLER + "658s_2" => TextureOverrides::MODBASE + "AshGreninja/GreninjaSFront",
-  TextureOverrides::BATTLER + "658sb_2" => TextureOverrides::MODBASE + "AshGreninja/GreninjaSBack",
-  TextureOverrides::BATTLER + "658b_2" => TextureOverrides::MODBASE + "AshGreninja/Battler"
+  TextureOverrides::BATTLER + "658sb_2" => TextureOverrides::MODBASE + "AshGreninja/GreninjaSBack"
 })
 
 PBStuff::ABILITYBLACKLIST.push(:BATTLEBOND)
