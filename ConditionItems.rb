@@ -115,7 +115,7 @@ module StatusConditionItems
   def self.createSomniamSeller(map)
     rawev = RPG::Event.new(37, 24)
     rawev.name = "Status Item seller"
-    rawev.id = map.events.values.max { |a, b| a.id <=> b.id }.id + 1
+    rawev.id = map.events.keys.max + 1
 
     rawev.pages[0].graphic.direction = 2
     rawev.pages[0].graphic.character_name = "NPC 22"
@@ -136,7 +136,7 @@ module StatusConditionItems
   def self.createGoldenleafSeller(map)
     rawev = RPG::Event.new(60, 49)
     rawev.name = "Status Item seller"
-    rawev.id = map.events.values.max { |a, b| a.id <=> b.id }.id + 1
+    rawev.id = map.events.keys.max + 1
 
     rawev.pages[0].graphic.direction = 2
     rawev.pages[0].graphic.character_name = "trchar072Dark"

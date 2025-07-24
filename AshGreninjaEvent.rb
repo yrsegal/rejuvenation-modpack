@@ -363,7 +363,7 @@ SILENT_ANGRY_ANIMATION_ID = 32
 KARMA_ANIMATION_ID = 115
 
 InjectionHelper.defineMapPatch(44) { |map| # Neo East Gearen (east)
-  baseid = map.events.values.max { |a, b| a.id <=> b.id }.id
+  baseid = map.events.keys.max
 
   ash = RPG::Event.new(63, 76)
   ash.pages.push(RPG::Event::Page.new, RPG::Event::Page.new)

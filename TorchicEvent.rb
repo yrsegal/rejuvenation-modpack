@@ -5,7 +5,7 @@ InjectionHelper.defineMapPatch(203) { |map| # Pokestar Studios Interiors
   rawev = RPG::Event.new(86, 10)
   rawev.name = "Torchic"
   rawev.pages.push(RPG::Event::Page.new, RPG::Event::Page.new)
-  rawev.id = map.events.values.max { |a, b| a.id <=> b.id }.id + 1
+  rawev.id = map.events.keys.max
 
   rawev.pages[2].condition.self_switch_valid = true
   rawev.pages[2].condition.self_switch_ch = "A"
