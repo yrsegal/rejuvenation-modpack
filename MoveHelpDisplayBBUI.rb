@@ -1886,7 +1886,7 @@ class PokeBattle_Scene
   end
 end
 
-class PokeBattle_Move
+class MoveData
   attr_accessor :desc
 end
 
