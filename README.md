@@ -53,6 +53,8 @@ Fix/hotfix mods:
   Fixes an area name being displayed incorrectly.
 - FixFactoryAreas.rb (depends on 0000.injection.rb)  
   Adds a field effect message to entering Oceana Pier's field-effect tutorial warehouse, and fixes damage pads not applying the proper types of damage.
+- FixForeignGiftShinyChance.rb  
+  Fix non-trade gift Pokémon with foreign IDs not being boosted properly by the Shiny Charm or Shiny Contract.
 - FixMissingItemTextures.rb (depends on 0000.textures.rb)  
   Fixes several missing items textures.
 - FixNWSilvally.rb  
