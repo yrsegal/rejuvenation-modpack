@@ -18,7 +18,7 @@ end
 
 Switches[:QuestAfterForest] = 248
 Switches[:Gym_5] = 8
-Variables[:QuestRestoration] = 557
+Variables[:QuestRestoration] = 577
 Variables[:QuestRiftGyarados] = 401
 Variables[:KarmaFilesGood] = 731
 
