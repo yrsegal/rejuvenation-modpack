@@ -293,10 +293,10 @@ class PokeBattle_Move_F25 < PokeBattle_Move
     end
 
     if @battle.ashgreninja_wasspedup && !$speed_up
-      @battle.ashgreninja_wasspedup = nil
       Graphics.frame_rate=200
       $speed_up = true
     end
+    @battle.ashgreninja_wasspedup = nil
   end
 end
 

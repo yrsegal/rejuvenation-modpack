@@ -115,9 +115,10 @@ FlyExpansion.addPoint(209, 61, 53, "North Dream District", "Somniam Mall", [35, 
 FlyExpansion.addPoint(209, 30, 37, "North Dream District", "Viennas Hill", [31, 20])
 FlyExpansion.addPoint(555, 52, 20, "GDC Tournament Stadium", "", [12, 18])
 FlyExpansion.addPoint(268, 28, 28, "Deep Terajuma Jungle", "Black Shard Excav.", [9, 37])
+FlyExpansion.addPoint(299, 26, 67, "Mynori Sea", "Luck's Tent", [11, 34])
 
 FlyExpansion.changeFlyPoint(311, 38, 17) # Axis High University
-FlyExpansion.changeFlyPoint(353, 34, 43) # Oblitus Town
+FlyExpansion.changeFlyPoint(353, 34, 43) # Oblitus Town - more complex dispatch handled above
 FlyExpansion.changeFlyPoint(321, 41, 36) # Goldenwood Forest - more complex dispatch handled above
 FlyExpansion.changeFlyPoint(201, 49, 86) # Helojak
 FlyExpansion.changeSubFlyPoint(373, 65, 27, [7, 12]) # Voidal Chasm entrance
