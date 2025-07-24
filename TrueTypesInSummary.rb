@@ -54,7 +54,7 @@ def hpSummary_trueType(move, pokemon)
     when :GALVANIZE   then type = :ELECTRIC if type==:NORMAL
     when :REFRIGERATE then type = :ICE      if type==:NORMAL
     when :DUSKILATE   then type = :DARK     if type==:NORMAL
-    when :LIQUIDVOICE then type = :WATER    if isSoundBased?
+    when :LIQUIDVOICE then type = :WATER    if move.isSoundBased?
   end
   case pokemon.species
     when :SIMISEAR  then type = :WATER      if type==:NORMAL && pokemon.item==:SEARCREST
