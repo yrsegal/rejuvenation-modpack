@@ -476,7 +476,10 @@ module InjectionHelper
           mapValue(params, 2, Variables)
           mapValue(params, 3, Variables)
           mapValue(params, 4, Variables)
+        else
+          mapValue(params, 4, InjectionHelper::FACING_DIRECTIONS)
         end
+        mapValue(params, 5, InjectionHelper::TRUTH)
       when :SetEventLocation
         if mapValue(params, 1, InjectionHelper::APPOINTMENT_METHODS) == :Variable
           mapValue(params, 2, Variables)
