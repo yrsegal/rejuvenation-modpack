@@ -73,6 +73,8 @@ Fix/hotfix mods:
   Makes Route 4's reset trigger work in all areas as intended.
 - LabyrinthPuzzleFix.rb  
   A typo in a puzzle causes it to not select the proper type of pokemon.
+- QuicksilverImplementation.rb  
+  Implements the move Quicksilver Spear's effect to do what it says it does.
 
 QoL mods:
 - AutoFish.rb  
@@ -163,6 +165,7 @@ Other mods:
   - Play Rough becomes 100% accurate.
   - Air Slash becomes 100% accurate.
   - Fly becomes a 100/100 move.
+  - Teleport acts as in Gen 8, as a switching move with -6 priority.
 - MrLuckIsBlind.rb  
   Mr. Luck can no longer tell if you cheat.
 - MusicSignpost.rb *(experimental)* (depends on 0000.textures.rb)  

@@ -1472,6 +1472,7 @@ class FightMenuButtons < BitmapSprite
     return 0 if !move.battle.field.isFieldEffect?
     battle = move.battle
     return 1 if battle.field.statusMoves && battle.field.statusMoves.include?(move.move)
+    return 2 if defined?(move_tweak) && battle.FE == :COLOSSEUM && move.move == :TELEPORT # Mod compat; teleport is weakened on field
     typeBoost = 1; moveBoost=1
     attacker = battle.battlers.find { |battler| battler.moves.include?(move) || (battler.zmoves && battler.zmoves.include?(move)) }
     opponent = attacker.pbOppositeOpposing

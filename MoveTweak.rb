@@ -209,6 +209,54 @@ class PokeBattle_Move_807 < PokeBattle_Move
   end
 end
 
+# Gen 8 Teleport
+class PokeBattle_Move_0EA < PokeBattle_Move
+  alias :teleport_old_pbEffect :pbEffect
+
+  def pbEffect(attacker,opponent,hitnum=0,alltargets=nil,showanimation=true)
+    if !@battle.pbIsOpposing?(attacker.index) || !@battle.pbIsWild?
+      pbShowAnimation(@move,attacker,nil,hitnum,alltargets,showanimation)
+      attacker.vanished = true
+
+      if attacker.userSwitch
+        for j in @battle.priority
+          next if !attacker.pbIsOpposing?(j.index)
+          # if Pursuit and this target was chosen
+          if !j.hasMovedThisRound? && @battle.pbChoseMoveFunctionCode?(j.index,0x88) && !j.effects[:Pursuit] && (@battle.choices[j.index][3]!=j.pbPartner.index)
+            attacker.vanished=false
+            if @battle.FE == :COLOSSEUM
+              @battle.pbDisplay(_INTL("The crowd roars in approval!"))
+              battler.pbIncreaseStat(PBStats::ATTACK,2) if j.pbCanIncreaseStatStage?(PBStats::ATTACK)
+            end
+            @battle.pbCommonAnimation("Fade in",attacker,nil)
+            newpoke=@battle.pbPursuitInterrupt(j,attacker)
+          end
+          break if attacker.isFainted?
+        end
+      end
+
+      if @battle.FE == :COLOSSEUM
+        @battle.pbDisplay(_INTL("The crowd boos the cowardly display!"))
+      end
+
+      newpoke=@battle.pbSwitchInBetween(attacker.index,true,false)
+      @battle.pbMessagesOnReplace(attacker.index,newpoke)
+      attacker.vanished=false
+      attacker.pbResetForm
+      pbReplace(attacker.index,newpoke,false)
+      pbOnActiveOne(attacker)
+      attacker.pbAbilitiesOnSwitchIn(true)
+
+      if @battle.FE == :COLOSSEUM
+        opponent.pbReduceStat(PBStats::SPEED, 2, abilitymessage: false) if attacker.pbCanReduceStatStage?(PBStats::ATTACK,false)
+      end
+      return 0
+    end
+
+    return teleport_old_pbEffect(attacker,opponent,hitnum,alltargets,showanimation)
+  end
+end
+
 # Tweaks
 
 move_tweak(:CUT,
@@ -265,6 +313,10 @@ move_tweak(:STRENGTH,
 move_tweak(:COVET,
   type: :FAIRY,
   desc: "The user endearingly approaches the target, then steals the target's held item.")
+
+move_tweak(:TELEPORT,
+  priority: -6,
+  desc: "The user switches places with a party Pokémon in waiting, if any. If a wild Pokémon uses this move, it flees.")
 
 move_tweak(:PLAYROUGH,
   accuracy: 100)
