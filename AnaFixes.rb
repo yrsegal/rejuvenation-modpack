@@ -204,6 +204,12 @@ def anafixes_fix_protagname(page)
   }
 end
 
+$cache.trainers.dig[:TRAINER_ANA, "Ana"].each do |tr|
+  if !tr[4] || tr[4].size == 0
+    tr[4] = "..."
+  end
+end
+
 TextureOverrides.registerTextureOverrides({
     TextureOverrides::CHARS + 'BGirlAerialDrive_2' => TextureOverrides::MOD + 'Ana/Legacy/Flying',
     TextureOverrides::CHARS + 'BGirlAquaDrive_2' => TextureOverrides::MOD + 'Ana/Legacy/Surfing',
