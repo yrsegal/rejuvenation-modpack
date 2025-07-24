@@ -114,7 +114,7 @@ Events.onMapChange+=proc {|sender,e|
 FlyExpansion.addPoint(209, 61, 53, "North Dream District", "Somniam Mall", [35, 23])
 FlyExpansion.addPoint(209, 30, 37, "North Dream District", "Viennas Hill", [31, 20])
 FlyExpansion.addPoint(555, 52, 20, "GDC Tournament Stadium", "", [12, 18])
-FlyExpansion.addPoint(268, 28, 28, "DeepTerajuma Jungle", "Black Shards" [9, 37]) # Deep Terajuma Jungles
+FlyExpansion.addPoint(268, 28, 28, "Deep Terajuma Jungle", "Black Shard Excav.", [9, 37])
 
 FlyExpansion.changeFlyPoint(311, 38, 17) # Axis High University
 FlyExpansion.changeFlyPoint(353, 34, 43) # Oblitus Town
