@@ -24,7 +24,7 @@ module PokeBattle_BattleCommon
   alias :cleanerprismpower_old_pbStorePokemon :pbStorePokemon
 
   def pbStorePokemon(pokemon)
-    @pokemon.prismPower = false if @pokemon.prismPower && pokemon.species == :DELPHOX && pokemon.form == 1
-    cleanerprismpower_old_pbStorePokemon(pkmn, pkmnIndex)
+    pokemon.prismPower = false if pokemon.prismPower && pokemon.species == :DELPHOX && pokemon.form == 1
+    cleanerprismpower_old_pbStorePokemon(pokemon)
   end
 end
