@@ -8,7 +8,7 @@ InjectionHelper.defineMapPatch(315) { |map| # Rose Theatre
   rawev = RPG::Event.new(4, 25)
   rawev.name = "Larvesta Egg"
   rawev.pages.push(RPG::Event::Page.new)
-  rawev.id = map.events.values.max { |a, b| a.id <=> b.id }.id + 1
+  rawev.id = map.events.keys.max + 1
   rawev.pages[1].condition.self_switch_valid = true
   rawev.pages[1].condition.self_switch_ch = "A"
 

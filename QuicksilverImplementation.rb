@@ -15,6 +15,8 @@ class PokeBattle_Battle
       pbDisplayPaused(_INTL("The quicksilver spear holds {1} in place!",thispkmn.pbThis)) if showMessages 
       return false
     end
+
+    return true
   end
   alias :quicksilver_old_pbEndOfRoundPhase :pbEndOfRoundPhase
 
