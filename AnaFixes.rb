@@ -204,7 +204,7 @@ def anafixes_fix_protagname(page)
   }
 end
 
-$cache.trainers.dig[:TRAINER_ANA, "Ana"].each do |tr|
+$cache.trainers.dig(:TRAINER_ANA, "Ana").each do |tr|
   if !tr[4] || tr[4].size == 0
     tr[4] = "..."
   end
