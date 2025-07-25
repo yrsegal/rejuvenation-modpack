@@ -43,7 +43,7 @@ class Game_System
   alias :musicoverride_old_initialize :initialize
 
   def initialize(*args, **kwargs)
-    ret = musicoverrideoverride_old_initialize(*args, **kwargs)
+    ret = musicoverride_old_initialize(*args, **kwargs)
     MusicOverrides.setup
     return ret
   end
