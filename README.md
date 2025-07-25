@@ -6,6 +6,8 @@ Libraries:
   Fixes an issue with the unused "advanced-formatting" choices menu, and allows it to be used.
 - 0000.injection.rb  
   Supports code injection mods.
+- 0000.music.rb  
+  A framework for music overrides. Currently unused.
 - 0000.textures.rb  
   A framework for texture overrides, which also includes a couple misc overrides.
 - 0001.boundedentry.rb (depends on 0000.textures.rb)  
