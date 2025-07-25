@@ -28,7 +28,7 @@ def hpSummary_trueType(move, pokemon)
     type = :QMARKS if type == "???".intern
   end
 
-  if pokemon.form<19
+  if pokemon.item && pokemon.form<19
     if move.move == :TECHNOBLAST
       case pokemon.item
         when :SHOCKDRIVE then type = :ELECTRIC
