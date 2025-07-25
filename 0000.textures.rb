@@ -39,8 +39,9 @@ module TextureOverrides
     TextureOverrides::ICONS + "jynnobikey" => TextureOverrides::ICONS + "lightkey",
     TextureOverrides::ICONS + "blackshard2" => TextureOverrides::ICONS + "blackshard",
     TextureOverrides::ICONS + "blkapricorn" => TextureOverrides::ICONS + "blackapricorn",
-  }
 
+    TextureOverrides::CHARS + "trchar117_bike" => TextureOverrides::MOD + 'MissingTextures/ErinRide',
+  }
 
   def self.registerServiceSprites(*spriteNames)
     for spriteName in spriteNames
@@ -80,6 +81,7 @@ module TextureOverrides
   def self.setup
     return if TextureOverrides::COMPILED_TEXTURE_OVERRIDES.size != 0
     trainerClassSetup
+    $cache.metadata[:Players][17][:bike] = "trchar117_bike"
     compileTextureOverrides
   end
 
