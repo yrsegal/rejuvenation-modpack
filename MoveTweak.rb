@@ -328,6 +328,11 @@ move_tweak(:FLY,
   power: 100,
   accuracy: 100)
 
+move_tweak(:QUICKSILVERSPEAR,
+  flags: {
+    :sharpmove => true,
+  })
+
 # This is... actually the function the move is SUPPOSED to have.
 move_tweak(:DOUBLEIRONBASH,
   function: TweakMoveFunctions::DOUBLE_IRON_BASH)
