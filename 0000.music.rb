@@ -19,7 +19,7 @@ module MusicOverrides
   end
 
   def self.compileMusicOverrides
-    MusicOverrides::MUSIC_OVERRIDES.each_pair {|k, v| MusicOverrides::MUSIC_OVERRIDES[k.downcase] = v }
+    MusicOverrides::MUSIC_OVERRIDES.each_pair {|k, v| MusicOverrides::COMPILED_MUSIC_OVERRIDES[k.downcase] = v }
   end
 
   def self.mapPath(path)
@@ -50,10 +50,12 @@ class Game_System
 end
 
 [:bgm_play, :bgs_play, :me_play, :se_play].each { |it|
-  eval <<__END__
-    alias :musicoverride_old_Audio_#{it} :Audio_#{it}
-    def Audio_#{it}(name, *args, **kwargs)
-      musicoverride_old_Audio_#{it}(MusicOverrides.mapPath(name), *args, **kwargs)
+  Audio.instance_eval(<<__END__)
+    unless defined?(musicoverride_old_#{it})
+      alias :musicoverride_old_#{it} :#{it}
+    end
+    def #{it}(name, *args, **kwargs)
+      musicoverride_old_#{it}(MusicOverrides.mapPath(name), *args, **kwargs)
     end
 __END__
 }
