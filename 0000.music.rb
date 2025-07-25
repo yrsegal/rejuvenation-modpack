@@ -50,10 +50,10 @@ class Game_System
 end
 
 [:bgm_play, :bgs_play, :me_play, :se_play].each { |it|
-  Audio.instance_eval(<<__END__)
-    alias :musicoverride_old_#{it} :#{it}
-    def #{it}(name, *args, **kwargs)
-      musicoverride_old_#{it}(MusicOverrides.mapPath(name), *args, **kwargs)
+  eval <<__END__
+    alias :musicoverride_old_Audio_#{it} :Audio_#{it}
+    def Audio_#{it}(name, *args, **kwargs)
+      musicoverride_old_Audio_#{it}(MusicOverrides.mapPath(name), *args, **kwargs)
     end
 __END__
 }
