@@ -62,6 +62,6 @@ alias :musicoverride_old_pbResolveAudioSE :pbResolveAudioSE
 
 def pbResolveAudioSE(file)
   full = 'Audio/SE/' + file
-  mapped = MusicOverrides.mapKey(full)
+  mapped = MusicOverrides.mapPath(full)
   return mapped == full ? musicoverride_old_pbResolveAudioSE(file) : mapped
 end
