@@ -113,46 +113,32 @@ module StatusConditionItems
   end
 
   def self.createSomniamSeller(map)
-    rawev = RPG::Event.new(37, 24)
-    rawev.name = "Status Item seller"
-    rawev.id = map.events.keys.max + 1
-
-    rawev.pages[0].graphic.direction = 2
-    rawev.pages[0].graphic.character_name = "NPC 22"
-    rawev.pages[0].trigger = 0 # Action button
-    rawev.pages[0].list = InjectionHelper.parseEventCommands(
-      [:ConditionalBranch, :Variable, :Stamps, :Constant, 1, :GreaterOrEquals],
-        [:Script, "showmallstamps_show_window('Status Items',1) if defined?(ShowSomniamMallStamps)"],
-        [:Script, "pbPokemonMart(["],
-        *ITEMS.keys.map { |item| [:ScriptContinued, ":#{item},"] },
-        [:ScriptContinued, "])"],
-        [:Script, 'showmallstamps_disposefully if defined?(ShowSomniamMallStamps)'],
-        :Done,
-      :Done)
-
-    map.events[rawev.id] = rawev
+    InjectionHelper.createSinglePageEvent(map, 37, 24, "Status Item seller") { |page|
+      page.setGraphic("NPC 22")
+      page.interact(
+        [:ConditionalBranch, :Variable, :Stamps, :Constant, 1, :GreaterOrEquals],
+          [:Script, "showmallstamps_show_window('Status Items',1) if defined?(ShowSomniamMallStamps)"],
+          [:Script, "pbPokemonMart(["],
+          *ITEMS.keys.map { |item| [:ScriptContinued, ":#{item},"] },
+          [:ScriptContinued, "])"],
+          [:Script, 'showmallstamps_disposefully if defined?(ShowSomniamMallStamps)'],
+        :Done)
+    }
   end
 
   def self.createGoldenleafSeller(map)
-    rawev = RPG::Event.new(60, 49)
-    rawev.name = "Status Item seller"
-    rawev.id = map.events.keys.max + 1
-
-    rawev.pages[0].graphic.direction = 2
-    rawev.pages[0].graphic.character_name = "trchar072Dark"
-    rawev.pages[0].trigger = 0 # Action button
-    rawev.pages[0].list = InjectionHelper.parseEventCommands(
-      [:ConditionalBranch, :Switch, :NewTownOrdinance, true],
-        [:ShowText, "Sorry about before. I'm still selling the items, though."],
-      :Else,
-        [:ShowText, "Hey, kid. You should use these on your Pokémon."],
-      :Done,
-      [:Script, "pbPokemonMart(["],
-      *ITEMS.keys.map { |item| [:ScriptContinued, ":#{item},"] },
-      [:ScriptContinued, "])"],
-      :Done)
-
-    map.events[rawev.id] = rawev
+    InjectionHelper.createSinglePageEvent(map, 60, 49, "Status Item seller") { |page|
+      page.setGraphic("trchar072Dark")
+      page.interact(
+        [:ConditionalBranch, :Switch, :NewTownOrdinance, true],
+          [:ShowText, "Sorry about before. I'm still selling the items, though."],
+        :Else,
+          [:ShowText, "Hey, kid. You should use these on your Pokémon."],
+        :Done,
+        [:Script, "pbPokemonMart(["],
+        *ITEMS.keys.map { |item| [:ScriptContinued, ":#{item},"] },
+        [:ScriptContinued, "])"])
+    }
   end
 end
 

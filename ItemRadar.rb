@@ -59,18 +59,9 @@ class Game_Screen
     end
 
     if foundz && itemRadar_checkIsItemRadarOn?
-      rawev = RPG::Event.new(0, 0)
-      rawev.name = "ping"
-      rawev.id = biggestid + 1
-      rawev.pages[0].list = InjectionHelper.parseEventCommands(
-        [:PlaySoundEvent, 'MiningPing', 60, 80],
-        :EraseEvent,
-        :Done)
-      rawev.pages[0].trigger = 3 # as soon as map is loaded
-
-      newevent = Game_Event.new($game_map.map_id, rawev, $game_map)
-      $game_map.events[rawev.id] = newevent
-
+      InjectionHelper.createSinglePageEvent($game_map, 0, 0, "ping") { |page|
+        page.autorun([:PlaySoundEvent, 'MiningPing', 60, 80], :EraseEvent)
+      }
     end
   end
 

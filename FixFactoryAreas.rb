@@ -158,114 +158,80 @@ module FixFactoryAreas
   end
 
   def self.createFactoryMessageEvent(map, x, y)
-    maxid = 0
-    for id, evt in map.events
-      maxid = id if id > maxid
-    end
-
-    rawev = RPG::Event.new(x, y)
-    rawev.name = "Factory field event message"
-    rawev.id = maxid + 1
-    rawev.pages[0].list = InjectionHelper.parseEventCommands(
-      [:ConditionalBranch, :Variable, :QuestStolenCargo, :Constant, 3, :GreaterOrEquals],
-        [:Wait, 20],
-      :Done,
-      [:ShowText, 'The factory is humming away...'],
-      [:Script, '$game_variables[:Forced_BaseField] = "Factory"'],
-      :EraseEvent,
-      :Done)
-    rawev.pages[0].trigger = 2 # event touch
-
-    map.events[maxid + 1] = rawev
+    InjectionHelper.createSinglePageEvent(map, x, y, "Factory field event message") { |page|
+      page.eventTouch(
+        [:ConditionalBranch, :Variable, :QuestStolenCargo, :Constant, 3, :GreaterOrEquals],
+          [:Wait, 20],
+        :Done,
+        [:ShowText, 'The factory is humming away...'],
+        [:Script, '$game_variables[:Forced_BaseField] = "Factory"'],
+        :EraseEvent)
+    }
   end
 
   def self.createCelgearnFieldMessageEvent(map, x, y)
-    maxid = 0
-    for id, evt in map.events
-      maxid = id if id > maxid
-    end
-
-    rawev = RPG::Event.new(x, y)
-    rawev.name = "Toggle field event message"
-    rawev.pages.push(RPG::Event::Page.new, RPG::Event::Page.new, RPG::Event::Page.new)
-    rawev.id = maxid + 1
-
-    # If unshorted and lights are off, short
-    rawev.pages[0].list = InjectionHelper.parseEventCommands(
-      [:Script, '$game_variables[:Forced_BaseField] = "ShortCircuit"'],
-      [:ShowText, 'The factory went quiet...'],
-      [:ControlSwitch, :ShortedOut, true],
-      :Done)
-    rawev.pages[0].trigger = 3 # autorun
-
-    # If shorted out and lights are off, don't do anything
-    rawev.pages[1].condition.switch1_valid = true
-    rawev.pages[1].condition.switch1_id = Switches[:ShortedOut]
-
-    # If unshorted and lights are on, don't do anything
-    rawev.pages[2].condition.switch1_valid = true
-    rawev.pages[2].condition.switch1_id = Switches[:ReusableSwitch1]
-
-    # If shorted out and lights are on, unshort
-    rawev.pages[3].condition.switch1_valid = true
-    rawev.pages[3].condition.switch1_id = Switches[:ReusableSwitch1]
-    rawev.pages[3].condition.switch2_valid = true
-    rawev.pages[3].condition.switch2_id = Switches[:ShortedOut]
-    rawev.pages[3].list = InjectionHelper.parseEventCommands(
-      [:Script, '$game_variables[:Forced_BaseField] = "Factory"'],
-      [:ShowText, 'The factory hummed to life...'],
-      [:ControlSwitch, :ShortedOut, false],
-      :Done)
-    rawev.pages[3].trigger = 3 # autorun
-
-    map.events[maxid + 1] = rawev
+    InjectionHelper.createNewEvent(map, x, y, "Factory field event message") { |event|
+      # If unshorted and lights are off, short
+      event.newPage { |page|
+        page.autorun(
+          [:Script, '$game_variables[:Forced_BaseField] = "ShortCircuit"'],
+          [:ShowText, 'The factory went quiet...'],
+          [:ControlSwitch, :ShortedOut, true])
+      }
+      # If shorted out and lights are off, don't do anything
+      event.newPage { |page|
+        page.requiresSwitch(:ShortedOut)
+      }
+      # If unshorted and lights are on, don't do anything
+      event.newPage { |page|
+        page.requiresSwitch(:ReusableSwitch1)
+      }
+      # If shorted out and lights are on, unshort
+      event.newPage { |page|
+        page.requiresSwitch(:ReusableSwitch1, :ShortedOut)
+        page.autorun(
+          [:Script, '$game_variables[:Forced_BaseField] = "Factory"'],
+          [:ShowText, 'The factory hummed to life...'],
+          [:ControlSwitch, :ShortedOut, false])
+      }
+    }
   end
 
   def self.createCelgearnFieldToggleEvent(map, x, y)
-    maxid = 0
-    for id, evt in map.events
-      maxid = id if id > maxid
-    end
+    InjectionHelper.createNewEvent(map, x, y, "Field event controller") { |event|
+      event.newPage { |page|
+        page.runInParallel(
+          [:Wait, 5],
+          [:ConditionalBranch, :Script, '$game_variables[:Field_Effect_End_Of_Battle] == :FACTORY'],
+            [:PlaySoundEvent, 'SlotsCoin', 100, 150],
+            [:ChangeScreenColorTone, Tone.new(0, 0, 0), 5],
+            [:PlaySoundEvent, 'Exit Door', 80, 60],
+            [:ControlSwitch, :ReusableSwitch1, true],
+            [:ControlVariable, :Field_Effect_End_Of_Battle, :Set, :Constant, 0],
+            [:Wait, 9],
+            [:ShowText, 'The factory sparked to life!'],
+            [:Script, '$game_variables[:Forced_BaseField] = "Factory"'],
+            [:ControlSwitch, :ShortedOut, false],
+          :Done)
+      }
 
-    rawev = RPG::Event.new(x, y)
-    rawev.name = "Field event controller"
-    rawev.pages.push(RPG::Event::Page.new)
-    rawev.id = maxid + 1
-    rawev.pages[0].list = InjectionHelper.parseEventCommands(
-      [:Wait, 5],
-      [:ConditionalBranch, :Script, '$game_variables[:Field_Effect_End_Of_Battle] == :FACTORY'],
-        [:PlaySoundEvent, 'SlotsCoin', 100, 150],
-        [:ChangeScreenColorTone, Tone.new(0, 0, 0), 5],
-        [:PlaySoundEvent, 'Exit Door', 80, 60],
-        [:ControlSwitch, :ReusableSwitch1, true],
-        [:ControlVariable, :Field_Effect_End_Of_Battle, :Set, :Constant, 0],
-        [:Wait, 9],
-        [:ShowText, 'The factory sparked to life!'],
-        [:Script, '$game_variables[:Forced_BaseField] = "Factory"'],
-        [:ControlSwitch, :ShortedOut, false],
-      :Done,
-      :Done)
-    rawev.pages[0].trigger = 4 # parallel process
-
-    rawev.pages[1].condition.switch1_valid = true
-    rawev.pages[1].condition.switch1_id = Switches[:ReusableSwitch1]
-    rawev.pages[1].list = InjectionHelper.parseEventCommands(
-      [:Wait, 5],
-      [:ConditionalBranch, :Script, '$game_variables[:Field_Effect_End_Of_Battle] == :SHORTCIRCUIT'],
-        [:PlaySoundEvent, 'PRSFX- Thunderbolt2', 100, 150],
-        [:ChangeScreenColorTone, Tone.new(-136, -136, -136), 10],
-        [:PlaySoundEvent, 'Exit Door', 80, 60],
-        [:ControlSwitch, :ReusableSwitch1, false],
-        [:ControlVariable, :Field_Effect_End_Of_Battle, :Set, :Constant, 0],
-        [:Wait, 9],
-        [:ShowText, 'The factory shorted out!'],
-        [:Script, '$game_variables[:Forced_BaseField] = "ShortCircuit"'],
-        [:ControlSwitch, :ShortedOut, true],
-      :Done,
-      :Done)
-    rawev.pages[1].trigger = 4 # parallel process
-
-    map.events[maxid + 1] = rawev
+      event.newPage { |page|
+        page.requiresSwitch(:ReusableSwitch1)
+        page.runInParallel(
+          [:Wait, 5],
+          [:ConditionalBranch, :Script, '$game_variables[:Field_Effect_End_Of_Battle] == :SHORTCIRCUIT'],
+            [:PlaySoundEvent, 'PRSFX- Thunderbolt2', 100, 150],
+            [:ChangeScreenColorTone, Tone.new(-136, -136, -136), 10],
+            [:PlaySoundEvent, 'Exit Door', 80, 60],
+            [:ControlSwitch, :ReusableSwitch1, false],
+            [:ControlVariable, :Field_Effect_End_Of_Battle, :Set, :Constant, 0],
+            [:Wait, 9],
+            [:ShowText, 'The factory shorted out!'],
+            [:Script, '$game_variables[:Forced_BaseField] = "ShortCircuit"'],
+            [:ControlSwitch, :ShortedOut, true],
+          :Done)
+      }
+    }
   end
 
   def self.killEvent(event)

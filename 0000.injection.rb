@@ -236,6 +236,14 @@ module InjectionHelper
     false => 1
   }
 
+  TRIGGER_TYPES = {
+    Interact: 0,
+    PlayerTouch: 1,
+    EventTouch: 2,
+    Autorun: 3,
+    RunInParallel: 4
+  }
+
   BLOCK_TYPES = {
     When: :BranchEndChoices,
     WhenCancel: :BranchEndChoices,
@@ -245,6 +253,89 @@ module InjectionHelper
     IfLose: :BranchEndBattle,
     Loop: :RepeatAbove
   }
+
+  module EventUtilMixin
+    def newPage
+      page = RPG::Event::Page.new
+      page.extend(PageUtilMixin)
+      yield page
+      self.pages.push(page)
+    end
+  end
+
+  module PageUtilMixin
+    def setTile(tileid, hueShift: 0, direction: :Down, pattern: 0)
+      self.graphic.tile_id = tileid
+      self.graphic.character_hue = hueShift
+      self.graphic.direction = InjectionHelper::FACING_DIRECTIONS[direction] || direction
+      self.graphic.pattern = pattern
+      return self
+    end
+
+    def setGraphic(name, hueShift: 0, direction: :Down, pattern: 0)
+      self.graphic.character_name = name
+      self.graphic.character_hue = hueShift
+      self.graphic.direction = InjectionHelper::FACING_DIRECTIONS[direction] || direction
+      self.graphic.pattern = pattern
+      return self
+    end
+
+    def setMoveRoute(*params, repeat: false, skippable: false, wait: false)
+      self.move_route = InjectionHelper.parseMoveRoute(*params, repeat: repeat)
+      self.move_route.skippable = skippable
+      self.move_route.wait = wait
+      return self
+    end
+
+    def requiresVariable(varid, value)
+      self.condition.variable_valid = true
+      self.condition.variable_id = Variables[varid] || varid
+      self.condition.variable_value = value
+      return self
+    end
+
+    def requiresSwitch(switch, switch2=nil)
+      self.condition.switch1_valid = true
+      self.condition.switch1_id = Switches[switch] || switch
+      if switch2
+        self.condition.switch2_valid = true
+        self.condition.switch2_id = Switches[switch2] || switch2
+      end
+      return self
+    end
+
+    def requiresSelfSwitch(selfswitch)
+      self.condition.self_switch_valid = true
+      self.condition.self_switch_ch = selfswitch
+      return self
+    end
+
+    def code(triggerType, *params)
+      self.trigger = InjectionHelper::TRIGGER_TYPES[triggerType] || triggerType
+      self.list = InjectionHelper.parseEventCommands(*params, :Done)
+      return self
+    end
+
+    def interact(*params)
+      code(:Interact, *params)
+    end
+
+    def playerTouch(*params)
+      code(:PlayerTouch, *params)
+    end
+
+    def eventTouch(*params)
+      code(:EventTouch, *params)
+    end
+
+    def autorun(*params)
+      code(:Autorun, *params)
+    end
+
+    def runInParallel(*params)
+      code(:RunInParallel, *params)
+    end
+  end
 
   class InsnMatcher
     def initialize(code, mapper, params=[]) # Param does partial matches - nil is ignored
@@ -281,6 +372,46 @@ module InjectionHelper
 
       return true
     end
+  end
+
+  @@eventsToLoad = []
+
+  def self.clearEventBuilders
+    @@eventsToLoad = []
+  end
+
+  def self.applyEventBuilders
+    for event, configure in @@eventsToLoad
+      configure.call(event)
+      event.push(RPG::Event::Page.new) if event.pages.empty? # No pages is a bad thing!
+    end
+    return !@@eventsToLoad.empty?
+  end
+
+  def self.createSinglePageEvent(map, x, y, name, &block)
+    createNewEvent(map, x, y, name) { |event|
+      event.newPage(&block)
+    }
+  end
+
+  def self.createNewEvent(map, x, y, name, &block)
+    newEvent = RPG::Event.new(x, y)
+    newEvent.pages = [] if block_given?
+    newEvent.extend(EventUtilMixin)
+    newEvent.name = name
+    newEvent.id = map.events.keys.max + 1
+    map.events[newEvent.id] = newEvent
+
+    if map.is_a?(RPG::Map)
+      map.events[newEvent.id] = newEvent
+      @@eventsToLoad.push([newEvent, block]) if block_given?
+    elsif map.is_a?(Game_Map)
+      gameev = Game_Event.new(map.map_id, newEvent, map)
+      map.events[newEvent.id] = gameev
+      block.call(newEvent) if block_given?
+    end
+
+    return newEvent
   end
 
   def self.getPatchComment(insns, create)
@@ -625,6 +756,7 @@ module InjectionHelper
 
   def self.applyMapPatches(mapid, map)
     begin
+      clearEventBuilders
       doneAny = false
       if PATCHES[mapid]
         for mappatch in PATCHES[mapid]
@@ -649,10 +781,13 @@ module InjectionHelper
           end
         end
       end
+      doneAny |= applyEventBuilders
     rescue
       pbPrintException($!)
       doneAny = true
     end
+
+    clearEventBuilders
 
     if doneAny
       APPLIED_PATCHES.push(mapid)
