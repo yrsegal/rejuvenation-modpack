@@ -1495,6 +1495,26 @@ class FightMenuButtons < BitmapSprite
       ### /MODDED
     end
     moveBoost = 1.5 if move.move == :SONICBOOM && battle.FE == :RAINBOW
+
+    ### /MODDED account for Snowy Mountain, Deep Earth multipliers
+    case battle.FE
+      when :MOUNTAIN,:SNOWYMOUNTAIN
+        if movetype == :FLYING && !move.pbIsPhysical?(movetype) && battle.pbWeather== :STRONGWINDS
+          typeBoost*=1.5
+        end
+      when :DEEPEARTH
+        if movetype == :GROUND && opponent.hasType?(:GROUND)
+          typeBoost*=0.25
+        end
+        if (move.priorityCheck(attacker) > 0) && move.basedamage > 0
+          moveBoost*=0.7
+        end
+        if (move.priorityCheck(attacker) < 0) && move.basedamage > 0
+          moveBoost*=1.3
+        end
+    end
+    ### /MODDED
+
     # Failing moves
     case battle.FE
     when :UNDERWATER
