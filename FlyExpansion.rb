@@ -35,15 +35,19 @@ class PokemonRegionMapScene
         restoration = $game_variables[:QuestRestoration]
 
         if restoration >= 9
-          ret[0] = 217
+          ret[0] = 217 # Goldenwood Park
         elsif restoration >= 7
-          ret[0] = 216
+          ret[0] = 216 # Goldenwood Forest, restoration stage 2
         elsif restoration >= 4
-          ret[0] = 190
+          ret[0] = 190 # Goldenwood Forest, restoration stage 1
         end
       end
-    elsif ret && ret[0] == 353 && $game_variables[:KarmaFilesGood] >= 72
-      ret[0] = 263
+    elsif ret && ret[0] == 353 && # Oblitus Town
+     $game_variables[:KarmaFilesGood] >= 72 # Day with Alice and Allen
+      ret[0] = 263 # Oblitus Town (rebuilding)
+    elsif ret && ret[0] == 311 && # Axis High University
+     $game_variables[:V13Story] >= 79 && $game_variables[:V13Story] < 100 # Land of Broken Dreams
+      return nil
     end
 
     return ret
@@ -114,9 +118,10 @@ Events.onMapChange+=proc {|sender,e|
 FlyExpansion.addPoint(209, 61, 53, "North Dream District", "Somniam Mall", [35, 23])
 FlyExpansion.addPoint(209, 30, 37, "North Dream District", "Viennas Hill", [31, 20])
 FlyExpansion.addPoint(555, 52, 20, "GDC Tournament Stadium", "", [12, 18])
-FlyExpansion.addPoint(268, 28, 28, "Deep Terajuma Jungle", "Black Shard Excav.", [9, 37])
+FlyExpansion.addPoint(268, 27, 28, "Deep Terajuma Jungle", "Black Shard Excav.", [9, 37])
 FlyExpansion.addPoint(299, 26, 67, "Mynori Sea", "Luck's Tent", [11, 34])
 
+FlyExpansion.changeFlyPoint(295, 87, 14) # Mt. Terajuma
 FlyExpansion.changeFlyPoint(311, 38, 17) # Axis High University
 FlyExpansion.changeFlyPoint(353, 34, 43) # Oblitus Town - more complex dispatch handled above
 FlyExpansion.changeFlyPoint(321, 41, 36) # Goldenwood Forest - more complex dispatch handled above
