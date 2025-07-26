@@ -121,6 +121,7 @@ FlyExpansion.addPoint(555, 52, 20, "GDC Tournament Stadium", "", [12, 18])
 FlyExpansion.addPoint(268, 27, 28, "Deep Terajuma Jungle", "Black Shard Excav.", [9, 37])
 FlyExpansion.addPoint(299, 26, 67, "Mynori Sea", "Luck's Tent", [11, 34])
 
+FlyExpansion.changeFlyPoint(258, 52, 25) # Botanical Garden
 FlyExpansion.changeFlyPoint(295, 87, 14) # Mt. Terajuma
 FlyExpansion.changeFlyPoint(311, 38, 17) # Axis High University
 FlyExpansion.changeFlyPoint(353, 34, 43) # Oblitus Town - more complex dispatch handled above
