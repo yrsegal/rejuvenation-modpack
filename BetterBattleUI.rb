@@ -1472,15 +1472,27 @@ class FightMenuButtons < BitmapSprite
     return 0 if !move.battle.field.isFieldEffect?
     battle = move.battle
     return 1 if battle.field.statusMoves && battle.field.statusMoves.include?(move.move)
-    return 2 if defined?(move_tweak) && battle.FE == :COLOSSEUM && move.move == :TELEPORT # Mod compat; teleport is weakened on field
+    ### MODDED/ Mod compat; teleport is weakened on field
+    return 2 if defined?(move_tweak) && battle.FE == :COLOSSEUM && move.move == :TELEPORT
+    ### /MODDED
     typeBoost = 1; moveBoost=1
     attacker = battle.battlers.find { |battler| battler.moves.include?(move) || (battler.zmoves && battler.zmoves.include?(move)) }
     opponent = attacker.pbOppositeOpposing
+    ### MODDED/ Take form into account
     movetype = betterBattleUI_pbType(move, attacker)
+    ### /MODDED
     if move.basedamage > 0 && !((0x6A..0x73).include?(move.function) || [0xD4,0xE1].include?(move.function))
       typeBoost = move.typeFieldBoost(movetype,attacker,opponent)
       moveBoost = move.moveFieldBoost
       moveBoost = 1.5 if move.isSoundBased? && move.basedamage > 0 && [:CAVE,:BIGTOP,:CONCERT1,:CONCERT2,:CONCERT3,:CONCERT4].include?(battle.FE)
+      ### MODDED/ Account for overlays
+      typeBoost *= move.typeOverlayBoost(movetype,attacker,opponent)[0]
+      for terrain in [:ELECTERRAIN,:GRASSY,:MISTY,:PSYTERRAIN]
+        if battle.state.effects[terrain] > 0
+          moveBoost *= move.moveOverlayBoost(terrain)
+        end
+      end
+      ### /MODDED
     end
     moveBoost = 1.5 if move.move == :SONICBOOM && battle.FE == :RAINBOW
     # Failing moves
