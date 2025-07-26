@@ -117,7 +117,7 @@ module InspectMenuDisplay
     effect("Semi-Invulnerable", "The Pokémon cannot be hit by most attacks.") { |battler| PBStuff::TWOTURNMOVE.include?(battler.effects[:TwoTurnAttack]) },
     durationEffect("Perish Count", "This Pokémon will faint when the count reaches 0.", 3) { |battler| battler.effects[:PerishSong] },
     durationEffect("Future Attack", "The Pokémon in this spot will be attacked in 2 turns.", 2) { |battler| battler.effects[:FutureSight] },
-    durationEffect("Slow Start", "The Pokémon gets its act together in 5 turns.", 5) { |battler| next battler.turncount if battler.ability == (:SLOWSTART) && battler.turncount<=5 && (battler == @battle.battlers[0] || battler == @battle.battlers[2]) },
+    durationEffect("Slow Start", "The Pokémon gets its act together in 5 turns.", 5) { |battler| next battler.turncount if battler.ability == (:SLOWSTART) && battler.turncount<=5 && (battler == battler.battle.battlers[0] || battler == battler.battle.battlers[2]) },
     effect("Drowsy", "The Pokémon will fall asleep at the end of the next turn.") { |battler| battler.effects[:Yawn] > 0 },
     effect("Recharging", "The Pokémon cannot move until it recharges from its last attack.") { |battler| battler.effects[:HyperBeam] > 0 },
     durationEffect("Move Disabled", "A move has been disabled and cannot be used.", 4) { |battler| battler.effects[:Disable] },
