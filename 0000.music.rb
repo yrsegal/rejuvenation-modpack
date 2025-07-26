@@ -63,7 +63,7 @@ __END__
 alias :musicoverride_old_pbResolveAudioSE :pbResolveAudioSE
 
 def pbResolveAudioSE(file)
-  full = 'Audio/SE/' + file
+  full = ('Audio/SE/' + file).downcase
   mapped = MusicOverrides.mapPath(full)
   return mapped == full ? musicoverride_old_pbResolveAudioSE(file) : mapped
 end
