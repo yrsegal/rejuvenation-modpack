@@ -10,8 +10,7 @@ InjectionHelper.defineMapPatch(315) { |map| # Rose Theatre
       page.setGraphic("egg_aevian_larvesta")
       page.requiresSwitch(:Gym_13)
       page.interact(
-        [:ShowText,          "This egg is nestled in a corner, almost like you were"],
-        [:ShowTextContinued, "expected to come back for it."],
+        [:ShowText,          "The egg is nestled here, as if waiting for you to return for it."],
         [:ShowText,          "Take it?"],
         [:ShowChoices, ["Yes", "No"], 2],
         [:When, 0, "Yes"],
