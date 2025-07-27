@@ -7,8 +7,6 @@ end
 Variables[:Outfit] = 259
 Variables[:MCname] = 701
 
-print(TextureOverrides::MODBASE)
-
 # Code blocks
 
 def anafixes_makeMoveRoute(graphic, direction = :Up)
