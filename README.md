@@ -1,14 +1,14 @@
 Rejuvenation Modpack
 ====================
 
-# Resolving name clashes
+## Resolving name clashes
 
 If these mods clash with any other mod names you're using, move the entire contents of this modpack to a folder named `WireModpack`, then create `0000.wiremodpack.rb` in `Data/Mods` with the following contents:
 ```ruby
 Dir["./Data/Mods/WireModpack/*.rb"].each {|file| load File.expand_path(file) }
 ```
 
-# Contents
+## Contents
 
 Libraries:
 - 0000.formattedchoices.rb  
