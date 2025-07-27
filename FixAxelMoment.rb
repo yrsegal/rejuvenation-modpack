@@ -28,4 +28,11 @@ InjectionHelper.defineMapPatch(53) { |map| # I Nightmare Realm
   # Mirror match
   axelfixes_fix_stormsprite(map.events[66])
   axelfixes_fix_stormsprite(map.events[76])
+  axelfixes_fix_stormsprite(map.events[86])
+  axelfixes_fix_stormsprite(map.events[94])
 }
+InjectionHelper.defineMapPatch(31, 39) { |event| # SS Oceana, Crescent
+  # Crescent
+  axelfixes_fix_stormsprite(event)
+}
+

@@ -310,6 +310,8 @@ InjectionHelper.defineMapPatch(53) { |map| # I Nightmare Realm
   # Mirror match
   outfitoptions_injectBeforeOutfit0(map.events[66].pages[0], 0, [2, 3, 4, 6], true)
   outfitoptions_injectBeforeOutfit0(map.events[76].pages[0], 0, [2, 3, 4, 6], true)
+  outfitoptions_injectBeforeOutfit0(map.events[86].pages[0], 0, [2, 3, 4, 6], true)
+  outfitoptions_injectBeforeOutfit0(map.events[94].pages[0], 0, [2, 3, 4, 6], true)
 }
 
 InjectionHelper.defineMapPatch(85) { |map| # Nightmare Toy Box
