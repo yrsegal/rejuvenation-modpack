@@ -1,5 +1,5 @@
 begin
-  missing = ['0001.boundedentry.rb'].select { |f| !File.exist?("Data/Mods/#{f}") }
+  missing = ['0001.boundedentry.rb'].select { |f| !File.exist?(File.join(File.dirname(__FILE__), f)) }
   raise "Dependency #{missing[0]} is required by #{__FILE__}. Please install it." if missing.length == 1
   raise "Dependencies #{missing.join(", ")} are required by #{__FILE__}. Please install them." if missing.length > 1
 end
