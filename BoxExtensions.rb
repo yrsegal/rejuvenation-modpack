@@ -1,5 +1,5 @@
 begin
-  missing = ['0001.boundedentry.rb'].select { |f| !File.exist?(File.join(File.dirname(__FILE__), f)) }
+  missing = ['0001.boundedentry.rb'].select { |f| !File.exist?(File.join(__dir__, f)) }
   raise "Dependency #{missing[0]} is required by #{__FILE__}. Please install it." if missing.length == 1
   raise "Dependencies #{missing.join(", ")} are required by #{__FILE__}. Please install them." if missing.length > 1
 end
@@ -226,7 +226,7 @@ class PokemonStorageScene
     end
 
     if pokemon
-      imagepos=[["Data/Mods/BoxExtensions/BallBackground",2,46,0,0,-1,-1]]
+      imagepos=[["#{__dir__[Dir.pwd.length+1..]}/BoxExtensions/BallBackground",2,46,0,0,-1,-1]]
       ballused = pokemon.ballused ? pokemon.ballused : :POKEBALL
       ballimage=sprintf("Graphics/Pictures/Summary/summaryball" + ballused.to_s)
       imagepos.push([ballimage,4,46,0,0,-1,-1])

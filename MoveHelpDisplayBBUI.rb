@@ -1,5 +1,5 @@
 begin
-  missing = ['BetterBattleUI.rb'].select { |f| !File.exist?(File.join(File.dirname(__FILE__), f)) }
+  missing = ['BetterBattleUI.rb'].select { |f| !File.exist?(File.join(__dir__, f)) }
   raise "Dependency #{missing[0]} is required by #{__FILE__}. Please install it." if missing.length == 1
   raise "Dependencies #{missing.join(", ")} are required by #{__FILE__}. Please install them." if missing.length > 1
 end
@@ -1612,7 +1612,7 @@ class PokeBattle_Scene
         tempMove.smartDamageCategory(battler, target)
         category = tempMove.betterCategory
       end
-      imagePos.push(["Data/Mods/BetterBattleUI/Inspect/moveselectbg", xpos, ypos, 0, 0, -1, -1])
+      imagePos.push(["#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/Inspect/moveselectbg", xpos, ypos, 0, 0, -1, -1])
 
       #---------------------------------------------------------------------------
       cattype = 2
@@ -1622,7 +1622,7 @@ class PokeBattle_Scene
         when :status   then cattype = 2
       end
 
-      imagePos.push(["Data/Mods/BetterBattleUI/minicategory", xpos + 480, ypos + 98, 0, cattype * 28, 64,  28])
+      imagePos.push(["#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/minicategory", xpos + 480, ypos + 98, 0, cattype * 28, 64,  28])
 
       acc = move.movehelpdisplay_calcAccuracy(battler, target)
       pri = move.priorityCheck(battler)
@@ -1749,27 +1749,27 @@ class PokeBattle_Scene
 
       # Draws images.
       if secondtype.nil?
-        imagePos = [[sprintf("Data/Mods/BetterBattleUI/MoveBGs/moveBg%s", type),          xpos,       ypos,     0, 0,            512, 168],
-                    [sprintf("Data/Mods/BetterBattleUI/MoveBGs/moveBg%s", type),          xpos,       ypos,     0, 168,          512, 168],
-                    [sprintf("Data/Mods/BetterBattleUI/MoveBGs/moveBg%s", type),          xpos,       ypos,     0, 336,          512, 168],
+        imagePos = [[sprintf("#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/MoveBGs/moveBg%s", type),          xpos,       ypos,     0, 0,            512, 168],
+                    [sprintf("#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/MoveBGs/moveBg%s", type),          xpos,       ypos,     0, 168,          512, 168],
+                    [sprintf("#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/MoveBGs/moveBg%s", type),          xpos,       ypos,     0, 336,          512, 168],
                     [sprintf("Graphics/Icons/type%s", type),                              xpos + 282, ypos + 8, 0, 0,            64,  28],
                     ["Graphics/Pictures/category",                                        xpos + 350, ypos + 8, 0, cattype * 28, 64,  28]]
       elsif secondtype.length == 1
-        imagePos = [[sprintf("Data/Mods/BetterBattleUI/MoveBGs/moveBg%s", type),          xpos,       ypos,     0, 0,            512, 168],
-                    [sprintf("Data/Mods/BetterBattleUI/MoveBGs/moveBg%s", secondtype[0]), xpos,       ypos,     0, 168,          512, 168],
-                    [sprintf("Data/Mods/BetterBattleUI/MoveBGs/moveBg%s", secondtype[0]), xpos,       ypos,     0, 336,          512, 168],
+        imagePos = [[sprintf("#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/MoveBGs/moveBg%s", type),          xpos,       ypos,     0, 0,            512, 168],
+                    [sprintf("#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/MoveBGs/moveBg%s", secondtype[0]), xpos,       ypos,     0, 168,          512, 168],
+                    [sprintf("#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/MoveBGs/moveBg%s", secondtype[0]), xpos,       ypos,     0, 336,          512, 168],
                     [sprintf("Graphics/Icons/type%s", type),                              xpos + 284, ypos + 8, 0, 0,            64,  28],
                     [sprintf("Graphics/Icons/minitype%s", secondtype[0]),                 xpos + 348, ypos + 8, 0, 0,            28,  28],
-                    ["Data/Mods/BetterBattleUI/minicategory",                             xpos + 384, ypos + 8, 0, cattype * 28, 28,  28]]
+                    ["#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/minicategory",                             xpos + 384, ypos + 8, 0, cattype * 28, 28,  28]]
       else
 
-        imagePos = [[sprintf("Data/Mods/BetterBattleUI/MoveBGs/moveBg%s", type),          xpos,       ypos,     0, 0,            512, 168],
-                    [sprintf("Data/Mods/BetterBattleUI/MoveBGs/moveBg%s", secondtype[0]), xpos,       ypos,     0, 168,          512, 168],
-                    [sprintf("Data/Mods/BetterBattleUI/MoveBGs/moveBg%s", secondtype[1]), xpos,       ypos,     0, 336,          512, 168],
+        imagePos = [[sprintf("#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/MoveBGs/moveBg%s", type),          xpos,       ypos,     0, 0,            512, 168],
+                    [sprintf("#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/MoveBGs/moveBg%s", secondtype[0]), xpos,       ypos,     0, 168,          512, 168],
+                    [sprintf("#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/MoveBGs/moveBg%s", secondtype[1]), xpos,       ypos,     0, 336,          512, 168],
                     [sprintf("Graphics/Icons/minitype%s", type),                          xpos + 282, ypos + 8, 0, 0,            28,  28],
                     [sprintf("Graphics/Icons/minitype%s", secondtype[0]),                 xpos + 310, ypos + 8, 0, 0,            28,  28],
                     [sprintf("Graphics/Icons/minitype%s", secondtype[1]),                 xpos + 338, ypos + 8, 0, 0,            28,  28],
-                    ["Data/Mods/BetterBattleUI/minicategory",                             xpos + 386, ypos + 8, 0, cattype * 28, 28,  28]]
+                    ["#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/minicategory",                             xpos + 386, ypos + 8, 0, cattype * 28, 28,  28]]
       end
 
       bbui_pbDrawMoveFlagIcons(battler, xpos, ypos, move, imagePos)
@@ -1883,7 +1883,7 @@ class PokeBattle_Scene
     flags.delete(:zmove) if flags.include?(:intercept)
     flags.each do |flag|
       break if icons > 8
-      path = sprintf("Data/Mods/BetterBattleUI/MoveFlags/%s", flag)
+      path = sprintf("#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/MoveFlags/%s", flag)
       next if !pbResolveBitmap(path)
       imagePos.push([path, flagX + (icons * 26), flagY, 0, 0, 26, 28])
       icons += 1

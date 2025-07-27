@@ -1,5 +1,5 @@
 begin
-  missing = ['0000.textures.rb'].select { |f| !File.exist?(File.join(File.dirname(__FILE__), f)) }
+  missing = ['0000.textures.rb'].select { |f| !File.exist?(File.join(__dir__, f)) }
   raise "Dependency #{missing[0]} is required by #{__FILE__}. Please install it." if missing.length == 1
   raise "Dependencies #{missing.join(", ")} are required by #{__FILE__}. Please install them." if missing.length > 1
 end
@@ -395,8 +395,8 @@ module MusicSignpostDisplay
     if !isDarkWindowskin(window.windowskin)
       for replacement in MusicSignpostDisplay::LIGHT_ICONS
         icon = "Light#{replacement}"
-        trackName.gsub!("<img=#{pbResolveBitmap("Data/Mods/MusicTypes/#{replacement}")}>",
-          "<img=#{pbResolveBitmap("Data/Mods/MusicTypes/#{icon}")}>")
+        trackName.gsub!("<img=#{pbResolveBitmap("#{__dir__[Dir.pwd.length+1..]}/MusicTypes/#{replacement}")}>",
+          "<img=#{pbResolveBitmap("#{__dir__[Dir.pwd.length+1..]}/MusicTypes/#{icon}")}>")
         if MusicSignpostDisplay::ANIM_ICONS.include?(replacement)
           animicons.delete(replacement)
         end
@@ -419,7 +419,7 @@ module MusicSignpostDisplay
     return nil if trackName.nil?
     for icon in MusicSignpostDisplay::ICONS
       if trackName.include?("[#{icon}]")
-        trackName.gsub!("[#{icon}]", "<img=#{pbResolveBitmap("Data/Mods/MusicTypes/#{icon}")}>")
+        trackName.gsub!("[#{icon}]", "<img=#{pbResolveBitmap("#{__dir__[Dir.pwd.length+1..]}/MusicTypes/#{icon}")}>")
         if MusicSignpostDisplay::ANIM_ICONS.include?(icon)
           animicons.push(icon) unless animicons.include?(icon)
         end
@@ -468,7 +468,7 @@ module MusicSignpostDisplay
     def animated_icons=(value)
       @animated_icons = {}
       for icon in value
-        @animated_icons["Data/Mods/MusicTypes/#{icon}"] = AnimatedBitmap.new("Data/Mods/MusicTypes/#{icon}Anim")
+        @animated_icons["#{__dir__[Dir.pwd.length+1..]}/MusicTypes/#{icon}"] = AnimatedBitmap.new("#{__dir__[Dir.pwd.length+1..]}/MusicTypes/#{icon}Anim")
       end
     end
 

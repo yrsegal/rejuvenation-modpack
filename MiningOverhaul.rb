@@ -242,7 +242,7 @@ class MiningGameScene
     addBackgroundPlane(@sprites,"bg","Mining/miningbg",@viewport)
     @sprites["itemlayer"]=BitmapSprite.new(Graphics.width,Graphics.height,@viewport)
     ##				MODDED					##
-	@itembitmap=AnimatedBitmap.new("Data/Mods/MiningItems")
+	@itembitmap=AnimatedBitmap.new("#{__dir__[Dir.pwd.length+1..]}/MiningItems")
 	## 				MODDED 					##
     @ironbitmap=AnimatedBitmap.new(_INTL("Graphics/Pictures/Mining/irons"))
     @items=[]

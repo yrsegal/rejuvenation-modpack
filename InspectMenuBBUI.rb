@@ -1,5 +1,5 @@
 begin
-  missing = ['BetterBattleUI.rb'].select { |f| !File.exist?(File.join(File.dirname(__FILE__), f)) }
+  missing = ['BetterBattleUI.rb'].select { |f| !File.exist?(File.join(__dir__, f)) }
   raise "Dependency #{missing[0]} is required by #{__FILE__}. Please install it." if missing.length == 1
   raise "Dependencies #{missing.join(", ")} are required by #{__FILE__}. Please install them." if missing.length > 1
 end
@@ -251,12 +251,12 @@ class PokeBattle_Scene
     movename = $cache.moves[battler.lastMoveUsed] ? $cache.moves[battler.lastMoveUsed].name : "---"
     movename = movename[0..12] + "..." if movename.length > 16
     imagePos = [
-      ["Data/Mods/BetterBattleUI/Inspect/bg", 0, 0, 0, 0, -1, -1],
-      ["Data/Mods/BetterBattleUI/Inspect/bg_data", 0, 0, 0, 0, -1, -1],
-      ["Data/Mods/BetterBattleUI/Inspect/level", xpos + 16, ypos + 106, 0, 0, -1, -1]
+      ["#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/Inspect/bg", 0, 0, 0, 0, -1, -1],
+      ["#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/Inspect/bg_data", 0, 0, 0, 0, -1, -1],
+      ["#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/Inspect/level", xpos + 16, ypos + 106, 0, 0, -1, -1]
     ]
     unless poke.form > 0 && $cache.pkmn[poke.species].formData.keys[poke.form - 1] == 'Amalgamation'
-      imagePos.push(["Data/Mods/BetterBattleUI/Inspect/gender", xpos + 148, ypos + 22, poke.gender * 22, 0, 22, 22])
+      imagePos.push(["#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/Inspect/gender", xpos + 148, ypos + 22, poke.gender * 22, 0, 22, 22])
     end
     textPos  = [
       [_INTL("{1}", name), iconX + 82, iconY - 20, 2, InspectMenuDisplay::BASE_DARK, InspectMenuDisplay::SHADOW_DARK],
@@ -274,7 +274,7 @@ class PokeBattle_Scene
     #---------------------------------------------------------------------------
     # Owner
     if @battle.pbGetOwner(battler.index)
-      imagePos.push(["Data/Mods/BetterBattleUI/Inspect/owner", xpos - 34, ypos + 6, 0, 20, 128, 20])
+      imagePos.push(["#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/Inspect/owner", xpos - 34, ypos + 6, 0, 20, 128, 20])
       textPos.push([@battle.pbGetOwner(battler.index).name, xpos + 32, ypos + 8, 2, InspectMenuDisplay::BASE_DARK, InspectMenuDisplay::SHADOW_DARK])
     end
     # Battler HP.
@@ -285,7 +285,7 @@ class PokeBattle_Scene
       hpzone = 0
       hpzone = 1 if battler.hp <= (battler.totalhp / 2).floor
       hpzone = 2 if battler.hp <= (battler.totalhp / 4).floor
-      imagePos.push(["Data/Mods/BetterBattleUI/Inspect/hp", 86, 86, 0, hpzone * 6, w, 6])
+      imagePos.push(["#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/Inspect/hp", 86, 86, 0, hpzone * 6, w, 6])
     end
     # Battler status.
     if battler.status
@@ -297,8 +297,8 @@ class PokeBattle_Scene
     # Battler info for player-owned Pokemon.
     if @battle.pbOwnedByPlayer?(battler.index)
       imagePos.push(
-        ["Data/Mods/BetterBattleUI/Inspect/owner", xpos + 36, iconY + 10, 0, 0, 128, 20],
-        ["Data/Mods/BetterBattleUI/Inspect/effects", panelX, 86, 0, 0, 218, 26]
+        ["#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/Inspect/owner", xpos + 36, iconY + 10, 0, 0, 128, 20],
+        ["#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/Inspect/effects", panelX, 86, 0, 0, 218, 26]
       )
       textPos.push(
         [_INTL("Item"), xpos + 272, ypos + 68, 2, InspectMenuDisplay::BASE_LIGHT, InspectMenuDisplay::SHADOW_LIGHT],
@@ -319,7 +319,7 @@ class PokeBattle_Scene
       ability = battler.ability
     end
 
-    imagePos.push(["Data/Mods/BetterBattleUI/Inspect/effects", panelX, 62, 0, 0, 218, 26])
+    imagePos.push(["#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/Inspect/effects", panelX, 62, 0, 0, 218, 26])
     textPos.push([_INTL("Abil."), xpos + 272, ypos + 44, 2, InspectMenuDisplay::BASE_LIGHT, InspectMenuDisplay::SHADOW_LIGHT],
                  [_INTL("{1}", ability ? getAbilityName(ability) : _INTL("No ability")), xpos + 376, ypos + 44, 2, InspectMenuDisplay::BASE_DARK, InspectMenuDisplay::SHADOW_DARK])
     #---------------------------------------------------------------------------
@@ -372,7 +372,7 @@ class PokeBattle_Scene
       if stage != 0
         arrow = (stage > 0) ? 0 : 18
         stage.abs.times do |t|
-          imagePos.push(["Data/Mods/BetterBattleUI/Inspect/stats", xpos + 110 + (t * 18), ypos + 136 + (i * 24), arrow, 0, 18, 18])
+          imagePos.push(["#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/Inspect/stats", xpos + 110 + (t * 18), ypos + 136 + (i * 24), arrow, 0, 18, 18])
         end
       end
     end
@@ -402,30 +402,30 @@ class PokeBattle_Scene
     end
     textPos = []
     imagePos = [
-      ["Data/Mods/BetterBattleUI/Inspect/effectdesc", xpos + 240, ypos + 256, 0, 0, -1, -1],
-      ["Data/Mods/BetterBattleUI/Inspect/slider_base", panelX + 222, ypos + 132, 0, 0, -1, -1]
+      ["#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/Inspect/effectdesc", xpos + 240, ypos + 256, 0, 0, -1, -1],
+      ["#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/Inspect/slider_base", panelX + 222, ypos + 132, 0, 0, -1, -1]
     ]
     #---------------------------------------------------------------------------
     # Draws the slider.
     #---------------------------------------------------------------------------
     if effects.length > 5
-      imagePos.push(["Data/Mods/BetterBattleUI/Inspect/slider", panelX + 222, ypos + 132, 0, 0, 18, 19]) if idxEffect > 3
-      imagePos.push(["Data/Mods/BetterBattleUI/Inspect/slider", panelX + 222, ypos + 233, 0, 19, 18, 19]) if idxEffect < idxLast - 1
+      imagePos.push(["#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/Inspect/slider", panelX + 222, ypos + 132, 0, 0, 18, 19]) if idxEffect > 3
+      imagePos.push(["#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/Inspect/slider", panelX + 222, ypos + 233, 0, 19, 18, 19]) if idxEffect < idxLast - 1
       sliderheight = 82
       boxheight = (sliderheight * 4 / idxLast).floor
       boxheight += [(sliderheight - boxheight) / 2, sliderheight / 4].min
       boxheight = [boxheight.floor, 18].max
       y = ypos + 152
       y += ((sliderheight - boxheight) * idxStart / (idxLast - 4)).floor
-      imagePos.push(["Data/Mods/BetterBattleUI/Inspect/slider", panelX + 222, y, 18, 0, 18, 4])
+      imagePos.push(["#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/Inspect/slider", panelX + 222, y, 18, 0, 18, 4])
       i = 0
       while i * 7 < boxheight - 2 - 7
         height = [boxheight - 2 - 7 - (i * 7), 7].min
         offset = y + 2 + (i * 7)
-        imagePos.push(["Data/Mods/BetterBattleUI/Inspect/slider", panelX + 222, offset, 18, 2, 18, height])
+        imagePos.push(["#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/Inspect/slider", panelX + 222, offset, 18, 2, 18, height])
         i += 1
       end
-      imagePos.push(["Data/Mods/BetterBattleUI/Inspect/slider", panelX + 222, y + boxheight - 6 - 7, 18, 9, 18, 12])
+      imagePos.push(["#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/Inspect/slider", panelX + 222, y + boxheight - 6 - 7, 18, 9, 18, 12])
     end
     #---------------------------------------------------------------------------
     # Draws each effect and the cursor.
@@ -433,10 +433,10 @@ class PokeBattle_Scene
     effects[idxStart..idxEnd].each_with_index do |effect, i|
       real_idx = effects.find_index(effect)
       if i == idxDisplay || idxEffect == real_idx
-        imagePos.push(["Data/Mods/BetterBattleUI/Inspect/effects", panelX, ypos + 132 + (i * 24), 0, 52, 218, 26])
+        imagePos.push(["#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/Inspect/effects", panelX, ypos + 132 + (i * 24), 0, 52, 218, 26])
         textPos.push([effect[0], xpos + 322, ypos + 138 + (i * 24), 2, InspectMenuDisplay::BASE_LIGHT, InspectMenuDisplay::SHADOW_LIGHT, true])
       else
-        imagePos.push(["Data/Mods/BetterBattleUI/Inspect/effects", panelX, ypos + 132 + (i * 24), 0, 26, 218, 26])
+        imagePos.push(["#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/Inspect/effects", panelX, ypos + 132 + (i * 24), 0, 26, 218, 26])
         textPos.push([effect[0], xpos + 322, ypos + 138 + (i * 24), 2, InspectMenuDisplay::BASE_DARK, InspectMenuDisplay::SHADOW_DARK])
       end
       textPos.push([effect[1], xpos + 426, ypos + 138 + (i * 24), 2, InspectMenuDisplay::BASE_LIGHT, InspectMenuDisplay::SHADOW_LIGHT])

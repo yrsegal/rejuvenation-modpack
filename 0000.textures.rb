@@ -1,5 +1,5 @@
 module TextureOverrides
-  MODBASE = 'Data/Mods/'
+  MODBASE = __dir__[Dir.pwd.length+1..] + '/'
   MOD = MODBASE + 'TextureOverrides/'
   SERVICE = MODBASE + 'ServiceIcons/'
   SKINS = MODBASE + 'Windowskins/'

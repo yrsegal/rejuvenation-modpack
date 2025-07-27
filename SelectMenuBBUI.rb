@@ -1,5 +1,5 @@
 begin
-  missing = ['BetterBattleUI.rb'].select { |f| !File.exist?(File.join(File.dirname(__FILE__), f)) }
+  missing = ['BetterBattleUI.rb'].select { |f| !File.exist?(File.join(__dir__, f)) }
   raise "Dependency #{missing[0]} is required by #{__FILE__}. Please install it." if missing.length == 1
   raise "Dependencies #{missing.join(", ")} are required by #{__FILE__}. Please install them." if missing.length > 1
 end
@@ -44,7 +44,7 @@ class PokeBattle_Scene
     @sprites["bbui_canvas"].bitmap.clear
     ypos = 68
     textPos = []
-    imagePos = [["Data/Mods/BetterBattleUI/Inspect/selectbg", 0, ypos, 0, 0, -1, -1]]
+    imagePos = [["#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/Inspect/selectbg", 0, ypos, 0, 0, -1, -1]]
     count = 1
     count = 2 if @battle.doublebattle
     oppTrainers = []
@@ -74,10 +74,10 @@ class PokeBattle_Scene
       nameX = iconX + 82
       if idxPoke == trueidx
         base, shadow = SelectMenuBBUI::BASE_LIGHT, SelectMenuBBUI::SHADOW_LIGHT
-        imagePos.push(["Data/Mods/BetterBattleUI/Inspect/cursor", bgX, iconY - 28, 0, 52, 166, 52])
+        imagePos.push(["#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/Inspect/cursor", bgX, iconY - 28, 0, 52, 166, 52])
       else
         base, shadow = SelectMenuBBUI::BASE_DARK, SelectMenuBBUI::SHADOW_DARK
-        imagePos.push(["Data/Mods/BetterBattleUI/Inspect/cursor", bgX, iconY - 28, 0, 0, 166, 52])
+        imagePos.push(["#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/Inspect/cursor", bgX, iconY - 28, 0, 0, 166, 52])
       end
       @sprites["bbui_info_icon#{trueidx}"].x = iconX - 28
       @sprites["bbui_info_icon#{trueidx}"].y = iconY - 40
@@ -94,7 +94,7 @@ class PokeBattle_Scene
         end
         if !b.isFainted?
           unless b.form > 0 && $cache.pkmn[b.species].formData.keys[b.form - 1] == 'Amalgamation'
-            imagePos.push(["Data/Mods/BetterBattleUI/Inspect/gender", bgX + 148, iconY - 34, b.gender * 22, 0, 22, 22])
+            imagePos.push(["#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/Inspect/gender", bgX + 148, iconY - 34, b.gender * 22, 0, 22, 22])
           end
           name = b.name
           if b.effects[:Illusion]
@@ -107,7 +107,7 @@ class PokeBattle_Scene
           textPos.push([_INTL("{1}", name), nameX, iconY - 16, 2, base, shadow])
           
           if owner
-            imagePos.push(["Data/Mods/BetterBattleUI/Inspect/owner", bgX + 36, iconY + 12, 0, 0, 128, 20])
+            imagePos.push(["#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/Inspect/owner", bgX + 36, iconY + 12, 0, 0, 128, 20])
             textPos.push([owner.name, nameX - 10, iconY + 14, 2, SelectMenuBBUI::BASE_LIGHT, SelectMenuBBUI::SHADOW_LIGHT])
           end
         end
@@ -140,14 +140,14 @@ class PokeBattle_Scene
             else                        ballX = ballXMiddle
             end
           end
-          imagePos.push(["Data/Mods/BetterBattleUI/Inspect/owner", ballX - 16, ballY - ballOffset, 0, 0, 128, 20])
+          imagePos.push(["#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/Inspect/owner", ballX - 16, ballY - ballOffset, 0, 0, 128, 20])
           PokeBattle_Battle::MAXPARTYSIZE.times do |slot|
             idx = 0
             if !party[slot]                then idx = 3 # Empty
             elsif party[slot].hp <= 0      then idx = 2 # Fainted
             elsif !party[slot].status.nil? then idx = 1 # Status
             end
-            imagePos.push(["Data/Mods/BetterBattleUI/Inspect/party", ballX + (slot * 16), ballY, idx * 15, 0, 15, 15])
+            imagePos.push(["#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/Inspect/party", ballX + (slot * 16), ballY, idx * 15, 0, 15, 15])
           end
         end
       end

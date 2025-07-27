@@ -21,7 +21,7 @@ $BBUI_FIXED_DAMAGE_FIELD = {
   0x118 => :DEEPEARTH # Gravity
 }
 
-TextureOverrides.registerTextureOverride(TextureOverrides::BATTLEICON + "battleFightButtonsFighting", "Data/Mods/BetterBattleUI/FightingButton") if defined?(TextureOverrides)
+TextureOverrides.registerTextureOverride(TextureOverrides::BATTLEICON + "battleFightButtonsFighting", "#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/FightingButton") if defined?(TextureOverrides)
 
 module BBUIConsts
   X_PAD = 50
@@ -123,7 +123,7 @@ end
 
 def betterBattleUI_statBoosts_ensureGraphicsLoaded
   if !$betterBattleUI_statBoosts_data[:background] || $betterBattleUI_statBoosts_data[:background].disposed?
-    $betterBattleUI_statBoosts_data[:background]=AnimatedBitmap.new('Data/Mods/BetterBattleUI/StatGrid.png')
+    $betterBattleUI_statBoosts_data[:background]=AnimatedBitmap.new("#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/StatGrid.png")
   end
   $betterBattleUI_statBoosts_data[:stages]={} if !$betterBattleUI_statBoosts_data[:stages]
   stagesToBeLoaded=[]
@@ -133,7 +133,7 @@ def betterBattleUI_statBoosts_ensureGraphicsLoaded
     stagesToBeLoaded.push(i)
   end
   return nil if stagesToBeLoaded.length <= 0
-  rawBmp=AnimatedBitmap.new('Data/Mods/BetterBattleUI/StatStages.png')
+  rawBmp=AnimatedBitmap.new("#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/StatStages.png")
   for i in stagesToBeLoaded
     stage="#{i}"
     if i == 0
@@ -331,7 +331,7 @@ class BetterBattleUI_PokeballThrowButton < BitmapSprite
     super(44,68,viewport)
     self.x=0
     self.y=118
-    @buttonbitmap=AnimatedBitmap.new("Data/Mods/BetterBattleUI/ThrowBall")
+    @buttonbitmap=AnimatedBitmap.new("#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/ThrowBall")
     @pokeball = nil
     @pokeballbitmap=nil
     @cancatch = false
@@ -1227,18 +1227,18 @@ class FightMenuButtons < BitmapSprite
 
   alias :betterBattleUI_old_initialize :initialize
   def initialize(*args,**kwargs)
-    @betterBattleUI_fieldnullmove=AnimatedBitmap.new(_INTL("Data/Mods/BetterBattleUI/FieldNulled"))
+    @betterBattleUI_fieldnullmove=AnimatedBitmap.new(_INTL("#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/FieldNulled"))
 
-    @betterBattleUI_movenoeffect_left=AnimatedBitmap.new(_INTL("Data/Mods/BetterBattleUI/NoEffectLeft"))
-    @betterBattleUI_movenoeffect_right=AnimatedBitmap.new(_INTL("Data/Mods/BetterBattleUI/NoEffectRight"))
-    @betterBattleUI_movedoubleresisted_left=AnimatedBitmap.new(_INTL("Data/Mods/BetterBattleUI/ResistedDoubleLeft"))
-    @betterBattleUI_movedoubleresisted_right=AnimatedBitmap.new(_INTL("Data/Mods/BetterBattleUI/ResistedDoubleRight"))
-    @betterBattleUI_moveresisted_left=AnimatedBitmap.new(_INTL("Data/Mods/BetterBattleUI/ResistedLeft"))
-    @betterBattleUI_moveresisted_right=AnimatedBitmap.new(_INTL("Data/Mods/BetterBattleUI/ResistedRight"))
-    @betterBattleUI_movesupereffective_left=AnimatedBitmap.new(_INTL("Data/Mods/BetterBattleUI/SuperEffectiveLeft"))
-    @betterBattleUI_movesupereffective_right=AnimatedBitmap.new(_INTL("Data/Mods/BetterBattleUI/SuperEffectiveRight"))
-    @betterBattleUI_movedoublesuper_left=AnimatedBitmap.new(_INTL("Data/Mods/BetterBattleUI/SuperEffectiveDoubleLeft"))
-    @betterBattleUI_movedoublesuper_right=AnimatedBitmap.new(_INTL("Data/Mods/BetterBattleUI/SuperEffectiveDoubleRight"))
+    @betterBattleUI_movenoeffect_left=AnimatedBitmap.new(_INTL("#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/NoEffectLeft"))
+    @betterBattleUI_movenoeffect_right=AnimatedBitmap.new(_INTL("#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/NoEffectRight"))
+    @betterBattleUI_movedoubleresisted_left=AnimatedBitmap.new(_INTL("#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/ResistedDoubleLeft"))
+    @betterBattleUI_movedoubleresisted_right=AnimatedBitmap.new(_INTL("#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/ResistedDoubleRight"))
+    @betterBattleUI_moveresisted_left=AnimatedBitmap.new(_INTL("#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/ResistedLeft"))
+    @betterBattleUI_moveresisted_right=AnimatedBitmap.new(_INTL("#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/ResistedRight"))
+    @betterBattleUI_movesupereffective_left=AnimatedBitmap.new(_INTL("#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/SuperEffectiveLeft"))
+    @betterBattleUI_movesupereffective_right=AnimatedBitmap.new(_INTL("#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/SuperEffectiveRight"))
+    @betterBattleUI_movedoublesuper_left=AnimatedBitmap.new(_INTL("#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/SuperEffectiveDoubleLeft"))
+    @betterBattleUI_movedoublesuper_right=AnimatedBitmap.new(_INTL("#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/SuperEffectiveDoubleRight"))
 
     return betterBattleUI_old_initialize(*args, **kwargs)
   end

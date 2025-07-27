@@ -1,5 +1,5 @@
 begin
-  missing = ['0000.textures.rb'].select { |f| !File.exist?(File.join(File.dirname(__FILE__), f)) }
+  missing = ['0000.textures.rb'].select { |f| !File.exist?(File.join(__dir__, f)) }
   raise "Dependency #{missing[0]} is required by #{__FILE__}. Please install it." if missing.length == 1
   raise "Dependencies #{missing.join(", ")} are required by #{__FILE__}. Please install them." if missing.length > 1
 end
@@ -337,11 +337,11 @@ class PokemonTypeReel < BitmapSprite
     end
     @reel.push(*$cache.types.keys)
     @icons=@reel.map { |type|
-      next AnimatedBitmap.new("Data/Mods/BoxExtensions/TypeBlank") unless type
+      next AnimatedBitmap.new("#{__dir__[Dir.pwd.length+1..]}/BoxExtensions/TypeBlank") unless type
 
       next AnimatedBitmap.new(sprintf("Graphics/Icons/type%s",type))
     }
-    @cursor=AnimatedBitmap.new("Data/Mods/BoxExtensions/TypeCursor")
+    @cursor=AnimatedBitmap.new("#{__dir__[Dir.pwd.length+1..]}/BoxExtensions/TypeCursor")
     @pos = 0
     @frame = 0
     @selected = false
