@@ -56,6 +56,8 @@ Fix/hotfix mods:
   Fixes some logic errors in a cutscene that leaves key items which are intended to be deleted.
 - ExcludeAnimationsFromCallable.rb  
   Excludes all moves that are purely for animation purposes from being called by Metronome.
+- FixAxelMoment.rb (depends on 0000.injection.rb)  
+  Fixes Axel missing a sprite in a story-critical cutscene.
 - FixBasculegionForms.rb  
   Fixes Basculegion's forms on evolution. (Currently, female basculegion does not recieve the proper icon or stats.)
 - FixBlueMIC.rb (depends on 0000.injection.rb)  
