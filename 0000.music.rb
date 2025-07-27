@@ -2,7 +2,6 @@ module MusicOverrides
   MUSIC_OVERRIDES = {
   }
 
-
   def self.registerMusicOverride(from, to)
     MusicOverrides::MUSIC_OVERRIDES[from] = to
   end

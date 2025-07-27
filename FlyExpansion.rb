@@ -115,6 +115,7 @@ Events.onMapChange+=proc {|sender,e|
   end
 }
 
+FlyExpansion.addPoint(291, 50, 15, "PokeStar Studios", "", [21, 32])
 FlyExpansion.addPoint(209, 61, 53, "North Dream District", "Somniam Mall", [35, 23])
 FlyExpansion.addPoint(209, 30, 37, "North Dream District", "Viennas Hill", [31, 20])
 FlyExpansion.addPoint(555, 52, 20, "GDC Tournament Stadium", "", [12, 18])
