@@ -22,13 +22,13 @@ Libraries:
   Adds a clothing-swapping service.
 - FriendshipPCService.rb (depends on 0001.pcservices.rb)  
   Adds a Spa service, which lets you instantly max out or check a pokemon's friendship. Unlocked by entering Teila Resort.
-- GenderPCService.rb (depends on 0000.formattedchoices.rb, 00001.pcservices.rb,  
+- GenderPCService.rb (depends on 0000.formattedchoices.rb, 00001.pcservices.rb)  
   Adds a Genderswapping service, for setting Pokemon (and player) gender. Unlocked through Tale of Two Hearts.
 - HealPCService.rb (depends on 0001.pcservices.rb)  
   Adds a Field Healing service.
 - HiddenPowerPCService.rb (depends on 0001.pcservices.rb)  
   Adds a Hidden Power Changer/checker service. Unlocked by speaking to the relevant NPC in Kristiline.
-- MoveRelearnerPCService.rb (depends on 0001.pcservices.rb)  
+- MoveRelearnerPCService.rb (depends on 0000.injection.rb, 0001.pcservices.rb)  
   Adds a service which allows relearning, teaching egg moves, and move deletion (always free). Free after 10 Heart Scales.  
   Also fixes missing Egg Move pools and allows evolutions to learn preevo moves.
 - PokeballTransferPCService.rb (depends on 0001.pcservices.rb)  
@@ -139,7 +139,7 @@ Other mods:
   Adds an Aevian Larvesta egg to the Rose Theatre post Badge 13.
 - AshGreninja.rb (depends on 0000.textures.rb)  
   Adds Battle Bond and Ash-Greninja.
-  - AshGreninjaFight.rb (depends on AshGreninja.rb)  
+  - AshGreninjaFight.rb (depends on AshGreninja.rb, 0000.injection.rb)  
     Adds an Ash boss fight in Neo Gearen which rewards you with Battle Bond Greninja.
 - BoostPickupOdds.rb  
   Makes Pickup more likely (33%) to trigger after battle.

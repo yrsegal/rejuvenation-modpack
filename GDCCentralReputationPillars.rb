@@ -1,3 +1,9 @@
+begin
+  missing = ['0000.injection.rb'].select { |f| !File.exist?("Data/Mods/#{f}") }
+  raise "Dependency #{missing[0]} is required by #{__FILE__}. Please install it." if missing.length == 1
+  raise "Dependencies #{missing.join(", ")} are required by #{__FILE__}. Please install them." if missing.length > 1
+end
+
 Variables[:GDCReputation] = 745
 
 $GDC_REPUTATION_PILLARS = true

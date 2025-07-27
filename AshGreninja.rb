@@ -1,3 +1,8 @@
+begin
+  missing = ['0000.textures.rb'].select { |f| !File.exist?("Data/Mods/#{f}") }
+  raise "Dependency #{missing[0]} is required by #{__FILE__}. Please install it." if missing.length == 1
+  raise "Dependencies #{missing.join(", ")} are required by #{__FILE__}. Please install them." if missing.length > 1
+end
 $cache.abil[:BATTLEBOND] = AbilityData.new(:BATTLEBOND, {
   name: "Battle Bond",
   desc: "Becomes powerful after knocking out a foe...",
