@@ -48,6 +48,8 @@ Libraries:
   Adds a Celebi service for advancing to different times if Unreal Time is on.
 
 Fix/hotfix mods:
+- AddMissingEncounterAreas.rb (depends on 0000.injection.rb)  
+  Add the missing encounter types to the Scholar's District and Route Z.
 - AnaFixes.rb (depends on 0000.injection.rb, 0000.textures.rb)  
   Fixes some issues with the character Ana's sprites.
 - BagReclassification.rb  
@@ -88,6 +90,8 @@ Fix/hotfix mods:
   Makes Route 4's reset trigger work in all areas as intended.
 - LabyrinthPuzzleFix.rb  
   A typo in a puzzle causes it to not select the proper type of pokemon.
+- LivelierAmbipom.rb (depends on 0000.injection.rb)  
+  The Ambipom on Route 2 look around like the Aipom do.
 - QuicksilverImplementation.rb  
   Implements the move Quicksilver Spear's effect to do what it says it does.
 

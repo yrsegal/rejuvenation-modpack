@@ -236,12 +236,19 @@ module InjectionHelper
     false => 1
   }
 
-  TRIGGER_TYPES = {
+  EVENT_TRIGGER_TYPES = {
     Interact: 0,
     PlayerTouch: 1,
     EventTouch: 2,
     Autorun: 3,
     RunInParallel: 4
+  }
+
+  EVENT_MOVE_TYPES = {
+    Fixed: 0,
+    Random: 1,
+    Approach: 2,
+    Custom: 3
   }
 
   BLOCK_TYPES = {
@@ -280,7 +287,13 @@ module InjectionHelper
       return self
     end
 
+    def setMoveType(movetype)
+      self.move_type = InjectionHelper::EVENT_MOVE_TYPES[movetype] || movetype
+      return self
+    end
+
     def setMoveRoute(*params, repeat: false, skippable: false, wait: false)
+      setMoveType(:Custom)
       self.move_route = InjectionHelper.parseMoveRoute(*params, repeat: repeat)
       self.move_route.skippable = skippable
       self.move_route.wait = wait
@@ -311,7 +324,7 @@ module InjectionHelper
     end
 
     def code(triggerType, *params)
-      self.trigger = InjectionHelper::TRIGGER_TYPES[triggerType] || triggerType
+      self.trigger = InjectionHelper::EVENT_TRIGGER_TYPES[triggerType] || triggerType
       self.list = InjectionHelper.parseEventCommands(*params, :Done)
       return self
     end
@@ -413,6 +426,33 @@ module InjectionHelper
 
     return newEvent
   end
+
+  def self.fillArea(map, x, y, fill, mapping={})
+    fill.each_with_index { |row, rowY|
+      row = row.chars if row.is_a?(String)
+      row.each_with_index { |value, colX|
+        value = mapping[value] if mapping[value]
+        if value && value.is_a?(Array) && value.length == 3
+          setTile(map, x + colX, y + rowY, *value)
+        end
+      }
+    }
+  end    
+
+  def self.fillAreaWithTile(map, x, y, width, height, layer0, layer1, layer2)
+    height.times do |rowY|
+      width.times do |colX|
+        setTile(map, x + colX, y + rowY, layer0, layer1, layer2)
+      end
+    end
+  end
+
+  def self.setTile(map, x, y, layer0, layer1, layer2)
+    map.data[x, y, 0] = layer0 if layer0
+    map.data[x, y, 1] = layer1 if layer1
+    map.data[x, y , 2] = layer2 if layer2
+  end
+
 
   def self.getPatchComment(insns, create)
     insns.each { |insn|
