@@ -70,9 +70,9 @@ module FlyExpansion
       $cache.mapdata[map].HealingSpot = [map, x, y]
       loc = [mappos[1], mappos[2]]
       data = {
-        :name => name,
-        :poi => poi,
-        :flyData => [map,x,y]
+        name: name,
+        poi: poi,
+        flyData: [map,x,y]
       }
       $cache.town_map[loc] = TownMapData.new(loc, data, mappos[0])
     end

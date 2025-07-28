@@ -307,13 +307,13 @@ class PokeBattle_Move_F25 < PokeBattle_Move
 end
 
 TextureOverrides.registerTrainerClass(:ASHKETCHUM, {
-  :title => "World Champion",
-  :trainerID => 63932,
-  :skill => 100,
-  :moneymult => 120,
-  :battleBGM => "Battle - Soul",
-  :winBGM => "Gym Battle Victory",
-  :replacements => {
+  title: "World Champion",
+  trainerID: 63932,
+  skill: 100,
+  moneymult: 120,
+  battleBGM: "Battle - Soul",
+  winBGM: "Gym Battle Victory",
+  replacements: {
     TextureOverrides::CHARS + 'trainer{ID}' => TextureOverrides::MODBASE + 'AshGreninja/AshBattler',
     TextureOverrides::VS + 'vsTrainer{ID}' => TextureOverrides::MODBASE + 'AshGreninja/AshVS',
     TextureOverrides::VS + 'vsBar{ID}' => TextureOverrides::VS + "vsBar#{$cache.trainertypes[:SPIRITJENNER].checkFlag?(:ID)}"
@@ -838,82 +838,82 @@ InjectionHelper.defineMapPatch(44) { |map| # Neo East Gearen (east)
 $cache.trainers[:ASHKETCHUM] = {
   "Ash" => [[0, 
     [{
-      :species => :PIKACHU,
-      :form => 3,
-      :level => 85,
-      :moves => [:THUNDERBOLT,:SURF,:GRASSKNOT,:FAKEOUT],
-      :item => :PIKASHUNIUMZ,
-      :ability => :STATIC,
-      :gender => "M",
-      :nature => :MODEST,
-      :happiness => 255,
-      :ev => [4,0,0,252,0,252],
-      :iv => 31,
+      species: :PIKACHU,
+      form: 3,
+      level: 85,
+      moves: [:THUNDERBOLT,:SURF,:GRASSKNOT,:FAKEOUT],
+      item: :PIKASHUNIUMZ,
+      ability: :STATIC,
+      gender: "M",
+      nature: :MODEST,
+      happiness: 255,
+      ev: [4,0,0,252,0,252],
+      iv: 31,
     },
     {
-      :species => :DRAGONITE,
-      :level => 85,
-      :moves => [:DRAGONDANCE,:EXTREMESPEED,:EARTHQUAKE,:ROOST],
-      :item => :WEAKNESSPOLICY,
-      :ability => :MULTISCALE,
-      :gender => "F",
-      :nature => :ADAMANT,
-      :happiness => 255,
-      :ev => [0,252,4,0,0,252],
-      :iv => 31,
+      species: :DRAGONITE,
+      level: 85,
+      moves: [:DRAGONDANCE,:EXTREMESPEED,:EARTHQUAKE,:ROOST],
+      item: :WEAKNESSPOLICY,
+      ability: :MULTISCALE,
+      gender: "F",
+      nature: :ADAMANT,
+      happiness: 255,
+      ev: [0,252,4,0,0,252],
+      iv: 31,
     },
     {
-      :species => :SIRFETCHD,
-      :level => 85,
-      :moves => [:METEORASSAULT,:KNOCKOFF,:FIRSTIMPRESSION,:SWORDSDANCE],
-      :item => :STICK,
-      :ability => :STEADFAST,
-      :gender => "M",
-      :nature => :ADAMANT,
-      :happiness => 255,
-      :ev => [0,252,0,0,4,252],
-      :iv => 31,
+      species: :SIRFETCHD,
+      level: 85,
+      moves: [:METEORASSAULT,:KNOCKOFF,:FIRSTIMPRESSION,:SWORDSDANCE],
+      item: :STICK,
+      ability: :STEADFAST,
+      gender: "M",
+      nature: :ADAMANT,
+      happiness: 255,
+      ev: [0,252,0,0,4,252],
+      iv: 31,
     },
     {
-      :species => :GENGAR,
-      :level => 85,
-      :moves => [:POLTERGEIST,:DRAINPUNCH,:ICEPUNCH,:GUNKSHOT], # No, it can't learn Gunk Shot. Ash is built different.
-      :item => :GENGARITEG, # Giga gengar is physical for. some reason.
-      :ability => :CURSEDBODY,
-      :gender => "M",
-      :nature => :IMPISH,
-      :happiness => 255,
-      :ev => [0,252,130,0,126,0],
-      :iv => 31,
+      species: :GENGAR,
+      level: 85,
+      moves: [:POLTERGEIST,:DRAINPUNCH,:ICEPUNCH,:GUNKSHOT], # No, it can't learn Gunk Shot. Ash is built different.
+      item: :GENGARITEG, # Giga gengar is physical for. some reason.
+      ability: :CURSEDBODY,
+      gender: "M",
+      nature: :IMPISH,
+      happiness: 255,
+      ev: [0,252,130,0,126,0],
+      iv: 31,
     },
     {
-      :species => :DRACOVISH,
-      :level => 85,
-      :moves => [:FISHIOUSREND,:OUTRAGE,:CRUNCH,:PSYCHICFANGS],
-      :item => :CHOICESCARF,
-      :ability => :STRONGJAW,
-      :nature => :JOLLY,
-      :ev => [0,252,0,0,4,252],
-      :iv => 31,
+      species: :DRACOVISH,
+      level: 85,
+      moves: [:FISHIOUSREND,:OUTRAGE,:CRUNCH,:PSYCHICFANGS],
+      item: :CHOICESCARF,
+      ability: :STRONGJAW,
+      nature: :JOLLY,
+      ev: [0,252,0,0,4,252],
+      iv: 31,
     },
     {
-      :species => :LUCARIO,
-      :level => 85,
-      :moves => [:EARTHQUAKE,:METEORMASH,:CLOSECOMBAT,:BULLETPUNCH],
-      :ability => :JUSTIFIED,
-      :item => :LUCARIONITE,
-      :gender => "M",
-      :happiness => 255,
-      :nature => :ADAMANT,
-      :ev => [0,252,0,0,4,252],
-      :iv => 31,
+      species: :LUCARIO,
+      level: 85,
+      moves: [:EARTHQUAKE,:METEORMASH,:CLOSECOMBAT,:BULLETPUNCH],
+      ability: :JUSTIFIED,
+      item: :LUCARIONITE,
+      gender: "M",
+      happiness: 255,
+      nature: :ADAMANT,
+      ev: [0,252,0,0,4,252],
+      iv: 31,
     }],
     [], # items
     "Pushing us to our limits? That's exactly what we wanted to see!", # ace quote
     "Amazing.", # defeat quote
     { # trainer effect
-      :effectmode => :AshPlotArmor,
-      :buffactivation => :Always
+      effectmode: :AshPlotArmor,
+      buffactivation: :Always
     }]] 
 }
 
@@ -948,19 +948,19 @@ $cache.moves[:ASHTHUNDERBOLT] = MoveData.new(:ASHTHUNDERBOLT, {
 $cache.items[:PIKASHUNIUMZ] = ItemData.new(:PIKASHUNIUMZ, {
   name: "Pikashunium-Z",
   desc: "It converts Z-Power into crystals that upgrade a Thunderbolt by Pikachu in a cap to an exclusive Z-Move.",
-  :price => 0,
-  :crystal => true,
-  :zcrystal => true,
-  :noUseInBattle => true,
+  price: 0,
+  crystal: true,
+  zcrystal: true,
+  noUseInBattle: true,
 })
 ItemHandlers::UseOnPokemon.copy(:NORMALIUMZ, :PIKASHUNIUMZ)
 
 PBStuff::CRYSTALTOZMOVE[:PIKASHUNIUMZ] = :ASHTHUNDERBOLT
 
 $cache.pkmn[:PIKACHU].formData["World Cap"] = {
-  :BaseStats => [55, 80, 50, 75, 60, 120],
-  :toobig => true,
-  :evolutions => [],
+  BaseStats: [55, 80, 50, 75, 60, 120],
+  toobig: true,
+  evolutions: [],
 }
 
 $cache.pkmn[:PIKACHU].forms[3] = "World Cap"

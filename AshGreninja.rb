@@ -72,13 +72,13 @@ end
 
 $cache.pkmn[:GRENINJA].formData["Battle Bond"] = {
   Abilities: [:BATTLEBOND],
-  :ExcludeDex => true,
+  ExcludeDex: true,
 }
 
 $cache.pkmn[:GRENINJA].formData["Ash-Greninja"] = {
   Abilities: [:BATTLEBOND],
-  :BaseStats => [72, 145, 67, 153, 71, 132],
-  :toobig => true,
+  BaseStats: [72, 145, 67, 153, 71, 132],
+  toobig: true,
 }
 
 $cache.pkmn[:GRENINJA].forms[1] = "Battle Bond"

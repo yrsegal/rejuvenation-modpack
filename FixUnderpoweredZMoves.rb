@@ -52,7 +52,7 @@ end
 # /fake moves
 
 $UNDERPOWERZ_TRUE_BASETYPES = pbHashForwardizer({
-  :NORMAL => [
+  NORMAL: [
     # Weather Ball
     :WEATHERBALLSUN, :WEATHERBALLRAIN, :WEATHERBALLHAIL, :WEATHERBALLSAND,
     # Techno Blast
@@ -71,7 +71,7 @@ $UNDERPOWERZ_TRUE_BASETYPES = pbHashForwardizer({
     :HIDDENPOWERNOR, :HIDDENPOWERFIR, :HIDDENPOWERFIG, :HIDDENPOWERWAT, :HIDDENPOWERFLY, :HIDDENPOWERGRA,
     :HIDDENPOWERPOI, :HIDDENPOWERELE, :HIDDENPOWERGRO, :HIDDENPOWERPSY, :HIDDENPOWERROC, :HIDDENPOWERICE,
     :HIDDENPOWERBUG, :HIDDENPOWERDRA, :HIDDENPOWERGHO, :HIDDENPOWERDAR, :HIDDENPOWERSTE, :HIDDENPOWERFAI],
-  :ELECTRIC => [
+  ELECTRIC: [
     # Aura Wheel
     :AURAWHEELMINUS]
 })
@@ -121,7 +121,6 @@ class PokeBattle_Move
     when :INFERNALPARADE then return 160 # Same as Hex
     # Rejuv exclusive moves
     when :FEVERPITCH     then return 140 # Same as Magnitude
-    # Not really sure HOW you'd Z-probopog but...
     end
 
     if oldmove.function == 0x070 # OHKO

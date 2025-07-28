@@ -264,7 +264,7 @@ move_tweak(:CUT,
   accuracy: 100,
   type: :STEEL,
   flags: {
-    :highcrit => true,
+    highcrit: true,
   },
   tmdesc: "The target is cut with a scythe or a claw. Critical hits land more easily. It can also cut down thin trees.",
   desc: "The target is cut with a scythe or a claw. Critical hits land more easily.")
@@ -279,8 +279,8 @@ move_tweak(:FLASH,
   priority: 0,
   function: TweakMoveFunctions::LOWER_ACCURACY,
   flags: {
-    :kingrock => true,
-    :effect => 100,
+    kingrock: true,
+    effect: 100,
   },
   copyFlags: false,
   tmdesc: "The user emits a powerful blast of light that also cuts accuracy. It can also light up dark caves.",
@@ -289,8 +289,8 @@ move_tweak(:FLASH,
 move_tweak(:ROCKSMASH,
   power: 55,
   flags: {
-    :punchmove => true,
-    :effect => 100,
+    punchmove: true,
+    effect: 100,
   },
   tmdesc: "The user attacks with a punch that lowers Defense. It can also break rocks.",
   desc: "The user attacks with a punch that lowers Defense.")
@@ -300,8 +300,8 @@ move_tweak(:ROCKCLIMB,
   accuracy: 100,
   type: :ROCK,
   flags: {
-    :effect => 10,
-    :contact => true,
+    effect: 10,
+    contact: true,
   },
   function: TweakMoveFunctions::CONFUSE,
   tmdesc: "A charging attack that may also leave the foe confused. It can also scale rocky walls.",
@@ -330,7 +330,7 @@ move_tweak(:FLY,
 
 move_tweak(:QUICKSILVERSPEAR,
   flags: {
-    :sharpmove => true,
+    sharpmove: true,
   })
 
 # This is... actually the function the move is SUPPOSED to have.
