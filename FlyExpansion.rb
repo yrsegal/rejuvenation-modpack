@@ -128,4 +128,6 @@ FlyExpansion.changeFlyPoint(311, 38, 17) # Axis High University
 FlyExpansion.changeFlyPoint(353, 34, 43) # Oblitus Town - more complex dispatch handled above
 FlyExpansion.changeFlyPoint(321, 41, 36) # Goldenwood Forest - more complex dispatch handled above
 FlyExpansion.changeFlyPoint(201, 49, 86) # Helojak
+FlyExpansion.changeFlyPoint(515, 52, 13) # Zorrialyn Coast
+FlyExpansion.changeSubFlyPoint(76, 22, 39, [5, 15]) # Strange House
 FlyExpansion.changeSubFlyPoint(373, 65, 27, [7, 12]) # Voidal Chasm entrance
