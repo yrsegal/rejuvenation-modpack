@@ -582,8 +582,8 @@ class PokeBattle_Scene
           when :BISHOP then name, desc = _INTL("Piece: Bishop"), _INTL("The Pokémon specializes in doing damage.")
           when :ROOK then name, desc = _INTL("Piece: Rook"), _INTL("The Pokémon specializes in surviving damage.")
           when :QUEEN then name, desc = _INTL("Piece: Queen"), _INTL("The Pokémon's damage is increased.")
-          display_effects.push([name, "--", desc])
         end
+        display_effects.push([name, "--", desc])
       end
     end
 

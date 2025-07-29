@@ -1840,7 +1840,7 @@ class PokeBattle_Scene
       ztext = []
       zlinecount = linecount = normtext[-1][2] / 32 + 1
 
-      if move.zmove && move.category == :status
+      if move.zmove && move.category == :status && !$cache.moves[move.move].checkFlag?(:zmove)
         ztext=getLineBrokenChunks(bm,MoveHelpDisplay.getZText(battler, move.move),Graphics.width - 12,nil,true)
         linecount += ztext[-1][2] / 32 + 1
       end
