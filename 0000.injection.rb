@@ -388,9 +388,11 @@ module InjectionHelper
   end
 
   @@eventsToLoad = []
+  @@anyMapChange = false
 
   def self.clearEventBuilders
     @@eventsToLoad = []
+    @@anyMapChange = false
   end
 
   def self.applyEventBuilders
@@ -398,7 +400,7 @@ module InjectionHelper
       configure.call(event)
       event.push(RPG::Event::Page.new) if event.pages.empty? # No pages is a bad thing!
     end
-    return !@@eventsToLoad.empty?
+    return !@@eventsToLoad.empty? || @@anyMapChange
   end
 
   def self.createSinglePageEvent(map, x, y, name, &block)
@@ -412,7 +414,7 @@ module InjectionHelper
     newEvent.pages = [] if block_given?
     newEvent.extend(EventUtilMixin)
     newEvent.name = name
-    newEvent.id = map.events.keys.max + 1
+    newEvent.id = (map.events.keys.max || 0) + 1
     map.events[newEvent.id] = newEvent
 
     if map.is_a?(RPG::Map)
@@ -448,6 +450,7 @@ module InjectionHelper
   end
 
   def self.setTile(map, x, y, layer0, layer1, layer2)
+    @@anyMapChange = true
     map.data[x, y, 0] = layer0 if layer0
     map.data[x, y, 1] = layer1 if layer1
     map.data[x, y , 2] = layer2 if layer2
