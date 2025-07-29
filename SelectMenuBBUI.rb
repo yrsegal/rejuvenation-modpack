@@ -104,6 +104,7 @@ class PokeBattle_Scene
               name = b.pokemon.name
             end
           end
+          name = name[0..12] + "..." if name.length > 16
           textPos.push([_INTL("{1}", name), nameX, iconY - 16, 2, base, shadow])
           
           if owner
