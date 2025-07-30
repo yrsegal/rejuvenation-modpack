@@ -21,8 +21,8 @@ module MusicOverrides
     MusicOverrides::MUSIC_OVERRIDES.each_pair {|k, v| MusicOverrides::COMPILED_MUSIC_OVERRIDES[k.downcase] = v }
   end
 
-  def self.mapPath(path)
-    path = path.downcase
+  def self.mapPath(origPath, pathbase=nil)
+    path = origPath.downcase
 
     ext = ''
     noext = path.gsub(/(\.(?:mp3|wav|wma|midi?|ogg))$/,"")
@@ -30,9 +30,14 @@ module MusicOverrides
       ext = $1
     end
 
-    noext = MusicOverrides::COMPILED_MUSIC_OVERRIDES[noext] if MusicOverrides::COMPILED_MUSIC_OVERRIDES[noext]
+    fullpath = noext
+    fullpath = "audio/#{pathbase}/" + noext if pathbase && !fullpath.start_with?("audio/#{pathbase}/")
 
-    return noext + ext
+    if MusicOverrides::COMPILED_MUSIC_OVERRIDES[fullpath]
+      return MusicOverrides::COMPILED_MUSIC_OVERRIDES[fullpath] + ext
+    else
+      return origPath
+    end
   end
 end
 
@@ -48,21 +53,36 @@ class Game_System
   end
 end
 
-[:bgm_play, :bgs_play, :me_play, :se_play].each { |it|
+[:bgm, :bgs, :me, :se].each { |it|
   Audio.instance_eval(<<__END__)
-    unless defined?(musicoverride_old_#{it})
-      alias :musicoverride_old_#{it} :#{it}
+    unless defined?(musicoverride_old_#{it}_play)
+      alias :musicoverride_old_#{it}_play :#{it}_play
     end
-    def #{it}(name, *args, **kwargs)
-      musicoverride_old_#{it}(MusicOverrides.mapPath(name), *args, **kwargs)
+    def #{it}_play(name, *args, **kwargs)
+      musicoverride_old_#{it}_play(MusicOverrides.mapPath(name, '#{it}'), *args, **kwargs)
     end
 __END__
 }
 
+FileTest.instance_eval do 
+  unless defined?(musicoverride_old_audio_exist?)
+    alias :musicoverride_old_audio_exist? :audio_exist?
+  end
+
+  def audio_exist?(name)
+    musicoverride_old_audio_exist?(MusicOverrides.mapPath(name))
+  end
+end
+
 alias :musicoverride_old_pbResolveAudioSE :pbResolveAudioSE
 
 def pbResolveAudioSE(file)
-  full = ('Audio/SE/' + file).downcase
-  mapped = MusicOverrides.mapPath(full)
-  return mapped == full ? musicoverride_old_pbResolveAudioSE(file) : mapped
+  return nil if !file
+
+  mapped = MusicOverrides.mapPath(file, 'se')
+  if mapped != file && RTP.exists?(mapped,["",".wav",".mp3",".ogg"])
+    return RTP.getPath(mapped,["",".wav",".mp3",".ogg"])
+  end
+
+  return musicoverride_old_pbResolveAudioSE(file)
 end

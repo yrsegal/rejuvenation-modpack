@@ -168,18 +168,21 @@ module TextureOverrides
     return key
   end
 
-  def self.mapPath(path)
-    path = path.downcase
+  def self.mapPath(origPath)
+    path = origPath.downcase
 
     ext = ''
     noext = path.gsub(/(\.(?:bmp|png|gif|jpg|jpeg))$/,"")
     if noext != path
       ext = $1
     end
+    if TextureOverrides::COMPILED_TEXTURE_OVERRIDES[noext]
+      noext = TextureOverrides::COMPILED_TEXTURE_OVERRIDES[noext] 
 
-    noext = TextureOverrides::COMPILED_TEXTURE_OVERRIDES[noext] if TextureOverrides::COMPILED_TEXTURE_OVERRIDES[noext]
-
-    return noext + ext
+      return noext + ext
+    else
+      return origPath
+    end
   end
 end
 
