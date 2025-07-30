@@ -251,8 +251,8 @@ class PokemonValuesPCService
 
   def evs(pkmn, origstats)
     command = 0
-    evMax = $game_switches[:No_Total_EV_Cap] ? 255 : 252
-    evTotalMax = $game_switches[:No_Total_EV_Cap] ? 255 * 6 : 510
+    evMax = 252
+    evTotalMax = $game_switches[:No_Total_EV_Cap] ? 252 * 6 : 510
 
     for i in 0...6
       if pkmn.ev[i] > evMax

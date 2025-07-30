@@ -356,6 +356,7 @@ class GenderPCService
               else
                 Kernel.pbMessage(odessa("ODESSA: Yes, yes, it wasn't flashy. <i>You</i> asked for me to do it again."))
               end
+              break
             end
           end
           heartscalewindow.dispose
