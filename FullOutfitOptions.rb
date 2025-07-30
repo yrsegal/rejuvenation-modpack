@@ -245,7 +245,7 @@ def outfitoptions_handle_clothing_choices(doToneChange = true)
     outfits.push(2)
   end
 
-  if !$game_switches[:outfitoptions_IceptOutfit] && $game_variables[:V13Story] >= 97 && $game_switches[:BecameOne]
+  if !$game_switches[:outfitoptions_IceptOutfit] && $game_variables[:V13Story] >= 97
     $game_switches[:outfitoptions_IceptOutfit] = true
   end
 

@@ -545,7 +545,7 @@ def moverelearnpc_injectMove(moves, move)
   moves.push(move) unless moves.include?(move)
 end
 
-# Gen 8/9 learnsets for Galarian forms/Indeedee-F/Hisuian Qwilfish/Hisuian Growlithe
+# Gen 8/9 learnsets for Galarian forms/Indeedee-F/Hisuian Qwilfish/Hisuian Growlithe/Hisuian Sneasel
 $cache.pkmn[:SLOWPOKE].formData["Galarian Form"][:EggMoves] = [:BELCH,:BELLYDRUM,:BLOCK,:STOMP]
 $cache.pkmn[:PONYTA].formData["Galarian Form"][:EggMoves] = [:DOUBLEKICK,:DOUBLEEDGE,:HORNDRILL,:HYPNOSIS,:MORNINGSUN,:THRASH,:PLAYROUGH] # Because play rough isn't tutorable yet
 $cache.pkmn[:FARFETCHD].formData["Galarian Form"][:EggMoves] = [:COVET,:CURSE,:FEATHERDANCE,:FEINT,:FINALGAMBIT,:FLAIL,:GUST,:LEAFBLADE,:MUDSLAP,:NIGHTSLASH,:QUICKATTACK,:REVENGE,:SIMPLEBEAM,:SKYATTACK]
@@ -553,6 +553,7 @@ $cache.pkmn[:INDEEDEE].formData["Female"][:EggMoves] = [:FAKEOUT, :HEALPULSE, :P
 moverelearnpc_injectMove($cache.pkmn[:FARFETCHD].formData["Galarian Form"][:compatiblemoves], :CUT)
 $cache.pkmn[:QWILFISH].formData["Hisuian Form"][:EggMoves] = [:ACIDSPRAY, :AQUAJET, :AQUATAIL, :ASTONISH, :BUBBLEBEAM, :FLAIL, :HAZE, :SELFDESTRUCT, :SUPERSONIC, :WATERPULSE]
 $cache.pkmn[:GROWLITHE].formData["Hisuian Form"][:EggMoves] = [:COVET,:DOUBLEKICK,:DOUBLEEDGE,:HEADSMASH,:MORNINGSUN,:THRASH]
+$cache.pkmn[:SNEASEL].formData["Hisuian Form"][:EggMoves] = [:COUNTER,:DOUBLEHIT,:FAKEOUT,:FEINT,:NIGHTSLASH,:QUICKGUARD,:SWITCHEROO]
 
 # Give Quiver Dance to oricorio, as is its right
 moverelearnpc_injectMove($cache.pkmn[:ORICORIO].EggMoves, :QUIVERDANCE)
