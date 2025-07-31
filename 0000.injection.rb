@@ -926,6 +926,33 @@ class Game_System
   end
 end
 
+def createMinimap(mapid)
+  ### MODDED/ warp to map minimap display
+  map=$cache.map_load(mapid) rescue (load_data(sprintf("Data/Map%03d.rxdata",mapid)) rescue nil)
+  ### /MODDED
+  return BitmapWrapper.new(32,32) if !map
+  bitmap=BitmapWrapper.new(map.width*4,map.height*4)
+  black=Color.new(0,0,0)
+  tilesets=load_data("Data/Tilesets.rxdata")
+  tileset=tilesets[map.tileset_id]
+  return bitmap if !tileset
+  helper=TileDrawingHelper.fromTileset(tileset)
+  for y in 0...map.height
+    for x in 0...map.width
+      for z in 0..2
+        id=map.data[x,y,z]
+        id=0 if !id
+        helper.bltSmallTile(bitmap,x*4,y*4,4,4,id)
+      end
+    end
+  end
+  bitmap.fill_rect(0,0,bitmap.width,1,black)
+  bitmap.fill_rect(0,bitmap.height-1,bitmap.width,1,black)
+  bitmap.fill_rect(0,0,1,bitmap.height,black)
+  bitmap.fill_rect(bitmap.width-1,0,1,bitmap.height,black)
+  return bitmap
+end
+
 class Cache_Game
   alias :injectionhelper_old_map_load :map_load
   def map_load(mapid)
