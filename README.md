@@ -197,6 +197,8 @@ Other mods:
   Expands the Password menu in the intro to give you much more info when enabling passwords.
 - ReplaceRepelInPickup.rb  
   Replaces Repel in Pickup tables, as it is effectively useless with the Spice Scent.
+- RouteZHQwil.rb  
+  Qwilfish on Route Z are Hisuian.
 - SkipTitleSoftResets.rb  
   Skips the intro scene for soft resets, making it easier to get back into the game.
 - TorchicEvent.rb (depends on 0000.injection.rb)  
