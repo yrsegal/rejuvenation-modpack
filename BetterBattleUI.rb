@@ -1578,7 +1578,8 @@ class PokeBattle_Move
     if @priority > 0 && ((!opponent.moldbroken && (opponent.ability == :DAZZLING || opponent.ability == :QUEENLYMAJESTY || 
         (@battle.FE == :STARLIGHT && opponent.ability == :MIRRORARMOR))) ||
       (otherOpponent && (!otherOpponent.moldbroken && (otherOpponent.ability == :DAZZLING || otherOpponent.ability == :QUEENLYMAJESTY || 
-        (@battle.FE == :STARLIGHT && otherOpponent.ability == :MIRRORARMOR)))))
+        (@battle.FE == :STARLIGHT && otherOpponent.ability == :MIRRORARMOR)))) ||
+      @battle.FE == :PSYCHICTERRAIN)
       return 0
     end
 
