@@ -201,6 +201,8 @@ Other mods:
   Qwilfish on Route Z are Hisuian.
 - SkipTitleSoftResets.rb  
   Skips the intro scene for soft resets, making it easier to get back into the game.
+- TechniqueContractDirectly.rb (depends on 0000.injection.rb)  
+  Adds a Marshadow tutor to avoid using the Technique Contract, costing 3 Black Prisms each time. Does not add the move to your CyberNav.
 - TorchicEvent.rb (depends on 0000.injection.rb)  
   Makes Dyre's Torchic doll an actual Torchic event.
 - WLLRiolu.rb (depends on 0000.injection.rb)  
