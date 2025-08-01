@@ -251,6 +251,12 @@ module InjectionHelper
     Custom: 3
   }
 
+  BLEND_TYPES = {
+    Normal: 0,
+    Additive: 1,
+    Subtractive: 2
+  }
+
   BLOCK_TYPES = {
     When: :BranchEndChoices,
     WhenCancel: :BranchEndChoices,
@@ -271,19 +277,23 @@ module InjectionHelper
   end
 
   module PageUtilMixin
-    def setTile(tileid, hueShift: 0, direction: :Down, pattern: 0)
+    def setTile(tileid, hueShift: 0, direction: :Down, pattern: 0, opacity: 255, blendType: :Normal)
       self.graphic.tile_id = tileid
       self.graphic.character_hue = hueShift
       self.graphic.direction = InjectionHelper::FACING_DIRECTIONS[direction] || direction
       self.graphic.pattern = pattern
+      self.graphic.opacity = opacity
+      self.graphic.blend_type = InjectionHelper::BLEND_TYPES[blendType] || blendType
       return self
     end
 
-    def setGraphic(name, hueShift: 0, direction: :Down, pattern: 0)
+    def setGraphic(name, hueShift: 0, direction: :Down, pattern: 0, opacity: 255, blendType: :Normal)
       self.graphic.character_name = name
       self.graphic.character_hue = hueShift
       self.graphic.direction = InjectionHelper::FACING_DIRECTIONS[direction] || direction
       self.graphic.pattern = pattern
+      self.graphic.opacity = opacity
+      self.graphic.blend_type = InjectionHelper::BLEND_TYPES[blendType] || blendType
       return self
     end
 
