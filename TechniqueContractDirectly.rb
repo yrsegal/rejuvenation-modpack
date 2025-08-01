@@ -124,6 +124,7 @@ InjectionHelper.defineMapPatch(434) { |map| # Luck's Tent
       page.setGraphic("pkmn_marshadow", hueShift: 120, direction: :Up)
       page.walk_anime = true
       page.step_anime = true
+      page.always_on_top = true
       page.interact(
         [:ShowText, "MARTEL: I am allergic to Shards. Please support my continued satiation."],
         [:ConditionalBranch, :SelfSwitch, "A", false],
