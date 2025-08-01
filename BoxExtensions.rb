@@ -96,7 +96,7 @@ module BoxExtensions
     end
 
     def gatherParameters(screen)
-      boundedentry_textEntry("Name of the species?", SearchTypes.gather(&:species), &method(:getMonName))
+      boundedentry_textEntry("Name of the species?", SearchTypes.gather(&:species), "No Pokémon found.", &method(:getMonName))
     end
 
     def filter(screen, pkmn, params)
@@ -114,7 +114,7 @@ module BoxExtensions
     end
 
     def gatherParameters(screen)
-      boundedentry_textEntry("Name of the item?", SearchTypes.gather(&:item), &method(:getItemName))
+      boundedentry_textEntry("Name of the item?", SearchTypes.gather(&:item), "No items found.", &method(:getItemName))
     end
 
     def filter(screen, pkmn, params)
@@ -132,7 +132,7 @@ module BoxExtensions
     end
 
     def gatherParameters(screen)
-      boundedentry_textEntry("Name of the ability?", SearchTypes.gather(&:ability), &method(:getAbilityName))
+      boundedentry_textEntry("Name of the ability?", SearchTypes.gather(&:ability), "No Pokémon found." &method(:getAbilityName))
     end
 
     def filter(screen, pkmn, params)
@@ -172,7 +172,7 @@ module BoxExtensions
     end
 
     def gatherParameters(screen)
-      boundedentry_textEntry("Name of the move?", SearchTypes.gather { |p| p.moves.map(&:move) }, &method(:getMoveName))
+      boundedentry_textEntry("Name of the move?", SearchTypes.gather { |p| p.moves.map(&:move) }, "No Pokémon found.", &method(:getMoveName))
     end
 
     def filter(screen, pkmn, params)
@@ -201,7 +201,7 @@ module BoxExtensions
         totallist.uniq!
         totallist -= exceptions
         next totallist
-      }, &method(:getMoveName))
+      }, "No Pokémon found." &method(:getMoveName))
     end
 
     def filter(screen, pkmn, params)

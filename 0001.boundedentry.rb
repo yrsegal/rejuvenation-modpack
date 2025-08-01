@@ -306,16 +306,20 @@ class BoundedPokemonEntryScene
   end
 end
 
-def boundedentry_textEntry(helptext, cacheList, &mapper)
+def boundedentry_textEntry(helptext, cacheList, ifno, &mapper)
   keys = cacheList.is_a?(Hash) ? cacheList.keys : cacheList
   names = keys.map { |key| (block_given? ? mapper.call(key) : key).gsub('é', 'e') }
   ret=""
-  pbFadeOutIn(99999){
-    sscene=BoundedPokemonEntryScene.new
-    sscene.pbStartScene(helptext,names)
-    ret=sscene.pbEntry
-    sscene.pbEndScene
-  }
+  if names.length == 0
+    Kernel.pbMessage(_INTL(ifno))
+  else
+    pbFadeOutIn(99999){
+      sscene=BoundedPokemonEntryScene.new
+      sscene.pbStartScene(helptext,names)
+      ret=sscene.pbEntry
+      sscene.pbEndScene
+    }
+  end
   ret = names.index(ret)
   return nil if ret.nil?
   return keys[ret]
