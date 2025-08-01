@@ -68,8 +68,7 @@ def techniquecontract_choosetechnique
 
     machinemoves = $cache.items.keys.select { |item| pbIsTM?(item) && $PokemonBag.pbQuantity(item) > 0 }.map { |item| $cache.items[item].flags[:tm] }
     tutormoves = pbGetTutorableMoves
-    print(machinemoves)
-
+    
     loop do
       if defined?(Selectfromboxes_PokemonStorageScreen)
         pbChoosePokemon(1, 2, proc {|pkmn|
