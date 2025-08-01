@@ -247,7 +247,7 @@ class PokeBattle_Scene
     elsif battler.effects[:Illusion]
       name = poke.name
     end
-    name = name[0..12] + "..." if name.length > 16
+    name = name[0..8] + "..." if name.length > 12
     
     level = (battler.isbossmon) ? "???" : battler.level.to_s
     movename = $cache.moves[battler.lastMoveUsed] ? $cache.moves[battler.lastMoveUsed].name : "---"

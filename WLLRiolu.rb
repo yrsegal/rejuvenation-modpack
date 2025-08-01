@@ -93,6 +93,22 @@ def wllriolu_pbAddPokemonNoTimeSet(species,level=nil,seeform=true,form=0)
   return true
 end
 
+InjectionHelper.defineMapPatch(426) { |map| # Sensei's Garden
+  # Cherry blossom tree
+  InjectionHelper.fillArea(map, 12, 6,
+    ["ABC",
+     "DEF",
+     "GHI",
+     "JKL"],
+    {
+      "A" => [nil, nil, 1240], "B" => [nil, nil, 1241], "C" => [nil, nil, 1242],
+      "D" => [nil, 1248, 1248], "E" => [nil, 1249, 1249], "F" => [nil, 1250, 1250],
+      "G" => [nil, 1256, 1256], "H" => [nil, 1257, nil], "I" => [nil, 1258, 1258],
+      "J" => [nil, 491, 1264], "K" => [nil, 1265, nil], "L" => [nil, 491, 1266],
+    })
+
+}
+
 InjectionHelper.defineMapPatch(294, 70) { |event| # GDC Central, clerk
     hasReputationPillars = defined?($GDC_REPUTATION_PILLARS)
     event.pages[0].list = InjectionHelper.parseEventCommands(

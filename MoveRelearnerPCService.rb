@@ -555,6 +555,11 @@ $cache.pkmn[:QWILFISH].formData["Hisuian Form"][:EggMoves] = [:ACIDSPRAY, :AQUAJ
 $cache.pkmn[:GROWLITHE].formData["Hisuian Form"][:EggMoves] = [:COVET,:DOUBLEKICK,:DOUBLEEDGE,:HEADSMASH,:MORNINGSUN,:THRASH]
 $cache.pkmn[:SNEASEL].formData["Hisuian Form"][:EggMoves] = [:COUNTER,:DOUBLEHIT,:FAKEOUT,:FEINT,:NIGHTSLASH,:QUICKGUARD,:SWITCHEROO]
 
+# So you can have covet/super luck early. because. pain.
+moverelearnpc_injectMove($cache.pkmn[:PIDOVE].compatiblemoves, :COVET)
+moverelearnpc_injectMove($cache.pkmn[:TRANQUILL].compatiblemoves, :COVET)
+moverelearnpc_injectMove($cache.pkmn[:UNFEZANT].compatiblemoves, :COVET)
+
 # Give Quiver Dance to oricorio, as is its right
 moverelearnpc_injectMove($cache.pkmn[:ORICORIO].EggMoves, :QUIVERDANCE)
 $cache.pkmn[:ORICORIO].formData.each_pair { |k, form| form[:EggMoves] = $cache.pkmn[:ORICORIO].EggMoves }
