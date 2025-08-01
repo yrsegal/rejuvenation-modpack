@@ -93,6 +93,10 @@ def wllriolu_pbAddPokemonNoTimeSet(species,level=nil,seeform=true,form=0)
   return true
 end
 
+# Sheridan Village_2
+$cache.RXtilesets[126].passages[1264] = 0b1010 # ^> Allow walking up to the cherry tree
+$cache.RXtilesets[126].passages[1266] = 0b1100 # <^
+
 InjectionHelper.defineMapPatch(426) { |map| # Sensei's Garden
   # Cherry blossom tree
   InjectionHelper.fillArea(map, 12, 6,
