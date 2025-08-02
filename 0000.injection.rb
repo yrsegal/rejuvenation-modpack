@@ -468,7 +468,7 @@ module InjectionHelper
     @@anyMapChange = true
     map.data[x, y, 0] = layer0 if layer0
     map.data[x, y, 1] = layer1 if layer1
-    map.data[x, y , 2] = layer2 if layer2
+    map.data[x, y, 2] = layer2 if layer2
   end
 
   def self.getPatchComment(insns, create)
