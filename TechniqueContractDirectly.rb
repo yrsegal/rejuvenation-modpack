@@ -118,7 +118,7 @@ end
 
 
 InjectionHelper.defineMapPatch(434) { |map| # Luck's Tent
-  InjectionHelper.createNewEvent(map, 16, 15, "Martel (Technique)") { |event|
+  InjectionHelper.createNewEvent(map, 16, 15, "Martel (Technique)", "techniquecontract_techniquemarshadow") { |event|
     applicator = proc { |page|
       page.setGraphic("pkmn_marshadow", hueShift: 120, direction: :Up)
       page.walk_anime = true

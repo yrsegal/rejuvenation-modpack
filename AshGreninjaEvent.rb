@@ -372,7 +372,7 @@ InjectionHelper.defineMapPatch(44) { |map| # Neo East Gearen (east)
   # Define in namespace so procs can reference later
   pikachu, ash, greninja = nil, nil, nil 
 
-  ash = InjectionHelper.createNewEvent(map, 63, 76, "Ash Ketchum") { |event|
+  ash = InjectionHelper.createNewEvent(map, 63, 76, "Ash Ketchum", "ashgreninja_ashnpc") { |event|
     event.newPage { |page|
       page.setGraphic("NPC AshKetchum")
       page.requiresVariable(:Karma, 30)
@@ -759,7 +759,7 @@ InjectionHelper.defineMapPatch(44) { |map| # Neo East Gearen (east)
 
 
 
-  pikachu = InjectionHelper.createNewEvent(map, 62, 76, "Ash's Pikachu") { |event|
+  pikachu = InjectionHelper.createNewEvent(map, 62, 76, "Ash's Pikachu", "ashgreninja_pikachunpc") { |event|
     event.newPage { |page|
       page.setGraphic("pkmn_pikachu_ash")
       page.requiresVariable(:Karma, 30)
@@ -778,7 +778,7 @@ InjectionHelper.defineMapPatch(44) { |map| # Neo East Gearen (east)
 
 
 
-  greninja = InjectionHelper.createNewEvent(map, 64, 76, "Ash's Greninja") { |event|
+  greninja = InjectionHelper.createNewEvent(map, 64, 76, "Ash's Greninja", "ashgreninja_greninjanpc") { |event|
     event.newPage { |page|
       page.requiresVariable(:Karma, 30)
     }

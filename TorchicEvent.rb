@@ -11,7 +11,7 @@ InjectionHelper.defineMapPatch(203) { |map| # Pokestar Studios Interiors
 
   map.data[86,9,2] = 0 # Remove the torchic doll, so it's exclusively handled by the event
 
-  InjectionHelper.createNewEvent(map, 86, 10, "Torchic") { |event|
+  InjectionHelper.createNewEvent(map, 86, 10, "Torchic", "torchicevent_interactableevent") { |event|
     event.newPage { |page|
       page.interact(
         [:ShowText, "It's a stuffed Torchic doll!"],
@@ -40,7 +40,7 @@ InjectionHelper.defineMapPatch(203) { |map| # Pokestar Studios Interiors
     }
   }
 
-  torchicDoll = InjectionHelper.createNewEvent(map, 86, 9, "Torchic Doll") { |event|
+  torchicDoll = InjectionHelper.createNewEvent(map, 86, 9, "Torchic Doll", "torchicevent_torchicdoll") { |event|
     event.newPage { |page|
       page.setTile(3046) # Torchic
     }

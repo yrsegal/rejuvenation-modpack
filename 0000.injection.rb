@@ -413,19 +413,24 @@ module InjectionHelper
     return !@@eventsToLoad.empty? || @@anyMapChange
   end
 
-  def self.createSinglePageEvent(map, x, y, name, &block)
-    createNewEvent(map, x, y, name) { |event|
+  def self.createSinglePageEvent(map, x, y, name, savetag=nil, &block)
+    createNewEvent(map, x, y, name, savetag) { |event|
       event.newPage(&block)
     }
   end
 
-  def self.createNewEvent(map, x, y, name, &block)
+  def self.createNewEvent(map, x, y, name, savetag=nil, &block)
     newEvent = RPG::Event.new(x, y)
     newEvent.pages = [] if block_given?
     newEvent.extend(EventUtilMixin)
     newEvent.name = name
     newEvent.id = (map.events.keys.max || 0) + 1
     map.events[newEvent.id] = newEvent
+
+    if savetag && @@currentmapid
+      $INJECTED_MAP_EVENTS[@@currentmapid] = {} unless $INJECTED_MAP_EVENTS[@@currentmapid]
+      $INJECTED_MAP_EVENTS[@@currentmapid][newEvent.id] = savetag
+    end
 
     if map.is_a?(RPG::Map)
       map.events[newEvent.id] = newEvent
@@ -465,7 +470,6 @@ module InjectionHelper
     map.data[x, y, 1] = layer1 if layer1
     map.data[x, y , 2] = layer2 if layer2
   end
-
 
   def self.getPatchComment(insns, create)
     insns.each { |insn|
@@ -811,6 +815,7 @@ module InjectionHelper
     begin
       clearEventBuilders
       doneAny = false
+      @@currentmapid = mapid
       if PATCHES[mapid]
         for mappatch in PATCHES[mapid]
           if !mappatch.eventid
@@ -840,6 +845,7 @@ module InjectionHelper
       doneAny = true
     end
 
+    @@currentmapid = nil
     clearEventBuilders
 
     if doneAny
@@ -847,6 +853,8 @@ module InjectionHelper
       $PREVIOUS_APPLIED_PATCHES.push(mapid)
     end
   end
+
+  @@currentmapid = nil
 
   class MapPatch
     attr_reader :mapid, :eventid, :pageid
@@ -920,6 +928,64 @@ module RPG
       for insn in injectionhelper_original_list
         list.push(RPG::EventCommand.new(insn.code, insn.indent, insn.parameters.clone))
       end
+    end
+  end
+end
+
+# Map Events injected by this library use a secondary selfswitch format 
+
+$INJECTED_MAP_EVENTS = {}
+Events.onMapChange+=proc {
+  mapid = $game_map.map_id
+  mapevs = $INJECTED_MAP_EVENTS[mapid]
+  $game_self_switches.injectionhelper_port_oldselfswitches(mapid, mapevs) if mapevs
+}
+
+class Game_SelfSwitches
+  attr_accessor :injectionhelper_injected_data
+
+  def injectionhelper_port_oldselfswitches(mapid, eventids)
+    @injectionhelper_injected_data = {} if !defined?(@injectionhelper_injected_data)
+
+    keystoport = []
+    for key in @data.keys
+      if key.is_a?(Array) && key.size == 3 && mapid == key[0] && eventids[key[1]]
+        keystoport.push(key)
+      end
+    end
+
+    for key in keystoport
+      mappedkey = [key[0], eventids[key[1]], key[2]]
+      @injectionhelper_injected_data[mappedkey] = @data[key]
+      @data.delete(key)
+    end
+  end
+
+  alias :injectionhelper_old_initialize :initialize
+  def initialize
+    injectionhelper_old_initialize
+    @injectionhelper_injected_data = {}
+  end
+
+  alias :injectionhelper_old_index :[]
+  def [](key)
+    if defined?(@injectionhelper_injected_data) && key.is_a?(Array) && key.size == 3 && $INJECTED_MAP_EVENTS[key[0]] && $INJECTED_MAP_EVENTS[key[0]][key[1]]
+      mappedkey = [key[0], $INJECTED_MAP_EVENTS[key[0]][key[1]], key[2]]
+      return @injectionhelper_injected_data[mappedkey] ? true : false
+    else
+      return injectionhelper_old_index(key)
+    end
+  end
+
+  alias :injectionhelper_old_set :[]=
+  def []=(key, value)
+    if key.is_a?(Array) && key.size == 3 && $INJECTED_MAP_EVENTS[key[0]] && $INJECTED_MAP_EVENTS[key[0]][key[1]]
+      @injectionhelper_injected_data = {} if !defined?(@injectionhelper_injected_data)
+
+      mappedkey = [key[0], $INJECTED_MAP_EVENTS[key[0]][key[1]], key[2]]
+      @injectionhelper_injected_data[mappedkey] = value
+    else
+      return injectionhelper_old_set(key, value)
     end
   end
 end
