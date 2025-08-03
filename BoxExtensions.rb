@@ -132,7 +132,7 @@ module BoxExtensions
     end
 
     def gatherParameters(screen)
-      boundedentry_textEntry("Name of the ability?", SearchTypes.gather(&:ability), "No Pokémon found." &method(:getAbilityName))
+      boundedentry_textEntry("Name of the ability?", SearchTypes.gather(&:ability), "No Pokémon found.", &method(:getAbilityName))
     end
 
     def filter(screen, pkmn, params)
