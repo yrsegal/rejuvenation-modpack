@@ -80,6 +80,8 @@ Fix/hotfix mods:
   Fixes Rayquaza crashing the game by simple existence.
 - FixSuperLuck.rb  
   Super Luck increases held item chances on wild pokemon, as it's supposed to.
+- FixUltraNecrozma.rb  
+  Fix Ultra Necrozma causing errors when it faints.
 - FixUnderpoweredZMoves.rb  
   Z-upgraded attacks which should have higher base power now do. Moves such as Hidden Power can be upgraded into differently typed Z-Moves.
 - PrimalReversionFix.rb  
