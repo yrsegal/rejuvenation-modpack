@@ -67,6 +67,14 @@ def miningoverhaul_getHitsCount(hitsToRemove, registerNewCount)
 end
 #####/MODDED
 
+class MiningGameTile
+  alias :miningoverhaul_old_initialize :initialize
+  def initialize(*args, **kwargs)
+    miningoverhaul_old_initialize(*args, **kwargs)
+    @image = AnimatedBitmap.new("#{__dir__[Dir.pwd.length+1..]}/MiningTiles")
+  end
+end
+
 class MiningGameCounter < BitmapSprite
   #####MODDED
   def miningoverhaul_resetMiningCounters
