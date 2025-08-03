@@ -84,6 +84,8 @@ Fix/hotfix mods:
   Fix Ultra Necrozma causing errors when it faints.
 - FixUnderpoweredZMoves.rb  
   Z-upgraded attacks which should have higher base power now do. Moves such as Hidden Power can be upgraded into differently typed Z-Moves.
+- FixVoidalSoftlock.rb (depends on 0000.injection.rb)  
+  Fix a softlock in the Voidal Chasm on the don't-expose route.
 - PrimalReversionFix.rb  
   Groudon and Kyogre don't constantly re-primal-revert each turn.
 - RelearnPreShadowMoves.rb  
