@@ -1145,7 +1145,7 @@ class PokemonDataBox < SpriteWrapper
 
   def betterBattleUI_typeIcons_backgroundBitmap(isFoe, issos)
     if !$betterBattleUI_typeIcons_bitmaps
-      rawBmp=AnimatedBitmap.new('Data/Mods/BetterBattleUI/TypeDiamonds.png')
+      rawBmp=AnimatedBitmap.new("#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/TypeDiamonds.png")
       retval=[]
       spriteWidth=26
       spriteHeight=28
@@ -1556,6 +1556,10 @@ class PokeBattle_Move
 
 
     if opponent.item == nil && @function == 0x315
+      return 0
+    end
+
+    if @move == :STEELROLLER && @battle.FE == :INDOOR
       return 0
     end
 
