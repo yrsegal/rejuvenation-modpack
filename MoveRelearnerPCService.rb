@@ -25,7 +25,7 @@ def pbEachNaturalMove(pokemon)
   while !prevo.nil?
     prevo = moverelearnerpc_producePreEvolution(prevo)
     if !prevo.nil?
-      movelist = prevo1getMoveList
+      movelist = prevo.getMoveList
       for i in movelist
         if !movesFound.include?(i[1])
           movesFound.push(i[1])
