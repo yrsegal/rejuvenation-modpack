@@ -267,99 +267,6 @@ module InjectionHelper
     Loop: :RepeatAbove
   }
 
-  module EventUtilMixin
-    def newPage
-      page = RPG::Event::Page.new
-      page.extend(PageUtilMixin)
-      yield page
-      self.pages.push(page)
-    end
-  end
-
-  module PageUtilMixin
-    def setTile(tileid, hueShift: 0, direction: :Down, pattern: 0, opacity: 255, blendType: :Normal)
-      self.graphic.tile_id = tileid
-      self.graphic.character_hue = hueShift
-      self.graphic.direction = InjectionHelper::FACING_DIRECTIONS[direction] || direction
-      self.graphic.pattern = pattern
-      self.graphic.opacity = opacity
-      self.graphic.blend_type = InjectionHelper::BLEND_TYPES[blendType] || blendType
-      return self
-    end
-
-    def setGraphic(name, hueShift: 0, direction: :Down, pattern: 0, opacity: 255, blendType: :Normal)
-      self.graphic.character_name = name
-      self.graphic.character_hue = hueShift
-      self.graphic.direction = InjectionHelper::FACING_DIRECTIONS[direction] || direction
-      self.graphic.pattern = pattern
-      self.graphic.opacity = opacity
-      self.graphic.blend_type = InjectionHelper::BLEND_TYPES[blendType] || blendType
-      return self
-    end
-
-    def setMoveType(movetype)
-      self.move_type = InjectionHelper::EVENT_MOVE_TYPES[movetype] || movetype
-      return self
-    end
-
-    def setMoveRoute(*params, repeat: false, skippable: false, wait: false)
-      setMoveType(:Custom)
-      self.move_route = InjectionHelper.parseMoveRoute(*params, repeat: repeat)
-      self.move_route.skippable = skippable
-      self.move_route.wait = wait
-      return self
-    end
-
-    def requiresVariable(varid, value)
-      self.condition.variable_valid = true
-      self.condition.variable_id = Variables[varid] || varid
-      self.condition.variable_value = value
-      return self
-    end
-
-    def requiresSwitch(switch, switch2=nil)
-      self.condition.switch1_valid = true
-      self.condition.switch1_id = Switches[switch] || switch
-      if switch2
-        self.condition.switch2_valid = true
-        self.condition.switch2_id = Switches[switch2] || switch2
-      end
-      return self
-    end
-
-    def requiresSelfSwitch(selfswitch)
-      self.condition.self_switch_valid = true
-      self.condition.self_switch_ch = selfswitch
-      return self
-    end
-
-    def code(triggerType, *params)
-      self.trigger = InjectionHelper::EVENT_TRIGGER_TYPES[triggerType] || triggerType
-      self.list = InjectionHelper.parseEventCommands(*params, :Done)
-      return self
-    end
-
-    def interact(*params)
-      code(:Interact, *params)
-    end
-
-    def playerTouch(*params)
-      code(:PlayerTouch, *params)
-    end
-
-    def eventTouch(*params)
-      code(:EventTouch, *params)
-    end
-
-    def autorun(*params)
-      code(:Autorun, *params)
-    end
-
-    def runInParallel(*params)
-      code(:RunInParallel, *params)
-    end
-  end
-
   class InsnMatcher
     def initialize(code, mapper, params=[]) # Param does partial matches - nil is ignored
       @code = code
@@ -422,7 +329,6 @@ module InjectionHelper
   def self.createNewEvent(map, x, y, name, savetag=nil, &block)
     newEvent = RPG::Event.new(x, y)
     newEvent.pages = [] if block_given?
-    newEvent.extend(EventUtilMixin)
     newEvent.name = name
     newEvent.id = (map.events.keys.max || 0) + 1
     map.events[newEvent.id] = newEvent
@@ -986,6 +892,101 @@ class Game_SelfSwitches
       @injectionhelper_injected_data[mappedkey] = value
     else
       return injectionhelper_old_set(key, value)
+    end
+  end
+end
+
+module RPG
+  class Event
+
+    def newPage
+      page = RPG::Event::Page.new
+      yield page
+      self.pages.push(page)
+    end
+
+    class Page
+      def setTile(tileid, hueShift: 0, direction: :Down, pattern: 0, opacity: 255, blendType: :Normal)
+        self.graphic.tile_id = tileid
+        self.graphic.character_hue = hueShift
+        self.graphic.direction = InjectionHelper::FACING_DIRECTIONS[direction] || direction
+        self.graphic.pattern = pattern
+        self.graphic.opacity = opacity
+        self.graphic.blend_type = InjectionHelper::BLEND_TYPES[blendType] || blendType
+        return self
+      end
+
+      def setGraphic(name, hueShift: 0, direction: :Down, pattern: 0, opacity: 255, blendType: :Normal)
+        self.graphic.character_name = name
+        self.graphic.character_hue = hueShift
+        self.graphic.direction = InjectionHelper::FACING_DIRECTIONS[direction] || direction
+        self.graphic.pattern = pattern
+        self.graphic.opacity = opacity
+        self.graphic.blend_type = InjectionHelper::BLEND_TYPES[blendType] || blendType
+        return self
+      end
+
+      def setMoveType(movetype)
+        self.move_type = InjectionHelper::EVENT_MOVE_TYPES[movetype] || movetype
+        return self
+      end
+
+      def setMoveRoute(*params, repeat: false, skippable: false, wait: false)
+        setMoveType(:Custom)
+        self.move_route = InjectionHelper.parseMoveRoute(*params, repeat: repeat)
+        self.move_route.skippable = skippable
+        self.move_route.wait = wait
+        return self
+      end
+
+      def requiresVariable(varid, value)
+        self.condition.variable_valid = true
+        self.condition.variable_id = Variables[varid] || varid
+        self.condition.variable_value = value
+        return self
+      end
+
+      def requiresSwitch(switch, switch2=nil)
+        self.condition.switch1_valid = true
+        self.condition.switch1_id = Switches[switch] || switch
+        if switch2
+          self.condition.switch2_valid = true
+          self.condition.switch2_id = Switches[switch2] || switch2
+        end
+        return self
+      end
+
+      def requiresSelfSwitch(selfswitch)
+        self.condition.self_switch_valid = true
+        self.condition.self_switch_ch = selfswitch
+        return self
+      end
+
+      def code(triggerType, *params)
+        self.trigger = InjectionHelper::EVENT_TRIGGER_TYPES[triggerType] || triggerType
+        self.list = InjectionHelper.parseEventCommands(*params, :Done)
+        return self
+      end
+
+      def interact(*params)
+        code(:Interact, *params)
+      end
+
+      def playerTouch(*params)
+        code(:PlayerTouch, *params)
+      end
+
+      def eventTouch(*params)
+        code(:EventTouch, *params)
+      end
+
+      def autorun(*params)
+        code(:Autorun, *params)
+      end
+
+      def runInParallel(*params)
+        code(:RunInParallel, *params)
+      end
     end
   end
 end

@@ -511,9 +511,28 @@ class PokeBattle_Trainer
 
   def party
     ret = selectfromboxes_old_party
+    ret = ret.clone
     ret.extend(Selectfromboxes_PartyArray) if ret.is_a?(Array)
     return ret
   end
+
+  alias :selectfromboxes_old_party_set :party=
+
+  def party=(value)
+    if value.is_a?(Selectfromboxes_PartyArray)
+      value = Array.new(value.length) { |i| value[i] }
+    end
+    selectfromboxes_old_party_set(value)
+  end
+end
+  
+# Avoid save incompatibilities
+def playerTeamBackup
+  value = $Trainer.party
+  if value.is_a?(Selectfromboxes_PartyArray)
+    value = Array.new(value.length) { |i| value[i] }
+  end
+  $game_variables[:PlayerDataBackup][0] = value
 end
 
 module Selectfromboxes_PartyArray

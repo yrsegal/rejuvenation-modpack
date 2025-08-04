@@ -201,7 +201,7 @@ module BoxExtensions
         totallist.uniq!
         totallist -= exceptions
         next totallist
-      }, "No Pokémon found." &method(:getMoveName))
+      }, "No Pokémon found.", &method(:getMoveName))
     end
 
     def filter(screen, pkmn, params)
