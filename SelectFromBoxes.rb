@@ -511,7 +511,6 @@ class PokeBattle_Trainer
 
   def party
     ret = selectfromboxes_old_party
-    ret = ret.clone
     ret.extend(Selectfromboxes_PartyArray) if ret.is_a?(Array)
     return ret
   end
