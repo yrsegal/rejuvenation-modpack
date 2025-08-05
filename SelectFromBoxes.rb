@@ -563,38 +563,32 @@ end
 ###### PATCHING DAY CARE
 
 def selectfromboxes_patch_partycheck(event)
-  for page in event.pages
-    insns = page.list
-    InjectionHelper.patch(insns, :selectfromboxes_patch_partycheck) {
-      matched = InjectionHelper.lookForAll(insns,
-        [:ConditionalBranch, :Script, proc{|script| script == '$Trainer.pokemonCount<=1' || script == '$Trainer.party.length>=6'}])
+  event.patch(:selectfromboxes_patch_partycheck) { |page|
+    matched = page.lookForAll(
+      [:ConditionalBranch, :Script, proc{|script| script == '$Trainer.pokemonCount<=1' || script == '$Trainer.party.length>=6'}])
 
-      for insn in matched
-        insn.parameters[0] = 'false'
-      end
+    for insn in matched
+      insn.parameters[0] = 'false'
+    end
 
-      next matched.length > 0
-    }
-  end
+    next matched.length > 0
+  }
 end
 
 def selectfromboxes_patch_daycarelady(event)
   selectfromboxes_patch_partycheck(event)
 
-  for page in event.pages
-    insns = page.list
-    InjectionHelper.patch(insns, :selectfromboxes_patch_daycarelady) {
-      matched = InjectionHelper.lookForSequence(insns,
+  event.patch(:selectfromboxes_patch_daycarelady) { |page|
+      matched = page.lookForSequence(
         [:Script, 'pbDayCareWithdraw(pbGet(1))'],
         [:ShowText, "\\GExcellent\\nHere's your Pokémon."])
 
       if !matched.nil?
-        insns.delete_at(insns.index(matched[0]))
-        insns.insert(insns.index(matched[1]) + 1, matched[0])
+        page.delete(matched[0])
+        page.insertAfter(matched[1], matched[0])
       end
       next !matched.nil?
-    }
-  end
+  }
 end
 
 InjectionHelper.defineMapPatch(425) { |map| # Sheridan Interiors

@@ -5,23 +5,19 @@ begin
 end
 
 def axelfixes_fix_stormsprite(event)
-  for page in event.pages
-    insns = page.list
-    InjectionHelper.patch(insns, :axelfixes_fix_stormsprite) {
-      matched = InjectionHelper.lookForAll(insns,
-        [:SetMoveRoute, nil, nil])
+  event.patch(:axelfixes_fix_stormsprite) { |page|
+    matched = page.lookForAll([:SetMoveRoute, nil, nil])
 
-      submatcher = InjectionHelper.parseMatcher([:SetCharacter, 'PlayerHeadachet_3', nil, nil, nil], InjectionHelper::MOVE_INSNS)
+    submatcher = InjectionHelper.parseMatcher([:SetCharacter, 'PlayerHeadachet_3', nil, nil, nil], InjectionHelper::MOVE_INSNS)
 
-      for insn in matched
-        insn.parameters[1].list.each { |movecommand|
-          movecommand.parameters[0] = 'PlayerHeadache_3' if submatcher.matches?(movecommand)
-        }
-      end
+    for insn in matched
+      insn.parameters[1].list.each { |movecommand|
+        movecommand.parameters[0] = 'PlayerHeadache_3' if submatcher.matches?(movecommand)
+      }
+    end
 
-      next matched.length > 0
-    }
-  end
+    next matched.length > 0
+  }
 end
 
 InjectionHelper.defineMapPatch(53) { |map| # I Nightmare Realm

@@ -334,8 +334,8 @@ module InjectionHelper
     map.events[newEvent.id] = newEvent
 
     if savetag && @@currentmapid
-      $INJECTED_MAP_EVENTS[@@currentmapid] = {} unless $INJECTED_MAP_EVENTS[@@currentmapid]
-      $INJECTED_MAP_EVENTS[@@currentmapid][newEvent.id] = savetag
+      INJECTED_MAP_EVENT_IDS[@@currentmapid] = {} unless INJECTED_MAP_EVENT_IDS[@@currentmapid]
+      INJECTED_MAP_EVENT_IDS[@@currentmapid][newEvent.id] = savetag
     end
 
     if map.is_a?(RPG::Map)
@@ -379,7 +379,7 @@ module InjectionHelper
 
   def self.getPatchComment(insns, create)
     insns.each { |insn|
-      if insn.code == InjectionHelper::EVENT_INSNS[:Comment] && insn.parameters[0] == 'InjectionHelper-Patches'
+      if insn.code == EVENT_INSNS[:Comment] && insn.parameters[0] == 'InjectionHelper-Patches'
         return insn
       end
     }
@@ -423,14 +423,14 @@ module InjectionHelper
   end
 
   def self.routeMatcher(matchers)
-    return matchers.map { |matcher| parseMatcher(matcher, InjectionHelper::MOVE_INSNS) }
+    return matchers.map { |matcher| parseMatcher(matcher, MOVE_INSNS) }
   end
 
-  def self.parseMatcher(matcher, mapper=InjectionHelper::EVENT_INSNS)
+  def self.parseMatcher(matcher, mapper=EVENT_INSNS)
     if matcher.is_a?(Array)
-      return InjectionHelper::InsnMatcher.new(matcher[0], mapper, matcher[1..])
+      return InsnMatcher.new(matcher[0], mapper, matcher[1..])
     elsif matcher.is_a?(Symbol)
-      return InjectionHelper::InsnMatcher.new(matcher, mapper)
+      return InsnMatcher.new(matcher, mapper)
     else
       return matcher
     end
@@ -500,43 +500,43 @@ module InjectionHelper
       when :SetSwitch, :UnsetSwitch
         mapValue(params, 0, Switches)
       when :SetCharacter
-        mapValue(params, 2, InjectionHelper::FACING_DIRECTIONS)
+        mapValue(params, 2, FACING_DIRECTIONS)
       when :ConditionalBranch
-        case mapValue(params, 0, InjectionHelper::CONDITIONAL_BRANCH_TYPES)
+        case mapValue(params, 0, CONDITIONAL_BRANCH_TYPES)
           when :Switch
             mapValue(params, 1, Switches)
-            mapValue(params, 2, InjectionHelper::TRUTH)
+            mapValue(params, 2, TRUTH)
           when :SelfSwitch
-            mapValue(params, 2, InjectionHelper::TRUTH)
+            mapValue(params, 2, TRUTH)
           when :Variable
             mapValue(params, 1, Variables)
-            if mapValue(params, 2, InjectionHelper::APPOINTMENT_METHODS) == :Variable
+            if mapValue(params, 2, APPOINTMENT_METHODS) == :Variable
               mapValue(params, 3, Variables)
             end
-            mapValue(params, 4, InjectionHelper::CONDITIONAL_MODES)
+            mapValue(params, 4, CONDITIONAL_MODES)
           when :Character
-            mapValue(params, 1, InjectionHelper::SPECIAL_EVENT_IDS)
-            mapValue(params, 2, InjectionHelper::FACING_DIRECTIONS)
+            mapValue(params, 1, SPECIAL_EVENT_IDS)
+            mapValue(params, 2, FACING_DIRECTIONS)
           when :Gold
-            mapValue(params, 2, InjectionHelper::MORE_OR_LESS)
+            mapValue(params, 2, MORE_OR_LESS)
         end
       when :InputNumber
         mapValue(params, 0, Variables)
       when :ShowAnimation
-        mapValue(params, 0, InjectionHelper::SPECIAL_EVENT_IDS)
+        mapValue(params, 0, SPECIAL_EVENT_IDS)
       when :SetEventLocation
-        mapValue(params, 0, InjectionHelper::SPECIAL_EVENT_IDS)
-        case mapValue(params, 1, InjectionHelper::APPOINTMENT_METHODS) 
+        mapValue(params, 0, SPECIAL_EVENT_IDS)
+        case mapValue(params, 1, APPOINTMENT_METHODS) 
         when :Variable
           mapValue(params, 2, Variables)
           mapValue(params, 3, Variables)
         when :Constant
         else
-          mapValue(params, 2, InjectionHelper::SPECIAL_EVENT_IDS)
+          mapValue(params, 2, SPECIAL_EVENT_IDS)
         end
-        mapValue(params, 4, InjectionHelper::FACING_DIRECTIONS)
+        mapValue(params, 4, FACING_DIRECTIONS)
       when :SetMoveRoute
-        mapValue(params, 0, InjectionHelper::SPECIAL_EVENT_IDS)
+        mapValue(params, 0, SPECIAL_EVENT_IDS)
         if matcher
           params[1] = routeMatcher(params[1][1..]) if !params[1].nil? && params[1].is_a?(Array)
         else
@@ -546,41 +546,41 @@ module InjectionHelper
         params.unshift(params[0]) if sym == :ControlSwitch
         mapValue(params, 0, Switches)
         mapValue(params, 1, Switches)
-        mapValue(params, 2, InjectionHelper::TRUTH)
+        mapValue(params, 2, TRUTH)
       when :ControlVariable, :ControlVariables
         params.unshift(params[0]) if sym == :ControlVariable
 
         mapValue(params, 0, Variables)
         mapValue(params, 1, Variables)
-        mapValue(params, 2, InjectionHelper::SET_MODES)
-        case mapValue(params, 3, InjectionHelper::SET_VAR_NAMES)
+        mapValue(params, 2, SET_MODES)
+        case mapValue(params, 3, SET_VAR_NAMES)
           when :Variable
             mapValue(params, 4, Variables)
           when :Character
-            mapValue(params, 4, InjectionHelper::SPECIAL_EVENT_IDS)
-            mapValue(params, 5, InjectionHelper::SET_CHARACTER_VAR_NAMES)
+            mapValue(params, 4, SPECIAL_EVENT_IDS)
+            mapValue(params, 5, SET_CHARACTER_VAR_NAMES)
           when :Other
-            mapValue(params, 4, InjectionHelper::SET_OTHER_VAR_NAMES)
+            mapValue(params, 4, SET_OTHER_VAR_NAMES)
         end
       when :ControlSelfSwitch
-        mapValue(params, 1, InjectionHelper::TRUTH)
+        mapValue(params, 1, TRUTH)
       when :TransferPlayer
-        if mapValue(params, 0, InjectionHelper::APPOINTMENT_METHODS) == :Variable
+        if mapValue(params, 0, APPOINTMENT_METHODS) == :Variable
           mapValue(params, 1, Variables)
           mapValue(params, 2, Variables)
           mapValue(params, 3, Variables)
           mapValue(params, 4, Variables)
         else
-          mapValue(params, 4, InjectionHelper::FACING_DIRECTIONS)
+          mapValue(params, 4, FACING_DIRECTIONS)
         end
-        mapValue(params, 5, InjectionHelper::TRUTH)
+        mapValue(params, 5, TRUTH)
       when :SetEventLocation
-        if mapValue(params, 1, InjectionHelper::APPOINTMENT_METHODS) == :Variable
+        if mapValue(params, 1, APPOINTMENT_METHODS) == :Variable
           mapValue(params, 2, Variables)
           mapValue(params, 3, Variables)
         end
       when :ShowPicture, :MovePicture
-        if mapValue(params, 3, InjectionHelper::APPOINTMENT_METHODS) == :Variable
+        if mapValue(params, 3, APPOINTMENT_METHODS) == :Variable
           mapValue(params, 4, Variables)
           mapValue(params, 5, Variables)
         end
@@ -600,7 +600,7 @@ module InjectionHelper
   end
 
   def self.parseMoveCommand(sym, *params)
-    return RPG::MoveCommand.new(InjectionHelper::MOVE_INSNS[sym], handleComplexParameters(sym, params))
+    return RPG::MoveCommand.new(MOVE_INSNS[sym], handleComplexParameters(sym, params))
   end
 
   def self.parseMoveRoute(*insns, repeat: false)
@@ -629,7 +629,7 @@ module InjectionHelper
   end
 
   def self.parseEventCommand(indent, sym, *params)
-    return RPG::EventCommand.new(InjectionHelper::EVENT_INSNS[sym], indent, handleComplexParameters(sym, params))
+    return RPG::EventCommand.new(EVENT_INSNS[sym], indent, handleComplexParameters(sym, params))
   end
 
   def self.parseEventCommands(*insns, baseIndent: 0)
@@ -645,7 +645,7 @@ module InjectionHelper
         sym = insn[0]
         params = insn[1..]
       elsif insn.is_a?(RPG::EventCommand)
-        sym = InjectionHelper::EVENT_INSNS.invert[insn.code]
+        sym = EVENT_INSNS.invert[insn.code]
         params = insn.parameters
       end
 
@@ -663,9 +663,9 @@ module InjectionHelper
           builtInsns.push(parseEventCommand(currIndent, blockstack.pop()))
         end
 
-        if InjectionHelper::BLOCK_TYPES[sym]
+        if BLOCK_TYPES[sym]
           currIndent += 1
-          blockstack.push(InjectionHelper::BLOCK_TYPES[sym])
+          blockstack.push(BLOCK_TYPES[sym])
         elsif sym == :Else
           currIndent += 1
         end
@@ -680,6 +680,82 @@ module InjectionHelper
 
     return builtInsns
   end
+
+  ### Map Creation
+
+  CREATE_MAPS = {}
+  MAP_ID_ASSIGNMENTS = {}
+
+  def self.mapIdForSavetag(savetag)
+    MAP_ID_ASSIGNMENTS[savetag]
+  end
+
+  def self.defineNewMap(savetag, width, height, name, parent, meta, &block)
+    CREATE_MAPS[savetag] = [width, height, name, parent, meta, block]
+  end
+
+  def self.assignMapIDs
+    return if CREATE_MAPS.empty?
+
+    openids = []
+    for i in 1..999
+      openids.push(i) if !pbRgssExists?(sprintf("Data/Map%03d.rxdata",i))
+      break if openids.size >= CREATE_MAPS.size
+    end
+
+    if openids.size < CREATE_MAPS.size
+      raise "Not enough free Map IDs! Needed #{CREATE_MAPS.size}, found #{openids.size}"
+    end
+
+    for savetag in CREATE_MAPS.keys
+      mapid = openids.shift
+      MAP_ID_ASSIGNMENTS[savetag] = mapid
+    end
+  end
+
+  def self.createMap(mapid)
+    begin
+      savetag = MAP_ID_ASSIGNMENTS.invert[mapid]
+      INJECTED_MAP_IDS[mapid] = savetag
+      $PREVIOUS_APPLIED_PATCHES.push(mapid)
+      APPLIED_PATCHES.push(mapid)
+
+      width, height, name, parent, meta, block = CREATE_MAPS[savetag]
+      newmap = RPG::Map.new(width, height)
+      newmapinfo = RPG::MapInfo.new
+      newmapinfo.parent_id = parent if parent.is_a?(Numeric)
+      newmapinfo.parent_id = MAP_ID_ASSIGNMENTS[parent] if parent.is_a?(String)
+      newmapinfo.name = name
+      newmapmeta = MapMetadata.new(mapid, meta, meta) # Encounters and meta merged
+
+      clearEventBuilders
+      block.call(newmap)
+      applyEventBuilders
+
+      if meta[:FlyData]
+        mappos = newmap.MapPosition
+        if mappos
+          loc = mappos[1...]
+          if $cache.town_map[loc].region == mappos[0]
+            $cache.town_map[loc].flyData = [mapid, x, y]
+            $cache.mapdata[map].HealingSpot = [mapid, x, y]
+          end
+        end
+      end
+
+      $cache.mapinfos[mapid] = newmapinfo
+      $cache.mapdata[mapid] = newmapmeta
+      return newmap
+    rescue
+      clearEventBuilders
+      raise $!
+    end
+  end
+
+  ### Alternate selfswitch format storage
+
+  INJECTED_MAP_IDS = {}
+  INJECTED_MAP_EVENT_IDS = {}
 
   ### Autopatcher
 
@@ -724,6 +800,18 @@ module InjectionHelper
       @@currentmapid = mapid
       if PATCHES[mapid]
         for mappatch in PATCHES[mapid]
+          if !mappatch.eventid
+            doneAny |= mappatch.applyToMap(map, mapid)
+          elsif !mappatch.pageid
+            doneAny |= mappatch.applyToEvent(map.events[mappatch.eventid])
+          else
+            doneAny |= mappatch.applyToPage(map.events[mappatch.eventid].pages[mappatch.pageid])
+          end
+        end
+      end
+
+      if INJECTED_MAP_IDS[mapid] && PATCHES[INJECTED_MAP_IDS[mapid]]
+        for mappatch in PATCHES[INJECTED_MAP_IDS[mapid]]
           if !mappatch.eventid
             doneAny |= mappatch.applyToMap(map, mapid)
           elsif !mappatch.pageid
@@ -840,10 +928,9 @@ end
 
 # Map Events injected by this library use a secondary selfswitch format 
 
-$INJECTED_MAP_EVENTS = {}
 Events.onMapChange+=proc {
   mapid = $game_map.map_id
-  mapevs = $INJECTED_MAP_EVENTS[mapid]
+  mapevs = InjectionHelper::INJECTED_MAP_EVENT_IDS[mapid]
   $game_self_switches.injectionhelper_port_oldselfswitches(mapid, mapevs) if mapevs
 }
 
@@ -875,8 +962,16 @@ class Game_SelfSwitches
 
   alias :injectionhelper_old_index :[]
   def [](key)
-    if defined?(@injectionhelper_injected_data) && key.is_a?(Array) && key.size == 3 && $INJECTED_MAP_EVENTS[key[0]] && $INJECTED_MAP_EVENTS[key[0]][key[1]]
-      mappedkey = [key[0], $INJECTED_MAP_EVENTS[key[0]][key[1]], key[2]]
+    if defined?(@injectionhelper_injected_data) && key.is_a?(Array) && key.size == 3 && 
+       ((InjectionHelper::INJECTED_MAP_EVENT_IDS[key[0]] && InjectionHelper::INJECTED_MAP_EVENT_IDS[key[0]][key[1]]) ||
+        InjectionHelper::INJECTED_MAP_IDS[key[0]])
+      mappedkey = [*key]
+      if InjectionHelper::INJECTED_MAP_EVENT_IDS[key[0]] && InjectionHelper::INJECTED_MAP_EVENT_IDS[key[0]][key[1]]
+        mappedkey[1] = InjectionHelper::INJECTED_MAP_EVENT_IDS[key[0]][key[1]]
+      end
+      if InjectionHelper::INJECTED_MAP_IDS[key[0]]
+        mappedkey[0] = InjectionHelper::INJECTED_MAP_IDS[key[0]]
+      end
       return @injectionhelper_injected_data[mappedkey] ? true : false
     else
       return injectionhelper_old_index(key)
@@ -885,10 +980,18 @@ class Game_SelfSwitches
 
   alias :injectionhelper_old_set :[]=
   def []=(key, value)
-    if key.is_a?(Array) && key.size == 3 && $INJECTED_MAP_EVENTS[key[0]] && $INJECTED_MAP_EVENTS[key[0]][key[1]]
+    if key.is_a?(Array) && key.size == 3 && 
+       ((InjectionHelper::INJECTED_MAP_EVENT_IDS[key[0]] && InjectionHelper::INJECTED_MAP_EVENT_IDS[key[0]][key[1]]) ||
+        InjectionHelper::INJECTED_MAP_IDS[key[0]])
       @injectionhelper_injected_data = {} if !defined?(@injectionhelper_injected_data)
 
-      mappedkey = [key[0], $INJECTED_MAP_EVENTS[key[0]][key[1]], key[2]]
+      mappedkey = [*key]
+      if InjectionHelper::INJECTED_MAP_EVENT_IDS[key[0]] && InjectionHelper::INJECTED_MAP_EVENT_IDS[key[0]][key[1]]
+        mappedkey[1] = InjectionHelper::INJECTED_MAP_EVENT_IDS[key[0]][key[1]]
+      end
+      if InjectionHelper::INJECTED_MAP_IDS[key[0]]
+        mappedkey[0] = InjectionHelper::INJECTED_MAP_IDS[key[0]]
+      end
       @injectionhelper_injected_data[mappedkey] = value
     else
       return injectionhelper_old_set(key, value)
@@ -896,7 +999,173 @@ class Game_SelfSwitches
   end
 end
 
+# Utils for creating/injecting into maps and events
+
+module EventListHolder
+  def patch(tag, &block)
+    InjectionHelper.patch(self.list, tag) { block.call(self) }
+  end
+
+  def patched?(tag)
+    InjectionHelper.patched?(self.list, tag)
+  end
+
+  def lookForSequence(*insnMatchers)
+    InjectionHelper.lookForSequence(self.list, *insnMatchers)
+  end
+
+  def lookForAll(matcher)
+    InjectionHelper.lookForAll(self.list, matcher)
+  end
+
+  def idxOf(insn)
+    self.list.index(insn)
+  end
+
+  def [](*args, **kwargs)
+    self.list[*args, **kwargs]
+  end
+
+  def []=(*args, **kwargs)
+    self.list.send(:[]=, *args, **kwargs)
+  end
+
+  def insertAtStart(*commands)
+    self.unshift(*InjectionHelper.parseEventCommands(*commands))
+  end
+
+  def insertBefore(insn, *commands)
+    insn = self[insn] if insn.is_a?(Numeric)
+
+    self.insert(self.idxOf(insn), *InjectionHelper.parseEventCommands(*commands, baseIndent: insn.indent))
+  end
+
+  def insertAfter(insn, *commands)
+    insn = self[insn] if insn.is_a?(Numeric)
+
+    blockdepth = insn.indent
+    blockdepth += 1 if InjectionHelper::BLOCK_TYPES[InjectionHelper::EVENT_INSNS.invert[insn.code]]
+    blockdepth += 1 if InjectionHelper::EVENT_INSNS.invert[insn.code] == :Else
+    self.insert(self.idxOf(insn), *InjectionHelper.parseEventCommands(*commands, baseIndent: blockdepth))
+  end
+
+  def replaceRange(insn1, insn2, *commands)
+    insn1 = self[insn1] if insn1.is_a?(Numeric)
+    insn2 = self[insn2] if insn1.is_a?(Numeric)
+    self[self.idxOf(insn1)..self.idxOf(insn2)] = InjectionHelper.parseEventCommands(*commands, baseIndent: insn1.indent)
+  end
+
+  def swap(rangeA1, rangeA2, rangeB1, rangeB2)
+    rangeA1 = self[rangeA1] if rangeA1.is_a?(Numeric)
+    rangeA2 = self[rangeA2] if rangeA2.is_a?(Numeric)
+    rangeB1 = self[rangeB1] if rangeB1.is_a?(Numeric)
+    rangeB2 = self[rangeB2] if rangeB2.is_a?(Numeric)
+
+    sectionA = self[self.idxOf(rangeA1)..self.idxOf(rangeA2)]
+    sectionB = self[self.idxOf(rangeB1)..self.idxOf(rangeB2)]
+    tempMrk = "Temporary Marker"
+
+    self[self.idxOf(rangeB1)..self.idxOf(rangeB2)] = [tempMrk]
+    self[self.idxOf(rangeA1)..self.idxOf(rangeA2)] = sectionB
+    self[self.idxOf(tempMrk)..self.idxOf(tempMrk)] = sectionA
+  end
+
+  def reformat(*commands)
+    self.list.clear()
+    self.list.push(*InjectionHelper.parseEventCommands(*commands, :Done))
+  end
+
+  def insert(*args, **kwargs)
+    self.list.insert(*args, **kwargs)
+  end
+
+  def unshift(*args, **kwargs)
+    self.list.unshift(*args, **kwargs)
+  end
+
+  def delete(*args, **kwargs)
+    self.list.delete(*args, **kwargs)
+  end
+
+  def delete_at(*args, **kwargs)
+    self.list.delete_at(*args, **kwargs)
+  end
+
+  def size
+    self.list.size
+  end
+
+  def length
+    self.list.length
+  end
+end
+
 module RPG
+
+  class Map
+    def setBGS(sound, volume=100, pitch=100, autoplay: true)
+      self.bgs = RPG::AudioFile.new(sound, volume, pitch)
+      self.autoplay_bgs = autoplay
+      return self
+    end
+
+    def setBGM(sound, volume=100, pitch=100, autoplay: true)
+      self.bgm = RPG::AudioFile.new(sound, volume, pitch)
+      self.autoplay_bgm = autoplay
+      return self
+    end
+
+    def setTileset(tileset_id)
+      self.tileset_id = tileset_id
+      return self
+    end
+
+    def createNewEvent(x, y, name, savetag=nil, &block)
+      InjectionHelper.createNewEvent(self, x, y, name, savetag, &block)
+    end
+
+    def createSinglePageEvent(x, y, name, savetag=nil, &block)
+      InjectionHelper.createSinglePageEvent(self, x, y, name, savetag, &block)
+    end
+
+    def fillArea(x, y, fill, mapping={})
+      InjectionHelper.fillArea(self, x, y, fill, mapping)
+      return self
+    end
+
+    def fillAreaWithTile(x, y, width, height, layer0, layer1, layer2)
+      InjectionHelper.fillAreaWithTile(self, x, y, width, height, layer0, layer1, layer2)
+      return self
+    end
+
+    def setTile(x, y, layer0, layer1, layer2)
+      InjectionHelper.setTile(self, x, y, layer0, layer1, layer2)
+      return self
+    end
+
+    def patch(tag, &block)
+      for event in self.events.values
+        event.patch(tag, &block)
+      end
+    end
+  end
+
+  class CommonEvent
+    include EventListHolder
+  end
+
+  class EventCommand
+    def command
+      return InjectionHelper::EVENT_INSNS.invert[@code]
+    end
+  end
+
+  class MoveCommand
+    def command
+      return InjectionHelper::MOVE_INSNS.invert[@code]
+    end
+  end
+
   class Event
 
     def newPage
@@ -905,7 +1174,15 @@ module RPG
       self.pages.push(page)
     end
 
+    def patch(tag, &block)
+      for page in self.pages
+        page.patch(tag, &block)
+      end
+    end
+
     class Page
+      include EventListHolder
+
       def setTile(tileid, hueShift: 0, direction: :Down, pattern: 0, opacity: 255, blendType: :Normal)
         self.graphic.tile_id = tileid
         self.graphic.character_hue = hueShift
@@ -999,6 +1276,7 @@ class Game_System
   def initialize(*args, **kwargs)
     ret = injectionhelper_old_initialize(*args, **kwargs)
     InjectionHelper.applyCommonPatches
+    InjectionHelper.assignMapIDs
     return ret
   end
 end
@@ -1042,7 +1320,12 @@ class Cache_Game
       return injectionhelper_old_map_load(mapid)
     end
 
-    ret = injectionhelper_old_map_load(mapid)
+    if InjectionHelper::MAP_ID_ASSIGNMENTS.values.include?(mapid)
+      ret = @cachedmaps[mapid] = InjectionHelper.createMap(mapid)
+    else
+      ret = injectionhelper_old_map_load(mapid)
+    end
+
     InjectionHelper.applyMapPatches(mapid, ret)
     return ret
   end

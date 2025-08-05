@@ -4,14 +4,18 @@ begin
   raise "Dependencies #{missing.join(", ")} are required by #{__FILE__}. Please install them." if missing.length > 1
 end
 
-def deleteendwaits_patchinsns(insns, textmatcher, textcmatcher, nextmatcher)
-  InjectionHelper.patch(insns, :deleteendwaits_patchinsns) {
+InjectionHelper.defineMapPatch(-1) { |map| # Apply to every map
+  textmatcher = InjectionHelper.parseMatcher([:ShowText, %r"((\\[\.\|])|(</ac>))$"])
+  textcmatcher = InjectionHelper.parseMatcher([:ShowTextContinued, %r"((\\[\.\|])|(</ac>))$"])
+  nextmatcher = InjectionHelper.parseMatcher([:ShowTextContinued, nil])
+
+  map.patch(:deleteendwaits_patchinsns) { |page|
     i = 0
     anypatch = false
-    while i < insns.size - 1
-      insn = insns[i]
+    while i < page.size - 1
+      insn = page[i]
 
-      if (textmatcher.matches?(insn) || textcmatcher.matches?(insn)) && !nextmatcher.matches?(insns[i + 1])
+      if (textmatcher.matches?(insn) || textcmatcher.matches?(insn)) && !nextmatcher.matches?(page[i + 1])
         insn.parameters[0].gsub!(%r"((\\[\.\|])|(</ac>))$", '')
         anypatch = true
       end
@@ -20,17 +24,5 @@ def deleteendwaits_patchinsns(insns, textmatcher, textcmatcher, nextmatcher)
     end
 
     next anypatch
-  }
-end
-
-InjectionHelper.defineMapPatch(-1) { |map| # Apply to every map
-  textmatcher = InjectionHelper.parseMatcher([:ShowText, %r"((\\[\.\|])|(</ac>))$"])
-  textcmatcher = InjectionHelper.parseMatcher([:ShowTextContinued, %r"((\\[\.\|])|(</ac>))$"])
-  nextmatcher = InjectionHelper.parseMatcher([:ShowTextContinued, nil])
-
-  map.events.each_value { |event|
-    event.pages.each { |page|
-      deleteendwaits_patchinsns(page.list, textmatcher, textcmatcher, nextmatcher)
-    }
   }
 }

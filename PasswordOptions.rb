@@ -258,41 +258,27 @@ def mod_passwordoptions_scene
 end
 
 InjectionHelper.defineMapPatch(1, 1) { |event| # Intro, Intro Sequence
-  for page in event.pages
-    insns = page.list
-    InjectionHelper.patch(insns, :PasswordOptions) {
-      matched = InjectionHelper.lookForSequence(insns,
-        [:Script,          'pbFadeOutIn(99999){'],
-        [:ScriptContinued, '    sscene=PokemonEntryScene.new'],
-        [:ScriptContinued, '    sscreen=PokemonEntry.new(sscene)'],
-        [:ScriptContinued, '    $trainpass=sscreen.pbStartScreen(_INTL("Enter password."),1,12,"")'],
-        [:ScriptContinued, '  }'],
-        [:Script,          'addPassword($trainpass)'])
+  event.patch(:PasswordOptions) { |page|
+    matched = page.lookForSequence(
+      [:Script,          'pbFadeOutIn(99999){'],
+      [:ScriptContinued, '    sscene=PokemonEntryScene.new'],
+      [:ScriptContinued, '    sscreen=PokemonEntry.new(sscene)'],
+      [:ScriptContinued, '    $trainpass=sscreen.pbStartScreen(_INTL("Enter password."),1,12,"")'],
+      [:ScriptContinued, '  }'],
+      [:Script,          'addPassword($trainpass)'])
 
-      if matched
-        labelPoint = InjectionHelper.lookForAll(insns,
-          [:ShowPicture, 1, 'introOak2', 0, 0, 0, 0, 100, 100, 255, 0])
+    if matched
+      labelPoint = page.lookForAll([:ShowPicture, 1, 'introOak2', 0, 0, 0, 0, 100, 100, 255, 0])
 
-        next false if labelPoint.size == 0
-        insns.insert(insns.index(labelPoint[0]), InjectionHelper.parseEventCommand(labelPoint[0].indent, :Label, 'passwordoptions_pwend'))
+      next false if labelPoint.size == 0
+      page.insertBefore(labelPoint[0], [:Label, 'passwordoptions_pwend'])
 
-        replacement = InjectionHelper.parseEventCommands(
-            [:ConditionalBranch, :Script, 'mod_passwordoptions_scene'],
-              [:JumpToLabel, 'passwordoptions_pwend'],
-            :Done,
-          baseIndent: matched[0].indent)
+      page.replaceRange(matched[0], matched[-1], 
+        [:ConditionalBranch, :Script, 'mod_passwordoptions_scene'],
+          [:JumpToLabel, 'passwordoptions_pwend'],
+        :Done)
+    end
 
-        while replacement.size < matched.size
-          replacement.push(InjectionHelper.parseEventCommand(matched[0].indent, :Comment, '////'))
-        end
-
-        for i in 0...replacement.length
-          insns[insns.index(matched[i])] = replacement[i]
-        end
-      end
-
-
-      next matched
-    }
-  end
+    next matched
+  }
 }

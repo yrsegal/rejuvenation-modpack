@@ -118,7 +118,7 @@ module StatusConditionItems
   end
 
   def self.createSomniamSeller(map)
-    InjectionHelper.createSinglePageEvent(map, 37, 24, "Status Item seller") { |page|
+    map.createSinglePageEvent(37, 24, "Status Item seller") { |page|
       page.setGraphic("NPC 22")
       page.interact(
         [:ConditionalBranch, :Variable, :Stamps, :Constant, 1, :GreaterOrEquals],
@@ -132,7 +132,7 @@ module StatusConditionItems
   end
 
   def self.createGoldenleafSeller(map)
-    InjectionHelper.createSinglePageEvent(map, 60, 49, "Status Item seller") { |page|
+    map.createSinglePageEvent(60, 49, "Status Item seller") { |page|
       page.setGraphic("trchar072Dark")
       page.interact(
         [:ConditionalBranch, :Switch, :NewTownOrdinance, true],

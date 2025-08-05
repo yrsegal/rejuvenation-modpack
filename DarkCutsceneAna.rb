@@ -745,7 +745,7 @@ module DarkAnaCutscene
       if playerMatcher.matches?(insn)
         nextinsn = originalPage.list[idx + 1]
         until nextinsn.indent == insn.indent &&
-            nextinsn.code != InjectionHelper::EVENT_INSNS[:BranchEndConditional] &&
+            nextinsn.command != :BranchEndConditional &&
             !playerMatcher.matches?(nextinsn)
           idx += 1
           nextinsn = originalPage.list[idx + 1]
@@ -754,7 +754,7 @@ module DarkAnaCutscene
         page.list.push(
           InjectionHelper.parseEventCommand(insn.indent, :ShowText, dialogue[dialogueidx]))
         dialogueidx += 1
-      elsif insn.code == InjectionHelper::EVENT_INSNS[:SetMoveRoute]
+      elsif insn.command == :SetMoveRoute
         insn.parameters[1].list.each { |movecommand|
           movecommand.parameters[0] = 'BGirlwalk_5' if spriteMatcher.matches?(movecommand)
         }
@@ -790,9 +790,9 @@ module DarkAnaCutscene
     until idx == originalPage.list.length
       insn = originalPage.list[idx]
 
-      if insn.code == InjectionHelper::EVENT_INSNS[:ShowText] # If text
+      if insn.command == :ShowText # If text
         nextinsn = originalPage.list[idx + 1]
-        until nextinsn.code != InjectionHelper::EVENT_INSNS[:ShowTextContinued]
+        until nextinsn.command != :ShowTextContinued
           idx += 1
           nextinsn = originalPage.list[idx + 1]
         end
@@ -815,7 +815,7 @@ module DarkAnaCutscene
             :Done,
           :Done,
           baseIndent: insn.indent))
-      elsif insn.code == InjectionHelper::EVENT_INSNS[:SetMoveRoute]
+      elsif insn.command == :SetMoveRoute
         if insn.parameters[1].list.any?(&spriteMatcher.method(:matches?))
 
           page.list.push(*InjectionHelper.parseEventCommands(
@@ -961,19 +961,15 @@ module DarkAnaCutscene
   end
 
   def self.patchDesolateOutfit(event)
-    for page in event.pages
-      insns = page.list
-      InjectionHelper.patch(insns, :darkana_patch_desolateoutfit) {
-        matched = InjectionHelper.lookForAll(insns,
-          [:Script, '$Trainer.outfit=5'])
+    event.patch(:darkana_patch_desolateoutfit) { |page|
+      matched = page.lookForAll([:Script, '$Trainer.outfit=5'])
 
-        for insn in matched
-          insn.parameters[0] = 'darkana_determine_outfit_desolate'
-        end
+      for insn in matched
+        insn.parameters[0] = 'darkana_determine_outfit_desolate'
+      end
 
-        next matched.length > 0
-      }
-    end
+      next matched.length > 0
+    }
   end
 
 end

@@ -60,166 +60,122 @@ end
 # Injections
 
 def outfitoptions_arbitrary_outfit(event)
-  for page in event.pages
-    insns = page.list
-    InjectionHelper.patch(insns, :outfitoptions_arbitrary_outfit) {
-      matched = InjectionHelper.lookForAll(insns,
-        [:Script, /^\$Trainer\.outfit=[0-24-9]/])
-      for insn in matched
-        insn.parameters[0] = '$Trainer.outfit=$game_variables[:Outfit]'
-      end
+  event.patch(:outfitoptions_arbitrary_outfit) { |page|
+    matched = page.lookForAll([:Script, /^\$Trainer\.outfit=[0-24-9]/])
+    for insn in matched
+      insn.parameters[0] = '$Trainer.outfit=$game_variables[:Outfit]'
+    end
 
-      next matched.length > 0
-    }
-  end
+    next matched.length > 0
+  }
 end
 
 def outfitoptions_replace_outfits_with_darchflag(event)
-  for page in event.pages
-    insns = page.list
-    InjectionHelper.patch(insns, :outfitoptions_replace_outfits_with_darchflag) {
-      matched = InjectionHelper.lookForAll(insns,
-        [:Script, /^\$Trainer\.outfit=/])
+  event.patch(:outfitoptions_replace_outfits_with_darchflag) { |page|
+    matched = page.lookForAll([:Script, /^\$Trainer\.outfit=/])
 
-      for insn in matched
-        insns[insns.index(insn)] = InjectionHelper.parseEventCommand(insn.indent,
-          :ControlSwitch, :DarchOutfit, true)
-      end
+    for insn in matched
+      page.replaceRange(insn, insn, [:ControlSwitch, :DarchOutfit, true])
+    end
 
-      next matched.length > 0
-    }
-  end
+    next matched.length > 0
+  }
 end
 
 def outfitoptions_nix_darchoutfit_set(event, replaceWithChoices)
-  for page in event.pages
-    insns = page.list
-    InjectionHelper.patch(insns, :outfitoptions_nix_darchoutfit_set) {
-      matched = InjectionHelper.lookForAll(insns,
-        [:ControlSwitch, :DarchOutfit, false])
+  event.patch(:outfitoptions_nix_darchoutfit_set) { |page|
+    matched = page.lookForAll([:ControlSwitch, :DarchOutfit, false])
 
-      for insn in matched
-        if replaceWithChoices
-          insns[insns.index(insn)] = InjectionHelper.parseEventCommand(insn.indent,
-            :Script, 'outfitoptions_handle_clothing_choices')
-        else
-          insns.delete_at(insns.index(insn))
-        end
+    for insn in matched
+      if replaceWithChoices
+        page.replaceRange(insn, [:Script, 'outfitoptions_handle_clothing_choices'])
+      else
+        page.delete_at(page.idxOf(insn))
       end
+    end
 
-      next matched.length > 0
-    }
-  end
+    next matched.length > 0
+  }
 end
 
 def outfitoptions_wake_up(page)
-  insns = page.list
-
-  InjectionHelper.patch(insns, :outfitoptions_wake_up) {
-    matched = InjectionHelper.lookForSequence(insns,
+  page.patch(:outfitoptions_wake_up) {
+    matched = page.lookForSequence(
       [:ConditionalBranch, :Variable, :Outfit, :Constant, 0, :Equals],
       :Else,
       [:Script, 'Kernel.pbSetPokemonCenter'])
 
     if matched
-      insns.insert(insns.index(matched[2]), # before pokemon center
-        *InjectionHelper.parseEventCommands(
-        [:Label, 'outfitoptions-end'],
-        :Done,
-        baseIndent: matched[2].indent))
+      # Done to end? if this breaks, return the done
+      page.insertBefore(matched[2], [:Label, 'outfitoptions-end']) # before pokemon center
 
       payload = []
       for outfit in [2,3,4,6]
         payload += outfitoptions_wakeup_section(outfit)
       end
 
-      insns.insert(insns.index(matched[1]) + 1, *InjectionHelper.parseEventCommands(*payload,
-        baseIndent: matched[1].indent + 1))
-
+      page.insertAfter(matched[1], *payload)
     end
     next matched
   }
 end
 
 def outfitoptions_injectBeforeOutfit0(subevent, event_id, nums, running)
-  insns = subevent.list
-
-  InjectionHelper.patch(insns, :outfitoptions_injectBeforeOutfit0) {
-    matched = InjectionHelper.lookForSequence(insns,
-      [:ConditionalBranch, :Variable, :Outfit, :Constant, 0, :Equals])
+  subevent.patch(:outfitoptions_injectBeforeOutfit0) {
+    matched = subevent.lookForSequence([:ConditionalBranch, :Variable, :Outfit, :Constant, 0, :Equals])
 
     if matched
       newinsns = []
       nums.each {|num| newinsns += outfitoptions_generateWindstormBranch(num,running,event_id) }
 
-      insns.insert(insns.index(matched), *InjectionHelper.parseEventCommands(*newinsns, baseIndent: matched.indent))
+      subevent.insertBefore(matched, *newinsns)
     end
     next matched
   }
 end
 
 def outfitoptions_set_icep_outfit_fight(event)
-  for page in event.pages
-    insns = page.list
-    InjectionHelper.patch(insns, :outfitoptions_set_icep_outfit_fight) {
-      matched = InjectionHelper.lookForAll(insns,
-        [:Script, '$Trainer.outfit=3'])
+  event.patch(:outfitoptions_set_icep_outfit_fight) { |page|
+    matched = page.lookForAll([:Script, '$Trainer.outfit=3'])
 
-      for insn in matched
-        insns.insert(insns.index(insn) + 1,
-          *InjectionHelper.parseEventCommands(
-            [:ControlSwitch, :outfitoptions_IceptOutfit, true],
-            baseIndent: insn.indent))
-      end
+    for insn in matched
+      page.insertAfter(insn, [:ControlSwitch, :outfitoptions_IceptOutfit, true])
+    end
 
-      next matched.length > 0
-    }
-  end
+    next matched.length > 0
+  }
 end
 
 def outfitoptions_patch_outfit_management(event)
-  insns = event.list
-  InjectionHelper.patch(insns, :outfitoptions_patch_outfit_management) {
-    insns.unshift(*InjectionHelper.parseEventCommands(
+  event.patch(:outfitoptions_patch_outfit_management) {
+    event.insertAtStart(
       [:ConditionalBranch, :Variable, :Outfit, :Constant, 3, :Equals],
         [:ControlSwitch, :outfitoptions_IceptOutfit, true],
-      :Done))
+      :Done)
 
-    matched = InjectionHelper.lookForSequence(insns,
-      [:ConditionalBranch, :Variable, :Outfit, :Constant, 4, :Equals])
+    matched = event.lookForSequence([:ConditionalBranch, :Variable, :Outfit, :Constant, 4, :Equals])
 
     if matched
-      insns.insert(insns.index(matched) + 1,
-        *InjectionHelper.parseEventCommands(
+      event.insertAfter(matched,
           [:ControlVariable, :Outfit, :Set, :Constant, 4],
-          [:Script, '$Trainer.outfit=4'],
-          baseIndent: matched.indent + 1))
+          [:Script, '$Trainer.outfit=4'])
     end
     next matched
   }
 end
 
 def outfitoptions_override_outfit_choice(event)
-  insns = event.list
-  InjectionHelper.patch(insns, :outfitoptions_override_outfit_choice) {
-    event.list.clear()
-    event.list.push(*InjectionHelper.parseEventCommands(
-        [:Script, 'outfitoptions_handle_clothing_select'],
-        :Done))
+  event.patch(:outfitoptions_override_outfit_choice) {
+    event.reformat([:Script, 'outfitoptions_handle_clothing_select'])
   }
 end
 
 def outfitoptions_restore_sprite(event)
-  insns = event.list
-  InjectionHelper.patch(insns, :outfitoptions_restore_sprite) {
-    matched = InjectionHelper.lookForSequence(insns,
-      [:Script, 'characterRestore'])
+  event.patch(:outfitoptions_restore_sprite) {
+    matched = event.lookForSequence([:Script, 'characterRestore'])
 
     if matched
-      insns.insert(insns.index(matched) + 1,
-        *InjectionHelper.parseEventCommands(
-          [:Script, '$game_player.character_name=pbGetPlayerCharset(:walk)'],
-          baseIndent: matched.indent))
+      event.insertAfter(matched, [:Script, '$game_player.character_name=pbGetPlayerCharset(:walk)'])
     end
     next matched
   }

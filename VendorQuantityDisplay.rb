@@ -66,187 +66,150 @@ module VendorQuantityDisplay
     return window
   end
 
-  def self.inject(event, script)
-    for page in event.pages
-      injectPage(page, script)
-    end
-  end
+  def self.inject(eventlike, script)
+    eventlike.patch(:VendorQuantityDisplay) { |page|
+      textMatches = page.lookForAll([:ShowText, /\\ch\[/]) + 
+                    page.lookForAll([:ShowTextContinued, /\\ch\[/])
 
-  def self.injectPage(page, script)
-    insns = page.list
-    InjectionHelper.patch(insns, :VendorQuantityDisplay) {
-      textMatches = InjectionHelper.lookForAll(insns,
-        [:ShowText, /\\ch\[/]) + InjectionHelper.lookForAll(insns,
-        [:ShowTextContinued, /\\ch\[/])
-
-      choiceMatches = InjectionHelper.lookForAll(insns,
-        [:ShowChoices, nil, nil])
+      choiceMatches = page.lookForAll([:ShowChoices, nil, nil])
 
       for insn in textMatches
-        targetIdx = insns.index(insn)
-        while targetIdx > 0 && insns[targetIdx].code == InjectionHelper::EVENT_INSNS[:ShowTextContinued]
+        targetIdx = page.idxOf(insn)
+        while targetIdx > 0 && page[targetIdx].command == :ShowTextContinued
           targetIdx -= 1
         end
-        insns.insert(targetIdx, InjectionHelper.parseEventCommand(insn.indent, :Script, script))
+        page.insertBefore(targetIdx, [:Script, script])
       end
 
       anyChoice = false
 
       for insn in choiceMatches
-        choiceIdx = insns.index(insn)
+        choiceIdx = page.idxOf(insn)
         insertIdx = choiceIdx - 1
-        while insertIdx > 0 && insns[insertIdx].code == InjectionHelper::EVENT_INSNS[:ShowTextContinued]
+        while insertIdx > 0 && page[insertIdx].command == :ShowTextContinued
           insertIdx -= 1
         end
-        if insertIdx >= 0 && insns[insertIdx].code == InjectionHelper::EVENT_INSNS[:ShowText]
-          insns.insert(insertIdx, InjectionHelper.parseEventCommand(insn.indent, :Script, script))
+        if insertIdx >= 0 && page[insertIdx].command == :ShowText
+          page.insertBefore(insertIdx, [:Script, script])
           anyChoice = true
         end
       end
 
       next textMatches.length > 0 || anyChoice
     }
-    injectCleanup(page)
+    injectCleanup(eventlike)
   end
 
   def self.injectForEvent(events, key, script)
     if key.is_a?(Array)
-      injectPage(events[key[0]].pages[key[1] - 1], script)
+      inject(events[key[0]].pages[key[1] - 1], script)
     else
       inject(events[key], script)
     end
   end
 
   def self.injectAtStart(event, script)
-    for page in event.pages
-      insns = page.list
-      InjectionHelper.patch(insns, :VendorQuantityDisplay) {
-        insns.unshift(InjectionHelper.parseEventCommand(0, :Script, script))
-        next true
-      }
-      injectCleanup(page)
-    end
+    event.patch(:VendorQuantityDisplay) { |page|
+      page.insertAtStart([:Script, script])
+      next true
+    }
+    injectCleanup(event)
   end
 
   def self.injectCairo(event)
-    for page in event.pages
-      insns = page.list
-      InjectionHelper.patch(insns, :VendorQuantityDisplay) {
-        showMoney = InjectionHelper.lookForAll(insns,
-          [:ShowText, /^CAIRO: Very well\./])
+    event.patch(:VendorQuantityDisplay) { |page|
+      showMoney = page.lookForAll([:ShowText, /^CAIRO: Very well\./])
 
-        showRE = InjectionHelper.lookForAll(insns,
-          [:ShowText, /^CAIRO: I see that you have Red Essence\./]) +
-        InjectionHelper.lookForAll(insns,
-          [:ShowText, /^CAIRO: Darkness need not hide from me\./])
+      showRE = page.lookForAll([:ShowText, /^CAIRO: I see that you have Red Essence\./]) +
+               page.lookForAll([:ShowText, /^CAIRO: Darkness need not hide from me\./])
 
-        for insn in showMoney
-          insn.parameters[0] = "\\G" + insn.parameters[0]
-        end
+      for insn in showMoney
+        insn.parameters[0] = "\\G" + insn.parameters[0]
+      end
 
-        for insn in showRE
-          targetIdx = insns.index(insn)
-          insns.insert(targetIdx, InjectionHelper.parseEventCommand(insn.indent, :Script, 'vendorquantity_show_redessence_window'))
-        end
+      for insn in showRE
+        page.insertBefore(insn, InjectionHelper.parseEventCommand(insn.indent, :Script, 'vendorquantity_show_redessence_window'))
+      end
 
-        next showRE.length > 0 || showMoney.length > 0
-      }
-      injectCleanup(page)
-    end
+      next showRE.length > 0 || showMoney.length > 0
+    }
+    injectCleanup(event)
   end
 
   def self.injectEnsureChoices(event)
-    for page in event.pages
-      insns = page.list
-      InjectionHelper.patch(insns, :VendorQuantityDisplay_AddText) {
-        choices = InjectionHelper.lookForAll(insns,
-          [:ShowChoices, ["Yes", "No"], 2])
+    event.patch(:VendorQuantityDisplay_AddText) { |page|
+      choices = page.lookForAll([:ShowChoices, ["Yes", "No"], 2])
 
-        doneAny = false
+      doneAny = false
 
-        for insn in choices
-          targetIdx = insns.index(insn)
+      for insn in choices
+        targetIdx = page.idxOf(insn)
 
-          textStart = -1
-          textEnd = -1
-          while targetIdx > 0
-            targetIdx -= 1
-            break if insns[targetIdx].indent != insn.indent
-            if textEnd == -1 && insns[targetIdx].code == InjectionHelper::EVENT_INSNS[:ShowTextContinued]
-              textEnd = targetIdx
-            elsif insns[targetIdx].code == InjectionHelper::EVENT_INSNS[:ShowText]
-              textEnd = targetIdx if textEnd == -1
-              textStart = targetIdx
-              break
-            end
-          end
-
-          if textStart != -1
-            dialogue = insns[textStart..textEnd]
-            insns[textStart..textEnd] = []
-
-            targetIdx = insns.index(insn)
-            insns.insert(targetIdx, *dialogue)
-            doneAny = true
+        textStart = -1
+        textEnd = -1
+        while targetIdx > 0
+          targetIdx -= 1
+          break if page[targetIdx].indent != insn.indent
+          if textEnd == -1 && page[targetIdx].command == :ShowTextContinued
+            textEnd = targetIdx
+          elsif page[targetIdx].command == :ShowText
+            textEnd = targetIdx if textEnd == -1
+            textStart = targetIdx
+            break
           end
         end
 
-        next doneAny
-      }
-    end
+        if textStart != -1
+          dialogue = page[textStart..textEnd]
+          page[textStart..textEnd] = []
+
+          targetIdx = page.index(insn)
+          page.insert(targetIdx, *dialogue)
+          doneAny = true
+        end
+      end
+
+      next doneAny
+    }
   end
 
   def self.injectNerta(event)
-    for page in event.pages
-      insns = page.list
-      InjectionHelper.patch(insns, :VendorQuantityDisplay_AddText) {
-        spiffen = InjectionHelper.lookForAll(insns,
-          [:ShowText, "Let's spiffen them up, shall we?"])
-        choices = InjectionHelper.lookForAll(insns,
-          [:ShowChoices, ["Yes", "No"], 2])
+    event.patch(:VendorQuantityDisplay_AddText) { |page|
+      spiffen = page.lookForAll([:ShowText, "Let's spiffen them up, shall we?"])
+      choices = page.lookForAll([:ShowChoices, ["Yes", "No"], 2])
 
-        for insn in spiffen
-          insns.delete(insn)
-        end
+      for insn in spiffen
+        page.delete(insn)
+      end
 
-        for insn in choices
-          targetIdx = insns.index(insn)
-          insns.insert(targetIdx, InjectionHelper.parseEventCommand(insn.indent, :ShowText, "Let's spiffen them up, shall we?"))
-        end
+      for insn in choices
+        page.insertBefore(insn, [:ShowText, "Let's spiffen them up, shall we?"])
+      end
 
-        next choices.size > 0 || spiffen.size > 0
-      }
-    end
+      next choices.size > 0 || spiffen.size > 0
+    }
   end
 
 
   def self.injectBeldumRaidDen(event)
-    for page in event.pages
-      insns = page.list
-      InjectionHelper.patch(insns, :VendorQuantityDisplay) {
-        showRE = InjectionHelper.lookForAll(insns,
-          [:ShowText, /^Throw in some Red Essence\?/])
+    event.patch(:VendorQuantityDisplay) { |page|
+      showRE = page.lookForAll([:ShowText, /^Throw in some Red Essence\?/])
 
-        for insn in showRE
-          targetIdx = insns.index(insn)
-          insns.insert(targetIdx, InjectionHelper.parseEventCommand(insn.indent, :Script, 'vendorquantity_show_redessence_window'))
-        end
+      for insn in showRE
+        page.insertBefore(insn,[:Script, 'vendorquantity_show_redessence_window'])
+      end
 
-        next showRE.length > 0
-      }
-      injectCleanup(page)
-    end
+      next showRE.length > 0
+    }
+    injectCleanup(event)
   end
 
-  def self.injectCleanup(page)
-    insns = page.list
-    InjectionHelper.patch(insns, :VendorQuantityCleanup) {
-      ends = InjectionHelper.lookForAll(insns,
-        :ExitEventProcessing) + [insns[-1]]
+  def self.injectCleanup(eventlike)
+    eventlike.patch(:VendorQuantityCleanup) { |page|
+      ends = page.lookForAll(:ExitEventProcessing) + [page[-1]]
 
       for insn in ends
-        targetIdx = insns.index(insn)
-        insns.insert(targetIdx, InjectionHelper.parseEventCommand(insn.indent, :Script, 'vendorquantity_disposefully'))
+        page.insertBefore(insn, [:Script, 'vendorquantity_disposefully'])
       end
 
       next true

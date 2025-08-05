@@ -18,60 +18,45 @@ Variables[:QuestStolenCargo] = 220
 
 module FixFactoryAreas
   def self.patchOceanaPierFieldEffect(event, resetter)
-    for page in event.pages
-      insns = page.list
-      InjectionHelper.patch(insns, :patchOceanaPierFieldEffect) {
-        setShorted = InjectionHelper.lookForAll(insns,
-            [:ControlSwitch, :ShortedOut, nil])
+    event.patch(:patchOceanaPierFieldEffect) { |page|
+      setShorted = page.lookForAll([:ControlSwitch, :ShortedOut, nil])
 
-        for insn in setShorted
-          if resetter
-            insns.insert(insns.index(insn), InjectionHelper.parseEventCommand(insn.indent, :ControlVariable, :Forced_BaseField, :Set, :Constant, 0))
-          else
-            insns.insert(insns.index(insn), InjectionHelper.parseEventCommand(insn.indent, :Script, "$game_variables[:Forced_BaseField] = '#{insn.parameters[2] ? 'ShortCircuit' : 'Factory' }'"))
-          end
+      for insn in setShorted
+        if resetter
+          page.insertBefore(insn, [:ControlVariable, :Forced_BaseField, :Set, :Constant, 0])
+        else
+          page.insertBefore(insn, [:Script, "$game_variables[:Forced_BaseField] = '#{insn.parameters[2] ? 'ShortCircuit' : 'Factory'}'"])
         end
+      end
 
-        next setShorted.length > 0
-      }
-    end
+      next setShorted.length > 0
+    }
   end
 
   def self.patchResetCelgearnFieldEffect(event)
-    for page in event.pages
-      insns = page.list
-      InjectionHelper.patch(insns, :patchResetCelgearnFieldEffect) {
-        resetSwitches = InjectionHelper.lookForAll(insns,
-            [:ControlSwitches, :ReusableSwitch1, nil, false]) # Indicates light state
-        flipLightsOn = InjectionHelper.lookForAll(insns,
-            [:ControlSwitches, :ReusableSwitch1, nil, true])
+    event.patch(:patchResetCelgearnFieldEffect) { |page|
+      resetSwitches = page.lookForAll([:ControlSwitches, :ReusableSwitch1, nil, false]) # Indicates light state
+      flipLightsOn = page.lookForAll([:ControlSwitches, :ReusableSwitch1, nil, true])
 
-        for insn in resetSwitches
-          insns.insert(insns.index(insn), *InjectionHelper.parseEventCommands(
-            [:ControlVariable, :Forced_BaseField, :Set, :Constant, 0],
-            [:ControlSwitch, :ShortedOut, false],
-            baseIndent: insn.indent))
-        end
+      for insn in resetSwitches
+        page.insertBefore(insn, 
+          [:ControlVariable, :Forced_BaseField, :Set, :Constant, 0],
+          [:ControlSwitch, :ShortedOut, false])
+      end
 
-        for insn in flipLightsOn
-          insns.insert(insns.index(insn), *InjectionHelper.parseEventCommands(
-            [:ControlSwitch, :ShortedOut, true], # To ensure message sent
-            baseIndent: insn.indent))
-        end
+      for insn in flipLightsOn
+        page.insertBefore(insn, 
+          [:ControlSwitch, :ShortedOut, true]) # To ensure message sent
+      end
 
-        next resetSwitches.length > 0 || flipLightsOn.length > 0
-      }
-    end
+      next resetSwitches.length > 0 || flipLightsOn.length > 0
+    }
   end
 
   def self.patchCelgearnEntranceRiftBrightness(event)
-    page = event.pages[1] # second page
-    insns = page.list
-    InjectionHelper.patch(insns, :patchCelgearnEntranceRiftBrightness) {
-      setLighting = InjectionHelper.lookForAll(insns,
-          [:ChangeScreenColorTone, Tone.new(0,0,0,0), 40])
-      flipLightsOn = InjectionHelper.lookForAll(insns,
-          [:ControlSwitch, :ReusableSwitch1, true])
+    event.pages[1].patch(:patchCelgearnEntranceRiftBrightness) { |page|
+      setLighting = page.lookForAll([:ChangeScreenColorTone, Tone.new(0,0,0,0), 40])
+      flipLightsOn = page.lookForAll([:ControlSwitch, :ReusableSwitch1, true])
 
       for insn in setLighting
         insn.parameters[0] = Tone.new(-136,-136,-136,0)
@@ -79,9 +64,7 @@ module FixFactoryAreas
       end
 
       for insn in flipLightsOn
-        insns.insert(insns.index(insn), *InjectionHelper.parseEventCommands(
-          [:ChangeScreenColorTone, Tone.new(0,0,0,0), 10],
-          baseIndent: insn.indent))
+        page.insertBefore(insn, [:ChangeScreenColorTone, Tone.new(0,0,0,0), 10])
       end
 
       next setLighting.length > 0 || flipLightsOn.length > 0
@@ -147,23 +130,19 @@ module FixFactoryAreas
   end
 
   def self.patchFieldDamage(event, type)
-    for page in event.pages
-      insns = page.list
-      InjectionHelper.patch(insns, :patchFieldDamage) {
-        fieldDamage = InjectionHelper.lookForAll(insns,
-            [:Script, 'pbFieldDamage'])
+    event.patch(:patchFieldDamage) { |page|
+      fieldDamage = page.lookForAll([:Script, 'pbFieldDamage'])
 
-        for insn in fieldDamage
-          insn.parameters[0] = 'FixFactoryAreas.pbFieldDamage' + type
-        end
+      for insn in fieldDamage
+        insn.parameters[0] = 'FixFactoryAreas.pbFieldDamage' + type
+      end
 
-        next fieldDamage.length > 0
-      }
-    end
+      next fieldDamage.length > 0
+    }
   end
 
   def self.createFactoryMessageEvent(map, x, y)
-    InjectionHelper.createSinglePageEvent(map, x, y, "Factory field event message") { |page|
+    map.createSinglePageEvent(x, y, "Factory field event message") { |page|
       page.eventTouch(
         [:ConditionalBranch, :Variable, :QuestStolenCargo, :Constant, 3, :GreaterOrEquals],
           [:Wait, 20],
@@ -175,7 +154,7 @@ module FixFactoryAreas
   end
 
   def self.createCelgearnFieldMessageEvent(map, x, y)
-    InjectionHelper.createNewEvent(map, x, y, "Factory field event message") { |event|
+    map.createNewEvent(x, y, "Factory field event message") { |event|
       # If unshorted and lights are off, short
       event.newPage { |page|
         page.autorun(
@@ -203,7 +182,7 @@ module FixFactoryAreas
   end
 
   def self.createCelgearnFieldToggleEvent(map, x, y)
-    InjectionHelper.createNewEvent(map, x, y, "Field event controller") { |event|
+    map.createNewEvent(x, y, "Field event controller") { |event|
       event.newPage { |page|
         page.runInParallel(
           [:Wait, 5],
@@ -240,13 +219,10 @@ module FixFactoryAreas
   end
 
   def self.killEvent(event)
-    for page in event.pages
-      insns = page.list
-      InjectionHelper.patch(insns, :EventIsKill) {
-        insns.unshift(InjectionHelper.parseEventCommand(0, :ExitEventProcessing))
-        next true
-      }
-    end
+    event.patch(:EventIsKill) { |page|
+      event.insertAtStart(:ExitEventProcessing)
+      next true
+    }
   end
 
   ELECTRICAL_FIELD_DAMAGE_EVENTS = {

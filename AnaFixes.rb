@@ -51,10 +51,8 @@ end
 # Injections
 
 def anafixes_fix_darchsprite(event)
-  insns = event.list
-  InjectionHelper.patch(insns, :anafixes_inject_special_sprite) {
-    matched = InjectionHelper.lookForAll(insns,
-      [:SetMoveRoute, nil, nil])
+  event.patch(:anafixes_inject_special_sprite) {
+    matched = event.lookForAll([:SetMoveRoute, nil, nil])
 
     submatcher = InjectionHelper.parseMatcher([:SetCharacter, 'BGirlwalk', nil, nil, nil], InjectionHelper::MOVE_INSNS)
 
@@ -69,10 +67,8 @@ def anafixes_fix_darchsprite(event)
 end
 
 def anafixes_replacewitheyesprite(event)
-  insns = event.list
-  InjectionHelper.patch(insns, :anafixes_inject_special_sprite) {
-    matched = InjectionHelper.lookForAll(insns,
-      [:SetMoveRoute, nil, nil])
+  event.patch(:anafixes_inject_special_sprite) {
+    matched = event.lookForAll([:SetMoveRoute, nil, nil])
 
     submatcher = InjectionHelper.parseMatcher([:SetCharacter, 'BGirlwalk', nil, nil, nil], InjectionHelper::MOVE_INSNS)
 
@@ -87,85 +83,72 @@ def anafixes_replacewitheyesprite(event)
 end
 
 def anafixes_inject_special_sprite(event, special)
-  insns = event.list
-  InjectionHelper.patch(insns, :anafixes_inject_special_sprite) {
-    matched = InjectionHelper.lookForSequence(insns,
-      [:ConditionalBranch, :Variable, :Outfit, :Constant, 0, :Equals])
+  event.patch(:anafixes_inject_special_sprite) {
+    matched = event.lookForSequence([:ConditionalBranch, :Variable, :Outfit, :Constant, 0, :Equals])
 
     if matched
-      insns.insert(insns.index(matched), *InjectionHelper.parseEventCommands(
+      event.insertBefore(matched,
         *anafixes_special_sprite_section(special, 3),
-        *anafixes_special_sprite_section(special, 4),
-        baseIndent: matched.indent))
+        *anafixes_special_sprite_section(special, 4))
     end
     next matched
   }
 end
 
 def anafixes_addLegacyRedCarpet(event)
-  for page in event.pages
-    insns = page.list
-    InjectionHelper.patch(insns, :anafixes_addLegacyRedCarpet) {
-      matched = InjectionHelper.lookForSequence(insns,
-        [:SetMoveRoute, 93, [ false,
-          :FaceUp,
-          [:SetCharacter, 'xgene_ana_redcarpet', nil, nil, nil],
-          :Done
-        ]])
+  event.patch(:anafixes_addLegacyRedCarpet) { |page|
+    matched = page.lookForSequence(
+      [:SetMoveRoute, 93, [ false,
+        :FaceUp,
+        [:SetCharacter, 'xgene_ana_redcarpet', nil, nil, nil],
+        :Done
+      ]])
 
 
-      if matched
-        targetIdx = insns.index(matched)
-        insns[targetIdx..targetIdx] = InjectionHelper.parseEventCommands(
-          [:ConditionalBranch, :Variable, :Outfit, :Constant, 2, :GreaterOrEquals],
-            [:ConditionalBranch, :Variable, :Outfit, :Constant, 5, :Less],
-              [:SetMoveRoute, matched.parameters[0], anafixes_transmuteMoveRoute(matched.parameters[1], 'xgene_legacyana_redcarpet')],
-            :Else,
-              matched,
-            :Done,
+    if matched
+      page.replaceRange(matched, matched,
+        [:ConditionalBranch, :Variable, :Outfit, :Constant, 2, :GreaterOrEquals],
+          [:ConditionalBranch, :Variable, :Outfit, :Constant, 5, :Less],
+            [:SetMoveRoute, matched.parameters[0], anafixes_transmuteMoveRoute(matched.parameters[1], 'xgene_legacyana_redcarpet')],
           :Else,
             matched,
           :Done,
-          baseIndent: matched.indent)
-      end
-      next matched
-    }
-  end
+        :Else,
+          matched,
+        :Done)
+    end
+    next matched
+  }
 end
 
 def anafixes_hotfix_battyfriends(event)
-  insns = event.list
-  InjectionHelper.patch(insns, :anafixes_hotfix_battyfriends) {
-    matched = InjectionHelper.lookForSequence(insns,
+  event.patch(:anafixes_hotfix_battyfriends) {
+    matched = event.lookForSequence(
       [:ConditionalBranch, :Switch, :Aevia, true],
       :BranchEndConditional,
       [:ConditionalBranch, :Switch, :Ana, true],
       :BranchEndConditional)
 
     if matched
-      aeviasection = insns[insns.index(matched[0])..insns.index(matched[1])]
-      anasection = insns[insns.index(matched[2])..insns.index(matched[3])]
-      tempMarker = "Temporary Marker"
+      event.swap(*matched)
+      # aeviasection = event[event.idxOf(matched[0])..event.idxOf(matched[1])]
+      # anasection = event[event.idxOf(matched[2])..event.idxOf(matched[3])]
+      # tempMarker = "Temporary Marker"
 
-      insns[insns.index(matched[2])..insns.index(matched[3])] = [tempMarker]
-      insns[insns.index(matched[0])..insns.index(matched[1])] = anasection
-      insns[insns.index(tempMarker)..insns.index(tempMarker)] = aeviasection
-
+      # event[event.idxOf(matched[2])..event.idxOf(matched[3])] = [tempMarker]
+      # event[event.idxOf(matched[0])..event.idxOf(matched[1])] = anasection
+      # event[event.idxOf(tempMarker)..event.idxOf(tempMarker)] = aeviasection
     end
     next matched
   }
 
-  InjectionHelper.patch(insns, :anafixes_batty_sprites) {
-    matched = InjectionHelper.lookForSequence(insns,
-      [:ConditionalBranch, :Switch, :Ana, true])
+  event.patch(:anafixes_batty_sprites) {
+    matched = event.lookForSequence([:ConditionalBranch, :Switch, :Ana, true])
 
     if matched
-      insns.insert(insns.index(matched) + 1,
-        *InjectionHelper.parseEventCommands(
+      event.insertAfter(matched,
           *anafixes_batty_section(3),
-          *anafixes_batty_section(4),
-          baseIndent: matched.indent + 1))
-
+          *anafixes_batty_section(4))
     end
     next matched
   }
@@ -185,20 +168,16 @@ def anafixes_provide_protagname
 end
 
 def anafixes_fix_protagname(page)
-  insns = page.list
-  InjectionHelper.patch(insns, :anafixes_fix_protagname) {
-    labelMatch = InjectionHelper.lookForSequence(insns,
+  page.patch(:anafixes_fix_protagname) {
+    labelMatch = page.lookForSequence(
       [:Label, 'point1'])
 
-    textMatches = InjectionHelper.lookForAll(insns,
-      [:ShowText, /\\v\[701\]/]) +
-    InjectionHelper.lookForAll(insns,
-      [:ShowTextContinued, /\\v\[701\]/])
+    textMatches = page.lookForAll([:ShowText, /\\v\[701\]/]) +
+                  page.lookForAll([:ShowTextContinued, /\\v\[701\]/])
 
     if labelMatch
-      insns.insert(insns.index(labelMatch), *InjectionHelper.parseEventCommands(
-        [:Script, '$game_variables[5] = anafixes_provide_protagname'],
-        baseIndent: labelMatch.indent))
+      page.insertBefore(labelMatch, 
+        [:Script, '$game_variables[5] = anafixes_provide_protagname'])
     end
 
     for matched in textMatches
@@ -265,12 +244,14 @@ InjectionHelper.defineCommonPatch(136, &method(:anafixes_hotfix_battyfriends)) #
 
 InjectionHelper.defineMapPatch(53, 2) { |event| # I Nightmare Realm, Aevis/Dupe
   anapage = event.pages[1] # if Ana on
-  alainpage = event.pages[7] # if Alain on
-  anafixes_replacewitheyesprite(anapage)
-  # Swap them so Ana always runs last, displaying properly
-  event.pages[1] = alainpage
-  event.pages[7] = anapage
-  next true
+  if anapage.graphic.character_name == "BGirlwalk_1"
+    alainpage = event.pages[7] # if Alain on
+    anafixes_replacewitheyesprite(anapage)
+    # Swap them so Ana always runs last, displaying properly
+    event.pages[1] = alainpage
+    event.pages[7] = anapage
+    next true
+  end
 }
 
 InjectionHelper.defineMapPatch(231, 40, 1, &method(:anafixes_fix_protagname)) # Somniam Mall, Melia, Crescent Conversation

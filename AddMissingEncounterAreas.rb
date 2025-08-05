@@ -5,7 +5,7 @@ begin
 end
 
 InjectionHelper.defineMapPatch(474) { |map| # Route Z
-  InjectionHelper.createSinglePageEvent(map, 27, 35, "Headbutt Tree") { |page|
+  map.createSinglePageEvent(27, 35, "Headbutt Tree") { |page|
     page.interact([:Script, "pbHeadbutt"])
   }
 }

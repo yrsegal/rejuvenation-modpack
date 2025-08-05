@@ -75,54 +75,45 @@ module ShowSomniamMallStamps
   end
 
   def self.patchShop(event, stampsRequired, title)
-    for page in event.pages
-      insns = page.list
-      InjectionHelper.patch(insns, :ShowSomniamMallStamps) {
-        textMatches = InjectionHelper.lookForAll(insns,
-          [:ShowText, nil])
+    event.patch(:ShowSomniamMallStamps) { |page|
+      textMatches = page.lookForAll([:ShowText, nil])
 
-        for insn in textMatches
-          targetIdx = insns.index(insn)
-          insns.insert(targetIdx, InjectionHelper.parseEventCommand(insn.indent, :Script, "showmallstamps_show_window('#{title}',#{stampsRequired})"))
-          targetIdx += 1
-          targetIdx += 1 while insns[targetIdx].code == InjectionHelper::EVENT_INSNS[:ShowText] || insns[targetIdx].code == InjectionHelper::EVENT_INSNS[:ShowTextContinued]
-          insns.insert(targetIdx, InjectionHelper.parseEventCommand(insn.indent, :Script, "showmallstamps_disposefully"))
-        end
+      for insn in textMatches
+        targetIdx = page.idxOf(insn)
+        page.insertBefore(targetIdx, [:Script, "showmallstamps_show_window('#{title}',#{stampsRequired})"])
+        targetIdx += 1
+        targetIdx += 1 while [:ShowText,:ShowTextContinued].include?(page[targetIdx].command)
+        page.insertBefore(targetIdx, [:Script, "showmallstamps_disposefully"])
+      end
 
-        martMatches = InjectionHelper.lookForAll(insns,
-          [:Script, /^pbPokemonMart/])
+      martMatches = page.lookForAll([:Script, /^pbPokemonMart/])
 
-        for insn in martMatches
-          targetIdx = insns.index(insn)
-          insns.insert(targetIdx, InjectionHelper.parseEventCommand(insn.indent, :Script, "showmallstamps_show_window('#{title}',#{stampsRequired})"))
-          targetIdx += 1
-          targetIdx += 1 while insns[targetIdx].code == InjectionHelper::EVENT_INSNS[:Script] || insns[targetIdx].code == InjectionHelper::EVENT_INSNS[:ScriptContinued]
-          insns.insert(targetIdx, InjectionHelper.parseEventCommand(insn.indent, :Script, "showmallstamps_disposefully"))
-        end
+      for insn in martMatches
+        targetIdx = page.idxOf(insn)
+        page.insertBefore(targetIdx, [:Script, "showmallstamps_show_window('#{title}',#{stampsRequired})"])
+        targetIdx += 1
+        targetIdx += 1 while [:Script,:ScriptContinued].include?(page[targetIdx].command)
+        page.insertBefore(targetIdx, [:Script, "showmallstamps_disposefully"])
+      end
 
-        next textMatches.length > 0 || martMatches.length > 0
-      }
-    end
+      next textMatches.length > 0 || martMatches.length > 0
+    }
   end
 
   def self.patchSign(event, stampsRequired)
-    for page in event.pages
-      insns = page.list
-      InjectionHelper.patch(insns, :ShowSomniamMallStamps) {
-        textMatches = InjectionHelper.lookForAll(insns,
-          [:ShowText, nil])
+    event.patch(:ShowSomniamMallStamps) { |page|
+      textMatches = page.lookForAll([:ShowText, nil])
 
-        for insn in textMatches
-          targetIdx = insns.index(insn)
-          insns.insert(targetIdx, InjectionHelper.parseEventCommand(insn.indent, :Script, "showmallstamps_show_window(nil,#{stampsRequired})"))
-          targetIdx += 1
-          targetIdx += 1 while insns[targetIdx].code == InjectionHelper::EVENT_INSNS[:ShowText] || insns[targetIdx].code == InjectionHelper::EVENT_INSNS[:ShowTextContinued]
-          insns.insert(targetIdx, InjectionHelper.parseEventCommand(insn.indent, :Script, "showmallstamps_disposefully"))
-        end
+      for insn in textMatches
+        targetIdx = page.idxOf(insn)
+        page.insertBefore(targetIdx, [:Script, "showmallstamps_show_window(nil,#{stampsRequired})"])
+        targetIdx += 1
+        targetIdx += 1 while [:ShowText,:ShowTextContinued].include?(page[targetIdx].command)
+        page.insertBefore(targetIdx, [:Script, "showmallstamps_disposefully"])
+      end
 
-        next textMatches.length > 0
-      }
-    end
+      next textMatches.length > 0
+    }
   end
 
   SHOPS = {

@@ -5,61 +5,57 @@ begin
 end
 
 def zzren_multiline_patch(event)
-  for page in event.pages
-    insns = page.list
-    InjectionHelper.patch(insns, :zzren_multiline_patch) {
-      showTexts = InjectionHelper.lookForAll(insns,
-          [:ShowText, nil])
-      doneAny = false
-      for insn in showTexts
-        lines = [insn.parameters[0]]
-        crushlines = lines.clone
-        crushed = false
-        idx = insns.index(insn)
-        if insns.size > idx + 1 && insns[idx + 1].code == InjectionHelper::EVENT_INSNS[:ShowText]
-          idx += 1
-          crushlines.push(insns[idx].parameters[0])
-          crushed = true
-        end
-        while insns.size > idx + 1 && insns[idx + 1].code == InjectionHelper::EVENT_INSNS[:ShowTextContinued]
-          idx += 1
-          crushlines.push(insns[idx].parameters[0])
-          lines.push(insns[idx].parameters[0]) unless crushed
-        end
+  event.patch(:zzren_multiline_patch) { |page|
+    showTexts = page.lookForAll([:ShowText, nil])
+    doneAny = false
+    for insn in showTexts
+      lines = [insn.parameters[0]]
+      crushlines = lines.clone
+      crushed = false
+      idx = page.idxOf(insn)
+      if page.size > idx + 1 && page[idx + 1].code == InjectionHelper::EVENT_INSNS[:ShowText]
+        idx += 1
+        crushlines.push(page[idx].parameters[0])
+        crushed = true
+      end
+      while page.size > idx + 1 && page[idx + 1].code == InjectionHelper::EVENT_INSNS[:ShowTextContinued]
+        idx += 1
+        crushlines.push(page[idx].parameters[0])
+        lines.push(page[idx].parameters[0]) unless crushed
+      end
 
 
-        usinglines = lines
+      usinglines = lines
+      mapping = $zzren_multiline_patches[usinglines]
+      if !mapping && crushed
+        usinglines = crushlines
         mapping = $zzren_multiline_patches[usinglines]
-        if !mapping && crushed
-          usinglines = crushlines
-          mapping = $zzren_multiline_patches[usinglines]
-        else
-          crushed = false
-        end
+      else
+        crushed = false
+      end
 
-        if mapping
-          if mapping.is_a?(Array) && mapping.length == usinglines.length - 1 && crushed
-            idx = insns.index(insn)
-            insns.delete_at(idx)
-            for i in 0...mapping.length
-              insns[idx + i].parameters[0] = mapping[i]
-            end
-            doneAny = true
-          elsif mapping.is_a?(Array) && mapping.length == usinglines.length
-            idx = insns.index(insn)
-            for i in 0...mapping.length
-              insns[idx + i].parameters[0] = mapping[i]
-            end
-            doneAny = true
-          elsif mapping.is_a?(Numeric)
-            insn.parameters[0] = "\\l[#{mapping}]" + insn.parameters[0]
-            doneAny = true
+      if mapping
+        if mapping.is_a?(Array) && mapping.length == usinglines.length - 1 && crushed
+          idx = page.idxOf(insn)
+          page.delete_at(idx)
+          for i in 0...mapping.length
+            page[idx + i].parameters[0] = mapping[i]
           end
+          doneAny = true
+        elsif mapping.is_a?(Array) && mapping.length == usinglines.length
+          idx = page.idxOf(insn)
+          for i in 0...mapping.length
+            page[idx + i].parameters[0] = mapping[i]
+          end
+          doneAny = true
+        elsif mapping.is_a?(Numeric)
+          insn.parameters[0] = "\\l[#{mapping}]" + insn.parameters[0]
+          doneAny = true
         end
       end
-      next doneAny
-    }
-  end
+    end
+    next doneAny
+  }
 end
 
 $zzren_multiline_patches = {

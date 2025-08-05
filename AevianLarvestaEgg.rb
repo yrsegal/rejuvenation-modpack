@@ -11,7 +11,7 @@ Switches[:Gym_13] = 296
 TextureOverrides.registerTextureOverride(TextureOverrides::CHARS + "egg_aevian_larvesta", TextureOverrides::MODBASE + "LarvestaEgg")
 
 InjectionHelper.defineMapPatch(315) { |map| # Rose Theatre
-  InjectionHelper.createNewEvent(map, 4, 25, "Larvesta Egg", "aevianlarvestaegg_egg") { |event|
+  map.createNewEvent(4, 25, "Larvesta Egg", "aevianlarvestaegg_egg") { |event|
     event.newPage { |page|
       page.setGraphic("egg_aevian_larvesta")
       page.requiresSwitch(:Gym_13)
