@@ -268,6 +268,8 @@ class PokemonBoxSprite
         pokemon = @storage[@boxnumber,i]
         if pokemon && !BoxExtensions.matchesSearch(pokemon)
           @pokemonsprites[i].tone = Tone.new(0,0,0,255)
+        elsif pokemon
+          @pokemonsprites[i].tone = Tone.new(0,0,0)
         end
       end
     end
