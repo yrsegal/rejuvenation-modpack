@@ -4,8 +4,8 @@ PASSWORD_HASH["opp31ivs"] = :Opp31IVs
 
 alias :opp31ivs_old_pbLoadTrainer :pbLoadTrainer
 
-def pbLoadTrainer(type,name,id)
-  opponent, items, party = opp31ivs_old_pbLoadTrainer(type,name,id)
+def pbLoadTrainer(*args)
+  opponent, items, party = opp31ivs_old_pbLoadTrainer(*args)
   if $game_switches[:Opp31IVs]
     for pkmn in party
       pokemon.iv.map! {|value| [31,value].max}
