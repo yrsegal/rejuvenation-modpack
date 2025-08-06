@@ -3,7 +3,7 @@ class PokeBattle_Move_0F1 < PokeBattle_Move
   alias :evenWithItem_old_pbEffect :pbEffect
 
   def pbEffect(attacker,opponent,hitnum=0,alltargets=nil,showanimation=true)
-    if !@battle.pbIsWild? || @battle.pbIsOpposing?(attacker)
+    if !@battle.pbIsWild? || @battle.pbIsOpposing?(attacker.index)
       return evenWithItem_old_pbEffect(attacker,opponent,hitnum,alltargets,showanimation)
     end
 
