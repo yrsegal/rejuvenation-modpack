@@ -956,6 +956,8 @@ $cache.items[:PIKASHUNIUMZ] = ItemData.new(:PIKASHUNIUMZ, {
 ItemHandlers::UseOnPokemon.copy(:NORMALIUMZ, :PIKASHUNIUMZ)
 
 PBStuff::CRYSTALTOZMOVE[:PIKASHUNIUMZ] = :ASHTHUNDERBOLT
+PBStuff::ZMOVES.push(:ASHTHUNDERBOLT)
+PBStuff::BLACKLISTS.values.each {|ls| ls.push(:ASHTHUNDERBOLT) }
 
 $cache.pkmn[:PIKACHU].formData["World Cap"] = {
   BaseStats: [55, 80, 50, 75, 60, 120],
