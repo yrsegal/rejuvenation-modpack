@@ -506,35 +506,21 @@ end
 
 ###### FOLLOWING CODE IS TO ENABLE COMPARISON
 
+####### THIS IS BAD BUT NECESSARY
+# This is very bad code discipline, but I can't think of another way to make this save-safe.
+# "LevelRestriction" is being used here as a module present in the basegame, so it'll save/load safely.
+# I really wish I had a better answer for this.
 class PokeBattle_Trainer
   alias :selectfromboxes_old_party :party
 
   def party
     ret = selectfromboxes_old_party
-    ret.extend(Selectfromboxes_PartyArray) if ret.is_a?(Array)
+    ret.extend(LevelRestriction) if ret.is_a?(Array)
     return ret
   end
-
-  alias :selectfromboxes_old_party_set :party=
-
-  def party=(value)
-    if value.is_a?(Selectfromboxes_PartyArray)
-      value = Array.new(value.length) { |i| value[i] }
-    end
-    selectfromboxes_old_party_set(value)
-  end
-end
-  
-# Avoid save incompatibilities
-def playerTeamBackup
-  value = $Trainer.party
-  if value.is_a?(Selectfromboxes_PartyArray)
-    value = Array.new(value.length) { |i| value[i] }
-  end
-  $game_variables[:PlayerDataBackup][0] = value
 end
 
-module Selectfromboxes_PartyArray
+module LevelRestriction 
   def [](i)
     if i.is_a?(Array)
       return $PokemonStorage[i[0], i[1]]
@@ -549,6 +535,10 @@ module Selectfromboxes_PartyArray
     return super(i,val)
   end
 end
+
+# This will convert old code using Selectfromboxes_PartyArray to LevelRestriction.
+Selectfromboxes_PartyArray = LevelRestriction
+####### END BAD CODE
 
 class Selectfromboxes_SelectionArray < Array
   include Comparable
