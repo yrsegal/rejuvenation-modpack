@@ -12,9 +12,8 @@ InjectionHelper.defineMapPatch(294) { |map| # GDC Central
   doneAny = false
   for event in map.events.values
     if event.pages[0].graphic.character_name == 'object_centerpillar' && event.pages[0].graphic.direction == 2
-      event.pages[0].trigger = 0
       event.pages[0].direction_fix = true
-      event.pages[0].list = InjectionHelper.parseEventCommands(
+      event.pages[0].interact(
         [:ShowText, "Check your reputation standings?"],
         [:ShowChoices, ["Yes", "No"], 2],
         [:When, 0, "Yes"],
@@ -57,8 +56,7 @@ InjectionHelper.defineMapPatch(294) { |map| # GDC Central
         :Done,
         [:When, 1, "No"],
           # Noop
-        :Done,
-      :Done)
+        :Done)
       doneAny = true
     end
   end

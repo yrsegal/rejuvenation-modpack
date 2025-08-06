@@ -115,7 +115,7 @@ InjectionHelper.defineMapPatch(426) { |map| # Sensei's Garden
 
 InjectionHelper.defineMapPatch(294, 70) { |event| # GDC Central, clerk
     hasReputationPillars = defined?($GDC_REPUTATION_PILLARS)
-    event.pages[0].list = InjectionHelper.parseEventCommands(
+    event.pages[0].interact(
       [:ConditionalBranch, :Switch, :Finished_WLL, false],
         [:ShowText, hasReputationPillars ? "STAFF: Welcome to the GDC Central Building!" : "STAFF: Welcome to the GDC Central Building! How may I help you today?"],
         *(hasReputationPillars ? [[:ShowText, 'You can check your reputation using the pillars in the lobby.'], [:ShowText, 'How may I help you?']] : []),
@@ -170,7 +170,6 @@ InjectionHelper.defineMapPatch(294, 70) { |event| # GDC Central, clerk
       :Else,
         [:ShowText, 'STAFF: Welcome to the GDC Central Building!'],
         *(hasReputationPillars ? [[:ShowText, 'You can check your reputation using the pillars in the lobby.']] : []),
-      :Done,
-    :Done)
+      :Done)
   next true
 }
