@@ -3,7 +3,7 @@ class PokeBattle_Move_0F1 < PokeBattle_Move
   alias :evenWithItem_old_pbEffect :pbEffect
 
   def pbEffect(attacker,opponent,hitnum=0,alltargets=nil,showanimation=true)
-    if !@battle.pbIsWild?
+    if !@battle.pbIsWild? || @battle.pbIsOpposing(attacker)
       return evenWithItem_old_pbEffect(attacker,opponent,hitnum,alltargets,showanimation)
     end
 
@@ -40,7 +40,7 @@ class PokeBattle_Battler
     end
 
     tochange = nil
-    if user.ability == :MAGICIAN && !@battle.opponent && !@battle.pbIsOpposing?(target.index)
+    if user.ability == :MAGICIAN && !@battle.opponent && !@battle.pbIsOpposing?(user.index)
       tochange = user
     elsif target.ability == :PICKPOCKET && !@battle.opponent && !@battle.pbIsOpposing?(target.index)
       tochange = target
