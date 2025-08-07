@@ -1046,7 +1046,7 @@ module EventListHolder
     blockdepth = insn.indent
     blockdepth += 1 if InjectionHelper::BLOCK_TYPES[InjectionHelper::EVENT_INSNS.invert[insn.code]]
     blockdepth += 1 if InjectionHelper::EVENT_INSNS.invert[insn.code] == :Else
-    self.insert(self.idxOf(insn), *InjectionHelper.parseEventCommands(*commands, baseIndent: blockdepth))
+    self.insert(self.idxOf(insn) + 1, *InjectionHelper.parseEventCommands(*commands, baseIndent: blockdepth))
   end
 
   def replace(insn, *commands)
