@@ -1599,6 +1599,7 @@ class PokeBattle_Scene
     end
 
     betterBattleUI_withForm(battler) do
+      battler.turncount += 1
       basePower, power = move.movehelpdisplay_calcPower(battler, target)
 
       if move.function == 0x91 && battler.effects[:FuryCutter] < 4 # Fury Cutter
@@ -1626,6 +1627,7 @@ class PokeBattle_Scene
 
       acc = move.movehelpdisplay_calcAccuracy(battler, target)
       pri = move.priorityCheck(battler)
+      battler.turncount -= 1
 
       if move.move == :POLLENPUFF && (target.index & 2) == (battler.index & 2) && power != 0
         basePower = 0
@@ -1718,6 +1720,7 @@ class PokeBattle_Scene
     end
 
     betterBattleUI_withForm(battler) do
+      battler.turncount += 1
       basePower, power = move.movehelpdisplay_calcPower(battler, knownFoe)
 
       if move.function == 0x91 && battler.effects[:FuryCutter] < 4 # Fury Cutter
@@ -1778,6 +1781,8 @@ class PokeBattle_Scene
       # Final move attribute calculations.
       acc = move.movehelpdisplay_calcAccuracy(battler, knownFoe)
       pri = move.priorityCheck(battler)
+      battler.turncount -= 1
+
       baseChance = move.effect
       chance = move.movehelpdisplay_effectMod(battler)
       if basePower > 1
