@@ -136,8 +136,8 @@ class PokeBattle_Scene
           end
           if trainers.length > 1
             case trainer
-            when trainers.first[0] then ballX = ballXFirst
-            when trainers.last[0]  then ballX = ballXLast
+            when trainers.first[0] then ballX = @battle.pbIsOpposing?(idxTrainer) ? ballXLast : ballXFirst
+            when trainers.last[0]  then ballX = @battle.pbIsOpposing?(idxTrainer) ? ballXFirst : ballXLast
             else                        ballX = ballXMiddle
             end
           end
