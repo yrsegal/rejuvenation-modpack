@@ -163,7 +163,7 @@ module VendorQuantityDisplay
           dialogue = page[textStart..textEnd]
           page[textStart..textEnd] = []
 
-          targetIdx = page.index(insn)
+          targetIdx = page.idxOf(insn)
           page.insert(targetIdx, *dialogue)
           doneAny = true
         end
