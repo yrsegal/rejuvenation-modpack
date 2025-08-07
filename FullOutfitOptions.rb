@@ -88,7 +88,7 @@ def outfitoptions_nix_darchoutfit_set(event, replaceWithChoices)
 
     for insn in matched
       if replaceWithChoices
-        page.replaceRange(insn, [:Script, 'outfitoptions_handle_clothing_choices'])
+        page.replace(insn, [:Script, 'outfitoptions_handle_clothing_choices'])
       else
         page.delete_at(page.idxOf(insn))
       end
