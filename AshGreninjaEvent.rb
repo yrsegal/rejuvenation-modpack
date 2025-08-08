@@ -274,8 +274,9 @@ alias :ashgreninja_old_unhashTRlist :unhashTRlist
 
 def unhashTRlist(*args, **kwargs)
   dehashedlist = ashgreninja_old_unhashTRlist(*args, **kwargs)
-  fight = $cache.trainers.dig(:ASHKETCHUM, "Ash")[0]
-  dehashedlist.push([:ASHKETCHUM, "Ash", fight[1], fight[0], fight[0]])
+  $cache.trainers.dig(:ASHKETCHUM, "Ash").each {|fight|
+    dehashedlist.push([:ASHKETCHUM, "Ash", fight[1], fight[0], fight[0]])
+  }
   return dehashedlist
 end
 
@@ -914,7 +915,7 @@ $cache.trainers[:ASHKETCHUM] = {
     { # trainer effect
       effectmode: :AshPlotArmor,
       buffactivation: :Always
-    }]] 
+    }]]
 }
 
 TextureOverrides.registerTextureOverrides({
