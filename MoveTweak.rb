@@ -209,6 +209,62 @@ class PokeBattle_Move_807 < PokeBattle_Move
   end
 end
 
+# # Actual Ally Switch
+# class PokeBattle_Move_120 < PokeBattle_Move
+#   def pbEffect(attacker,opponent,hitnum=0,alltargets=nil,showanimation=true)
+#     partner = attacker.pbPartner
+#     if !partner || partner.isFainted?
+#       @battle.pbDisplay(_INTL("But it failed!"))
+#       return -1
+#     end
+
+#     pbShowAnimation(@move,attacker,nil,hitnum,alltargets,showanimation)
+#     pbShowAnimation(@move,partner,nil,hitnum,alltargets,showanimation)
+
+#     attackereffects = attacker.effects
+#     partnereffects = partner.effects
+#     attackermon = attacker.pokemon
+#     partnermon = partner.pokemon
+#     if @battle.pbOwnedByPlayer?(attacker.index)
+#       # Reorder the party for this battle
+#       bpo=-1; bpn=-1
+#       for i in 0...6
+#         bpo=i if @battle.partyorder[i]==attacker.pokemonIndex
+#         bpn=i if @battle.partyorder[i]==partner.pokemonIndex
+#       end
+#       if bpo != -1
+#         poke1=@battle.partyorder[bpo]
+#         @battle.partyorder[bpo]=@battle.partyorder[bpn]
+#         @battle.partyorder[bpn]=poke1
+#       end
+#     end
+    
+
+#     attackerindex = attacker.pokemonIndex
+#     attacker.pbInitialize(partnermon,partner.pokemonIndex,false)
+#     attacker.effects = partnereffects
+#     @battle.scene.pbChangePokemon(attacker, partnermon)
+#     partner.pbInitialize(attackermon,attackerindex,false)
+#     partner.effects = attackereffects
+#     @battle.scene.pbChangePokemon(partner, attackermon)
+
+#     @battle.pbCommonAnimation("Fade in",attacker,nil)
+#     @battle.pbCommonAnimation("Fade in",partner,nil)
+
+#     attackerprio = @battle.pbGetPriority(attacker)
+#     partnerprio = @battle.pbGetPriority(partner)
+#     @battle.priority[attackerprio] = partner
+#     @battle.priority[partnerprio] = attacker
+
+#     # Todo:
+#     # swap pokemon using moves in priority brackets
+#     # set last move used and such
+
+#     @battle.pbDisplay(_INTL("{1} and {2} swapped places!", attacker.pbThis, partner.pbThis))
+#     return 0
+#   end
+# end
+
 # Gen 8 Teleport
 class PokeBattle_Move_0EA < PokeBattle_Move
   alias :teleport_old_pbEffect :pbEffect
@@ -248,7 +304,7 @@ class PokeBattle_Move_0EA < PokeBattle_Move
       attacker.pbAbilitiesOnSwitchIn(true)
 
       if @battle.FE == :COLOSSEUM
-        opponent.pbReduceStat(PBStats::SPEED, 2, abilitymessage: false) if attacker.pbCanReduceStatStage?(PBStats::ATTACK,false)
+        opponent.pbReduceStat(PBStats::SPEED, 2, abilitymessage: false) if attacker.pbCanReduceStatStage?(PBStats::SPEED,false)
       end
       return 0
     end
@@ -317,6 +373,9 @@ move_tweak(:COVET,
 move_tweak(:TELEPORT,
   priority: -6,
   desc: "The user switches places with a party Pokémon in waiting, if any. If a wild Pokémon uses this move, it flees.")
+
+# move_tweak(:ALLYSWITCH,
+#   priority: 2)
 
 move_tweak(:PLAYROUGH,
   accuracy: 100)

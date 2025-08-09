@@ -1903,6 +1903,6 @@ end
 $cache.moves[:UNLEASHEDPOWER].desc = "The user channels the flow of Fate, unleashing their Hidden Power in whichever category will be most effective, shattering all barriers in their path."
 $cache.moves[:BLINDINGSPEED].desc = "The user rides the flow of Fate, intercepting the opponent with their type in whichever category will be most effective, drawing their allies with them."
 $cache.moves[:ELYSIANSHIELD].desc = "The user cloaks themself in the flow of Fate, building a virtually impenetrable defense of blooming hope."
-$cache.moves[:CHTHONICMALADY].desc = "The user twists the flow of Fate, withering the basis for the target's existence to ash and stone."
+$cache.moves[:CHTHONICMALADY].desc = "The user twists the flow of Fate, forcing the basis of the target's existence to wilt down to ash and stone."
 $cache.moves[:DOMAINSHIFT].desc = "The user disrupts the flow of Fate, forcing the Core to redictate the field to meet the user's parameters."
 
