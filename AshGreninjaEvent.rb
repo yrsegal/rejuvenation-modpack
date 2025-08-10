@@ -309,7 +309,7 @@ end
 
 TextureOverrides.registerTrainerClass(:ASHKETCHUM, {
   title: "World Champion",
-  trainerID: 63932,
+  trainerID: 7150,
   skill: 100,
   moneymult: 120,
   battleBGM: "Battle - Soul",

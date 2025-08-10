@@ -26,7 +26,7 @@ class PokemonRegionMapScene
   alias :flyexpansion_old_getFlySpot :getFlySpot
   def getFlySpot(pos)
     ret = flyexpansion_old_getFlySpot(pos)
-    if ret && ret[0] == 321 # Goldenwood Forest
+    if ret && [25, 321, 190, 216, 217].include?(ret[0]) # Goldenwood Forest
       if !$game_switches[:QuestAfterForest]
         ret[0] = 25 # Base goldenwood forest
       else
