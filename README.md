@@ -10,6 +10,14 @@ Dir["./Data/Mods/WireModpack/*.rb"].each {|file| load File.expand_path(file) }
 
 ## Contents
 
+(Disabled by default) Dev Utilities:
+- PartialDebugMode.rb  
+  Enables Debug Mode without allowing for HMs out of sequence.
+- ShowPosition.rb  
+  When holding Ctrl, your current map id and position appear in the corner of your screen.
+- TileInvestigator.rb  
+  Reworks the ingame tileset editor to be more robust and also adds functions `tleditor`, `tleditor2`, `tlget`, `tlset`, and `tlopen`.
+
 Libraries:
 - 0000.formattedchoices.rb  
   Fixes an issue with the unused "advanced-formatting" choices menu, and allows it to be used.
