@@ -87,6 +87,11 @@ module TextureOverrides
 
   def self.compileTextureOverrides
     TextureOverrides::TEXTURE_OVERRIDES.each_pair {|k, v| COMPILED_TEXTURE_OVERRIDES[k.downcase] = v }
+    begin
+      missing = TextureOverrides::TEXTURE_OVERRIDES.values.select { |f| !(pbTryString(f + ".png") || pbTryString(f + ".gif") || pbTryString(f)) }
+      print "Missing asset #{missing[0]}. Please download it." if missing.length == 1
+      print "Assets #{missing.join(", ")} are missing. Please download them." if missing.length > 1
+    end
   end
 
   def self.trainerClassSetup
