@@ -478,6 +478,18 @@ class PokeBattle_Scene
         desc = _INTL("The Pokémon's destiny is already bound.")
         display_effects.push([_INTL("Resist Destiny"), "--", desc])
       end
+
+      if battler.immunities[:moves].include?(:PERISHSONG)
+        desc = _INTL("The Pokémon refuses to perish again.")
+        display_effects.push([_INTL("Resist Perish"), "--", desc])
+      end
+
+      ohkos = $cache.moves.select { |key,mv| mv.function == 0x070 }.keys
+      ohkoimmune = ohkos.select { |move| battler.immunities[:moves].include?(move) }
+      unless ohkoimmune.empty?
+        desc = _INTL("Immune to #{ohkoimmune.map { |move| getMoveName(move) }.join(", ")}.")
+        display_effects.push([_INTL("Resist OHKO"), "--", desc])
+      end
     end
     #---------------------------------------------------------------------------
     # Weather
