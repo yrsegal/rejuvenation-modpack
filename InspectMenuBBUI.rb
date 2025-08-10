@@ -44,7 +44,8 @@ module InspectMenuDisplay
     effect("Aqua Ring", "The Pokémon regains some HP at the end of each turn.") { |battler| battler.effects[:AquaRing] },
     effect("Ingrain", "The Pokémon regains some HP every turn, but cannot switch out.") { |battler| battler.effects[:Ingrain] },
     effect("Burned Up", "The Pokémon has used up its fire.") { |battler| battler.effects[:BurnUp] },
-    targetedEffect("Leech Seed", "The Pokémon's HP is leeched every turn to heal {1}.") { |battler| next battler.effects[:LeechSeed] },
+    targetedEffect("Leech Seed", "The Pokémon's HP is leeched every turn to heal {1}.") { |battler| battler.effects[:LeechSeed] },
+    # effect("Salt Cure", "The Pokémon takes damage at the end of each turn.") { |battler| battler.effects[:SaltCure] },
     effect("Curse", "The Pokémon takes damage at the end of each turn.") { |battler| battler.effects[:Curse] },
     effect("Nightmare", "The Pokémon takes damage each turn it spends asleep.") { |battler| battler.effects[:Nightmare] },
     effect("Rage", "The Pokémon's Attack stat increases whenever it's hit.") { |battler| battler.effects[:Rage] },
@@ -54,7 +55,7 @@ module InspectMenuDisplay
     effect("Torment", "The Pokémon can't use the same move twice in a row.") { |battler| next battler.effects[:Torment] if battler.effects[:ChtonicMalady] <= 0 },
     durationEffect("Torment", "The Pokémon can't use the same move twice in a row.", 5) { |battler| next battler.effects[:ChtonicMalady] if battler.effects[:Torment] },
     effect("Charged", "On the next turn, the Pokémon's Electric moves will double in power.") { |battler| battler.effects[:Charge].is_a?(Numeric) && battler.effects[:Charge] > 0 },
-    effect("Charged", "The Pokémon's next Electric move will double in power.") { |battler| battler.effects[:Charge] == true },
+    effect("Charged", "The Pokémon's next Electric move will double in power.") { |battler| battler.effects[:Charge] == true }, # Gen 9 charge
     effect("Curled Up", "The Pokémon has curled up into a ball.") { |battler| battler.effects[:DefenseCurl] },
     effect("Electrified", "The Pokémon's next move will be Electric type.") { |battler| battler.effects[:Electrify] },
     effect("Ion Deluge", "The Pokémon's Normal type moves become Electric type.") { |battler| battler.battle.state.effects[:IonDeluge] },
@@ -123,9 +124,11 @@ module InspectMenuDisplay
     effect("Semi-Invulnerable", "The Pokémon cannot be hit by most attacks.") { |battler| PBStuff::TWOTURNMOVE.include?(battler.effects[:TwoTurnAttack]) },
     durationEffect("Perish Count", "This Pokémon will faint when the count reaches 0.", 3) { |battler| battler.effects[:PerishSong] },
     durationEffect("Future Attack", "The Pokémon in this spot will be attacked in 2 turns.", 2) { |battler| battler.effects[:FutureSight] },
+    #durationEffect("Syrupy", "The Pokémon's Speed is lowered each turn for 3 turns.", 3) { |battler| battler.effects[:Syrupy] },
     durationEffect("Slow Start", "The Pokémon gets its act together in 5 turns.", 5) { |battler| next battler.turncount if battler.ability == (:SLOWSTART) && battler.turncount<=5 && (battler == battler.battle.battlers[0] || battler == battler.battle.battlers[2]) },
     effect("Drowsy", "The Pokémon will fall asleep at the end of the next turn.") { |battler| battler.effects[:Yawn] > 0 },
     effect("Recharging", "The Pokémon cannot move until it recharges from its last attack.") { |battler| battler.effects[:HyperBeam] > 0 },
+    #effect("Vulnerable", "The Pokémon cannot evade and takes double damage.") { |battler| battler.effects[:GlaiveRush] },
     durationEffect("Move Disabled", "A move has been disabled and cannot be used.", 4) { |battler| battler.effects[:Disable] },
     effect("Floating", "The Pokémon is floating on its Air Balloon.") { |battler| battler.hasWorkingItem(:AIRBALLOON) },
     effect("Sheltered", "The Pokémon takes less damage from the field's type.") { |battler| battler.effects[:Shelter] },
@@ -144,8 +147,8 @@ module InspectMenuDisplay
       end
       next result
     },
-    effect("Imprison", "Pokémon can't use moves known by an opposing Imprison user.") {
-      |battler| (0...4).any? { |i| battler.battle.battlers[i].effects[:Imprison] }
+    effect("Imprison", "Pokémon can't use moves known by an opposing Imprison user.") { |battler|
+      (0...4).any? { |i| battler.battle.battlers[i].effects[:Imprison] }
     }
   ]
 end
@@ -489,6 +492,7 @@ class PokeBattle_Scene
         name, desc = _INTL("Torrential Rain"), _INTL("Boosts Water moves and negates Fire moves.") if @battle.state.effects[:HeavyRain]
       when :SANDSTORM   then name, desc = _INTL("Sandstorm"), _INTL("Boosts Rock Sp. Def. Chip damage unless Rock/Ground/Steel.")
       when :HAIL        then name, desc = _INTL("Hail"), _INTL("Non-Ice types take damage each turn. Blizzard always hits.")
+      when :SNOWSCAPE   then name, desc = _INTL("Snow"), _INTL("Boosts Def of Ice types. Blizzard always hits.")
       when :STRONGWINDS then name, desc = _INTL("Strong Winds"), _INTL("Flying types have no weaknesses.")
       when :SHADOWSKY   then name, desc = _INTL("Shadow Sky"), _INTL("Boosts Shadow moves. Non-Shadow Pokémon damaged each turn.")
       else                   name, desc = nil, nil
