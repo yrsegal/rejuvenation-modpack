@@ -1579,7 +1579,7 @@ class PokeBattle_Move
       return 0
     end
 
-    if @priority > 0 && ((!opponent.moldbroken && (opponent.ability == :DAZZLING || opponent.ability == :QUEENLYMAJESTY || 
+    if priorityCheck(attacker) > 0 && ((!opponent.moldbroken && (opponent.ability == :DAZZLING || opponent.ability == :QUEENLYMAJESTY || 
         (@battle.FE == :STARLIGHT && opponent.ability == :MIRRORARMOR))) ||
       (otherOpponent && (!otherOpponent.moldbroken && (otherOpponent.ability == :DAZZLING || otherOpponent.ability == :QUEENLYMAJESTY || 
         (@battle.FE == :STARLIGHT && otherOpponent.ability == :MIRRORARMOR)))) ||
