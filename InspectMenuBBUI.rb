@@ -53,7 +53,8 @@ module InspectMenuDisplay
     effect("Power Trick", "The Pokémon's Atk and Def are swapped.") { |battler| battler.effects[:PowerTrick] },
     effect("Torment", "The Pokémon can't use the same move twice in a row.") { |battler| next battler.effects[:Torment] if battler.effects[:ChtonicMalady] <= 0 },
     durationEffect("Torment", "The Pokémon can't use the same move twice in a row.", 5) { |battler| next battler.effects[:ChtonicMalady] if battler.effects[:Torment] },
-    effect("Charged", "On the next turn, the Pokémon's Electric moves will double in power.") { |battler| battler.effects[:Charge] > 0 },
+    effect("Charged", "On the next turn, the Pokémon's Electric moves will double in power.") { |battler| battler.effects[:Charge].is_a?(Numeric) && battler.effects[:Charge] > 0 },
+    effect("Charged", "The Pokémon's next Electric move will double in power.") { |battler| battler.effects[:Charge] == true },
     effect("Curled Up", "The Pokémon has curled up into a ball.") { |battler| battler.effects[:DefenseCurl] },
     effect("Electrified", "The Pokémon's next move will be Electric type.") { |battler| battler.effects[:Electrify] },
     effect("Ion Deluge", "The Pokémon's Normal type moves become Electric type.") { |battler| battler.battle.state.effects[:IonDeluge] },
@@ -163,58 +164,62 @@ class PokeBattle_Scene
   # Handles the controls for the Battle Info UI.
   #-----------------------------------------------------------------------------
   def pbShowBattleStats(battler)
-    @sprites["bbui_canvas"].visible = true
-    @bbui_displaymode = :battler
-    idx = battler.index
-    allBattlers = @battle.battlers.select { |b| b && b.pokemon }
-    maxSize = allBattlers.length - 1
-    idxEffect = 0
-    effects = bbui_pbGetDisplayEffects(battler)
-    effctSize = effects.length - 1
-    bbui_pbUpdateBattlerInfo(battler, effects, idxEffect)
-    cw = @sprites["fightwindow"]
-    @sprites["bbui_leftarrow"].x = -2
-    @sprites["bbui_leftarrow"].y = 71
-    @sprites["bbui_leftarrow"].visible = true
-    @sprites["bbui_rightarrow"].x = Graphics.width - 38
-    @sprites["bbui_rightarrow"].y = 71
-    @sprites["bbui_rightarrow"].visible = true
-    loop do
-      pbGraphicsUpdate
-      Input.update
-      pbFrameUpdate(cw)
-      bbui_pbUpdateInfoSprites
-      break if Input.trigger?(Input::B)
-      if Input.trigger?(Input::LEFT)
-        idx -= 1
-        idx = maxSize if idx < 0
-        doFullRefresh = true
-      elsif Input.trigger?(Input::RIGHT)
-        idx += 1
-        idx = 0 if idx > maxSize
-        doFullRefresh = true
-      elsif Input.repeat?(Input::UP) && effects.length > 1
-        idxEffect -= 1
-        idxEffect = effctSize if idxEffect < 0
-        doRefresh = true
-      elsif Input.repeat?(Input::DOWN) && effects.length > 1
-        idxEffect += 1
-        idxEffect = 0 if idxEffect > effctSize
-        doRefresh = true
+    begin
+      @sprites["bbui_canvas"].visible = true
+      @bbui_displaymode = :battler
+      idx = battler.index
+      allBattlers = @battle.battlers.select { |b| b && b.pokemon }
+      maxSize = allBattlers.length - 1
+      idxEffect = 0
+      effects = bbui_pbGetDisplayEffects(battler)
+      effctSize = effects.length - 1
+      bbui_pbUpdateBattlerInfo(battler, effects, idxEffect)
+      cw = @sprites["fightwindow"]
+      @sprites["bbui_leftarrow"].x = -2
+      @sprites["bbui_leftarrow"].y = 71
+      @sprites["bbui_leftarrow"].visible = true
+      @sprites["bbui_rightarrow"].x = Graphics.width - 38
+      @sprites["bbui_rightarrow"].y = 71
+      @sprites["bbui_rightarrow"].visible = true
+      loop do
+        pbGraphicsUpdate
+        Input.update
+        pbFrameUpdate(cw)
+        bbui_pbUpdateInfoSprites
+        break if Input.trigger?(Input::B)
+        if Input.trigger?(Input::LEFT)
+          idx -= 1
+          idx = maxSize if idx < 0
+          doFullRefresh = true
+        elsif Input.trigger?(Input::RIGHT)
+          idx += 1
+          idx = 0 if idx > maxSize
+          doFullRefresh = true
+        elsif Input.repeat?(Input::UP) && effects.length > 1
+          idxEffect -= 1
+          idxEffect = effctSize if idxEffect < 0
+          doRefresh = true
+        elsif Input.repeat?(Input::DOWN) && effects.length > 1
+          idxEffect += 1
+          idxEffect = 0 if idxEffect > effctSize
+          doRefresh = true
+        end
+        if doFullRefresh
+          battler = allBattlers[idx]
+          effects = bbui_pbGetDisplayEffects(battler)
+          effctSize = effects.length - 1
+          idxEffect = 0
+          doRefresh = true
+        end
+        if doRefresh
+          pbPlayCursorSE
+          bbui_pbUpdateBattlerInfo(battler, effects, idxEffect)
+          doRefresh = false
+          doFullRefresh = false
+        end
       end
-      if doFullRefresh
-        battler = allBattlers[idx]
-        effects = bbui_pbGetDisplayEffects(battler)
-        effctSize = effects.length - 1
-        idxEffect = 0
-        doRefresh = true
-      end
-      if doRefresh
-        pbPlayCursorSE
-        bbui_pbUpdateBattlerInfo(battler, effects, idxEffect)
-        doRefresh = false
-        doFullRefresh = false
-      end
+    rescue
+      # noop
     end
     @bbui_displaymode = nil
     @sprites["bbui_leftarrow"].visible = false

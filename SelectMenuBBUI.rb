@@ -191,95 +191,104 @@ class PokeBattle_Scene
   # Handles the controls for the selection menu.
   #-----------------------------------------------------------------------------
   def bbui_pbSelectBattlerInfo(index, cwtype, mode=nil)
-    prevselectmode = @bbui_displaymode
-    @bbui_displaymode = :select
-    @sprites["bbui_canvas"].visible = true
-    trueBattler = @battle.battlers[index]
-    case mode
-    when :UserOrPartner then idxPoke = pbFirstTargetAcupressure(index)
-    when :SingleNonUser then idxPoke = pbFirstTarget(index)
-    else                idxPoke = index
-    end
-    if idxPoke == -1
-      raise RuntimeError.new(_INTL("No targets somehow..."))
-    end
-    battler = @battle.battlers[idxPoke]
-    cw = @sprites[cwtype]
-    result = nil
-    bbui_pbUpdateBattlerSelection(idxPoke, trueBattler, cw, prevselectmode)
-    loop do
-      oldPoke = idxPoke
-      pbGraphicsUpdate
-      pbFrameUpdate(cw)
-      Input.update
-      bbui_pbUpdateInfoSprites
-      if Input.trigger?(Input::B)
-        result = prevselectmode
-        break
-      elsif Input.trigger?(Input::C)
-        pbPlayDecisionSE
-        result = idxPoke
-        break
-      elsif Input.trigger?(Input::Y)
-        if mode.nil?
+    begin
+      prevselectmode = @bbui_displaymode
+      @bbui_displaymode = :select
+      @sprites["bbui_canvas"].visible = true
+      trueBattler = @battle.battlers[index]
+      case mode
+      when :UserOrPartner then idxPoke = pbFirstTargetAcupressure(index)
+      when :SingleNonUser then idxPoke = pbFirstTarget(index)
+      else                idxPoke = index
+      end
+      if idxPoke == -1
+        raise RuntimeError.new(_INTL("No targets somehow..."))
+      end
+      battler = @battle.battlers[idxPoke]
+      cw = @sprites[cwtype]
+      result = nil
+      bbui_pbUpdateBattlerSelection(idxPoke, trueBattler, cw, prevselectmode)
+      loop do
+        oldPoke = idxPoke
+        pbGraphicsUpdate
+        pbFrameUpdate(cw)
+        Input.update
+        bbui_pbUpdateInfoSprites
+        if Input.trigger?(Input::B)
+          result = prevselectmode
+          break
+        elsif Input.trigger?(Input::C)
           pbPlayDecisionSE
           result = idxPoke
           break
-        else
-          pbPlayCursorSE
-          prevselectmode = prevselectmode == :move ? nil : :move
-          oldPoke = -1
-        end
-      end
-      for inp, consts in SelectMenuBBUI::INPUT_MAPPING
-        if Input.trigger?(inp)
-          idxPoke = SelectMenuBBUI::VISUAL_MAPPING[idxPoke] if @battle.doublebattle
-          if idxPoke == 3 && battler && battler.isbossmon && (!battler.pbPartner || battler.pbPartner.isFainted?)
-            target = consts[2]
-            if bbui_isAcceptable(target, index, mode)
-              idxPoke = target
-            else
-              target = target ^ 2
-              idxPoke = target if bbui_isAcceptable(target, index, mode)
-            end
+        elsif Input.trigger?(Input::Y)
+          if mode.nil?
+            pbPlayDecisionSE
+            result = idxPoke
+            break
           else
-            target = idxPoke ^ consts[0]
-            if bbui_isAcceptable(target, index, mode)
-              idxPoke = target
-            else
-              target = target ^ consts[1]
+            pbPlayCursorSE
+            prevselectmode = prevselectmode == :move ? nil : :move
+            oldPoke = -1
+          end
+        end
+        for inp, consts in SelectMenuBBUI::INPUT_MAPPING
+          if Input.trigger?(inp)
+            idxPoke = SelectMenuBBUI::VISUAL_MAPPING[idxPoke] if @battle.doublebattle
+            if idxPoke == 3 && battler && battler.isbossmon && (!battler.pbPartner || battler.pbPartner.isFainted?)
+              target = consts[2]
               if bbui_isAcceptable(target, index, mode)
                 idxPoke = target
               else
-                target = target ^ consts[0]
+                target = target ^ 2
                 idxPoke = target if bbui_isAcceptable(target, index, mode)
               end
+            else
+              target = idxPoke ^ consts[0]
+              if bbui_isAcceptable(target, index, mode)
+                idxPoke = target
+              else
+                target = target ^ consts[1]
+                if bbui_isAcceptable(target, index, mode)
+                  idxPoke = target
+                else
+                  target = target ^ consts[0]
+                  idxPoke = target if bbui_isAcceptable(target, index, mode)
+                end
+              end
             end
+            idxPoke = SelectMenuBBUI::VISUAL_MAPPING.invert[idxPoke] if @battle.doublebattle
+            pbPlayCursorSE
+            break
           end
-          idxPoke = SelectMenuBBUI::VISUAL_MAPPING.invert[idxPoke] if @battle.doublebattle
-          pbPlayCursorSE
-          break
+        end
+        if oldPoke != idxPoke
+          bbui_pbUpdateBattlerSelection(idxPoke, trueBattler, cw, prevselectmode)
+          battler = @battle.battlers[idxPoke]
+          # @battle.battlers.each do |b|
+          #   showOutline = b.index == battler.index
+          #   pbShowOutline("info_icon#{b.index}", showOutline)
+          # end
         end
       end
-      if oldPoke != idxPoke
-        bbui_pbUpdateBattlerSelection(idxPoke, trueBattler, cw, prevselectmode)
-        battler = @battle.battlers[idxPoke]
-        # @battle.battlers.each do |b|
-        #   showOutline = b.index == battler.index
-        #   pbShowOutline("info_icon#{b.index}", showOutline)
-        # end
+      @bbui_displaymode = nil
+      @sprites["bbui_canvas"].visible = false
+      @battle.battlers.each do |b|
+        @sprites["bbui_info_icon#{b.index}"].visible = false
       end
+      if result == :move
+        bbui_pbToggleMoveInfo(trueBattler, cw)
+      elsif result.is_a?(Numeric)
+        return result
+      end
+      return -1
+    rescue
+      @bbui_displaymode = nil
+      @sprites["bbui_canvas"].visible = false
+      @battle.battlers.each do |b|
+        @sprites["bbui_info_icon#{b.index}"].visible = false
+      end
+      return -1
     end
-    @bbui_displaymode = nil
-    @sprites["bbui_canvas"].visible = false
-    @battle.battlers.each do |b|
-      @sprites["bbui_info_icon#{b.index}"].visible = false
-    end
-    if result == :move
-      bbui_pbToggleMoveInfo(trueBattler, cw)
-    elsif result.is_a?(Numeric)
-      return result
-    end
-    return -1
   end
 end

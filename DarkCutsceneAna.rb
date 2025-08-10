@@ -436,7 +436,7 @@ module DarkAnaCutscene
         "MELIA: ...\\v[#{Variables[:MCname]}]?",
         "ANA: ...",
         "If we go back, what will happen to us?",
-        "Overlapping, Melia. I'm the same unit, the same drive, and I can't change that.",
+        "Overlapping, Melia. I'm the same unit as they were.",
         "My soul will clash, as will yours, and we'll...",
         "...Overtake them.",
         "MELIA: ...It's a possibility.",
