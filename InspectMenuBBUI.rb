@@ -222,7 +222,7 @@ class PokeBattle_Scene
         end
       end
     rescue
-      # noop
+      pbPrintException($!)
     end
     @bbui_displaymode = nil
     @sprites["bbui_leftarrow"].visible = false
@@ -623,10 +623,14 @@ class PokeBattle_Scene
         if tick && tick != 0
           name = _INTL(effectName)
           desc = _INTL(effectDesc)
-          if tick > 0
-            tick = sprintf("%d/%d", tick, effectType) if effectType > 0
+          if effectType == 0
+            tick = tick.to_s
           else
-            tick = "--"
+            if tick > 0
+              tick = sprintf("%d/%d", tick, effectType) if effectType > 0
+            else
+              tick = "--"
+            end
           end
           display_effects.push([name, tick, desc])
         end

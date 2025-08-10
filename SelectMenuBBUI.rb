@@ -283,6 +283,7 @@ class PokeBattle_Scene
       end
       return -1
     rescue
+      pbPrintException($!)
       @bbui_displaymode = nil
       @sprites["bbui_canvas"].visible = false
       @battle.battlers.each do |b|
