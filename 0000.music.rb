@@ -21,8 +21,8 @@ module MusicOverrides
     MusicOverrides::MUSIC_OVERRIDES.each_pair {|k, v| MusicOverrides::COMPILED_MUSIC_OVERRIDES[k.downcase] = v }
     begin
       missing = MusicOverrides::MUSIC_OVERRIDES.values.select { |f| !FileTest.audio_exist?(f) }
-      raise "Missing asset #{missing[0]}. Please download it." if missing.length == 1
-      raise "Assets #{missing.join(", ")} are missing. Please download them." if missing.length > 1
+      print "Missing asset #{missing[0]}. Please download it." if missing.length == 1
+      print "Assets #{missing.join(", ")} are missing. Please download them." if missing.length > 1
     end
   end
 
