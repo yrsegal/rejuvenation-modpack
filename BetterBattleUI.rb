@@ -1543,6 +1543,13 @@ class FightMenuButtons < BitmapSprite
   end
 end
 
+# For compatability with how Gen 9 mod changes Illusion
+class PokeBattle_Battler
+  def isShiny?
+    @pokemon.isShiny?
+  end
+end
+
 class PokeBattle_Move
 
   def betterBattleUI_fixedDamageMove?
