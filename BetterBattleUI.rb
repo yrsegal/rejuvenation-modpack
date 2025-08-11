@@ -918,7 +918,7 @@ class PokemonDataBox < SpriteWrapper
       # Crest
       illusion = !@battler.effects[:Illusion].nil?
       if @battler.hasCrest?(illusion) || (@battler.crested && !illusion)
-        imagepos.push(["Graphics/Pictures/Battle/battleCrest.png",sbX+100,sbY,0,0,-1,-1])
+        imagepos.push(["Graphics/Pictures/Battle/battleCrest.png",sbX+100,sbY-4,0,0,-1,-1])
       end
       ### /MODDED
     end

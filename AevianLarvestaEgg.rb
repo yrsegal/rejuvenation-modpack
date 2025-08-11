@@ -6,7 +6,7 @@ end
 
 # Credit to moonpaw for creating this 
 
-Switches[:Gym_13] = 296
+Switches[:Gym_13] = 295
 
 TextureOverrides.registerTextureOverride(TextureOverrides::CHARS + "egg_aevian_larvesta", TextureOverrides::MODBASE + "LarvestaEgg")
 
