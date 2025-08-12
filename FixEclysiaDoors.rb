@@ -15,7 +15,9 @@ InjectionHelper.defineMapPatch(581, 20) { |event| # Eclysia, door in hallway to 
 
 [ 1,  2,  3, # Doors outside
  11, 12, 13, # Spring doors
- 22, 39, 40].each { |i| # Big sealed door
+ 22, 39, 40, # Big sealed door
+ 51 # Warp to skyview
+].each { |i|
   InjectionHelper.defineMapPatch(581, i) { |event| # Eclysia, 
     event.patch(:fixEclysiaDoors) { |page|
       if page.lookForSequence([:TransferPlayer, nil, nil, nil, nil, nil, nil])

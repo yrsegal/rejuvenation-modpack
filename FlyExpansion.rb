@@ -4,6 +4,8 @@ class MapMetadata
   def Outdoor
     # Rhodea's Apartment
     return true if mapid == 313 && $game_map && $game_map.map_id == mapid && $game_player && (46..105).include?($game_player.x) && (3..33).include?($game_player.y)
+    # Castle of Goomidra
+    return true if mapid == 602 && $game_map && $game_map.map_id == mapid && $game_player && (60..119).include?($game_player.x) && (0..59).include?($game_player.y)
     return flyexpansion_old_Outdoor
   end
 
