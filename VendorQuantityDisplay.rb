@@ -206,12 +206,7 @@ module VendorQuantityDisplay
 
   def self.injectCleanup(eventlike)
     eventlike.patch(:VendorQuantityCleanup) { |page|
-      ends = page.lookForAll(:ExitEventProcessing) + [page[-1]]
-
-      for insn in ends
-        page.insertBefore(insn, [:Script, 'vendorquantity_disposefully'])
-      end
-
+      ends = page.insertBeforeEnd([:Script, 'vendorquantity_disposefully'])
       next true
     }
   end

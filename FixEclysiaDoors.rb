@@ -4,9 +4,27 @@ begin
   raise "Dependencies #{missing.join(", ")} are required by #{__FILE__}. Please install them." if missing.length > 1
 end
 
+Variables[:LocationData] = 681
+
 InjectionHelper.defineMapPatch(581, 20) { |event| # Eclysia, door in hallway to Garufa Inc door
   event.patch(:fixEclysiaDoors) { |page|
     page.changeTrigger(:PlayerTouch)
+    next true
+  }
+}
+
+[11, 12, 13, # Spring doors
+ 22, 39, 40].each { |i| # Big sealed door
+  InjectionHelper.defineMapPatch(581, i) { |event| # Eclysia, 
+    event.patch(:fixEclysiaDoors) { |page|
+      if page.lookForSequence([:TransferPlayer, nil, nil, nil, nil, nil, nil])
+        if !page.lookForSequence([:ControlVariable, :LocationData, :Set, :Constant, 3], [:ControlVariable, :LocationData, :Set, :Constant, 0])
+          page.insertAtStart([:ControlVariable, :LocationData, :Set, :Constant, 3])
+          page.insertBeforeEnd([:ControlVariable, :LocationData, :Set, :Constant, 0])
+          next true
+        end
+      end
+    }
   }
 }
 

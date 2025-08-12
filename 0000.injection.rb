@@ -1040,6 +1040,13 @@ module EventListHolder
     self.insert(self.idxOf(insn), *InjectionHelper.parseEventCommands(*commands, baseIndent: insn.indent))
   end
 
+  def insertBeforeEnd(*commands)
+    locations = self.lookForAll(:ExitEventProcessing) + [self[-1]]
+    for location in locations
+      self.insertBefore(location, *commands)
+    end
+  end
+
   def insertAfter(insn, *commands)
     insn = self[insn] if insn.is_a?(Numeric)
 
@@ -1055,7 +1062,6 @@ module EventListHolder
     self.delete(insn)
     return self
   end
-
 
   def replaceRange(insn1, insn2, *commands)
     insn1 = self[insn1] if insn1.is_a?(Numeric)
