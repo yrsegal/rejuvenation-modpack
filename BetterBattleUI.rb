@@ -1679,7 +1679,7 @@ class PokeBattle_Move
     end
 
     # OK because Air Balloon informs on entry
-    if type == :GROUND && opponent.isAirborne? && opponent.hasWorkingItem(:AIRBALLOON)
+    if type == :GROUND && opponent.isAirborne?
       return 0
     end
 

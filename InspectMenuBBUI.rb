@@ -541,7 +541,7 @@ class PokeBattle_Scene
       when :FOREST            then desc = _INTL("Special Bug and all Grass moves are boosted.")
       when :VOLCANICTOP       then desc = _INTL("Fire is boosted and Water and Ice are weakened.")
       when :FACTORY           then desc = _INTL("Electric and mechanical moves are boosted.")
-      when :SHORTCIRCUIT      then desc = _INTL("Electric moves are erratic and light-based moves are boosted.")
+      when :SHORTCIRCUIT      then desc = _INTL("Electric is erratic, light-based moves are boosted.")
       when :WASTELAND         then desc = _INTL("Entry hazards occur immediately. Certain moves are dangerous.")
       when :ASHENBEACH        then desc = _INTL("Focus is rewarded and mud-based moves are boosted.")
       when :WATERSURFACE      then desc = _INTL("Ground is negated and Water and Electric are boosted.")

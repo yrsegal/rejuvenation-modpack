@@ -21,6 +21,7 @@ Switches[:Gym_5] = 8
 Variables[:QuestRestoration] = 577
 Variables[:QuestRiftGyarados] = 401
 Variables[:KarmaFilesGood] = 731
+Variables[:V12Story] = 602
 
 class PokemonRegionMapScene
   alias :flyexpansion_old_getFlySpot :getFlySpot
@@ -48,6 +49,9 @@ class PokemonRegionMapScene
     elsif ret && ret[0] == 311 && # Axis High University
      $game_variables[:V13Story] >= 79 && $game_variables[:V13Story] < 100 # Land of Broken Dreams
       return nil
+    elsif ret && ret[0] == 606 &&
+      $game_variables[:V12Story] < 115
+      ret[0] = 580 # Pyramid Grounds (unwatered)
     end
 
     return ret
@@ -59,7 +63,8 @@ module FlyExpansion
     [21, 134], # Oceana Piers
     [25, 321, 190, 216, 217], # Goldenwood Forests
     [58, 19], # East Gearen City (lab area)
-    [263, 353] # Oblitus Towns
+    [263, 353], # Oblitus Towns
+    [580, 606] # Pyramid Grounds
   ]
 
   def self.addPoint(map, x, y, name, poi, newloc=nil)
