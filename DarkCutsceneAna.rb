@@ -968,7 +968,7 @@ module DarkAnaCutscene
         insn.parameters[0] = 'darkana_determine_outfit_desolate'
       end
 
-      next matched.length > 0
+      next !matched.empty?
     }
   end
 

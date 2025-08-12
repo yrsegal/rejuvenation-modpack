@@ -14,7 +14,7 @@ def fixbluemic_patchShop(event)
       insn.parameters[1] = Variables[:IceCream]
     end
 
-    next checks.length > 0
+    next !checks.empty?
   }
 end
 

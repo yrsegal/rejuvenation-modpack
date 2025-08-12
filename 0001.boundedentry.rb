@@ -43,7 +43,7 @@ class Bounded_Window_TextEntry_Keyboard < Window_TextEntry
         for c in nextdisplay.chars
           c = c.downcase
           matches = @matchingnames.select { |n| n[self.text.length] && n[self.text.length].downcase == c }
-          if matches.length > 0
+          if !matches.empty?
             reup = @matchingnames.all? { |n| n[self.text.length].upcase == n[self.text.length] }
             @backnames.push([@matchingnames, @nextchars])
             @matchingnames = matches
@@ -76,7 +76,7 @@ class Bounded_Window_TextEntry_Keyboard < Window_TextEntry
     Input.gets.each_char { |c|
       c = c.downcase
       matches = @matchingnames.select { |n| n[self.text.length] && n[self.text.length].downcase == c }
-      if matches.length > 0
+      if !matches.empty?
         reup = @matchingnames.all? { |n| n[self.text.length].upcase == n[self.text.length] }
         @backnames.push([@matchingnames, @nextchars])
         @matchingnames = matches

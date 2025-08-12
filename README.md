@@ -74,6 +74,8 @@ Fix/hotfix mods:
   Fixes Blue Moon Ice Cream not being rarely available from certain shops as intended. (It was still possible to access, but not in the intended way.)
 - FixCdAName.rb  
   Fixes an area name being displayed incorrectly.
+- FixEclysiaDoors.rb (depends on 0000.injection.rb)  
+  Fixes some doors in Eclysia Pyramid.
 - FixFactoryAreas.rb (depends on 0000.injection.rb)  
   Adds a field effect message to entering Oceana Pier's field-effect tutorial warehouse, and fixes damage pads not applying the proper types of damage.
 - FixForeignGiftShinyChance.rb  

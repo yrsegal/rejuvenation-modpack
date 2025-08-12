@@ -12,6 +12,6 @@ InjectionHelper.defineMapPatch(99, 58) { |event| # School of Nightmares, Make An
       insn.parameters[0] = '$PokemonBag.pbDeleteItem(:MYSTBLACKBOX2,3)'
     end
 
-    next matched.length > 0
+    next !matched.empty?
   }
 }

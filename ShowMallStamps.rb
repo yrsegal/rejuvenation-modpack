@@ -96,7 +96,7 @@ module ShowSomniamMallStamps
         page.insertBefore(targetIdx, [:Script, "showmallstamps_disposefully"])
       end
 
-      next textMatches.length > 0 || martMatches.length > 0
+      next !textMatches.empty? || !martMatches.empty?
     }
   end
 
@@ -112,7 +112,7 @@ module ShowSomniamMallStamps
         page.insertBefore(targetIdx, [:Script, "showmallstamps_disposefully"])
       end
 
-      next textMatches.length > 0
+      next !textMatches.empty?
     }
   end
 

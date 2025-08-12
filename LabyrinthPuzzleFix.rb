@@ -12,6 +12,6 @@ InjectionHelper.defineMapPatch(537, 85) { |event| # Zorrialyn Labyrinth Floor 3,
       insn.parameters[0] += ' &&'
     end
 
-    next matched.length > 0
+    next !matched.empty?
   }
 }

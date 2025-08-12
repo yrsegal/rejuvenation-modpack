@@ -658,7 +658,7 @@ module InjectionHelper
 
         builtInsns.push(parseEventCommand(currIndent, sym, *params))
 
-        if sym == :Done && blockstack.length > 0
+        if sym == :Done && !blockstack.empty?
           currIndent -= 1
           builtInsns.push(parseEventCommand(currIndent, blockstack.pop()))
         end
@@ -1247,8 +1247,13 @@ module RPG
         return self
       end
 
-      def code(triggerType, *params)
+      def changeTrigger(triggerType)
         self.trigger = InjectionHelper::EVENT_TRIGGER_TYPES[triggerType] || triggerType
+        return self
+      end
+
+      def code(triggerType, *params)
+        self.changeTrigger(triggerType)
         self.list = InjectionHelper.parseEventCommands(*params, :Done)
         return self
       end

@@ -16,7 +16,7 @@ def axelfixes_fix_stormsprite(event)
       }
     end
 
-    next matched.length > 0
+    next !matched.empty?
   }
 end
 

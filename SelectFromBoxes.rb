@@ -561,7 +561,7 @@ def selectfromboxes_patch_partycheck(event)
       insn.parameters[0] = 'false'
     end
 
-    next matched.length > 0
+    next !matched.empty?
   }
 end
 

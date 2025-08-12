@@ -338,7 +338,7 @@ class PokemonStorageScreen
       end
     end
 
-    if commandsFound.length > 0
+    if !commandsFound.empty?
       for i in 0...commandsFound.length
         commandsFound[i] = _INTL("{1} ({2})", commandsFound[i], boxesCount[i])
       end

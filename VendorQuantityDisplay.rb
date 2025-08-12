@@ -95,7 +95,7 @@ module VendorQuantityDisplay
         end
       end
 
-      next textMatches.length > 0 || anyChoice
+      next !textMatches.empty? || anyChoice
     }
     injectCleanup(eventlike)
   end
@@ -131,7 +131,7 @@ module VendorQuantityDisplay
         page.insertBefore(insn, InjectionHelper.parseEventCommand(insn.indent, :Script, 'vendorquantity_show_redessence_window'))
       end
 
-      next showRE.length > 0 || showMoney.length > 0
+      next !showRE.empty? || !showMoney.empty?
     }
     injectCleanup(event)
   end
@@ -199,7 +199,7 @@ module VendorQuantityDisplay
         page.insertBefore(insn,[:Script, 'vendorquantity_show_redessence_window'])
       end
 
-      next showRE.length > 0
+      next !showRE.empty?
     }
     injectCleanup(event)
   end

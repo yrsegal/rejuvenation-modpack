@@ -66,7 +66,7 @@ def outfitoptions_arbitrary_outfit(event)
       insn.parameters[0] = '$Trainer.outfit=$game_variables[:Outfit]'
     end
 
-    next matched.length > 0
+    next !matched.empty?
   }
 end
 
@@ -78,7 +78,7 @@ def outfitoptions_replace_outfits_with_darchflag(event)
       page.replaceRange(insn, insn, [:ControlSwitch, :DarchOutfit, true])
     end
 
-    next matched.length > 0
+    next !matched.empty?
   }
 end
 
@@ -94,7 +94,7 @@ def outfitoptions_nix_darchoutfit_set(event, replaceWithChoices)
       end
     end
 
-    next matched.length > 0
+    next !matched.empty?
   }
 end
 
@@ -142,7 +142,7 @@ def outfitoptions_set_icep_outfit_fight(event)
       page.insertAfter(insn, [:ControlSwitch, :outfitoptions_IceptOutfit, true])
     end
 
-    next matched.length > 0
+    next !matched.empty?
   }
 end
 

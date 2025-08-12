@@ -62,7 +62,7 @@ def anafixes_fix_darchsprite(event)
       }
     end
 
-    next matched.length > 0
+    next !matched.empty?
   }
 end
 
@@ -78,7 +78,7 @@ def anafixes_replacewitheyesprite(event)
       }
     end
 
-    next matched.length > 0
+    next !matched.empty?
   }
 end
 
@@ -184,7 +184,7 @@ def anafixes_fix_protagname(page)
       matched.parameters[0].gsub! /\\v\[701\]/, '\\v[5]'
     end
 
-    next labelMatch && textMatches.length > 0
+    next labelMatch && !textMatches.empty?
   }
 end
 

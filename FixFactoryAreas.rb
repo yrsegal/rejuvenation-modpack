@@ -29,7 +29,7 @@ module FixFactoryAreas
         end
       end
 
-      next setShorted.length > 0
+      next !setShorted.empty?
     }
   end
 
@@ -49,7 +49,7 @@ module FixFactoryAreas
           [:ControlSwitch, :ShortedOut, true]) # To ensure message sent
       end
 
-      next resetSwitches.length > 0 || flipLightsOn.length > 0
+      next !resetSwitches.empty? || !flipLightsOn.empty?
     }
   end
 
@@ -67,7 +67,7 @@ module FixFactoryAreas
         page.insertBefore(insn, [:ChangeScreenColorTone, Tone.new(0,0,0,0), 10])
       end
 
-      next setLighting.length > 0 || flipLightsOn.length > 0
+      next !setLighting.empty? || !flipLightsOn.empty?
     }
   end
 
@@ -137,7 +137,7 @@ module FixFactoryAreas
         insn.parameters[0] = 'FixFactoryAreas.pbFieldDamage' + type
       end
 
-      next fieldDamage.length > 0
+      next !fieldDamage.empty?
     }
   end
 
