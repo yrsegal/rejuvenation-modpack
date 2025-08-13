@@ -17,7 +17,7 @@ Switches[:outfitoptions_IceptOutfit] = $OUTFITOPTIONS_SWITCH_ICEPTOUTFIT
 
 # Code blocks
 
-def outfitoptions_makeMoveRoute(base, outfit, direction = 8)
+def outfitoptions_makeMoveRoute(base, outfit, direction = 2)
   return [
     false,
     [:SetCharacter, base + '_' + outfit.to_s, 0, direction, 0],
@@ -34,24 +34,24 @@ def outfitoptions_wakeup_section(outfit)
   ]
 end
 
-def outfitoptions_generateWindstormBranch(outfit, running, event_id)
+def outfitoptions_generateWindstormBranch(outfit, running, event_id, direction=2)
   return [
     [:ConditionalBranch, :Variable, :Outfit, :Constant, outfit, :Equals],
-      *outfitoptions_charSection(outfit, event_id, :Ana, running ? 'BGirlrun2' : 'BGirlwalk'),
-      *outfitoptions_charSection(outfit, event_id, :Alain, running ? 'nb_run2' : 'nb_walk2'),
-      *outfitoptions_charSection(outfit, event_id, :Aero, running ? 'nb_run' : 'nb_walk'),
-      *outfitoptions_charSection(outfit, event_id, :Ariana, running ? 'BGirlRun' : 'trchar003'),
-      *outfitoptions_charSection(outfit, event_id, :Axel, running ? 'Boy_Run2' : 'trchar004'),
-      *outfitoptions_charSection(outfit, event_id, :Aevia, running ? 'girl_run' : 'trchar001'),
-      *outfitoptions_charSection(outfit, event_id, :Aevis, running ? 'boy_run' : 'trchar000'),
+      *outfitoptions_charSection(outfit, event_id, :Ana, running ? 'BGirlrun2' : 'BGirlwalk', direction),
+      *outfitoptions_charSection(outfit, event_id, :Alain, running ? 'nb_run2' : 'nb_walk2', direction),
+      *outfitoptions_charSection(outfit, event_id, :Aero, running ? 'nb_run' : 'nb_walk', direction),
+      *outfitoptions_charSection(outfit, event_id, :Ariana, running ? 'BGirlRun' : 'trchar003', direction),
+      *outfitoptions_charSection(outfit, event_id, :Axel, running ? 'Boy_Run2' : 'trchar004', direction),
+      *outfitoptions_charSection(outfit, event_id, :Aevia, running ? 'girl_run' : 'trchar001', direction),
+      *outfitoptions_charSection(outfit, event_id, :Aevis, running ? 'boy_run' : 'trchar000', direction),
     :Done
   ]
 end
 
-def outfitoptions_charSection(outfit, event_id, variable, base)
+def outfitoptions_charSection(outfit, event_id, variable, base, direction=2)
   return [
-    [:ConditionalBranch, :Switch, :Ana, true],
-      [:SetMoveRoute, event_id, outfitoptions_makeMoveRoute(base, outfit)],
+    [:ConditionalBranch, :Switch, variable, true],
+      [:SetMoveRoute, event_id, outfitoptions_makeMoveRoute(base, outfit, direction)],
       :WaitForMovement,
       [:JumpToLabel, 'End'],
     :Done]
@@ -120,13 +120,13 @@ def outfitoptions_wake_up(page)
   }
 end
 
-def outfitoptions_injectBeforeOutfit0(subevent, event_id, nums, running)
-  subevent.patch(:outfitoptions_injectBeforeOutfit0) {
+def outfitoptions_injectBeforeOutfit0(event, event_id, nums, running, direction=2)
+  event.patch(:outfitoptions_injectBeforeOutfit0) { |subevent|
     matched = subevent.lookForSequence([:ConditionalBranch, :Variable, :Outfit, :Constant, 0, :Equals])
 
     if matched
       newinsns = []
-      nums.each {|num| newinsns += outfitoptions_generateWindstormBranch(num,running,event_id) }
+      nums.each {|num| newinsns += outfitoptions_generateWindstormBranch(num,running,event_id,direction) }
 
       subevent.insertBefore(matched, *newinsns)
     end
@@ -264,10 +264,10 @@ InjectionHelper.defineCommonPatch(133, &method(:outfitoptions_override_outfit_ch
 
 InjectionHelper.defineMapPatch(53) { |map| # I Nightmare Realm
   # Mirror match
-  outfitoptions_injectBeforeOutfit0(map.events[66].pages[0], 0, [2, 3, 4, 6], true)
-  outfitoptions_injectBeforeOutfit0(map.events[76].pages[0], 0, [2, 3, 4, 6], true)
-  outfitoptions_injectBeforeOutfit0(map.events[86].pages[0], 0, [2, 3, 4, 6], true)
-  outfitoptions_injectBeforeOutfit0(map.events[94].pages[0], 0, [2, 3, 4, 6], true)
+  outfitoptions_injectBeforeOutfit0(map.events[66].pages[0], 0, [2, 3, 4, 6], true, 8)
+  outfitoptions_injectBeforeOutfit0(map.events[76].pages[0], 0, [2, 3, 4, 6], true, 8)
+  outfitoptions_injectBeforeOutfit0(map.events[86].pages[0], 0, [2, 3, 4, 6], true, 8)
+  outfitoptions_injectBeforeOutfit0(map.events[94].pages[0], 0, [2, 3, 4, 6], true, 8)
 }
 
 InjectionHelper.defineMapPatch(85) { |map| # Nightmare Toy Box

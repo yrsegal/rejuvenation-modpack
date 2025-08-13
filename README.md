@@ -11,6 +11,8 @@ Dir["./Data/Mods/WireModpack/*.rb"].each {|file| load File.expand_path(file) }
 ## Contents
 
 (Disabled by default) Dev Utilities:
+- DumpSingleEvent.rb  
+  Allow for event-dump-style dumping of a single event.
 - PartialDebugMode.rb  
   Enables Debug Mode without allowing for HMs out of sequence.
 - ShowPosition.rb  
@@ -176,6 +178,8 @@ Other mods:
   Makes Pickup more likely (33%) to trigger after battle.
 - ConditionItems.rb (depends on 0000.injection.rb, 0000.textures.rb)  
   Adds items which cause status conditions.
+- DarchlightAxel.rb (depends on 0000.injection.rb, 0000.textures.rb)  
+  Gives Axel's Darchlight Form full spriting.
 - DarchlightTrainerSprites.rb (depends on 0000.textures.rb)  
   Adds some relevant sprites to the Darchlight Caves segment.
 - DarkCutsceneAna.rb (depends on 0000.injection.rb)  

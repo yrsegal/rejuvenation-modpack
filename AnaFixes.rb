@@ -42,8 +42,10 @@ end
 def anafixes_special_sprite_section(special, outfit)
   return [
     [:ConditionalBranch, :Variable, :Outfit, :Constant, outfit, :Equals],
-      [:SetMoveRoute, :This, anafixes_makeMoveRoute(special + '_' + outfit.to_s, :Down)],
-      [:JumpToLabel, 'End'],
+      [:ConditionalBranch, :Switch, :Ana, true],
+        [:SetMoveRoute, :This, anafixes_makeMoveRoute(special + '_' + outfit.to_s, :Down)],
+        [:JumpToLabel, 'End'],
+      :Done,
     :Done
   ]
 end
