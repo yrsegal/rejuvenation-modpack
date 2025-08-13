@@ -1594,7 +1594,9 @@ class PokeBattle_Scene
 
     if target.effects[:Illusion] && @battle.pbIsOpposing?(target.index)
       fakeFoe = PokeBattle_Battler.new(battler.battle,target.index,true)
-      fakeFoe.pbInitPokemon(target.effects[:Illusion], target.index)
+      fakemon = target.effects[:Illusion]
+      fakemon = fakemon.pokemon if fakemon.is_a?(PokeBattle_Battler)
+      fakeFoe.pbInitPokemon(fakemon, target.index)
       target = fakeFoe
     end
 

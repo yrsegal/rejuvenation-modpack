@@ -78,20 +78,20 @@ def darchaxel_hotfix_battyfriends(event)
 end
 
 TextureOverrides.registerTextureOverrides({
-    TextureOverrides::CHARS + 'boy_bike2_4' => TextureOverrides::MOD + 'Darch/Axel/Bike',
-    TextureOverrides::CHARS + 'boy_surf_offset2_4' => TextureOverrides::MOD + 'Darch/Axel/Surf',
-    TextureOverrides::CHARS + 'boy_fish_offset2_4' => TextureOverrides::MOD + 'Darch/Axel/Fish',
-    TextureOverrides::CHARS + 'boy_fishsurf_offset2_4' => TextureOverrides::MOD + 'Darch/Axel/SurfFish',
-    TextureOverrides::CHARS + 'boy_dive2_4' => TextureOverrides::MOD + 'Darch/Axel/Dive',
-    TextureOverrides::CHARS + 'trchar004_4' => TextureOverrides::MOD + 'Darch/Axel/Walk',
-    TextureOverrides::CHARS + 'Boy_Run2_4' => TextureOverrides::MOD + 'Darch/Axel/Run',
-    TextureOverrides::CHARS + 'Trainer004_4' => TextureOverrides::MOD + 'Darch/Axel/Trainer',
-    TextureOverrides::CHARS + 'trBack004_4' => TextureOverrides::MOD + 'Darch/Axel/TrainerBack',
-    TextureOverrides::MAP + 'mapPlayer004_4' => TextureOverrides::MOD + 'Darch/Axel/MapHead',
-    TextureOverrides::VS + 'vsTrainer4_4' => TextureOverrides::MOD + 'Darch/Axel/VS',
-    TextureOverrides::CHARS + 'PlayerHeadache_4_4' => TextureOverrides::MOD + 'Darch/Axel/Headache',
-    TextureOverrides::CHARS + 'PlayerKnockedOut_4_4' => TextureOverrides::MOD + 'Darch/Axel/KO',
-    TextureOverrides::CHARS + 'BattyFriends_Axel_4' => TextureOverrides::MOD + 'Darch/Axel/BattyFriends'
+    TextureOverrides::CHARS + 'boy_bike2_4' => TextureOverrides::MOD + 'Axel/Darch/Bike',
+    TextureOverrides::CHARS + 'boy_surf_offset2_4' => TextureOverrides::MOD + 'Axel/Darch/Surf',
+    TextureOverrides::CHARS + 'boy_fish_offset2_4' => TextureOverrides::MOD + 'Axel/Darch/Fish',
+    TextureOverrides::CHARS + 'boy_fishsurf_offset2_4' => TextureOverrides::MOD + 'Axel/Darch/SurfFish',
+    TextureOverrides::CHARS + 'boy_dive2_4' => TextureOverrides::MOD + 'Axel/Darch/Dive',
+    TextureOverrides::CHARS + 'trchar004_4' => TextureOverrides::MOD + 'Axel/Darch/Walk',
+    TextureOverrides::CHARS + 'Boy_Run2_4' => TextureOverrides::MOD + 'Axel/Darch/Run',
+    TextureOverrides::CHARS + 'Trainer004_4' => TextureOverrides::MOD + 'Axel/Darch/Trainer',
+    TextureOverrides::CHARS + 'trBack004_4' => TextureOverrides::MOD + 'Axel/Darch/TrainerBack',
+    TextureOverrides::MAP + 'mapPlayer004_4' => TextureOverrides::MOD + 'Axel/Darch/MapHead',
+    TextureOverrides::VS + 'vsTrainer4_4' => TextureOverrides::MOD + 'Axel/Darch/VS',
+    TextureOverrides::CHARS + 'PlayerHeadache_4_4' => TextureOverrides::MOD + 'Axel/Darch/Headache',
+    TextureOverrides::CHARS + 'PlayerKnockedOut_4_4' => TextureOverrides::MOD + 'Axel/Darch/KO',
+    TextureOverrides::CHARS + 'BattyFriends_Axel_4' => TextureOverrides::MOD + 'Axel/Darch/BattyFriends'
 })
 
 InjectionHelper.defineCommonPatch(49) { |event| darchaxel_inject_special_sprite(event, 'PlayerHeadache_4') } # Player Dupe Distress

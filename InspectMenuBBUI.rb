@@ -251,6 +251,7 @@ class PokeBattle_Scene
 
     if @battle.pbIsOpposing?(battler.index)
       poke = battler.effects[:Illusion] ? battler.effects[:Illusion] : poke
+      poke = poke.pokemon if poke.is_a?(PokeBattle_Battler)
       name = poke.name if battler.effects[:Illusion]
     elsif battler.effects[:Illusion]
       name = poke.name

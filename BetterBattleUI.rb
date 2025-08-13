@@ -426,6 +426,7 @@ class PokeBattle_Scene
       poke = b.pokemon
       if @battle.pbIsOpposing?(b.index)
         poke = b.effects[:Illusion] ? b.effects[:Illusion] : poke
+        poke = poke.pokemon if poke.is_a?(PokeBattle_Battler)
       end
       if !b.isFainted?
         @sprites["bbui_info_icon#{b.index}"].pokemon = poke
@@ -848,6 +849,7 @@ class PokemonDataBox < SpriteWrapper
         genderX = sbX-16+206-self.bitmap.text_size(leveltxt).width
       end
       gendertarget = @battler.effects[:Illusion] ? @battler.effects[:Illusion] : @battler
+      gendertarget = gendertarget.pokemon if gendertarget.is_a?(PokeBattle_Battler)
       if gendertarget.gender==0 # Male
         textpos.push([_INTL("♂"),genderX,headerY,false,Color.new(48,96,216),shadow])
       elsif gendertarget.gender==1 # Female
