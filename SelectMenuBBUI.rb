@@ -1,7 +1,8 @@
 begin
   missing = ['BetterBattleUI.rb'].select { |f| !File.exist?(File.join(__dir__, f)) }
-  raise "Dependency #{missing[0]} is required by #{__FILE__}. Please install it." if missing.length == 1
-  raise "Dependencies #{missing.join(", ")} are required by #{__FILE__}. Please install them." if missing.length > 1
+  print "Dependency #{missing[0]} is required by #{__FILE__}. Please install it." if missing.length == 1
+  print "Dependencies #{missing.join(", ")} are required by #{__FILE__}. Please install them." if missing.length > 1
+  raise "Missing dependencies for mod #{__FILE__}, cannot load"
 end
 
 # Based on https://eeveeexpo.com/threads/7796/
