@@ -130,6 +130,8 @@ QoL mods:
     Adds a move-info display controlled by the Inspect key (A).
 - BoxExtensions.rb (depends on 0001.boundedentry.rb)  
   Expand the "Find" functionality of Pokémon boxes, and make Pokéballs visible from the box.
+- CairoAsShopInterface.rb (depends on 0000.injection.rb)  
+  Turns Cairo into a shop interface, so you don't need to remember which crests you've purchased.
 - CleanerPrismPower.rb  
   Makes a Rejuvenation-exclusive ability cleaner.
 - DeleteEndWaits.rb (depends on 0000.injection.rb)  

@@ -135,14 +135,11 @@ module StatusConditionItems
     map.createSinglePageEvent(60, 49, "Status Item seller") { |page|
       page.setGraphic("trchar072Dark")
       page.interact(
-        [:ConditionalBranch, :Switch, :NewTownOrdinance, true],
-          [:ShowText, "Sorry about before. I'm still selling the items, though."],
-        :Else,
-          [:ShowText, "Hey, kid. You should use these on your Pokémon."],
-        :Done,
         [:Script, "pbPokemonMart(["],
         *ITEMS.keys.map { |item| [:ScriptContinued, ":#{item},"] },
-        [:ScriptContinued, "])"])
+        [:ScriptContinued, "], $game_switches[:NewTownOrdinance] ?"],
+        [:ScriptContinued, "_INTL('Sorry about before. I\\'m still selling the items, though.') :"],
+        [:ScriptContinued, "_INTL('Hey, kid. You should use these on your Pokémon.'))"])
     }
   end
 end
