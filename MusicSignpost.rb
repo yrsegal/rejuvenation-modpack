@@ -324,7 +324,7 @@ module MusicSignpostDisplay
     "Wild Battle - RSE" => "\\rse[Battle] Wild",
     "Wild Battle - Terajuma" => "[Battle] Wild - Terajuma",
     "Wild Battle - Terrial" => "[Battle] Wild - Terrial",
-    "WMute" => nil
+    "WMute" => ""
   }
 
   @@lastText = ''
@@ -413,10 +413,18 @@ module MusicSignpostDisplay
     return trackName, animicons
   end
 
+  def self.naiveNameForMusic(trackName)
+    trackName.gsub! /^(Music|Battle) -/, "[\1]"
+    trackName.gsub! /^Bad Mood -/, "[BadMood]"
+    trackName = "[Music] #{trackName}" unless trackName[/\[\w+\]/]
+    return trackName
+  end
+
   def self.msg(track)
     animicons = []
     trackName = MusicSignpostDisplay::MAPPING[track.name.gsub(/\.(ogg|mp3)$/, '')].clone
-    return nil if trackName.nil?
+    return nil if trackName == ""
+    trackName = naiveNameForMusic(track.name.clone) if trackName.nil?
     for icon in MusicSignpostDisplay::ICONS
       if trackName.include?("[#{icon}]")
         trackName.gsub!("[#{icon}]", "<img=#{pbResolveBitmap("#{__dir__[Dir.pwd.length+1..]}/MusicTypes/#{icon}")}>")
