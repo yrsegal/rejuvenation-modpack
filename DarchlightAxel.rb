@@ -2,7 +2,7 @@ begin
   missing = ['0000.injection.rb', '0000.textures.rb'].select { |f| !File.exist?(File.join(__dir__, f)) }
   print "Dependency #{missing[0]} is required by #{__FILE__}. Please install it." if missing.length == 1
   print "Dependencies #{missing.join(", ")} are required by #{__FILE__}. Please install them." if missing.length > 1
-  raise "Missing dependencies for mod #{__FILE__}, cannot load"
+  raise "Missing dependencies for mod #{__FILE__}, cannot load" unless missing.empty?
 end
 
 # credit to @necrollo on discord for making the original sprites!
