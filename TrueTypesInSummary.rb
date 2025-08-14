@@ -175,7 +175,7 @@ class MoveRelearnerScene
     textpos.push([accuracy==0 ? "---" : sprintf("%d",accuracy),
           468,178,2,Color.new(64,64,64),Color.new(176,176,176)])
     pbDrawTextPositions(overlay,textpos)
-    case category
+    case category.downcase
     when :physical then cattype = 0
     when :special  then cattype = 1
     when :status   then cattype = 2
