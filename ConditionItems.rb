@@ -66,6 +66,7 @@ module StatusConditionItems
   }
 
   def self.itemUse(data, item, pokemon, checkTarget, scene)
+    checkTarget=pokemon if !checkTarget && pokemon
     if checkTarget.hp<=0 || !checkTarget.status.nil? || data[:immuneAbilities].include?(checkTarget.ability) || data[:immuneTypes].any?(&checkTarget.method(:hasType?)) ||
       (checkTarget.species == :MINIOR && checkTarget.ability == :SHIELDSDOWN && checkTarget.form == 7) || (checkTarget != pokemon && !checkTarget.send(data[:battlerCheck], false))
       scene.pbDisplay(_INTL("It won't have any effect."))
@@ -109,11 +110,11 @@ module StatusConditionItems
       TextureOverrides.registerTextureOverride(TextureOverrides::ICONS + "#{item.to_s.downcase!}", TextureOverrides::MODBASE + "ConditionItems/#{item.to_s.downcase!}")
 
       ItemHandlers::UseOnPokemon.add(item,proc{|item,pokemon,scene|
-        itemUse(data, item, pokemon, pokemon, scene)
+        next itemUse(data, item, pokemon, pokemon, scene)
       })
 
       ItemHandlers::BattleUseOnPokemon.add(item,proc{|item,pokemon,battler,scene|
-        itemUse(data, item, pokemon, battler, scene)
+        next itemUse(data, item, pokemon, battler, scene)
       })
     end
   end
@@ -156,7 +157,16 @@ class PokeBattle_Scene
         battler=i
       end
     end
-    return true if battler && !battler.effects[:SkyDrop] && battler.effects[:Embargo]<=0 && StatusConditionItems::ITEMS[item]
+    return false if battler && (battler.effects[:SkyDrop] || battler.effects[:Embargo]>0)
+
+    if StatusConditionItems::ITEMS[item]
+      data = StatusConditionItems::ITEMS[item]
+      unless pokemon.hp<=0 || !pokemon.status.nil? || data[:immuneAbilities].include?(pokemon.ability) || data[:immuneTypes].any?(&pokemon.method(:hasType?)) ||
+        (pokemon.species == :MINIOR && pokemon.ability == :SHIELDSDOWN && pokemon.form == 7)
+        return true
+      end
+    end
+
     return conditionitems_old_pbCanUseBattleItem(pkmnid, item, pkmnscreen)
   end
 end
