@@ -1,3 +1,6 @@
+
+TextureOverrides.registerTextureOverride(TextureOverrides::CHARS+"Generic Event Sprite", __dir__[Dir.pwd.length+1..] + '/Event') if defined?(TextureOverrides)
+
 module ShowPosition
   @@lastText = ''
 
@@ -8,7 +11,7 @@ module ShowPosition
       @@displaybox.z = 99999
     end
 
-    @@displaybox.visible = Input.press?(Input::CTRL)
+    @@displaybox.visible = Input.press?(Input::CTRL) || (Input.pressex?(:B) && !!facingEvent)
   end
 
   def self.positionBox
@@ -17,17 +20,103 @@ module ShowPosition
     @@displaybox.y = Graphics.height - @@displaybox.height
   end
 
+  def self.facingEvent
+    x, y, direction = $game_player.x, $game_player.y, $game_player.direction
+    new_x = x + (direction == 6 ? 1 : direction == 4 ? -1 : 0)
+    new_y = y + (direction == 2 ? 1 : direction == 8 ? -1 : 0)
+    for event in $game_map.events.values
+      if event.x == new_x && event.y == new_y
+        return event
+      end
+    end
+    if $game_map.counter?(new_x, new_y)
+      new_x += (direction == 6 ? 1 : direction == 4 ? -1 : 0)
+      new_y += (direction == 2 ? 1 : direction == 8 ? -1 : 0)
+      for event in $game_map.events.values
+        if event.x == new_x && event.y == new_y
+          return event
+        end
+      end
+    end
+    return nil
+  end
+
   def self.update
-    return if !$game_player || !$game_player
+    return if !$game_player
     ensureBox
     if @@displaybox.visible
-      position = "Map #{$game_map.map_id}\n(#{$game_player.x},#{$game_player.y})"
+
+      position = ""
+
+      if Input.pressex?(:B)
+        evt = facingEvent
+        if evt
+          position += sprintf("Event %03d\n", evt.id)
+          evname = evt.name
+          evname = "[NO NAME]" if !evname || evname.strip.empty?
+          position += "#{evname}\n" if evname != sprintf('EV%03d', evt.id)
+          position += sprintf("(%03d,%03d)", evt.x, evt.y)
+        end
+      end
+
+      if Input.press?(Input::CTRL)
+        position += "\n\n" unless position.empty?
+        position += sprintf("Map %03d\n(%03d,%03d)", $game_map.map_id, $game_player.x, $game_player.y)
+      end
 
       if @@lastText != position
         @@lastText = position
         @@displaybox.text=position
         positionBox
       end
+    end
+  end
+end
+
+class Game_Character
+  alias :showpossignpost_old_graphical? :graphical?
+  def graphical?
+    showpossignpost_old_graphical? || Input.pressex?(:B)
+  end
+
+  attr_writer :always_on_top
+  attr_writer :tile_id
+end
+
+class Game_Event
+  alias :showpossignpost_old_screen_z :screen_z
+  def screen_z(height = 0)
+    return 999 if Input.pressex?(:B)
+    return showpossignpost_old_screen_z(height)
+  end
+
+  attr_reader :erased
+end
+
+class Sprite_Character
+  alias :showpossignpost_old_update :update
+  def update
+    wrapping = @character && @character != $game_player && Input.pressex?(:B)
+
+    if wrapping
+      prevcharname = @character.character_name
+      prevtileid = @character.tile_id
+      prevopacity = @character.opacity
+      if @character.erased
+        @character.opacity = 80
+      elsif (@character.character_name.empty? && @character.tile_id < 384) || @character.opacity == 0
+        @character.opacity = 150
+      else
+        @character.opacity = 255
+      end
+      @character.character_name = defined?(TextureOverrides) ? 'Generic Event Sprite' : 'object_artifact'
+      @character.tile_id = 0
+    end
+    showpossignpost_old_update
+    if wrapping
+      @character.character_name = prevcharname
+      @character.tile_id = prevtileid
+      @character.opacity = prevopacity
     end
   end
 end

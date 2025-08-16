@@ -700,7 +700,7 @@ def tleditor
       newtext += "<b>" if layer == 2
       newtext += "#{$game_map.data[px,py,2]}"
       newtext += "</b>" if layer == 2
-      newtext += "]\n(#{px},#{py})"
+      newtext += sprintf("]\n(%03d,%03d)", px, py)
 
       infobox.text = newtext
       infobox.resizeToFit(infobox.text,Graphics.width)
