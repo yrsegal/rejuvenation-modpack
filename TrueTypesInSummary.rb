@@ -63,7 +63,7 @@ def hpSummary_trueType(move, pokemon)
     when :LUXRAY    then type = :ELECTRIC   if type==:NORMAL && pokemon.item==:LUXCREST
     when :SAWSBUCK
       if pokemon.item == :SAWSCREST && type == :NORMAL
-        case attacker.form
+        case pokemon.form
           when 0  then type = :WATER
           when 1  then type = :FIRE
           when 2  then type = :GROUND
