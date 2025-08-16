@@ -28,7 +28,7 @@ Libraries:
 - 0000.music.rb  
   A framework for music overrides. Currently unused.
 - 0000.textures.rb  
-  A framework for texture overrides, which also includes a couple misc overrides.
+  A framework for texture overrides.
 - 0001.boundedentry.rb (depends on 0000.textures.rb)  
   Adds "bounded" text entries, which allow you to choose from a preexisting set.
 - 0001.pcservices.rb (depends on 0000.textures.rb)  
@@ -83,7 +83,7 @@ Fix/hotfix mods:
 - FixForeignGiftShinyChance.rb  
   Fix non-trade gift Pokémon with foreign IDs not being boosted properly by the Shiny Charm or Shiny Contract.
 - FixMissingItemTextures.rb (depends on 0000.textures.rb)  
-  Fixes several missing items textures.
+  Fixes several missing item textures, and also includes a couple misc overrides. 
 - FixNWSilvally.rb  
   Fixes a field interaction with Silvally.
 - FixProboCrest.rb  
@@ -231,3 +231,5 @@ Other mods:
   Makes Dyre's Torchic doll an actual Torchic event.
 - WLLRiolu.rb (depends on 0000.injection.rb)  
   Adds the Where Love Lies password Riolu back into GDC Central.
+- Woop.rb (depends on 0000.textures.rb)  
+  Woop.

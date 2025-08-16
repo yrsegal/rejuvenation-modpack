@@ -1849,7 +1849,7 @@ class PokeBattle_Scene
       zlinecount = linecount = normtext[-1][2] / 32 + 1
 
       if move.zmove && move.category == :status && !$cache.moves[move.move].checkFlag?(:zmove)
-        ztext=getLineBrokenChunks(bm,MoveHelpDisplay.getZText(battler, move.move),Graphics.width - 12,nil,true)
+        ztext=getLineBrokenChunks(bm,_INTL(MoveHelpDisplay.getZText(battler, move.move)),Graphics.width - 12,nil,true)
         linecount += ztext[-1][2] / 32 + 1
       end
       textheight = 26

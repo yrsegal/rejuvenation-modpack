@@ -14,34 +14,7 @@ module TextureOverrides
   SPEECH = 'Graphics/Windowskins/'
 
 
-  TEXTURE_OVERRIDES = {
-    # Misc builtin overrides
-
-    # Steel Diamond for better readability
-    TextureOverrides::ICONS + 'bosstypeSTEEL' => TextureOverrides::MOD + 'SteelDiamond',
-
-    # Missing Summary ball
-    TextureOverrides::SUMMARY + 'summaryballDREAMBALL' => TextureOverrides::MOD + 'Pokeballs/DreamBallSummary',
-    # Fix Lure Ball colors
-    TextureOverrides::SUMMARY + 'summaryballLUREBALL' => TextureOverrides::MOD + 'Pokeballs/LureBallSummary',
-    TextureOverrides::BATTLEICON + 'LUREBALL' => TextureOverrides::MOD + 'Pokeballs/LureBallThrow',
-    TextureOverrides::BATTLEICON + 'LUREBALL_open' => TextureOverrides::MOD + 'Pokeballs/LureBallOpen',
-    # Fix the misshappen Beast Ball sprites (sprite from Caruban's gen 9 compilation)
-    TextureOverrides::SUMMARY + 'summaryballBEASTBALL' => TextureOverrides::MOD + 'Pokeballs/BeastBallSummary',
-    TextureOverrides::BATTLEICON + 'BEASTBALL' => TextureOverrides::MOD + 'Pokeballs/BeastBallThrow',
-    TextureOverrides::BATTLEICON + 'BEASTBALL_open' => TextureOverrides::MOD + 'Pokeballs/BeastBallOpen',
-    # Fix some misshappen/miscolored summary sprites
-    TextureOverrides::SUMMARY + 'summaryballMINERALBALL' => TextureOverrides::MOD + 'Pokeballs/MineralBallSummary',
-    TextureOverrides::SUMMARY + 'summaryballNETBALL' => TextureOverrides::MOD + 'Pokeballs/NetBallSummary',
-    TextureOverrides::SUMMARY + 'summaryballSTEAMBALL' => TextureOverrides::MOD + 'Pokeballs/SteamBallSummary',
-
-    # Fix typos
-    TextureOverrides::ICONS + "jynnobikey" => TextureOverrides::ICONS + "lightkey",
-    TextureOverrides::ICONS + "blackshard2" => TextureOverrides::ICONS + "blackshard",
-    TextureOverrides::ICONS + "blkapricorn" => TextureOverrides::ICONS + "blackapricorn",
-
-    TextureOverrides::CHARS + "trchar117_bike" => TextureOverrides::MOD + 'MissingTextures/ErinRide',
-  }
+  TEXTURE_OVERRIDES = {}
 
   def self.registerServiceSprites(*spriteNames)
     for spriteName in spriteNames
