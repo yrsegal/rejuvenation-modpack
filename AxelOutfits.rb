@@ -58,7 +58,7 @@ def darchaxel_inject_special_sprite(event, special)
 
     if matched
       event.insertBefore(matched,
-        *darchaxel_special_sprite_section(special, 3),
+        *darchaxel_special_sprite_section(special, 'int'),
         *darchaxel_special_sprite_section(special, 4))
     end
     next matched
@@ -92,7 +92,21 @@ TextureOverrides.registerTextureOverrides({
     TextureOverrides::VS + 'vsTrainer4_4' => TextureOverrides::MOD + 'Axel/Darch/VS',
     TextureOverrides::CHARS + 'PlayerHeadache_4_4' => TextureOverrides::MOD + 'Axel/Darch/Headache',
     TextureOverrides::CHARS + 'PlayerKnockedOut_4_4' => TextureOverrides::MOD + 'Axel/Darch/KO',
-    TextureOverrides::CHARS + 'BattyFriends_Axel_4' => TextureOverrides::MOD + 'Axel/Darch/BattyFriends'
+    TextureOverrides::CHARS + 'BattyFriends_Axel_4' => TextureOverrides::MOD + 'Axel/Darch/BattyFriends',
+
+    TextureOverrides::CHARS + 'boy_bike2_3' => TextureOverrides::MOD + 'Axel/Interceptor/Bike',
+    TextureOverrides::CHARS + 'boy_surf_offset2_3' => TextureOverrides::MOD + 'Axel/Interceptor/Surf',
+    TextureOverrides::CHARS + 'boy_fish_offset2_3' => TextureOverrides::MOD + 'Axel/Interceptor/Fish',
+    TextureOverrides::CHARS + 'boy_fishsurf_offset2_3' => TextureOverrides::MOD + 'Axel/Interceptor/SurfFish',
+    TextureOverrides::CHARS + 'boy_dive2_3' => TextureOverrides::MOD + 'Axel/Interceptor/Dive',
+    TextureOverrides::CHARS + 'trchar004_3' => TextureOverrides::MOD + 'Axel/Interceptor/Walk',
+    TextureOverrides::CHARS + 'Boy_Run2_3' => TextureOverrides::MOD + 'Axel/Interceptor/Run',
+    TextureOverrides::CHARS + 'Trainer004_3' => TextureOverrides::MOD + 'Axel/Interceptor/Trainer',
+    TextureOverrides::MAP + 'mapPlayer004_3' => TextureOverrides::MOD + 'Axel/Interceptor/MapHead',
+    TextureOverrides::VS + 'vsTrainer4_3' => TextureOverrides::MOD + 'Axel/Interceptor/VS',
+    TextureOverrides::CHARS + 'PlayerHeadache_4_int' => TextureOverrides::MOD + 'Axel/Interceptor/Headache',
+    TextureOverrides::CHARS + 'PlayerKnockedOut_4_int' => TextureOverrides::MOD + 'Axel/Interceptor/KO',
+    TextureOverrides::CHARS + 'BattyFriends_Axel_3' => TextureOverrides::MOD + 'Axel/Interceptor/BattyFriends'
 })
 
 InjectionHelper.defineCommonPatch(49) { |event| darchaxel_inject_special_sprite(event, 'PlayerHeadache_4') } # Player Dupe Distress

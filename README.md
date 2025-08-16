@@ -176,12 +176,12 @@ Other mods:
   Adds Battle Bond and Ash-Greninja.
   - AshGreninjaEvent.rb (depends on AshGreninja.rb, 0000.injection.rb)  
     Adds an Ash boss fight in Neo Gearen which rewards you with Battle Bond Greninja.
+- AxelOutfits.rb (depends on 0000.injection.rb, 0000.textures.rb)  
+  Gives Axel's Darchlight Form and Interceptor Form full spriting.
 - BoostPickupOdds.rb  
   Makes Pickup more likely (33%) to trigger after battle.
 - ConditionItems.rb (depends on 0000.injection.rb, 0000.textures.rb)  
   Adds items which cause status conditions.
-- DarchlightAxel.rb (depends on 0000.injection.rb, 0000.textures.rb)  
-  Gives Axel's Darchlight Form full spriting.
 - DarchlightTrainerSprites.rb (depends on 0000.textures.rb)  
   Adds some relevant sprites to the Darchlight Caves segment.
 - DarkCutsceneAna.rb (depends on 0000.injection.rb)  
