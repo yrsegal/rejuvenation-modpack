@@ -49,7 +49,7 @@ InjectionHelper.defineMapPatch(69, 3) { |event| # Route 3 megg
   }
 }
 
-InjectionHelper.defineMapPatch(69, 3) { |event| # Aevian megg
+InjectionHelper.defineMapPatch(26, 14) { |event| # Aevian megg
   event.patch(:AevianMeggChoices) { |page|
     choices = page.lookForSequence([:ShowTextContinued, "Maybe it could be of use to you?"])
 
