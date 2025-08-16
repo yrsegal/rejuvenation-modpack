@@ -5,18 +5,17 @@ begin
   raise "Missing dependencies for mod #{__FILE__}, cannot load" unless missing.empty?
 end
 
-# claiming var 1991
-
-$OUTFITOPTIONS_SWITCH_ICEPTOUTFIT = 1991
-
 Variables[:Outfit] = 259
 Switches[:BecameOne] = 1134
 Switches[:DarchOutfit] = 1666
 Switches[:LegacyOutfit] = 1052
 Switches[:XGOutfitAvailable] = 1645
-Switches[:outfitoptions_IceptOutfit] = $OUTFITOPTIONS_SWITCH_ICEPTOUTFIT
 
 # Code blocks
+
+class Game_Screen
+  attr_accessor :outfitoptions_iceptOutfit
+end
 
 def outfitoptions_makeMoveRoute(base, outfit, direction = 2)
   return [
@@ -140,7 +139,7 @@ def outfitoptions_set_icep_outfit_fight(event)
     matched = page.lookForAll([:Script, '$Trainer.outfit=3'])
 
     for insn in matched
-      page.insertAfter(insn, [:ControlSwitch, :outfitoptions_IceptOutfit, true])
+      page.insertAfter(insn, [:Script, '$game_screen.outfitoptions_iceptOutfit=true'])
     end
 
     next !matched.empty?
@@ -151,7 +150,7 @@ def outfitoptions_patch_outfit_management(event)
   event.patch(:outfitoptions_patch_outfit_management) {
     event.insertAtStart(
       [:ConditionalBranch, :Variable, :Outfit, :Constant, 3, :Equals],
-        [:ControlSwitch, :outfitoptions_IceptOutfit, true],
+        [:Script, "$game_screen.outfitoptions_iceptOutfit=true"],
       :Done)
 
     matched = event.lookForSequence([:ConditionalBranch, :Variable, :Outfit, :Constant, 4, :Equals])
@@ -202,11 +201,11 @@ def outfitoptions_handle_clothing_choices(doToneChange = true)
     outfits.push(2)
   end
 
-  if !$game_switches[:outfitoptions_IceptOutfit] && $game_variables[:V13Story] >= 97
-    $game_switches[:outfitoptions_IceptOutfit] = true
+  if !$game_screen.outfitoptions_iceptOutfit && $game_variables[:V13Story] >= 97
+    $game_screen.outfitoptions_iceptOutfit = true
   end
 
-  if $game_switches[:outfitoptions_IceptOutfit]
+  if $game_screen.outfitoptions_iceptOutfit
     choices.push(_INTL("Interceptor outfit *"))
     outfits.push(3)
     needsCaveat = true

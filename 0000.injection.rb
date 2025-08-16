@@ -495,23 +495,35 @@ module InjectionHelper
     return ret
   end
 
+  def self.mapSwitch(params, idx)
+    param = params[idx]
+    params[idx] = SCRIPT_SWITCHES[param] if param.is_a?(String) && SCRIPT_SWITCHES[param]
+    return mapValue(params, idx, Switches)
+  end
+
+  def self.mapVariable(params, idx)
+    param = params[idx]
+    params[idx] = SCRIPT_VARIABLES[param] if param.is_a?(String) && SCRIPT_VARIABLES[param]
+    return mapValue(params, idx, Variables)
+  end
+
   def self.handleComplexParameters(sym, params, matcher=false)
     case sym
       when :SetSwitch, :UnsetSwitch
-        mapValue(params, 0, Switches)
+        mapSwitch(params, 0)
       when :SetCharacter
         mapValue(params, 2, FACING_DIRECTIONS)
       when :ConditionalBranch
         case mapValue(params, 0, CONDITIONAL_BRANCH_TYPES)
           when :Switch
-            mapValue(params, 1, Switches)
+            mapSwitch(params, 1)
             mapValue(params, 2, TRUTH)
           when :SelfSwitch
             mapValue(params, 2, TRUTH)
           when :Variable
-            mapValue(params, 1, Variables)
+            mapVariable(params, 1)
             if mapValue(params, 2, APPOINTMENT_METHODS) == :Variable
-              mapValue(params, 3, Variables)
+              mapVariable(params, 3)
             end
             mapValue(params, 4, CONDITIONAL_MODES)
           when :Character
@@ -521,15 +533,15 @@ module InjectionHelper
             mapValue(params, 2, MORE_OR_LESS)
         end
       when :InputNumber
-        mapValue(params, 0, Variables)
+        mapVariable(params, 0)
       when :ShowAnimation
         mapValue(params, 0, SPECIAL_EVENT_IDS)
       when :SetEventLocation
         mapValue(params, 0, SPECIAL_EVENT_IDS)
         case mapValue(params, 1, APPOINTMENT_METHODS) 
         when :Variable
-          mapValue(params, 2, Variables)
-          mapValue(params, 3, Variables)
+          mapVariable(params, 2)
+          mapVariable(params, 3)
         when :Constant
         else
           mapValue(params, 2, SPECIAL_EVENT_IDS)
@@ -544,18 +556,18 @@ module InjectionHelper
         end
       when :ControlSwitch, :ControlSwitches
         params.unshift(params[0]) if sym == :ControlSwitch
-        mapValue(params, 0, Switches)
-        mapValue(params, 1, Switches)
+        mapSwitch(params, 0)
+        mapSwitch(params, 1)
         mapValue(params, 2, TRUTH)
       when :ControlVariable, :ControlVariables
         params.unshift(params[0]) if sym == :ControlVariable
 
-        mapValue(params, 0, Variables)
-        mapValue(params, 1, Variables)
+        mapVariable(params, 0)
+        mapVariable(params, 1)
         mapValue(params, 2, SET_MODES)
         case mapValue(params, 3, SET_VAR_NAMES)
           when :Variable
-            mapValue(params, 4, Variables)
+            mapVariable(params, 4)
           when :Character
             mapValue(params, 4, SPECIAL_EVENT_IDS)
             mapValue(params, 5, SET_CHARACTER_VAR_NAMES)
@@ -566,23 +578,23 @@ module InjectionHelper
         mapValue(params, 1, TRUTH)
       when :TransferPlayer
         if mapValue(params, 0, APPOINTMENT_METHODS) == :Variable
-          mapValue(params, 1, Variables)
-          mapValue(params, 2, Variables)
-          mapValue(params, 3, Variables)
-          mapValue(params, 4, Variables)
+          mapVariable(params, 1)
+          mapVariable(params, 2)
+          mapVariable(params, 3)
+          mapVariable(params, 4)
         else
           mapValue(params, 4, FACING_DIRECTIONS)
         end
         mapValue(params, 5, TRUTH)
       when :SetEventLocation
         if mapValue(params, 1, APPOINTMENT_METHODS) == :Variable
-          mapValue(params, 2, Variables)
-          mapValue(params, 3, Variables)
+          mapVariable(params, 2)
+          mapVariable(params, 3)
         end
       when :ShowPicture, :MovePicture
         if mapValue(params, 3, APPOINTMENT_METHODS) == :Variable
-          mapValue(params, 4, Variables)
-          mapValue(params, 5, Variables)
+          mapVariable(params, 4)
+          mapVariable(params, 5)
         end
       when :PlaySoundEvent, :PlayMusicEvent, :PlayBackgroundMusic, :PlayBackgroundSound, :ChangeBattleBackgroundMusic, :ChangeBattleEndME
         if params[0].is_a?(String)
@@ -756,6 +768,89 @@ module InjectionHelper
 
   INJECTED_MAP_IDS = {}
   INJECTED_MAP_EVENT_IDS = {}
+
+  ### Script-switch and script-variable registration
+
+  SCRIPT_SWITCHES = {}
+  SCRIPT_VARIABLES = {}
+
+  def self.registerScriptSwitch(code)
+    unless SCRIPT_SWITCHES[code]
+      SCRIPT_SWITCHES[code] = -1
+    end
+  end
+
+  def self.registerScriptVariable(code)
+    unless SCRIPT_VARIABLES[code]
+      SCRIPT_VARIABLES[code] = -1
+    end
+  end
+
+  def self.getScriptSwitch(code)
+    return SCRIPT_SWITCHES[code]
+  end
+
+  def self.getScriptVariable(code)
+    return SCRIPT_VARIABLES[code]
+  end
+
+  def self.assignScriptSwitches
+    return if SCRIPT_SWITCHES.empty?
+
+    openids = []
+    for i in 1...$cache.RXsystem.switches.size
+      switchname = $cache.RXsystem.switches[i]
+      openids.push(i) if !switchname || switchname.empty?
+      if switchname && switchname[/^s\:/]
+        code = $~.post_match
+        if SCRIPT_SWITCHES[code] == -1
+          SCRIPT_SWITCHES[code] = i
+        end
+      end
+      break if openids.size >= SCRIPT_SWITCHES.size
+    end
+
+    if openids.size < SCRIPT_SWITCHES.size
+      raise "Not enough free switches! Needed #{SCRIPT_SWITCHES.size}, found #{openids.size}"
+    end
+
+    for code, sw in SCRIPT_SWITCHES
+      if sw == -1
+        sw = openids.shift
+        $cache.RXsystem.switches[sw] = "s:#{code}"
+        SCRIPT_SWITCHES[code] = sw
+      end
+    end
+  end
+
+  def self.assignScriptVariables
+    return if SCRIPT_VARIABLES.empty?
+
+    openids = []
+    for i in 1...$cache.RXsystem.variables.size
+      varname = $cache.RXsystem.variables[i]
+      openids.push(i) if !varname || varname.empty?
+      if varname && varname[/^s\:/]
+        code = $~.post_match
+        if SCRIPT_VARIABLES[code] == -1
+          SCRIPT_VARIABLES[code] = i
+        end
+      end
+      break if openids.size >= SCRIPT_VARIABLES.size
+    end
+
+    if openids.size < SCRIPT_VARIABLES.size
+      raise "Not enough free variables! Needed #{SCRIPT_VARIABLES.size}, found #{openids.size}"
+    end
+
+    for code, vr in SCRIPT_VARIABLES
+      if vr == -1
+        vr = openids.shift
+        $cache.RXsystem.variables[vr] = "s:#{code}"
+        SCRIPT_VARIABLES[code] = vr
+      end
+    end
+  end
 
   ### Autopatcher
 
@@ -1232,17 +1327,17 @@ module RPG
 
       def requiresVariable(varid, value)
         self.condition.variable_valid = true
-        self.condition.variable_id = Variables[varid] || varid
+        self.condition.variable_id = Variables[varid] || InjectionHelper.getScriptVariable(varid) || varid
         self.condition.variable_value = value
         return self
       end
 
       def requiresSwitch(switch, switch2=nil)
         self.condition.switch1_valid = true
-        self.condition.switch1_id = Switches[switch] || switch
+        self.condition.switch1_id = Switches[switch] || InjectionHelper.getScriptSwitch(switch) || switch
         if switch2
           self.condition.switch2_valid = true
-          self.condition.switch2_id = Switches[switch2] || switch2
+          self.condition.switch2_id = Switches[switch2] || InjectionHelper.getScriptSwitch(switch2) || switch2
         end
         return self
       end
@@ -1296,6 +1391,8 @@ class Game_System
     ret = injectionhelper_old_initialize(*args, **kwargs)
     InjectionHelper.applyCommonPatches
     InjectionHelper.assignMapIDs
+    InjectionHelper.assignScriptSwitches
+    InjectionHelper.assignScriptVariables
     return ret
   end
 end

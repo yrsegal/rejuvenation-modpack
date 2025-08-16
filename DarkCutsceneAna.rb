@@ -78,11 +78,9 @@ end
 ############################################################################################################
 
 
-
-$DARKANA_SWITCH_ANA_LEGACY = 1990
-
 Variables[:MCname] = 701
-Switches[:darkana_AnaLegacy] = $DARKANA_SWITCH_ANA_LEGACY
+
+InjectionHelper.registerScriptSwitch('darkana_determine_outfit_desolate')
 
 TextureOverrides.registerTextureOverrides({
     TextureOverrides::CHARS + 'BGirlWalk_5' => TextureOverrides::MOD + 'Ana/Dark/Ana',
@@ -804,14 +802,11 @@ module DarkAnaCutscene
       elsif outfitMatcher.matches?(insn) # If outfit check
         page.list.push(*InjectionHelper.parseEventCommands(
           [:ConditionalBranch, :Variable, :Outfit, :Constant, 2, :Less],
-            [:ControlSwitch, :darkana_AnaLegacy, false],
             [:SetMoveRoute, 2, makeMoveRoute('BGirlWalk_5')],
           :Else,
             [:ConditionalBranch, :Variable, :Outfit, :Constant, 6, :GreaterOrEquals],
-              [:ControlSwitch, :darkana_AnaLegacy, false],
               [:SetMoveRoute, 2, makeMoveRoute('BGirlWalk_5')],
             :Else,
-              [:ControlSwitch, :darkana_AnaLegacy, true],
               [:SetMoveRoute, 2, makeMoveRoute('BGirlWalk_66')],
             :Done,
           :Done,
@@ -821,14 +816,11 @@ module DarkAnaCutscene
 
           page.list.push(*InjectionHelper.parseEventCommands(
             [:ConditionalBranch, :Variable, :Outfit, :Constant, 2, :Less],
-              [:ControlSwitch, :darkana_AnaLegacy, false],
               [:SetMoveRoute, insn.parameters[0], mapMoveRouteToAna(spriteMatcher, insn.parameters[1], 'BGirlWalk_5')],
             :Else,
               [:ConditionalBranch, :Variable, :Outfit, :Constant, 6, :GreaterOrEquals],
-                [:ControlSwitch, :darkana_AnaLegacy, false],
                 [:SetMoveRoute, insn.parameters[0], mapMoveRouteToAna(spriteMatcher, insn.parameters[1], 'BGirlWalk_5')],
               :Else,
-                [:ControlSwitch, :darkana_AnaLegacy, true],
                 [:SetMoveRoute, insn.parameters[0], mapMoveRouteToAna(spriteMatcher, insn.parameters[1], 'BGirlWalk_66')],
               :Done,
             :Done,
@@ -861,7 +853,7 @@ module DarkAnaCutscene
   def self.applyGraphic(legacy, darkOutfit, page)
     if legacy
       page.condition.switch2_valid = true
-      page.condition.switch2_id = Switches[:darkana_AnaLegacy]
+      page.condition.switch2_id = InjectionHelper.getScriptSwitch('darkana_determine_outfit_desolate')
     end
 
     page.graphic.character_name = 'BGirlwalk_' + darkOutfit.to_s
@@ -966,7 +958,7 @@ module DarkAnaCutscene
       matched = page.lookForAll([:Script, '$Trainer.outfit=5'])
 
       for insn in matched
-        insn.parameters[0] = 'darkana_determine_outfit_desolate'
+        insn.parameters[0] = 'darkana_set_outfit_for_desolate'
       end
 
       next !matched.empty?
@@ -976,30 +968,23 @@ module DarkAnaCutscene
 end
 
 
-
+def darkana_set_outfit_for_desolate
+  if darkana_determine_outfit_desolate
+    $Trainer.outfit = 66
+  else
+    $Trainer.outfit = 5
+  end
+end
 
 def darkana_determine_outfit_desolate
   if $Trainer.metaID == 8 # Ana
     trueOutfit = $game_variables[:Outfit]
-    if 2 <= trueOutfit && trueOutfit < 6
-      $game_switches[:darkana_AnaLegacy] = true
-      $Trainer.outfit = 66
-      return
+    if (2..4).include?(trueOutfit) || trueOutfit == 66
+      return true
     end
   end
-  $game_switches[:darkana_AnaLegacy] = false
-  $Trainer.outfit = 5
+  return false
 end
-
-
-Events.onMapChanging+=proc {
-  if $Trainer && $Trainer.metaID == 8 # Ana
-    trueOutfit = $game_variables[:Outfit]
-    $game_switches[:darkana_AnaLegacy] = (2 <= trueOutfit && trueOutfit < 6)
-  else
-    $game_switches[:darkana_AnaLegacy] = false
-  end
-}
 
 InjectionHelper.defineMapPatch(609) { |map| # Desolate ??? Inside
   DarkAnaCutscene.addGraphicPage(map.events[12]) # Player Dupe First
