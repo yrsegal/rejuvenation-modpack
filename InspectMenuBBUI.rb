@@ -333,7 +333,7 @@ class PokeBattle_Scene
 
     imagePos.push(["#{__dir__[Dir.pwd.length+1..]}/BetterBattleUI/Inspect/effects", panelX, 62, 0, 0, 218, 26])
     textPos.push([_INTL("Abil."), xpos + 272, ypos + 44, 2, InspectMenuDisplay::BASE_LIGHT, InspectMenuDisplay::SHADOW_LIGHT],
-                 [_INTL("{1}", ability ? getAbilityName(ability) : _INTL("No ability")), xpos + 376, ypos + 44, 2, InspectMenuDisplay::BASE_DARK, InspectMenuDisplay::SHADOW_DARK])
+                 [_INTL("{1}", ability ? getAbilityName(ability,true) : _INTL("No ability")), xpos + 376, ypos + 44, 2, InspectMenuDisplay::BASE_DARK, InspectMenuDisplay::SHADOW_DARK])
     #---------------------------------------------------------------------------
 
 

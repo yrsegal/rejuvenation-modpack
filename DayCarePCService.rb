@@ -10,6 +10,85 @@ Switches[:EarlyIncubator] = 1776
 
 TextureOverrides.registerServiceSprites('DayCareLady', 'DayCareMan')
 
+if defined?(InjectionHelper)
+  InjectionHelper.defineMapPatch(425, 1) { |event| # Sheridan Interiors, Day Care Lady
+    event.patch(:daycarepc_preferBreedablePokemon) { |page|
+      matched = page.lookForAll([:Script, "pbChooseNonEggPokemon(1,3)"])
+      for insn in matched
+        insn.parameters[0] = "daycarepc_selectPokemon(1,3)"
+      end
+      next !matched.empty?
+    }
+  }
+  InjectionHelper.defineMapPatch(282, 13) { |event| # Dream District Interiors, pseudo-Day Care Lady
+    event.patch(:daycarepc_preferBreedablePokemon) { |page|
+      matched = page.lookForAll([:Script, "pbChooseNonEggPokemon(1,3)"])
+      for insn in matched
+        insn.parameters[0] = "daycarepc_selectPokemon(1,3)"
+      end
+      next !matched.empty?
+    }
+  }
+end
+
+def daycarepc_selectPokemon(resultvar,namevar)
+  loop do
+    pbChoosePokemon(resultvar,namevar,proc {|poke|
+      !poke.isEgg? &&
+      !(poke.isShadow? rescue false) &&
+      daycarepc_compatCheck(poke)
+    }, true)
+    result = pbGet(resultvar)
+    return if result < 0 # Handled by event
+
+    poke = $Trainer.party[result]
+    if poke.isEgg?
+      Kernel.pbMessage(_INTL("That Pokémon hasn't even hatched yet!"))
+      next
+    else
+      if !pbCheckAble(result)
+        return # Handled by event
+      else
+        issueWithMon = false
+        if (poke.isShadow? rescue false)
+          Kernel.pbMessage(_INTL("Oh, my. That Pokémon... I don't think it'll get along with anything at all.\1"))
+          issueWithMon = true
+        elsif DayCarePCService::BABIES.include?(poke.species)
+          Kernel.pbMessage(_INTL("Ah, what a cute little Pokémon! It isn't ready to have Eggs, though.\1"))
+          issueWithMon = true
+        elsif poke.eggGroups.include?(:Undiscovered)
+          Kernel.pbMessage(_INTL("This Pokémon can't have Eggs at all.\1"))
+          issueWithMon = true
+        else
+          variabletouse = 4
+          variabletouse = 2 if resultvar == variabletouse || namevar == variabletouse
+          variabletouse = 5 if resultvar == variabletouse || namevar == variabletouse
+          if !daycarepc_compatCheck(poke,variabletouse)
+            Kernel.pbMessage(_INTL("I don't think \\v[{1}] and \\v[{2}] will get along.\1", variabletouse, namevar))
+            issueWithMon = true
+          end
+        end
+
+        return unless issueWithMon && !Kernel.pbConfirmMessage(_INTL("Do you want to deposit \\v[{1}] anyway?", namevar))
+      end
+    end
+  end
+end
+
+def daycarepc_compatCheck(poke,nameVariable=nil)
+    pokeEggGroups = poke.eggGroups
+    return false if pokeEggGroups.include?(:Undiscovered)
+    return true if pbDayCareDeposited != 1
+
+    daycarePoke = $PokemonGlobal.daycare[0][0] || $PokemonGlobal.daycare[1][0]
+    $game_variables[nameVariable] = daycarePoke.name if nameVariable
+    return false if !daycarePoke
+    daycareEggGroups = daycarePoke.eggGroups
+    return false if daycareEggGroups.include?(:Undiscovered)
+    return ((pokeEggGroups & daycareEggGroups) || poke.species == :DITTO || daycarePoke.species == :DITTO) &&
+      pbDayCareCompatibleGender(poke, daycarePoke)
+  end
+
 class Game_Screen
   attr_accessor :daycarepc_used
   attr_accessor :daycarepc_lastCommand
@@ -83,19 +162,7 @@ class DayCarePCService
     return $game_switches[:EarlyIncubator] # Currently, no other way to unlock the Incubator exists
   end
 
-  def compatCheck(poke,nameVariable=nil)
-    pokeEggGroups = poke.eggGroups
-    return false if pokeEggGroups.include?(:Undiscovered)
-    return true if pbDayCareDeposited != 1
-
-    daycarePoke = $PokemonGlobal.daycare[0][0] || $PokemonGlobal.daycare[1][0]
-    $game_variables[nameVariable] = daycarePoke.name if nameVariable
-    return false if !daycarePoke
-    daycareEggGroups = daycarePoke.eggGroups
-    return false if daycareEggGroups.include?(:Undiscovered)
-    return ((pokeEggGroups & daycareEggGroups) || poke.species == :DITTO || daycarePoke.species == :DITTO) &&
-      pbDayCareCompatibleGender(poke, daycarePoke)
-  end
+  
 
   def access
     if ServicePCList.offMap? || ServicePCList.inRift? || inPast? || ServicePCList.darchlightCaves?
@@ -138,7 +205,7 @@ class DayCarePCService
           pbChoosePokemon(1,3,proc {|poke|
              !poke.isEgg? &&
              !(poke.isShadow? rescue false) &&
-             compatCheck(poke)
+             daycarepc_compatCheck(poke)
           }, true)
           result = pbGet(1)
           break if result < 0
@@ -163,7 +230,7 @@ class DayCarePCService
             elsif poke.eggGroups.include?(:Undiscovered)
               Kernel.pbMessage(lady("This Pokémon can't have Eggs at all.\1"))
               issueWithMon = true
-            elsif !compatCheck(poke,4)
+            elsif !daycarepc_compatCheck(poke,4)
               Kernel.pbMessage(lady("I don't think \\v[4] and \\v[3] will get along.\1"))
               issueWithMon = true
             end
