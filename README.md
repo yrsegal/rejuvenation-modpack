@@ -16,7 +16,8 @@ Dir["./Data/Mods/WireModpack/*.rb"].each {|file| load File.expand_path(file) }
 - PartialDebugMode.rb  
   Enables Debug Mode without allowing for HMs out of sequence.
 - ShowPosition.rb  
-  When holding Ctrl, your current map id and position appear in the corner of your screen.
+  When holding Ctrl, your current map id and position appear in the corner of your screen.  
+  When holding B, all events appear as a generic sprite, and info on the one the player is facing is shown.
 - TileInvestigator.rb  
   Reworks the ingame tileset editor to be more robust and also adds functions `tleditor`, `tleditor2`, `tlget`, `tlset`, and `tlopen`.
 
@@ -33,6 +34,16 @@ Libraries:
   Adds "bounded" text entries, which allow you to choose from a preexisting set.
 - 0001.pcservices.rb (depends on 0000.textures.rb)  
   Adds a "service directory" to the PC, which lets you call NPCs for various services. Also makes the Rotom Phone a Remote PC.
+- 9999.lateloader.rb  
+  Adds a "late-loader" which executes code only once the modpack's dependencies have been loaded. This is for dependent mods in different packs to use.  
+  Syntax is:
+  ```ruby
+  $WIRE_LATE_LOAD = [] unless defined?($WIRE_LATE_LOAD)
+  $WIRE_LATE_LOAD << proc {
+    # code gos here
+  }
+  ```
+
 
 "Service" mods (0001.pcservices.rb)
 - DayCarePCService.rb (depends on 0000.formattedchoices.rb, 0001.pcservices.rb)  
