@@ -315,11 +315,13 @@ class Selectfromboxes_PokemonStorageScene < PokemonStorageScene
         else
           @choseFromParty=true
           ret = [-1,ret]
+          ret.extend(Comparable)
           ret.extend(LevelRestriction)
           return ret
         end
       else
         if ret.is_a?(Array)
+          ret.extend(Comparable)
           ret.extend(LevelRestriction)
         end
         return ret
