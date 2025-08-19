@@ -364,12 +364,12 @@ class RelearnerPCService
     Kernel.pbMessage(sister("Oh, it's \\PN! How've you been?\1"))
     if !$game_screen.relearnerpc_used
       if !$game_self_switches[[425, 15, 'A']] # Sister
-        Kernel.pbMessage(sister("Thank you for finding my sister!"))
-        Kernel.pbMessage(sister("She's always forgetting that she has a duty here in Sheridan!"))
+        Kernel.pbMessage(sister("Thank you for finding my sister!\1"))
+        Kernel.pbMessage(sister("She's always forgetting that she has a duty here in Sheridan!\1"))
         Kernel.pbMessage(sister("Um, don't tell her I sent you this, but-"))
         if Kernel.pbReceiveItem(:HEARTSCALE)
           ServicePCList.updateWindowQuantity(@heartscalewindow, :HEARTSCALE) if @heartscalewindow && !@heartscalewindow.disposed?
-          Kernel.pbMessage(sister("You earned that."))
+          Kernel.pbMessage(sister("You earned that.\1"))
           Kernel.pbMessage(sister("Put it to good use, okay?"))
           $game_self_switches[[425, 15, 'A']] = true
         end

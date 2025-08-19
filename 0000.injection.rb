@@ -1058,7 +1058,8 @@ class Game_SelfSwitches
   alias :injectionhelper_old_index :[]
   def [](key)
     if defined?(@injectionhelper_injected_data) && key.is_a?(Array) && key.size == 3 && 
-       ((InjectionHelper::INJECTED_MAP_EVENT_IDS[key[0]] && InjectionHelper::INJECTED_MAP_EVENT_IDS[key[0]][key[1]]) ||
+       ((key[0].is_a?(String) || key[1].is_a?(String)) ||
+        (InjectionHelper::INJECTED_MAP_EVENT_IDS[key[0]] && InjectionHelper::INJECTED_MAP_EVENT_IDS[key[0]][key[1]]) ||
         InjectionHelper::INJECTED_MAP_IDS[key[0]])
       mappedkey = [*key]
       if InjectionHelper::INJECTED_MAP_EVENT_IDS[key[0]] && InjectionHelper::INJECTED_MAP_EVENT_IDS[key[0]][key[1]]
@@ -1076,7 +1077,8 @@ class Game_SelfSwitches
   alias :injectionhelper_old_set :[]=
   def []=(key, value)
     if key.is_a?(Array) && key.size == 3 && 
-       ((InjectionHelper::INJECTED_MAP_EVENT_IDS[key[0]] && InjectionHelper::INJECTED_MAP_EVENT_IDS[key[0]][key[1]]) ||
+       ((key[0].is_a?(String) || key[1].is_a?(String)) ||
+        (InjectionHelper::INJECTED_MAP_EVENT_IDS[key[0]] && InjectionHelper::INJECTED_MAP_EVENT_IDS[key[0]][key[1]]) ||
         InjectionHelper::INJECTED_MAP_IDS[key[0]])
       @injectionhelper_injected_data = {} if !defined?(@injectionhelper_injected_data)
 

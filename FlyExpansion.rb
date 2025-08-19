@@ -31,8 +31,10 @@ alias :flyexpansion_old_pbEraseEscapePoint :pbEraseEscapePoint
 
 def pbEraseEscapePoint
   flyexpansion_old_pbEraseEscapePoint
-  if $game_player.x == 41 && $game_player.y == 36 && [25, 321, 190, 216, 217].include?($game_map.map_id)
+  if $game_player.x == 41 && $game_player.y == 36 && [25, 321, 190, 216, 217].include?($game_map.map_id) # Goldenwood Forest
     $game_switches[:ElevationSwitch] = true
+  elsif $game_player.x == 28 && $game_player.y == 28 && $game_map.map_id == 268 # Deep Terajuma Jungle
+    $game_switches[:ElevationSwitch] = false
   end
 end
 
