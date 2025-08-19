@@ -20,10 +20,21 @@ end
 
 Switches[:QuestAfterForest] = 248
 Switches[:Gym_5] = 8
+Switches[:ElevationSwitch] = 476
 Variables[:QuestRestoration] = 577
 Variables[:QuestRiftGyarados] = 401
 Variables[:KarmaFilesGood] = 731
 Variables[:V12Story] = 602
+
+# Fix weird bridge interactions in goldenleaf
+alias :flyexpansion_old_pbEraseEscapePoint :pbEraseEscapePoint
+
+def pbEraseEscapePoint
+  flyexpansion_old_pbEraseEscapePoint
+  if $game_player.x == 41 && $game_player.y == 36 && [25, 321, 190, 216, 217].include?($game_map.map_id)
+    $game_switches[:ElevationSwitch] = true
+  end
+end
 
 class PokemonRegionMapScene
   alias :flyexpansion_old_getFlySpot :getFlySpot
