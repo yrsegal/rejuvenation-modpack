@@ -10,11 +10,11 @@ $WOOP_TEXTURE_FOLDER = TextureOverrides::MODBASE + "Woop/"
 # Credit to @1moonn_ (Buck) on discord for creating the original sprites!
 TextureOverrides.registerTextureOverrides({
   TextureOverrides::BATTLER + "194"  => $WOOP_TEXTURE_FOLDER + "WoopM",
-  TextureOverrides::BATTLER + "194f" => $WOOP_TEXTURE_FOLDER + "WoopF",
+  TextureOverrides::BATTLER + "194_f" => $WOOP_TEXTURE_FOLDER + "WoopF",
   TextureOverrides::BATTLER + "194Egg" => $WOOP_TEXTURE_FOLDER + "WoopEggM",
   TextureOverrides::BATTLER + "194fEgg" => $WOOP_TEXTURE_FOLDER + "WoopEggF",
   TextureOverrides::BATTLER + "195" => $WOOP_TEXTURE_FOLDER + "QuagM",
-  TextureOverrides::BATTLER + "195f" => $WOOP_TEXTURE_FOLDER + "QuagF",
+  TextureOverrides::BATTLER + "195_f" => $WOOP_TEXTURE_FOLDER + "QuagF",
 
   TextureOverrides::ICONS + "icon194" => $WOOP_TEXTURE_FOLDER + "WoopIconM",
   TextureOverrides::ICONS + "icon194f" => $WOOP_TEXTURE_FOLDER + "WoopIconF",
