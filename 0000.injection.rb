@@ -314,8 +314,9 @@ module InjectionHelper
 
   def self.applyEventBuilders
     for event, configure in @@eventsToLoad
+      event.pages = []
       configure.call(event)
-      event.push(RPG::Event::Page.new) if event.pages.empty? # No pages is a bad thing!
+      event.pages.push(RPG::Event::Page.new) if event.pages.empty? # No pages is a bad thing!
     end
     return !@@eventsToLoad.empty? || @@anyMapChange
   end
@@ -328,7 +329,6 @@ module InjectionHelper
 
   def self.createNewEvent(map, x, y, name, savetag=nil, &block)
     newEvent = RPG::Event.new(x, y)
-    newEvent.pages = [] if block_given?
     newEvent.name = name
     newEvent.id = (map.events.keys.max || 0) + 1
     map.events[newEvent.id] = newEvent
@@ -344,7 +344,9 @@ module InjectionHelper
     elsif map.is_a?(Game_Map)
       gameev = Game_Event.new(map.map_id, newEvent, map)
       map.events[newEvent.id] = gameev
+      newEvent.pages = [] if block_given?
       block.call(newEvent) if block_given?
+      newEvent.pages.push(RPG::Event::Page.new) if newEvent.pages.empty? # No pages is a bad thing!
     end
 
     return newEvent
