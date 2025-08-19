@@ -321,6 +321,12 @@ module InjectionHelper
     return !@@eventsToLoad.empty? || @@anyMapChange
   end
 
+  def self.processEventBuilders
+    result = applyEventBuilders
+    clearEventBuilders
+    return result
+  end
+
   def self.createSinglePageEvent(map, x, y, name, savetag=nil, &block)
     createNewEvent(map, x, y, name, savetag) { |event|
       event.newPage(&block)
@@ -742,7 +748,7 @@ module InjectionHelper
 
       clearEventBuilders
       block.call(newmap)
-      applyEventBuilders
+      processEventBuilders
 
       if meta[:FlyData]
         mappos = newmap.MapPosition
@@ -890,7 +896,6 @@ module InjectionHelper
 
   def self.applyMapPatches(mapid, map)
     begin
-      clearEventBuilders
       doneAny = false
       @@currentmapid = mapid
       if PATCHES[mapid]
@@ -928,7 +933,6 @@ module InjectionHelper
           end
         end
       end
-      doneAny |= applyEventBuilders
     rescue
       pbPrintException($!)
       doneAny = true
@@ -956,25 +960,31 @@ module InjectionHelper
     end
 
     def applyToMap(map, mapid)
+      InjectionHelper.clearEventBuilders
       InjectionHelper.beginPatch
       ret = @proc.call(map, mapid)
       endPatch = InjectionHelper.endPatch
+      return true if InjectionHelper.processEventBuilders
       return endPatch unless endPatch.nil? || ret == true
       return ret
     end
 
     def applyToEvent(event)
+      InjectionHelper.clearEventBuilders
       InjectionHelper.beginPatch
       ret = @proc.call(event)
       endPatch = InjectionHelper.endPatch
+      return true if InjectionHelper.processEventBuilders
       return endPatch unless endPatch.nil? || ret == true
       return ret
     end
 
     def applyToPage(page)
+      InjectionHelper.clearEventBuilders
       InjectionHelper.beginPatch
       ret = @proc.call(page)
       endPatch = InjectionHelper.endPatch
+      return true if InjectionHelper.processEventBuilders
       return endPatch unless endPatch.nil? || ret == true
       return ret
     end
