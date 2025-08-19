@@ -7,3 +7,13 @@ $WIRE_LATE_LOAD = Class.new do
     p1.call
   end
 end.new
+
+class Game_System
+  alias :lateloader_old_initialize :initialize
+
+  def initialize(*args, **kwargs)
+    ret = lateloader_old_initialize(*args, **kwargs)
+    $WIRE_LATE_LOAD = [] # You should not be registering to this after it's been built!
+    return ret
+  end
+end
