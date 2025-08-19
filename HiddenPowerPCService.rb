@@ -70,7 +70,7 @@ class HiddenPowerPCService
   end
 
   def access
-    if ServicePCList.offMap? || ServicePCList.darchlightCaves?
+    if ServicePCList.offMap? || ServicePCList.inRift? || inPast? || ServicePCList.darchlightCaves?
       Kernel.pbMessage(_INTL("\\se[SFX - Dialtone:60]...\1"))
       Kernel.pbMessage(_INTL("There's no response..."))
       return
