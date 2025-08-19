@@ -314,14 +314,15 @@ class Selectfromboxes_PokemonStorageScene < PokemonStorageScene
           @choseFromParty=false
         else
           @choseFromParty=true
-          return Selectfromboxes_SelectionArray.new([-1,ret])
+          ret = [-1,ret]
+          ret.extend(LevelRestriction)
+          return ret
         end
       else
         if ret.is_a?(Array)
-          return Selectfromboxes_SelectionArray.new(ret)
-        else
-          return ret
+          ret.extend(LevelRestriction)
         end
+        return ret
       end
     end
     ### /MODDED
@@ -535,19 +536,17 @@ module LevelRestriction
     end
     return super(i,val)
   end
-end
-
-# This will convert old code using Selectfromboxes_PartyArray to LevelRestriction.
-Selectfromboxes_PartyArray = LevelRestriction
-####### END BAD CODE
-
-class Selectfromboxes_SelectionArray < Array
-  include Comparable
-
+  
   def <=>(other)
     0.01 <=> other
   end
 end
+
+# This will convert old code using Selectfromboxes_PartyArray to LevelRestriction, and SelectionArray to regular arrays
+Selectfromboxes_PartyArray = LevelRestriction
+Selectfromboxes_SelectionArray = Array
+
+####### END BAD CODE
 
 ######
 

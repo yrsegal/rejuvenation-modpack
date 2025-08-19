@@ -40,7 +40,7 @@ Libraries:
   ```ruby
   $WIRE_LATE_LOAD = [] unless defined?($WIRE_LATE_LOAD)
   $WIRE_LATE_LOAD << proc {
-    # code gos here
+    # code goes here
   }
   ```
 
