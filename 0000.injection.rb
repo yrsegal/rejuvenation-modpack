@@ -581,10 +581,8 @@ module InjectionHelper
           mapVariable(params, 1)
           mapVariable(params, 2)
           mapVariable(params, 3)
-          mapVariable(params, 4)
-        else
-          mapValue(params, 4, FACING_DIRECTIONS)
         end
+        mapValue(params, 4, FACING_DIRECTIONS)
         mapValue(params, 5, TRUTH)
       when :SetEventLocation
         if mapValue(params, 1, APPOINTMENT_METHODS) == :Variable
