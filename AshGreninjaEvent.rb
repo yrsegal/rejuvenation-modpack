@@ -802,7 +802,9 @@ InjectionHelper.defineMapPatch(44) { |map| # Neo East Gearen (east)
         [:PlaySoundEvent, '658Cry', 80, 100],
         [:ShowText, "GRENINJA: Gre! Nin-ja!"],
 
-        [:Script,          'poke=PokeBattle_Pokemon.new(:GRENINJA,85,$Trainer,false,1)'],
+        [:Script,          'Ash=PokeBattle_Trainer.new("Ash",:ASHKETCHUM)'],
+        [:ScriptContinued, 'Ash.id = 7150'],
+        [:ScriptContinued, 'poke=PokeBattle_Pokemon.new(:GRENINJA,85,Ash,false,1)'],
         [:ScriptContinued, 'poke.iv = [20,20,20,20,20,20] if !$game_switches[:Full_IVs] && !$game_switches[:Empty_IVs_Password]'],
         [:ScriptContinued, 'poke.setNature(:MODEST)'],
         [:ScriptContinued, 'poke.hptype = :GROUND'],
@@ -820,8 +822,6 @@ InjectionHelper.defineMapPatch(44) { |map| # Neo East Gearen (east)
         [:ScriptContinued, 'poke.obtainText = _INTL("The Alola region")'],
         [:ScriptContinued, 'poke.obtainMode = 0'],
         [:ScriptContinued, 'poke.obtainLevel = 5'],
-        [:ScriptContinued, 'poke.ot = _INTL("Ash")'],
-        [:ScriptContinued, 'poke.trainerID = 7150'],
         [:ScriptContinued, 'pbSet(1,poke)'],
 
         [:ConditionalBranch, :Script, 'ashgreninja_addPokemonNoTimeSet(pbGet(1))'],

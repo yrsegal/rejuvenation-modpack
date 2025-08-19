@@ -130,7 +130,9 @@ InjectionHelper.defineMapPatch(294, 70) { |event| # GDC Central, clerk
           [:InputNumber, :PasswordVar, 6],
           [:ConditionalBranch, :Variable, :PasswordVar, :Constant, 489234, :Equals],
             [:ControlSwitch, :Finished_WLL, true],
-            [:Script,          'poke=PokeBattle_Pokemon.new(:RIOLU,5,$Trainer)'],
+            [:Script,          'Kenneth=PokeBattle_Trainer.new("Kenneth",:LEADER_KETA)'],
+            [:ScriptContinued, 'Kenneth.id = 924'], # Kenesu goroawase
+            [:ScriptContinued, 'poke=PokeBattle_Pokemon.new(:RIOLU,5,Kenneth)'],
             [:ScriptContinued, 'poke.iv = [20,20,20,20,20,20] if !$game_switches[:Full_IVs] && !$game_switches[:Empty_IVs_Password]'],
             [:ScriptContinued, 'poke.setAbility(:PRANKSTER)'],
             [:ScriptContinued, 'poke.setNature(:DOCILE)'],
@@ -156,8 +158,6 @@ InjectionHelper.defineMapPatch(294, 70) { |event| # GDC Central, clerk
             [:ScriptContinued, '$Settings.unrealTimeDiverge = timediverge'],
             [:ScriptContinued, 'poke.obtainText = _INTL("Four Island")'],
             [:ScriptContinued, 'poke.obtainMode = 0'], # Caught
-            [:ScriptContinued, 'poke.ot = _INTL("Kenneth")'],
-            [:ScriptContinued, 'poke.trainerID = 924'], # Kenesu goroawase
 
             [:ScriptContinued, 'wllriolu_pbAddPokemonNoTimeSet(poke)'],
 
