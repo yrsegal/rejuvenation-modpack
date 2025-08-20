@@ -48,18 +48,34 @@ module ShowPosition
 
       position = ""
 
+      showMap = Input.press?(Input::CTRL)
+
       if Input.pressex?(:B)
         evt = facingEvent
         if evt
+          position += sprintf("Map %03d - ", $game_map.map_id) unless showMap
           position += sprintf("Event %03d\n", evt.id)
           evname = evt.name
           evname = "[NO NAME]" if !evname || evname.strip.empty?
-          position += "#{evname}\n" if evname != sprintf('EV%03d', evt.id)
+          pageid = evt.showpossignpost_page_id
+          pagecount = evt.showpossignpost_page_count
+          if pagecount > 1 || !pageid || evname != sprintf('EV%03d', evt.id) 
+            position += evname
+            if pagecount > 1
+              position += sprintf(" (Page %d/%d)", pageid + 1, pagecount) if pageid
+              position += sprintf(" (Inactive/%d)", pagecount) unless pageid
+            else
+              position += " (Inactive)" unless pageid
+            end
+            position += "\n"
+          end
           position += sprintf("(%03d,%03d)", evt.x, evt.y)
+          switches = ['A', 'B', 'C', 'D'].select { |it| $game_self_switches[[evt.map_id, evt.id, it]] }.join("")
+          position += " #{switches}" unless switches.empty?
         end
       end
 
-      if Input.press?(Input::CTRL)
+      if showMap
         position += "\n\n" unless position.empty?
         position += sprintf("Map %03d\n(%03d,%03d)", $game_map.map_id, $game_player.x, $game_player.y)
       end
@@ -88,6 +104,14 @@ class Game_Event
   def screen_z(height = 0)
     return 999 if Input.pressex?(:B)
     return showpossignpost_old_screen_z(height)
+  end
+
+  def showpossignpost_page_id
+    return @event.pages.index(@page)
+  end
+
+  def showpossignpost_page_count
+    return @event.pages.length
   end
 
   attr_reader :erased

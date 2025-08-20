@@ -563,7 +563,12 @@ class PokeBattle_Scene
       when :FLOWERGARDEN3     then desc = _INTL("Fire, Bug, and Grass are boosted.")
       when :FLOWERGARDEN4     then desc = _INTL("Fire, Bug, and Grass are boosted.")
       when :FLOWERGARDEN5     then desc = _INTL("Fire, Bug, and Grass are boosted.")
-      when :STARLIGHT         then desc = @battle.pbCheckGlobalAbility(:WORLDOFNIGHTMARES) ? _INTL("A new dawn peels away at the firmament.") : _INTL("Dark, Fairy, and Psychic are boosted.")
+      when :STARLIGHT         
+        if @battle.pbCheckGlobalAbility(:WORLDOFNIGHTMARES) || @battle.field.backdrop == "Starlight1"
+          desc = _INTL("A new dawn peels away at the firmament.") 
+        else
+          desc = _INTL("Dark, Fairy, and Psychic are boosted.")
+        end
       when :NEWWORLD          then desc = _INTL("All that remains is potential.")
       when :INVERSE           then desc = _INTL("Type interactions are reversed.")
       when :DIMENSIONAL       then desc = _INTL("Darkness surrounds you.")

@@ -98,6 +98,7 @@ class Game_Event < Game_Character
       @opacity = 128
       @character_hue = -100
       @through = false
+      @always_on_top = true
     else  # This branch is only reached, in current maps, for the Darchlight purple nectar
       @character_name = "invisible"
       @through = false
@@ -120,6 +121,8 @@ class Game_Event < Game_Character
       @character_name = @page.graphic.character_name
       @character_hue = @page.graphic.character_hue
       @opacity = @page.graphic.opacity
+      @always_on_top = @page.always_on_top
+      @through = @page.through
     else # This branch is only reached, in current maps, for the Darchlight purple nectar
       @character_name = "invisible"
       @through = false

@@ -1,3 +1,10 @@
+begin
+  missing = ['0000.injection.rb'].select { |f| !File.exist?(File.join(__dir__, f)) }
+  print "Dependency #{missing[0]} is required by #{__FILE__}. Please install it." if missing.length == 1
+  print "Dependencies #{missing.join(", ")} are required by #{__FILE__}. Please install them." if missing.length > 1
+  raise "Missing dependencies for mod #{__FILE__}, cannot load" unless missing.empty?
+end
+
 class MapMetadata
   alias :flyexpansion_old_Outdoor :Outdoor
 
@@ -39,6 +46,13 @@ def pbEraseEscapePoint
     $game_map.need_refresh = true
   end
 end
+
+InjectionHelper.defineMapPatch(311) { |map| # Axis High University
+  map.createNewEvent(38, 7, "")
+  map.createSinglePageEvent(38, 7, "set gdc music") { |page|
+    page.autorun([:PlayBackgroundMusic, 'GDC - City of Dreams', 100, 100], :EraseEvent)
+  }
+}
 
 class PokemonRegionMapScene
   alias :flyexpansion_old_getFlySpot :getFlySpot
