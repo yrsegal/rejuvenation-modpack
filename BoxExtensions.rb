@@ -155,11 +155,18 @@ module BoxExtensions
     end
 
     def filter(screen, pkmn, params)
-      if params.length == 2
-        return pkmn.type1 == params[0] && pkmn.type2.nil? if params[0] == params[1]
-        return (pkmn.type1 == params[0] && pkmn.type2 == params[1]) || (pkmn.type2 == params[0] && pkmn.type1 == params[1])
+      onlyshadow = params.include?(:SHADOW)
+      noshadowparams = params.select { |it| it != :SHADOW }
+
+      return false if onlyshadow && !(pkmn.isShadow? rescue false)
+
+      if noshadowparams.length == 2
+        return pkmn.type1 == noshadowparams[0] && pkmn.type2.nil? if noshadowparams[0] == noshadowparams[1]
+        return (pkmn.type1 == noshadowparams[0] && pkmn.type2 == noshadowparams[1]) || 
+               (pkmn.type2 == noshadowparams[0] && pkmn.type1 == noshadowparams[1])
       end
-      return pkmn.type1 == params[0] || pkmn.type2 == params[0] if params.length == 1
+      return pkmn.type1 == noshadowparams[0] || pkmn.type2 == noshadowparams[0] if noshadowparams.length == 1
+      return noshadowparams.empty?
     end
   end
 

@@ -20,6 +20,16 @@ class PokeBattle_Battler
   end
 end
 
+# Todo:
+# No Retreat
+# Clangorous Soul
+# Corrosive Gas (City/Backalley)
+# Extreme Evoboost
+# Clangorous Soulblaze
+# Ancient Power/Silver Wind/Ominous Wind
+# ... not doing for zygarde complete on deep earth, too embedded
+# Maybe shell smash and such
+
 module PokeBattle_BattleCommon
   alias :cleanerprismpower_old_pbStorePokemon :pbStorePokemon
 

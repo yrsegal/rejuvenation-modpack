@@ -103,7 +103,7 @@ module InspectMenuDisplay
     durationEffect("Safeguard", "The Pokémon is protected from status conditions.", 5) { |battler| battler.pbOwnSide.effects[:Safeguard] },
     durationEffect("Mist", "The Pokémon's stats cannot be lowered.", 5) { |battler| battler.pbOwnSide.effects[:Mist] },
     durationEffect("Lucky Chant", "The Pokémon is immune to critical hits.", 5) { |battler| battler.pbOwnSide.effects[:LuckyChant] },
-    durationEffect("Gravity", "Grounds Pokémon. Prevents midair actions. Increases accuracy.", 5) { |battler| battler.battle.state.effects[:Gravity] },
+    durationEffect("Gravity", "Grounds Pokémon. No midair actions. Increases accuracy.", 5) { |battler| battler.battle.state.effects[:Gravity] },
     durationEffect("Magic Room", "No Pokémon can use their held items.", 5) { |battler| battler.battle.state.effects[:MagicRoom] },
     durationEffect("Wonder Room", "All Pokémon swap their Def and Sp. Def stats.", 5) { |battler| battler.battle.state.effects[:WonderRoom] },
     durationEffect("Trick Room", "Slower Pokémon get to move first.", 5) { |battler| battler.battle.state.effects[:TrickRoom] },

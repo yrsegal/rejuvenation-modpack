@@ -920,7 +920,7 @@ class PokemonDataBox < SpriteWrapper
       # Crest
       illusion = !@battler.effects[:Illusion].nil?
       if @battler.hasCrest?(illusion) || (@battler.crested && !illusion)
-        imagepos.push(["Graphics/Pictures/Battle/battleCrest.png",sbX+100,sbY-4,0,0,-1,-1])
+        imagepos.push(["Graphics/Pictures/Battle/battleCrest.png",sbX+100,sbY+4,0,0,-1,-1])
       end
       ### /MODDED
     end
@@ -1362,6 +1362,16 @@ class FightMenuButtons < BitmapSprite
       else
         zorovar = false
       end
+      if (battler.ability == :MOLDBREAKER || battler.ability == :TERAVOLT || battler.ability == :TURBOBLAZE) ||
+        move.function==0x166 || move.function==0x176 || move.function==0x200 # Solgaluna/crozma signatures
+        for i in 0..3
+          battler.battle.battlers[i].moldbroken = true
+        end
+      else
+        for i in 0..3
+          battler.battle.battlers[i].moldbroken = false
+        end
+      end
       if !move.pbIsStatus?
         if twoOpponents
           if battler.pbOpposing1.effects[:Illusion]
@@ -1767,6 +1777,11 @@ class PokeBattle_Move
         return 1
       end
     end
+
+    if opponent.ability == :WONDERGUARD && !opponent.moldbroken && typemod <= 4
+      return 0
+    end
+
     return typemod
   end
 end
