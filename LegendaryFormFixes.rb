@@ -43,9 +43,10 @@ ItemHandlers::UseOnPokemon.add(:REINSOFUNITY,proc{|item,pokemon,scene|
    end
 })
 
+TextureOverrides.registerTextureOverride(TextureOverrides::ICONS + "icon892", TextureOverrides::MOD + "UrshifuFix") if defined?(TextureOverrides)
+
 $cache.items[:REINSOFUNITY].flags[:legendary] = true
 $cache.items[:REINSOFUNITY].flags.delete(:noUse)
-
 
 $cache.pkmn[:URSHIFU].formData["Rapid Giga Form"][:Type2] = :WATER
 
