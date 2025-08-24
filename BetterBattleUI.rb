@@ -1339,6 +1339,9 @@ class FightMenuButtons < BitmapSprite
             448,50+UPPERGAP,2,ppcolors[(4-ppfraction)*2],ppcolors[(4-ppfraction)*2+1]])
       end
     end
+    ### MODDED/ For feraligatr crest
+    battler.turncount += 1
+    ### /MODDED
     pbDrawImagePositions(self.bitmap,imagepos)
     for i in 0...4
       next if !moves[i]
@@ -1438,6 +1441,7 @@ class FightMenuButtons < BitmapSprite
           self.bitmap.blt(x + 2, y + 2, @betterBattleUI_movedoublesuper_left.bitmap, Rect.new(0, 0, @betterBattleUI_movedoublesuper_left.bitmap.width, @betterBattleUI_movedoublesuper_left.bitmap.height))
       end
     end
+    battler.turncount -= 1 # For feraligatr crest
     ### /MODDED
     pbDrawTextPositions(self.bitmap,textpos)
     if megaButton>0
