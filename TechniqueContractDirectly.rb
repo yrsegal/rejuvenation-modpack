@@ -61,7 +61,6 @@ def techniquecontract_choosetechnique
   pbFadeOutIn(99999){
     if !defined?(Selectfromboxes_PokemonStorageScreen)
       scene=PokemonScreen_Scene.new
-      movename=getMoveName(move)
       screen=PokemonScreen.new(scene,$Trainer.party)
       annot=pbMoveTutorAnnotations(move,movelist)
       screen.pbStartScene(_INTL("Teach which Pokémon?"),false,annot)
