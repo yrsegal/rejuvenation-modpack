@@ -56,7 +56,7 @@ def techniquecontract_movelist(pokemon, machinemoves, tutormoves)
   return bonuslist
 end
 
-def techniquecontract_movetutorannotations
+def techniquecontract_movetutorannotations(machinemoves, tutormoves)
   ret=[]
   for i in 0...6
     ret[i]=nil
@@ -64,7 +64,7 @@ def techniquecontract_movetutorannotations
     if $Trainer.party[i].isEgg? || ($Trainer.party[i].isShadow rescue false)
       ret[i]=_INTL("NOT ABLE")
     else
-      l = techniquecontract_movelist($Trainer.party[i])
+      l = techniquecontract_movelist($Trainer.party[i], machinemoves, tutormoves)
       if l.empty?
         ret[i]=_INTL("NOT ABLE")
       else
@@ -78,15 +78,15 @@ end
 def techniquecontract_choosetechnique
   ret=false
   pbFadeOutIn(99999){
+    machinemoves = $cache.items.keys.select { |item| pbIsTM?(item) && $PokemonBag.pbQuantity(item) > 0 }.map { |item| $cache.items[item].flags[:tm] }
+    tutormoves = pbGetTutorableMoves
+
     if !defined?(Selectfromboxes_PokemonStorageScreen)
       scene=PokemonScreen_Scene.new
       screen=PokemonScreen.new(scene,$Trainer.party)
-      annot=techniquecontract_movetutorannotations
+      annot=techniquecontract_movetutorannotations(machinemoves, tutormoves)
       screen.pbStartScene(_INTL("Teach which Pokémon?"),false,annot)
     end
-
-    machinemoves = $cache.items.keys.select { |item| pbIsTM?(item) && $PokemonBag.pbQuantity(item) > 0 }.map { |item| $cache.items[item].flags[:tm] }
-    tutormoves = pbGetTutorableMoves
     
     loop do
       if defined?(Selectfromboxes_PokemonStorageScreen)
