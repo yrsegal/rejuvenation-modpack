@@ -56,13 +56,32 @@ def techniquecontract_movelist(pokemon, machinemoves, tutormoves)
   return bonuslist
 end
 
+def techniquecontract_movetutorannotations
+  ret=[]
+  for i in 0...6
+    ret[i]=nil
+    next if i>=$Trainer.party.length
+    if $Trainer.party[i].isEgg? || ($Trainer.party[i].isShadow rescue false)
+      ret[i]=_INTL("NOT ABLE")
+    else
+      l = techniquecontract_movelist($Trainer.party[i])
+      if l.empty?
+        ret[i]=_INTL("NOT ABLE")
+      else
+        ret[i]=_INTL("ABLE")
+      end
+    end
+  end
+  return ret
+end
+
 def techniquecontract_choosetechnique
   ret=false
   pbFadeOutIn(99999){
     if !defined?(Selectfromboxes_PokemonStorageScreen)
       scene=PokemonScreen_Scene.new
       screen=PokemonScreen.new(scene,$Trainer.party)
-      annot=pbMoveTutorAnnotations(move,movelist)
+      annot=techniquecontract_movetutorannotations
       screen.pbStartScene(_INTL("Teach which Pokémon?"),false,annot)
     end
 
