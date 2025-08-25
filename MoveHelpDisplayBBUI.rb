@@ -1588,7 +1588,7 @@ class PokeBattle_Scene
     powBase   = accBase   = priBase   = effBase   = MoveHelpDisplay::BASE_LIGHT
     powShadow = accShadow = priShadow = effShadow = MoveHelpDisplay::SHADOW_LIGHT
     basePower = move.basedamage
-    basePower = [attacker.happiness,250].min if attacker.crested == :LUVDISC && basePower != 0
+    basePower = [battler.happiness,250].min if battler.crested == :LUVDISC && basePower != 0
 
     if basePower != 0 && battler.crested == :CINCCINO && !move.pbIsMultiHit
       basePower *= 0.3
@@ -1694,7 +1694,7 @@ class PokeBattle_Scene
     powBase   = accBase   = priBase   = effBase   = MoveHelpDisplay::BASE_LIGHT
     powShadow = accShadow = priShadow = effShadow = MoveHelpDisplay::SHADOW_LIGHT
     basePower = move.basedamage
-    basePower = [attacker.happiness,250].min if attacker.crested == :LUVDISC && basePower != 0
+    basePower = [battler.happiness,250].min if battler.crested == :LUVDISC && basePower != 0
 
     if basePower != 0 && battler.crested == :CINCCINO && !move.pbIsMultiHit
       basePower *= 0.3
