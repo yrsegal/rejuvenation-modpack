@@ -107,6 +107,8 @@ Fix/hotfix mods:
   Fix Ultra Necrozma causing errors when it faints.
 - FixUnderpoweredZMoves.rb  
   Z-upgraded attacks which should have higher base power now do. Moves such as Hidden Power can be upgraded into differently typed Z-Moves.
+- FixVivillonForms.rb  
+  Fixes Vivillon forms not being tracked separately.
 - FixVoidalSoftlock.rb (depends on 0000.injection.rb)  
   Fix a softlock in the Voidal Chasm on the don't-expose route.
 - FixQuickClawMessage.rb  
@@ -161,6 +163,7 @@ QoL mods:
   L and R (or rather, Q and W, with default mappings) will shift your position in the Box menu. This works even when holding a Pokémon.
 - LureRework.rb  
   The Mirror Lure lets you run always, like it says it does. The Magnetic Lure becomes a toggleable key item.
+  The Mirror Lure and Magnetic Lure are made specific by form, so if you haven't caught a Blue-Striped Basculin but have caught a Red-Striped one, Blue-Striped will appear through the Magnetic Lure. This is somewhat inconsistent with saves prior to this change, and may not accurately reflect the forms you've caught.
 - MoreSpecificGatherCube.rb  
   The Gather Cube tells you how many Cells you've picked up from each region of Aevium.
 - NoTMXAnimations.rb  
