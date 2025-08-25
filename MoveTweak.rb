@@ -387,9 +387,16 @@ move_tweak(:FLY,
   power: 100,
   accuracy: 100)
 
+# It's a *spear*
 move_tweak(:QUICKSILVERSPEAR,
   flags: {
     sharpmove: true,
+  })
+
+# This is how it is in main series, rejuv has it wrong for some reason
+move_tweak(:AQUACUTTER,
+  flags: {
+    contact: false
   })
 
 # This is... actually the function the move is SUPPOSED to have.

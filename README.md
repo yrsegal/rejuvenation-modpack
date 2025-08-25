@@ -224,6 +224,8 @@ Other mods:
   - Play Rough becomes 100% accurate.
   - Air Slash becomes 100% accurate.
   - Fly becomes a 100/100 move.
+  - Quicksilver Spear becomes a sharp move.
+  - Aqua Cutter becomes a noncontact move, as in main series.
   - Teleport acts as in Gen 8, as a switching move with -6 priority.
 - MrLuckIsBlind.rb  
   Mr. Luck can no longer tell if you cheat.
