@@ -537,6 +537,10 @@ def moverelearnpc_injectMove(moves, move)
   moves.push(move) unless moves.include?(move)
 end
 
+class MonData
+  attr_writer :EggMoves
+end
+
 # Gen 8/9 learnsets for Galarian forms/Indeedee-F/Hisuian Qwilfish/Hisuian Growlithe/Hisuian Sneasel
 $cache.pkmn[:SLOWPOKE].formData["Galarian Form"][:EggMoves] = [:BELCH,:BELLYDRUM,:BLOCK,:STOMP]
 $cache.pkmn[:PONYTA].formData["Galarian Form"][:EggMoves] = [:DOUBLEKICK,:DOUBLEEDGE,:HORNDRILL,:HYPNOSIS,:MORNINGSUN,:THRASH,:PLAYROUGH] # Because play rough isn't tutorable yet
@@ -554,7 +558,24 @@ moverelearnpc_injectMove($cache.pkmn[:UNFEZANT].compatiblemoves, :COVET)
 
 # Give Quiver Dance to oricorio, as is its right
 moverelearnpc_injectMove($cache.pkmn[:ORICORIO].EggMoves, :QUIVERDANCE)
-$cache.pkmn[:ORICORIO].formData.each_pair { |k, form| form[:EggMoves] = $cache.pkmn[:ORICORIO].EggMoves }
+$cache.pkmn[:ORICORIO].formData.each_pair { |k, form| form[:EggMoves] = $cache.pkmn[:ORICORIO].EggMoves if form.is_a?(Hash) }
+
+# Give Flabebe and Deerling forms, and partner Eevee, their egg moves
+$cache.pkmn[:FLABEBE].formData.each_pair { |k, form| form[:EggMoves] = $cache.pkmn[:FLABEBE].EggMoves if form.is_a?(Hash) }
+$cache.pkmn[:DEERLING].formData.each_pair { |k, form| form[:EggMoves] = $cache.pkmn[:DEERLING].EggMoves if form.is_a?(Hash) }
+$cache.pkmn[:EEVEE].formData["Partner"][:EggMoves] = $cache.pkmn[:EEVEE].EggMoves
+
+# Gen 9 egg moves for pokemon who couldn't have egg moves prior
+$cache.pkmn[:MAGNEMITE].EggMoves = [:ELECTROWEB,:EXPLOSION]
+$cache.pkmn[:VOLTORB].EggMoves = [:RECYCLE,:METALSOUND]
+$cache.pkmn[:VOLTORB].formData["Hisuian Form"][:EggMoves] = [:LEECHSEED,:RECYCLE,:WORRYSEED]
+$cache.pkmn[:TAUROS].EggMoves = [:CURSE,:ENDEAVOR]
+$cache.pkmn[:BRONZOR].EggMoves = [:GRAVITY,:RECYCLE]
+$cache.pkmn[:BRONZOR].formData["Aevian Form"][:EggMoves] = [:GRAVITY,:RECYCLE,:REFLECTTYPE] # Reflect type just kinda fits
+$cache.pkmn[:CRYOGONAL].EggMoves = [:AURORAVEIL,:EXPLOSION,:FROSTBREATH]
+$cache.pkmn[:RUFFLET].EggMoves = [:ROCKSMASH,:ROOST]
+$cache.pkmn[:SINISTEA].EggMoves = [:ALLYSWITCH]
+$cache.pkmn[:IMPIDIMP].EggMoves = [:PARTINGSHOT]
 
 # Fix East Shellos and Small Pumpkaboo
 $cache.pkmn[:SHELLOS].formData["East Sea"][:EggMoves] = $cache.pkmn[:SHELLOS].EggMoves

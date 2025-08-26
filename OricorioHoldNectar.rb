@@ -1,7 +1,7 @@
-class MonData < DataObject
+class MonData
   attr_writer :flags
 end
-class ItemData < DataObject
+class ItemData
   attr_writer :flags
 end
 
