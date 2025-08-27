@@ -260,7 +260,7 @@ end
 #     # swap pokemon using moves in priority brackets
 #     # set last move used and such
 
-#     @battle.pbDisplay(_INTL("{1} and {2} swapped places!", attacker.pbThis, partner.pbThis))
+#     @battle.pbDisplay(_INTL("{1} and {2} swapped places!", attacker.pbThis, partner.pbThis(true)))
 #     return 0
 #   end
 # end

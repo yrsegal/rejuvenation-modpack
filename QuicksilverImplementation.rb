@@ -12,7 +12,7 @@ class PokeBattle_Battle
     end
 
     if thispkmn.effects[:Quicksilver]
-      pbDisplayPaused(_INTL("The quicksilver spear holds {1} in place!",thispkmn.pbThis)) if showMessages 
+      pbDisplayPaused(_INTL("The quicksilver spear holds {1} in place!",thispkmn.pbThis(true))) if showMessages 
       return false
     end
 
@@ -28,7 +28,7 @@ class PokeBattle_Battle
       if i.ability != :MAGICGUARD && !(i.ability == :WONDERGUARD && @battle.FE == :COLOSSEUM)
         if i.hasType?(:SHADOW) || i.isbossmon
           pbCommonAnimation("StanceAttack",i,nil)
-          pbDisplay(_INTL("Blessed quicksilver strikes true on {1}!",i.pbThis))
+          pbDisplay(_INTL("Blessed quicksilver strikes true on {1}!",i.pbThis(true)))
           i.pbReduceHP((i.totalhp/8.0).floor,true)
         else
           pbCommonAnimation("Skull Bash charging",i,nil)
@@ -57,7 +57,7 @@ class PokeBattle_Move_0EB
   alias :quicksilver_old_pbEffect :pbEffect
   def pbEffect(attacker,opponent,hitnum=0,alltargets=nil,showanimation=true)
     if opponent.effects[:Quicksilver]
-      @battle.pbDisplay(_INTL("The quicksilver spear holds {1} in place!",thispkmn.pbThis)) if showMessages 
+      @battle.pbDisplay(_INTL("The quicksilver spear holds {1} in place!",thispkmn.pbThis(true))) if showMessages 
       return -1
     end
     return quicksilver_old_pbEffect(attacker, opponent, hitnum, alltargets, showanimation)
