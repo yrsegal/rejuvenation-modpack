@@ -393,10 +393,25 @@ move_tweak(:QUICKSILVERSPEAR,
     sharpmove: true,
   })
 
+# As it's described as a blade
+move_tweak(:SHADOWBLAST,
+  flags: {
+    sharpmove: true
+  })
+# As it's a storm move
+move_tweak(:SHADOWSTORM,
+  flags: {
+    windmove: true
+  })
+
 # This is how it is in main series, rejuv has it wrong for some reason
 move_tweak(:AQUACUTTER,
   flags: {
     contact: false
+  })
+move_tweak(:AXEKICK,
+  flags: {
+    gravityblocked: false
   })
 
 # This is... actually the function the move is SUPPOSED to have.

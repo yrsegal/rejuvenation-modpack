@@ -29,7 +29,6 @@ module MoveHelpDisplay
   SHADOW_LOWERED = Color.new(48, 32, 32)
 
   FLAGS_TO_CHECK = [
-    :beammove,
     [:pulsemove, [:AURASPHERE,:DRAGONPULSE,:DARKPULSE,:WATERPULSE,:ORIGINPULSE,:TERRAINPULSE]],
     [:bitemove, PBStuff::BITEMOVE],
     [:bulletmove, PBStuff::BULLETMOVE],
