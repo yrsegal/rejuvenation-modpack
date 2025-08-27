@@ -563,7 +563,7 @@ $cache.pkmn[:ORICORIO].formData.each_pair { |k, form| form[:EggMoves] = $cache.p
 # Give Flabebe and Deerling forms, and partner Eevee, their egg moves
 $cache.pkmn[:FLABEBE].formData.each_pair { |k, form| form[:EggMoves] = $cache.pkmn[:FLABEBE].EggMoves if form.is_a?(Hash) }
 $cache.pkmn[:DEERLING].formData.each_pair { |k, form| form[:EggMoves] = $cache.pkmn[:DEERLING].EggMoves if form.is_a?(Hash) }
-$cache.pkmn[:EEVEE].formData["Partner"][:EggMoves] = $cache.pkmn[:EEVEE].EggMoves
+$cache.pkmn[:EEVEE].formData["Partner"][:EggMoves] = $cache.pkmn[:EEVEE].EggMoves if $cache.pkmn[:EEVEE].formData["Partner"]
 
 # Gen 9 egg moves for pokemon who couldn't have egg moves prior
 $cache.pkmn[:MAGNEMITE].EggMoves = [:ELECTROWEB,:EXPLOSION]
