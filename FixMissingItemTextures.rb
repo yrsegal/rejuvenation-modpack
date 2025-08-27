@@ -49,6 +49,7 @@ TextureOverrides.registerTextureOverrides({
   TextureOverrides::ICONS + "interceptorwish" => $ITEM_REPLACE_FOLDER + "InterceptorWish",
   TextureOverrides::ICONS + "emotionpowder" => $ITEM_REPLACE_FOLDER + "EmotionPowder",
   TextureOverrides::ICONS + "achievementcard" => $ITEM_REPLACE_FOLDER + "AchievementCard",
+  TextureOverrides::ICONS + "spuparcel" => $ITEM_REPLACE_FOLDER + "SPUParcel",
   
   # Misc builtin overrides
 
