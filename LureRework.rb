@@ -192,21 +192,23 @@ def pbGenerateWildPokemon(species,level,sos=false)
   oldforminit = nil
 
   data = $cache.pkmn[species]
-  if $PokemonEncounters.pbShouldFilterKnownPkmnFromEncounter?
-    if data.formInit && data.formInit.is_a?(String) && data.formInit[/^proc\{rand\((\d+)\)\}$/]
-      oldforminit = data.formInit
-      data.formInit = <<__END__
-        proc {
-          data = $cache.pkmn[species]
-          formData = $Trainer.pokedex.formList[species]
-          next (0...#{$1}).select { |it| !formData[:forms][data.forms[it]] }.sample
-        }
+  if data
+    if $PokemonEncounters.pbShouldFilterKnownPkmnFromEncounter?
+      if data.formInit && data.formInit.is_a?(String) && data.formInit[/^proc\{rand\((\d+)\)\}$/]
+        oldforminit = data.formInit
+        data.formInit = <<__END__
+          proc {
+            data = $cache.pkmn[species]
+            formData = $Trainer.pokedex.formList[species]
+            next (0...#{$1}).select { |it| !formData[:forms][data.forms[it]] }.sample
+          }
 __END__
+      end
+    elsif $PokemonEncounters.pbShouldFilterOtherPkmnFromEncounter?
+      oldforminit = data.formInit
+      forms = $Trainer.party.select { |it| it.species == species && it.item == :MIRRORLURE }.map(&:form)
+      data.formInit = "proc {#{forms.inspect}.sample}"
     end
-  elsif $PokemonEncounters.pbShouldFilterOtherPkmnFromEncounter?
-    oldforminit = data.formInit
-    forms = $Trainer.party.select { |it| it.species == species && it.item == :MIRRORLURE }.map(&:form)
-    data.formInit = "proc {#{forms.inspect}.sample}"
   end
 
   ret = lurerework_old_pbGenerateWildPokemon(species,level,sos)
