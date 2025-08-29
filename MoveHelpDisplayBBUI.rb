@@ -1584,6 +1584,17 @@ class PokeBattle_Scene
     if cw.zButton == 2 && !battler.zmoves.nil? && !battler.zmoves[cw.index].nil?
       move = battler.zmoves[cw.index]
     end
+
+    naturepower = false
+
+    if move.move == :NATUREPOWER
+      naturepower = true
+      move = PokeBattle_Move.pbFromPBMove(battler.battle, PBMove.new(battler.battle.field.naturePower), battler)
+      if cw.zButton == 2 && !battler.zmoves.nil? && !battler.zmoves[cw.index].nil? && move.basedamage > 0
+        move = PokeBattle_Move.pbFromPBMove(battler.battle, PBMove.new(PBStuff::CRYSTALTOZMOVE[PBStuff::TYPETOZCRYSTAL[move.type]]), battler, move)
+      end
+    end
+
     powBase   = accBase   = priBase   = effBase   = MoveHelpDisplay::BASE_LIGHT
     powShadow = accShadow = priShadow = effShadow = MoveHelpDisplay::SHADOW_LIGHT
     basePower = move.basedamage
@@ -1690,6 +1701,21 @@ class PokeBattle_Scene
     if cw.zButton == 2 && !battler.zmoves.nil? && !battler.zmoves[cw.index].nil?
       move = battler.zmoves[cw.index]
     end
+
+    naturepower = false
+
+    if move.move == :NATUREPOWER
+      naturepower = true
+      move = PokeBattle_Move.pbFromPBMove(battler.battle, PBMove.new(battler.battle.field.naturePower), battler)
+      if cw.zButton == 2 && !battler.zmoves.nil? && !battler.zmoves[cw.index].nil?
+        if move.basedamage > 0
+          move = PokeBattle_Move.pbFromPBMove(battler.battle, PBMove.new(PBStuff::CRYSTALTOZMOVE[PBStuff::TYPETOZCRYSTAL[move.type]]), battler, move)
+        else
+          move = PokeBattle_Move.pbFromPBMove(battler.battle, PBMove.new(move.move), battler, move)
+        end
+      end
+    end
+
     powBase   = accBase   = priBase   = effBase   = MoveHelpDisplay::BASE_LIGHT
     powShadow = accShadow = priShadow = effShadow = MoveHelpDisplay::SHADOW_LIGHT
     basePower = move.basedamage
@@ -1829,8 +1855,10 @@ class PokeBattle_Scene
       displayAccuracy = (acc    <= 0)                      ? "-" : acc.ceil.to_s
       displayPriority = (pri    == 0)                      ? "-" : (pri > 0) ? "+" + pri.to_s : pri.to_s
       displayChance   = (baseChance == 0 || chance == 100) ? "-" : chance.ceil.to_s + "%"
+      displayName = move.getMoveUseName
+      displayName = "(#{displayName})" if naturepower
       textPos.push(
-        [move.getMoveUseName, xpos + 10,  ypos + 14, 0, MoveHelpDisplay::BASE_LIGHT, MoveHelpDisplay::SHADOW_LIGHT, true],
+        [displayName,         xpos + 10,  ypos + 14, 0, MoveHelpDisplay::BASE_LIGHT, MoveHelpDisplay::SHADOW_LIGHT, true],
         [_INTL("Pow"),        xpos + 256, ypos + 44, 0, MoveHelpDisplay::BASE_LIGHT, MoveHelpDisplay::SHADOW_LIGHT],
         [displayPower,        xpos + 309, ypos + 44, 2, powBase,                     powShadow],
         [_INTL("Acc"),        xpos + 348, ypos + 44, 0, MoveHelpDisplay::BASE_LIGHT, MoveHelpDisplay::SHADOW_LIGHT],
@@ -1850,8 +1878,14 @@ class PokeBattle_Scene
       zlinecount = linecount = normtext[-1][2] / 32 + 1
 
       if move.zmove && move.category == :status && !$cache.moves[move.move].checkFlag?(:zmove)
-        ztext=getLineBrokenChunks(bm,_INTL(MoveHelpDisplay.getZText(battler, move.move)),Graphics.width - 12,nil,true)
-        linecount += ztext[-1][2] / 32 + 1
+        if !naturepower
+          ztext=getLineBrokenChunks(bm,_INTL(MoveHelpDisplay.getZText(battler, move.move)),Graphics.width - 12,nil,true)
+          linecount += ztext[-1][2] / 32 + 1
+        elsif MoveHelpDisplay::MOVES_WHICH_CALL_MOVES.include?(move.move)
+          ztext=getLineBrokenChunks(bm,_INTL("Z-Power effect: Calls a Z-Move."),Graphics.width - 12,nil,true)
+          linecount += ztext[-1][2] / 32 + 1
+        end
+
       end
       textheight = 26
       textheight = 21 if linecount > 3
