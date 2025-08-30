@@ -475,6 +475,9 @@ class PokeBattle_Move
     # opponent.damagestate.calcdamage=0
     # opponent.damagestate.hplost=0
     ### /MODDED
+    ### MODDED/ return immediately for Beat Up, as it crashes otherwise
+    return 1, 1 if @move == :BEATUP
+    ### /MODDED
     basedmg=@basedamage # From PBS file
     basedmg = [attacker.happiness,250].min if attacker.crested == :LUVDISC && basedmg != 0
     basedmg=pbBaseDamage(basedmg,attacker,opponent) # Some function codes alter base power

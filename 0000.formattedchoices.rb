@@ -1,20 +1,51 @@
 class Window_AdvancedCommandPokemon
+  def commands=(value)
+    @commands=value
+    @item_max=commands.length
+    ### MODDED/
+    self.build_format_cache(value)
+    ### /MODDED
+    self.update_cursor_rect
+    self.refresh
+  end
+
+  def build_format_cache(value)
+    choicebmp = Bitmap.new(width, height)
+    pbSetSystemFont(choicebmp)
+    @textCache = value.each_with_index.map { |cmd, idx|
+      dims=[nil,0]
+      formattedText = getFormattedText(choicebmp,0,0,Graphics.width,@row_height,cmd,@row_height,true,true)
+      for ch in formattedText
+        dims[0]=dims[0] ? [dims[0],ch[1]].min : ch[1]
+        dims[1]=[dims[1],ch[1]+ch[3]].max
+      end
+      dims[0]=0 if !dims[0]
+      
+      next [formattedText, dims[1]-dims[0]]
+    }
+    choicebmp.dispose
+  end
+
   def getAutoDims(commands,dims,width=nil)
+    ### MODDED/
+    self.build_format_cache(commands)
+    ### /MODDED
+
     rowMax=((commands.length + self.columns - 1) / self.columns).to_i
     windowheight=(rowMax*self.rowHeight)
     windowheight+=self.borderY
     if !width || width<0
       width=0
-      tmpbitmap=BitmapWrapper.new(1,1)
-      pbSetSystemFont(tmpbitmap)
-      for i in commands
+      for i in 0...commands.length
         ### MODDED/
-        width=[width,textWidth(tmpbitmap,i)].max
+        width=[width,@textCache[i][1]].max
         ### /MODDED
+      end
+      if !@textCache
+        choicebmp.dispose
       end
       # one 16 to allow cursor
       width+=16+16+SpriteWindow_Base::TEXTPADDING
-      tmpbitmap.dispose
     end
     # Store suggested width and height of window
     dims[0]=[self.borderX+1,(width*self.columns)+self.borderX+
@@ -32,18 +63,14 @@ class Window_AdvancedCommandPokemon
          @commands[index],self.baseColor,self.shadowColor)
     else
       ### MODDED/
-      @textCache = {} if !@textCache
-
-      chars = @textCache[[index, rect.y]]
-      if !chars
-        chars=getFormattedText(
-          self.contents,rect.x,rect.y,rect.width,rect.height,
-          @commands[index],rect.height,true,true)
-        @textCache[[index, rect.y]] = chars
-      end
+      chars=@textCache[index][0]
+      choicebmp = Bitmap.new(rect.width, rect.height)
+      pbSetSystemFont(choicebmp)
+      choicerect = Rect.new(0, 0, rect.width, rect.height)
+      drawFormattedChars(choicebmp, chars)
+      self.contents.blt(rect.x, rect.y, choicebmp, choicerect)
+      choicebmp.dispose
       ### /MODDED
-
-      drawFormattedChars(self.contents,chars)
     end
   end
 end
