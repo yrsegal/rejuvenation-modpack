@@ -13,17 +13,20 @@ class Window_AdvancedCommandPokemon
     @textCache.each(&:dispose) if defined?(@textCache)
     txtbmp = Bitmap.new(1, 1)
     pbSetSystemFont(txtbmp)
-    @textCache = value.each_with_index.map { |cmd, idx|
+    @txtwidth = value.map { |cmd|
       dims=[nil,0]
-
-      formattedText = getFormattedText(txtbmp,0,0,Graphics.width,@row_height,cmd,@row_height,true,true)
-      for ch in formattedText
+      formattedTextNoR = getFormattedText(txtbmp,0,0,Graphics.width,@row_height,cmd.gsub("<r>", ""),@row_height,true,true)
+      for ch in formattedTextNoR
         dims[0]=dims[0] ? [dims[0],ch[1]].min : ch[1]
         dims[1]=[dims[1],ch[1]+ch[3]].max
       end
       dims[0]=0 if !dims[0]
+      next dims[1]-dims[0]
+    }.max
+    @textCache = value.each_with_index.map { |cmd, idx|
+      formattedText = getFormattedText(txtbmp,0,0,@txtwidth,@row_height,cmd,@row_height,true,true)
       
-      choicebmp = Bitmap.new(dims[1]-dims[0], @row_height)
+      choicebmp = Bitmap.new(@txtwidth, @row_height)
       pbSetSystemFont(choicebmp)
       drawFormattedChars(choicebmp, formattedText)
 
@@ -46,15 +49,9 @@ class Window_AdvancedCommandPokemon
     windowheight=(rowMax*self.rowHeight)
     windowheight+=self.borderY
     if !width || width<0
-      width=0
-      for i in 0...commands.length
-        ### MODDED/
-        width=[width,@textCache[i].width].max
-        ### /MODDED
-      end
-      if !@textCache
-        choicebmp.dispose
-      end
+      ### MODDED/ width is precomputed
+      width=@txtwidth
+      ### /MODDED
       # one 16 to allow cursor
       width+=16+16+SpriteWindow_Base::TEXTPADDING
     end

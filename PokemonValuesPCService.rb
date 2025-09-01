@@ -55,7 +55,7 @@ class PokemonValuesPCService
   EV_CARDS = [:HPCARD, :ATKCARD, :DEFCARD, :SPATKCARD, :SPDEFCARD, :SPEEDCARD]
   STAT_NAMES = ["HP", "Attack", "Defense", "Sp. Atk", "Sp. Def", "Speed"]
   STAT_NAMES_SHORT = [nil, "ATK", "DEF", "SPATK", "SPDEF", "SPEED"]
-  FLAVORS_TO_STATS = [nil, 'spicy', 'sour', 'sweet', 'dry', 'bitter']
+  FLAVORS_TO_STATS = [nil, 'spicy', 'sour', 'dry', 'bitter', 'sweet']
 
   def color(num)
     return getSkinColor(nil, num, true)
@@ -318,13 +318,13 @@ class PokemonValuesPCService
       $builtNatures = []
       $cache.natures.each_with_index { |(natureKey, nature), idx|
         if !nature.incStat && !nature.decStat
-          natureText = _INTL("{1}  <o=128>±{2}</o>", nature.name, STAT_NAMES_SHORT[FLAVORS_TO_STATS.index(nature.like)])
+          natureText = _INTL("{1}  <r><o=128>±{2}</o>", nature.name, STAT_NAMES_SHORT[FLAVORS_TO_STATS.index(nature.like)])
           $builtCommandsLightWindow.push(natureText)
           $builtCommandsDarkWindow.push(natureText)
         else
-          $builtCommandsLightWindow.push(_INTL("{1}  {4}+{2}</c3> {5}-{3}</c3>", nature.name, STAT_NAMES_SHORT[nature.incStat], STAT_NAMES_SHORT[nature.decStat],
+          $builtCommandsLightWindow.push(_INTL("{1}  <r>{4}+{2}</c3> {5}-{3}</c3>", nature.name, STAT_NAMES_SHORT[nature.incStat], STAT_NAMES_SHORT[nature.decStat],
             lesserPositiveColor(false), lesserNegativeColor(false)))
-          $builtCommandsDarkWindow.push(_INTL("{1}  {4}+{2}</c3> {5}-{3}</c3>", nature.name, STAT_NAMES_SHORT[nature.incStat], STAT_NAMES_SHORT[nature.decStat],
+          $builtCommandsDarkWindow.push(_INTL("{1}  <r>{4}+{2}</c3> {5}-{3}</c3>", nature.name, STAT_NAMES_SHORT[nature.incStat], STAT_NAMES_SHORT[nature.decStat],
             lesserPositiveColor(true), lesserNegativeColor(true)))
         end
         $builtNatures.push(natureKey)
