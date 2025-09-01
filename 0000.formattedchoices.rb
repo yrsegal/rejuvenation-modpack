@@ -10,20 +10,31 @@ class Window_AdvancedCommandPokemon
   end
 
   def build_format_cache(value)
-    choicebmp = Bitmap.new(width, height)
-    pbSetSystemFont(choicebmp)
+    @textCache.each(&:dispose) if defined?(@textCache)
+    txtbmp = Bitmap.new(1, 1)
+    pbSetSystemFont(txtbmp)
     @textCache = value.each_with_index.map { |cmd, idx|
       dims=[nil,0]
-      formattedText = getFormattedText(choicebmp,0,0,Graphics.width,@row_height,cmd,@row_height,true,true)
+
+      formattedText = getFormattedText(txtbmp,0,0,Graphics.width,@row_height,cmd,@row_height,true,true)
       for ch in formattedText
         dims[0]=dims[0] ? [dims[0],ch[1]].min : ch[1]
         dims[1]=[dims[1],ch[1]+ch[3]].max
       end
       dims[0]=0 if !dims[0]
       
-      next [formattedText, dims[1]-dims[0]]
+      choicebmp = Bitmap.new(dims[1]-dims[0], @row_height)
+      pbSetSystemFont(choicebmp)
+      drawFormattedChars(choicebmp, formattedText)
+
+      next choicebmp
     }
-    choicebmp.dispose
+    txtbmp.dispose
+  end
+
+  def dispose
+    super
+    @textCache.each(&:dispose) if defined?(@textCache)
   end
 
   def getAutoDims(commands,dims,width=nil)
@@ -38,7 +49,7 @@ class Window_AdvancedCommandPokemon
       width=0
       for i in 0...commands.length
         ### MODDED/
-        width=[width,@textCache[i][1]].max
+        width=[width,@textCache[i].width].max
         ### /MODDED
       end
       if !@textCache
@@ -63,13 +74,9 @@ class Window_AdvancedCommandPokemon
          @commands[index],self.baseColor,self.shadowColor)
     else
       ### MODDED/
-      chars=@textCache[index][0]
-      choicebmp = Bitmap.new(rect.width, rect.height)
-      pbSetSystemFont(choicebmp)
+      chars=@textCache[index]
       choicerect = Rect.new(0, 0, rect.width, rect.height)
-      drawFormattedChars(choicebmp, chars)
-      self.contents.blt(rect.x, rect.y, choicebmp, choicerect)
-      choicebmp.dispose
+      self.contents.blt(rect.x, rect.y, chars, choicerect)
       ### /MODDED
     end
   end

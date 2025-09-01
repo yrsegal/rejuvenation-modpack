@@ -249,9 +249,7 @@ class GenderPCService
                 elsif ashgreninja(pkmn)
                   ServicePCList.exclaimSound
                   Kernel.pbMessage(odessa("ODESSA: Is this... Ash's Greninja?"))
-                  Kernel.pbMessage(odessa("You met Ash?"))
-                  Kernel.pbMessage(odessa("Amazing."))
-                  Kernel.pbMessage(odessa("It feels like a trespass to do anything without Ash's permission, though..."))
+                  Kernel.pbMessage(odessa("It feels like a trespass to do anything without Ash's permission..."))
                   next
                 end
 
