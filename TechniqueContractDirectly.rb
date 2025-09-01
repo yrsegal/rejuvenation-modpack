@@ -152,7 +152,7 @@ InjectionHelper.defineMapPatch(434) { |map| # Luck's Tent
         :Done,
         [:Script, "vendorquantity_show_item_window(:BLKPRISM) if defined?(vendorquantity_show_item_window)"],
         [:ShowText, "Will you feed me?\\ch[1,2,Yes,No]"],
-        [:ConditionalBranch, :Variable, 1, :Constant, 0, :Equals],
+        [:ConditionalBranch, :Variable, 1, :Constant, 0, :==],
           [:ShowText, "MARTEL: My dietary requirement is three Black Prisms per move."],
           [:ConditionalBranch, :Script, "$PokemonBag.pbQuantity(:BLKPRISM)>2"],
             [:ConditionalBranch, :Script, "techniquecontract_choosetechnique"],

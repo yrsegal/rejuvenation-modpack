@@ -32,7 +32,7 @@ end
 
 def anafixes_batty_section(outfit)
   return [
-    [:ConditionalBranch, :Variable, :Outfit, :Constant, outfit, :Equals],
+    [:ConditionalBranch, :Variable, :Outfit, :Constant, outfit, :==],
       [:SetMoveRoute, :This, anafixes_makeMoveRoute('BattyFriends_Ana_' + outfit.to_s, :Down)],
       [:JumpToLabel, 'done'],
     :Done
@@ -42,7 +42,7 @@ end
 
 def anafixes_special_sprite_section(special, outfit)
   return [
-    [:ConditionalBranch, :Variable, :Outfit, :Constant, outfit, :Equals],
+    [:ConditionalBranch, :Variable, :Outfit, :Constant, outfit, :==],
       [:ConditionalBranch, :Switch, :Ana, true],
         [:SetMoveRoute, :This, anafixes_makeMoveRoute(special + '_' + outfit.to_s, :Down)],
         [:JumpToLabel, 'End'],
@@ -87,7 +87,7 @@ end
 
 def anafixes_inject_special_sprite(event, special)
   event.patch(:anafixes_inject_special_sprite) {
-    matched = event.lookForSequence([:ConditionalBranch, :Variable, :Outfit, :Constant, 0, :Equals])
+    matched = event.lookForSequence([:ConditionalBranch, :Variable, :Outfit, :Constant, 0, :==])
 
     if matched
       event.insertBefore(matched,
@@ -110,8 +110,8 @@ def anafixes_addLegacyRedCarpet(event)
 
     if matched
       page.replaceRange(matched, matched,
-        [:ConditionalBranch, :Variable, :Outfit, :Constant, 2, :GreaterOrEquals],
-          [:ConditionalBranch, :Variable, :Outfit, :Constant, 5, :Less],
+        [:ConditionalBranch, :Variable, :Outfit, :Constant, 2, :>=],
+          [:ConditionalBranch, :Variable, :Outfit, :Constant, 5, :<],
             [:SetMoveRoute, matched.parameters[0], anafixes_transmuteMoveRoute(matched.parameters[1], 'xgene_legacyana_redcarpet')],
           :Else,
             matched,

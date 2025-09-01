@@ -22,10 +22,10 @@ InjectionHelper.defineMapPatch(581, 20) { |event| # Eclysia, door in hallway to 
   InjectionHelper.defineMapPatch(581, i) { |event| # Eclysia, 
     event.patch(:fixEclysiaDoors) { |page|
       if page.lookForSequence([:TransferPlayer, nil, nil, nil, nil, nil, nil])
-        if !page.lookForSequence([:ControlVariable, :LocationData, :Set, :Constant, 3], 
-                                 [:ControlVariable, :LocationData, :Set, :Constant, 0])
-          page.insertAtStart([:ControlVariable, :LocationData, :Set, :Constant, 3])
-          page.insertBeforeEnd([:ControlVariable, :LocationData, :Set, :Constant, 0])
+        if !page.lookForSequence([:ControlVariable, :LocationData, :[]=, :Constant, 3], 
+                                 [:ControlVariable, :LocationData, :[]=, :Constant, 0])
+          page.insertAtStart([:ControlVariable, :LocationData, :[]=, :Constant, 3])
+          page.insertBeforeEnd([:ControlVariable, :LocationData, :[]=, :Constant, 0])
           next true
         end
       end

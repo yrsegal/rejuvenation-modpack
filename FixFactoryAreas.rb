@@ -24,7 +24,7 @@ module FixFactoryAreas
 
       for insn in setShorted
         if resetter
-          page.insertBefore(insn, [:ControlVariable, :Forced_BaseField, :Set, :Constant, 0])
+          page.insertBefore(insn, [:ControlVariable, :Forced_BaseField, :[]=, :Constant, 0])
         else
           page.insertBefore(insn, [:Script, "$game_variables[:Forced_BaseField] = '#{insn.parameters[2] ? 'ShortCircuit' : 'Factory'}'"])
         end
@@ -41,7 +41,7 @@ module FixFactoryAreas
 
       for insn in resetSwitches
         page.insertBefore(insn, 
-          [:ControlVariable, :Forced_BaseField, :Set, :Constant, 0],
+          [:ControlVariable, :Forced_BaseField, :[]=, :Constant, 0],
           [:ControlSwitch, :ShortedOut, false])
       end
 
@@ -145,7 +145,7 @@ module FixFactoryAreas
   def self.createFactoryMessageEvent(map, x, y)
     map.createSinglePageEvent(x, y, "Factory field event message") { |page|
       page.eventTouch(
-        [:ConditionalBranch, :Variable, :QuestStolenCargo, :Constant, 3, :GreaterOrEquals],
+        [:ConditionalBranch, :Variable, :QuestStolenCargo, :Constant, 3, :>=],
           [:Wait, 20],
         :Done,
         [:ShowText, 'The factory is humming away...'],
@@ -192,7 +192,7 @@ module FixFactoryAreas
             [:ChangeScreenColorTone, Tone.new(0, 0, 0), 5],
             [:PlaySoundEvent, 'Exit Door', 80, 60],
             [:ControlSwitch, :ReusableSwitch1, true],
-            [:ControlVariable, :Field_Effect_End_Of_Battle, :Set, :Constant, 0],
+            [:ControlVariable, :Field_Effect_End_Of_Battle, :[]=, :Constant, 0],
             [:Wait, 9],
             [:ShowText, 'The factory sparked to life!'],
             [:Script, '$game_variables[:Forced_BaseField] = "Factory"'],
@@ -209,7 +209,7 @@ module FixFactoryAreas
             [:ChangeScreenColorTone, Tone.new(-136, -136, -136), 10],
             [:PlaySoundEvent, 'Exit Door', 80, 60],
             [:ControlSwitch, :ReusableSwitch1, false],
-            [:ControlVariable, :Field_Effect_End_Of_Battle, :Set, :Constant, 0],
+            [:ControlVariable, :Field_Effect_End_Of_Battle, :[]=, :Constant, 0],
             [:Wait, 9],
             [:ShowText, 'The factory shorted out!'],
             [:Script, '$game_variables[:Forced_BaseField] = "ShortCircuit"'],

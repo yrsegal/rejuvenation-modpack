@@ -27,7 +27,7 @@ end
 
 def outfitoptions_wakeup_section(outfit)
   return [
-    [:ConditionalBranch, :Variable, :Outfit, :Constant, outfit, :Equals],
+    [:ConditionalBranch, :Variable, :Outfit, :Constant, outfit, :==],
       [:Script, '$Trainer.outfit=' + outfit.to_s],
       [:JumpToLabel, 'outfitoptions-end'],
     :Done
@@ -36,7 +36,7 @@ end
 
 def outfitoptions_generateWindstormBranch(outfit, running, event_id, direction=2)
   return [
-    [:ConditionalBranch, :Variable, :Outfit, :Constant, outfit, :Equals],
+    [:ConditionalBranch, :Variable, :Outfit, :Constant, outfit, :==],
       *outfitoptions_charSection(outfit, event_id, :Ana, running ? 'BGirlrun2' : 'BGirlwalk', direction),
       *outfitoptions_charSection(outfit, event_id, :Alain, running ? 'nb_run2' : 'nb_walk2', direction),
       *outfitoptions_charSection(outfit, event_id, :Aero, running ? 'nb_run' : 'nb_walk', direction),
@@ -101,7 +101,7 @@ end
 def outfitoptions_wake_up(page)
   page.patch(:outfitoptions_wake_up) {
     matched = page.lookForSequence(
-      [:ConditionalBranch, :Variable, :Outfit, :Constant, 0, :Equals],
+      [:ConditionalBranch, :Variable, :Outfit, :Constant, 0, :==],
       :Else,
       [:Script, 'Kernel.pbSetPokemonCenter'])
 
@@ -122,7 +122,7 @@ end
 
 def outfitoptions_injectBeforeOutfit0(event, event_id, nums, running, direction=2)
   event.patch(:outfitoptions_injectBeforeOutfit0) { |subevent|
-    matched = subevent.lookForSequence([:ConditionalBranch, :Variable, :Outfit, :Constant, 0, :Equals])
+    matched = subevent.lookForSequence([:ConditionalBranch, :Variable, :Outfit, :Constant, 0, :==])
 
     if matched
       newinsns = []
@@ -149,15 +149,15 @@ end
 def outfitoptions_patch_outfit_management(event)
   event.patch(:outfitoptions_patch_outfit_management) {
     event.insertAtStart(
-      [:ConditionalBranch, :Variable, :Outfit, :Constant, 3, :Equals],
+      [:ConditionalBranch, :Variable, :Outfit, :Constant, 3, :==],
         [:Script, "$game_screen.outfitoptions_iceptOutfit=true"],
       :Done)
 
-    matched = event.lookForSequence([:ConditionalBranch, :Variable, :Outfit, :Constant, 4, :Equals])
+    matched = event.lookForSequence([:ConditionalBranch, :Variable, :Outfit, :Constant, 4, :==])
 
     if matched
       event.insertAfter(matched,
-          [:ControlVariable, :Outfit, :Set, :Constant, 4],
+          [:ControlVariable, :Outfit, :[]=, :Constant, 4],
           [:Script, '$Trainer.outfit=4'])
     end
     next matched

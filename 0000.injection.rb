@@ -153,11 +153,16 @@ module InjectionHelper
 
   CONDITIONAL_MODES = {
     Equals: 0,
+    :== => 0, 
     GreaterOrEquals: 1,
+    :>= => 1, 
     LessOrEquals: 2,
+    :<= => 2, 
     Greater: 3,
+    :> => 3, 
     Less: 4,
-    NotEquals: 5,
+    :< => 4,
+    NotEquals: 5, # No equivalent for !=
   }
 
   SET_VAR_NAMES = {
@@ -192,20 +197,17 @@ module InjectionHelper
 
   SET_MODES = {
     Set: 0,
+    :[]= => 0,
     Add: 1,
+    :+ => 1,
     Subtract: 2,
+    :- => 2,
     Multiply: 3,
+    :* => 3,
     Divide: 4,
+    :/ => 4,
     Modulus: 5,
-  }
-
-  SET_MODES = {
-    Set: 0,
-    Add: 1,
-    Subtract: 2,
-    Multiply: 3,
-    Divide: 4,
-    Modulus: 5,
+    :% => 5,
   }
 
   FACING_DIRECTIONS = {
@@ -228,7 +230,9 @@ module InjectionHelper
 
   MORE_OR_LESS = {
     OrMore: 0,
-    OrLess: 1
+    :>= => 0,
+    OrLess: 1,
+    :<= => 1,
   }
 
   TRUTH = {

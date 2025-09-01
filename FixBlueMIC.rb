@@ -9,7 +9,7 @@ Variables[:Random1] = 216
 
 def fixbluemic_patchShop(event)
   event.patch(:fixbluemic) { |page|
-    checks = page.lookForAll([:ConditionalBranch, :Variable, :Random1, :Constant, nil, :Equals])
+    checks = page.lookForAll([:ConditionalBranch, :Variable, :Random1, :Constant, nil, :==])
 
     for insn in checks
       insn.parameters[1] = Variables[:IceCream]

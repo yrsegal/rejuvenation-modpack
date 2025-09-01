@@ -124,11 +124,11 @@ InjectionHelper.defineMapPatch(294, 70) { |event| # GDC Central, clerk
 
         [:When, 0, "Password"],
           [:ConditionalBranch, :Script, '$Unidata[:WLL]'],
-            [:ControlVariable, :PasswordVar, :Set, :Constant, 489234],
+            [:ControlVariable, :PasswordVar, :[]=, :Constant, 489234],
           :Done,
           [:ShowText, 'Enter a password.'],
           [:InputNumber, :PasswordVar, 6],
-          [:ConditionalBranch, :Variable, :PasswordVar, :Constant, 489234, :Equals],
+          [:ConditionalBranch, :Variable, :PasswordVar, :Constant, 489234, :==],
             [:ControlSwitch, :Finished_WLL, true],
             [:Script,          'Kenneth=PokeBattle_Trainer.new("Kenneth",:LEADER_KETA)'],
             [:ScriptContinued, 'Kenneth.id = 924'], # Kenesu goroawase

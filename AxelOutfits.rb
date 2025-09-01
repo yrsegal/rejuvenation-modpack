@@ -31,7 +31,7 @@ end
 
 def darchaxel_batty_section(outfit)
   return [
-    [:ConditionalBranch, :Variable, :Outfit, :Constant, outfit, :Equals],
+    [:ConditionalBranch, :Variable, :Outfit, :Constant, outfit, :==],
       [:SetMoveRoute, :This, darchaxel_makeMoveRoute('BattyFriends_Axel_' + outfit.to_s, :Down)],
       [:JumpToLabel, 'done'],
     :Done
@@ -41,7 +41,7 @@ end
 
 def darchaxel_special_sprite_section(special, outfit)
   return [
-    [:ConditionalBranch, :Variable, :Outfit, :Constant, outfit, :Equals],
+    [:ConditionalBranch, :Variable, :Outfit, :Constant, outfit, :==],
       [:ConditionalBranch, :Switch, :Axel, true],
         [:SetMoveRoute, :This, darchaxel_makeMoveRoute(special + '_' + outfit.to_s, :Down)],
         [:JumpToLabel, 'End'],
@@ -54,7 +54,7 @@ end
 
 def darchaxel_inject_special_sprite(event, special)
   event.patch(:darchaxel_inject_special_sprite) {
-    matched = event.lookForSequence([:ConditionalBranch, :Variable, :Outfit, :Constant, 0, :Equals])
+    matched = event.lookForSequence([:ConditionalBranch, :Variable, :Outfit, :Constant, 0, :==])
 
     if matched
       event.insertBefore(matched,

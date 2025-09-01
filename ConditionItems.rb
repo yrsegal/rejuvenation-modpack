@@ -123,7 +123,7 @@ module StatusConditionItems
     map.createSinglePageEvent(37, 24, "Status Item seller") { |page|
       page.setGraphic("NPC 22")
       page.interact(
-        [:ConditionalBranch, :Variable, :Stamps, :Constant, 1, :GreaterOrEquals],
+        [:ConditionalBranch, :Variable, :Stamps, :Constant, 1, :>=],
           [:Script, "showmallstamps_show_window('Status Items',1) if defined?(ShowSomniamMallStamps)"],
           [:Script, "pbPokemonMart(["],
           *ITEMS.keys.map { |item| [:ScriptContinued, ":#{item},"] },

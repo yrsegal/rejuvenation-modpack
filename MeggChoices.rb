@@ -22,7 +22,7 @@ InjectionHelper.defineMapPatch(321, 28) { |event| # Crawli megg
         :Done,
         [:When, 1, "Choice"],
           [:ShowText, "(Which Pokémon do you want?)\\ch[#{Variables[:CrawliMysteryEgg]},0,Sizzlipede,Joltik,Blipbug]"],
-          [:ControlVariable, :CrawliMysteryEgg, :Add, :Constant, 1], # Because 0 is "unchosen", shift by 1
+          [:ControlVariable, :CrawliMysteryEgg, :+, :Constant, 1], # Because 0 is "unchosen", shift by 1
         :Done)
     end
 
@@ -61,7 +61,7 @@ InjectionHelper.defineMapPatch(26, 14) { |event| # Aevian megg
         :Done,
         [:When, 1, "Choice"],
           [:ShowText, "(Which Pokémon do you want?)\\ch[#{Variables[:AevianMysteryEgg]},0,A-Magikarp,A-Budew,A-Wimpod,A-Shroomish,A-Larvesta,A-Bronzor,A-Feebas,A-Sigilyph]"],
-          [:ControlVariable, :AevianMysteryEgg, :Add, :Constant, 1], # Because 0 is "unchosen", shift by 1
+          [:ControlVariable, :AevianMysteryEgg, :+, :Constant, 1], # Because 0 is "unchosen", shift by 1
         :Done)
     end
 

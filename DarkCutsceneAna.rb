@@ -801,10 +801,10 @@ module DarkAnaCutscene
         dialogueidx += 1
       elsif outfitMatcher.matches?(insn) # If outfit check
         page.list.push(*InjectionHelper.parseEventCommands(
-          [:ConditionalBranch, :Variable, :Outfit, :Constant, 2, :Less],
+          [:ConditionalBranch, :Variable, :Outfit, :Constant, 2, :<],
             [:SetMoveRoute, 2, makeMoveRoute('BGirlWalk_5')],
           :Else,
-            [:ConditionalBranch, :Variable, :Outfit, :Constant, 6, :GreaterOrEquals],
+            [:ConditionalBranch, :Variable, :Outfit, :Constant, 6, :>=],
               [:SetMoveRoute, 2, makeMoveRoute('BGirlWalk_5')],
             :Else,
               [:SetMoveRoute, 2, makeMoveRoute('BGirlWalk_66')],
@@ -815,10 +815,10 @@ module DarkAnaCutscene
         if insn.parameters[1].list.any?(&spriteMatcher.method(:matches?))
 
           page.list.push(*InjectionHelper.parseEventCommands(
-            [:ConditionalBranch, :Variable, :Outfit, :Constant, 2, :Less],
+            [:ConditionalBranch, :Variable, :Outfit, :Constant, 2, :<],
               [:SetMoveRoute, insn.parameters[0], mapMoveRouteToAna(spriteMatcher, insn.parameters[1], 'BGirlWalk_5')],
             :Else,
-              [:ConditionalBranch, :Variable, :Outfit, :Constant, 6, :GreaterOrEquals],
+              [:ConditionalBranch, :Variable, :Outfit, :Constant, 6, :>=],
                 [:SetMoveRoute, insn.parameters[0], mapMoveRouteToAna(spriteMatcher, insn.parameters[1], 'BGirlWalk_5')],
               :Else,
                 [:SetMoveRoute, insn.parameters[0], mapMoveRouteToAna(spriteMatcher, insn.parameters[1], 'BGirlWalk_66')],
