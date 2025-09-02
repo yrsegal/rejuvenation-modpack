@@ -27,7 +27,7 @@ Libraries:
 - 0000.injection.rb  
   Supports code injection mods.
 - 0000.music.rb  
-  A framework for music overrides. Currently unused.
+  A framework for music overrides.
 - 0000.textures.rb  
   A framework for texture overrides.
 - 0001.boundedentry.rb (depends on 0000.textures.rb)  
@@ -196,6 +196,8 @@ Other mods:
   Gives Axel's Darchlight Form and Interceptor Form full spriting.
 - BoostPickupOdds.rb  
   Makes Pickup more likely (33%) to trigger after battle.
+- ChatotCrest.rb (depends on 0000.injection.rb, 0000.textures.rb, 0000.music.rb)  
+  Adds a Chatot Crest which grants additional effects on sound-based moves, adds Torment to Chatter, gives a 30% Speed boost, and sets its ability to Berserk.
 - ConditionItems.rb (depends on 0000.injection.rb, 0000.textures.rb)  
   Adds items which cause status conditions.
 - DarchlightTrainerSprites.rb (depends on 0000.textures.rb)  
