@@ -1,4 +1,6 @@
 module MusicOverrides
+  MODBASE = __dir__[Dir.pwd.length+1..] + '/'
+  
   MUSIC_OVERRIDES = {
   }
 
