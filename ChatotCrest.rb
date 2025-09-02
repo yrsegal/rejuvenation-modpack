@@ -265,7 +265,7 @@ class PokeBattle_Move
     if isSoundBased? && attacker.crested == :CHATOT
       pbPlayCry(attacker.pokemon, attacker.hp<=(attacker.totalhp/2.0).floor ? 135 : 90)
       if !opponent.isFainted?
-        if (opponent.ability != (:SHIELDDUST) || opponent.moldbroken) && attacker.ability != (:SHEERFORCE)
+        if ((opponent.ability != :SHIELDDUST && opponent.ability != :OBLIVIOUS) || opponent.moldbroken) && attacker.ability != (:SHEERFORCE)
           case attacker.chatotSwear
           when :SHIT
             if opponent.pbCanReduceStatStage?(PBStats::DEFENSE,abilitymessage:false)
