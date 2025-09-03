@@ -190,6 +190,7 @@ module ModPasswordOptions
 
   def self.addPasswordAndLearn(password)
     addPassword(password)
+    $game_map.need_refresh = true
     if password == "truewirepack"
       $game_variables[472] = 3 # Do the eizen greetings
     end
