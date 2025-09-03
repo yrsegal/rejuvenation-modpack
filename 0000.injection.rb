@@ -1413,6 +1413,25 @@ class Game_System
   end
 end
 
+class Interpreter
+  def set_self_switches(map_id = nil, switch = nil, value = false)
+    map_id = $game_map.map_id if map_id.nil?
+    switch = ['A','B','C','D','E'] if switch.nil?
+    switch = Array(switch)
+    
+    ### MODDED/ reset added events too
+    map = ($cache.map_load(mapid) rescue load_data(sprintf("Data/Map%03d.rxdata", map_id)))
+    ### /MODDED
+    map.events.keys.each{|event_id|
+      switch.each{|switch_type|
+        key = [map_id, event_id, switch_type]
+        $game_self_switches[key] = value
+      }
+    }
+    $game_map.need_refresh = ($game_map.map_id == map_id)
+  end
+end
+
 def createMinimap(mapid)
   ### MODDED/ warp to map minimap display
   map=$cache.map_load(mapid) rescue (load_data(sprintf("Data/Map%03d.rxdata",mapid)) rescue nil)
