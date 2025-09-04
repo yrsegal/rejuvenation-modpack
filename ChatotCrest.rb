@@ -246,7 +246,7 @@ class PokeBattle_Battler
   alias :chatotcrest_old_crestStats :crestStats
   def crestStats
     if @crested == :CHATOT
-      @speed *= 1.3
+      @speed = (@speed * 1.3).floor
       @ability = :BERSERK
     end
     chatotcrest_old_crestStats
