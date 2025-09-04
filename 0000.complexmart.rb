@@ -1,23 +1,38 @@
-Switches[:BikeVoucher] = 1699
-Switches[:NoctowlCrest] = 1698
-Switches[:SimisageCrest] = 1697
-Switches[:SimisearCrest] = 1696
-Switches[:SimipourCrest] = 1695
-Switches[:LuxrayCrest] = 1701
-Switches[:DruddigonCrest] = 1702
-Switches[:ThievulCrest] = 1703
-Switches[:SamurottCrest] = 1704
-Switches[:BoltundCrest] = 1771
-Switches[:ProbopassCrest] = 1774
-Switches[:SwalotCrest] = 1772
-Switches[:CinccinoCrest] = 1773
-Switches[:DelcattyCrest] = 1775
-
-Switches[:Gym_13] = 295
-
 Variables[:PuppetCoins] = 597
 
 module ComplexMartInterface
+
+  DEFAULT_MESSAGES_INTERACT = {
+    speech: "Welcome!\nHow may I serve you?",
+    come_again: "Please come again!",
+    anything_else: "Is there anything else I can help you with?"
+  }
+
+  DEFAULT_MESSAGES_MART = {
+    no_money: "You don't have enough money.",
+    no_coins: "You don't have enough Coins.",
+    no_ap: "You don't have enough AP.",
+    no_re: "You don't have enough Red Essence.",
+    no_items: "You don't have enough {1}.",
+
+    purchase_important: "Certainly. You want {1}.\nThat will be {2}. OK?",
+    choose_quantity: "{1}? Certainly.\nHow many would you like?",
+    purchase_quantity: "{1}, and you want {2}.\nThat will be {3}. OK?",
+
+    full_puppet: "You're too full of coins.",
+    full_coins: "Your Coin Case is too full.",
+    full_item: "You have no more room in the Bag.",
+
+    success_money: "Here you are!\nThank you!",
+    success_coins: "Here you are!\nThank you!",
+    success_ap: "Here you are!\nThank you!",
+    success_re: "Here you are!\nThank you!",
+    success_items: "Here you are!\nThank you!",
+
+    premier_one: "I'll throw in a Premier Ball, too.",
+    premier_many: "I'll throw in {1} Premier Balls, too."
+  }
+
   def self.evaluateConditions(conditions)
     for condition in conditions
       if condition[:var]
@@ -108,7 +123,7 @@ module ComplexMartInterface
         return $game_switches[@inventory[item][:switch]]
       elsif item[0] == :item && pbIsImportantItem?(item[1]) && $PokemonBag.pbQuantity(item[1]) > 0
         return true
-      elsif item[0] == :move && $Trainer.tutorlist.length>0 && $Trainer.tutorlist.include?(stockItem[1]) # Is added to move tutors
+      elsif item[0] == :move && $Trainer.tutorlist.length>0 && $Trainer.tutorlist.include?(item[1]) # Is added to move tutors
         return true
       end
 
@@ -345,6 +360,7 @@ module ComplexMartInterface
     def pbBuyScreen
       @scene.pbStartBuyScene(@stock,@adapter)
       item=nil
+      bought = false
       loop do
         item=@scene.pbChooseBuyItem
         quantity=0
@@ -353,11 +369,11 @@ module ComplexMartInterface
         price=@adapter.getPrice(item)
         if @adapter.getMoney(item)<price
           case @adapter.getPriceType(item)
-          when :Money      then pbDisplayPaused(_INTL(@messages[:no_money]))
-          when :RedEssence then pbDisplayPaused(_INTL(@messages[:no_re]))
-          when :Coins      then pbDisplayPaused(_INTL(@messages[:no_coins]))
-          when :AP         then pbDisplayPaused(_INTL(@messages[:no_ap]))
-          when :Item       then pbDisplayPaused(_INTL(@messages[:no_items], @adapter.getPriceItemName(item)))
+          when :Money      then pbDisplayPaused(_INTL(@messages[:no_money])) unless @messages[:no_money].empty?
+          when :RedEssence then pbDisplayPaused(_INTL(@messages[:no_re])) unless @messages[:no_re].empty?
+          when :Coins      then pbDisplayPaused(_INTL(@messages[:no_coins])) unless @messages[:no_coins].empty?
+          when :AP         then pbDisplayPaused(_INTL(@messages[:no_ap])) unless @messages[:no_ap].empty?
+          when :Item       then pbDisplayPaused(_INTL(@messages[:no_items], @adapter.getPriceItemName(item))) unless @messages[:no_items].empty?
           end
           next
         end
@@ -385,11 +401,11 @@ module ComplexMartInterface
         end
         if @adapter.getMoney(item)<price
           case @adapter.getPriceType(item)
-          when :Money      then pbDisplayPaused(_INTL(@messages[:no_money]))
-          when :RedEssence then pbDisplayPaused(_INTL(@messages[:no_re]))
-          when :Coins      then pbDisplayPaused(_INTL(@messages[:no_coins]))
-          when :AP         then pbDisplayPaused(_INTL(@messages[:no_ap]))
-          when :Item       then pbDisplayPaused(_INTL(@messages[:no_items], @adapter.getPriceItemName(item)))
+          when :Money      then pbDisplayPaused(_INTL(@messages[:no_money])) unless @messages[:no_money].empty?
+          when :RedEssence then pbDisplayPaused(_INTL(@messages[:no_re])) unless @messages[:no_re].empty?
+          when :Coins      then pbDisplayPaused(_INTL(@messages[:no_coins])) unless @messages[:no_coins].empty?
+          when :AP         then pbDisplayPaused(_INTL(@messages[:no_ap])) unless @messages[:no_ap].empty?
+          when :Item       then pbDisplayPaused(_INTL(@messages[:no_items], @adapter.getPriceItemName(item))) unless @messages[:no_items].empty?
           end
           next
         end
@@ -410,7 +426,11 @@ module ComplexMartInterface
                 raise _INTL("Failed to delete stored items")
               end
             end
-            pbDisplayPaused(_INTL(@messages[:full_item])) 
+            case item[0]
+              when :puppet  then pbDisplayPaused(_INTL(@messages[:full_puppet])) unless @messages[:full_puppet].empty?
+              when :coins   then pbDisplayPaused(_INTL(@messages[:full_coins])) unless @messages[:full_coins].empty?
+              when :item    then pbDisplayPaused(_INTL(@messages[:full_item])) unless @messages[:full_item].empty?
+            end
           else
             success = true
           end
@@ -419,6 +439,7 @@ module ComplexMartInterface
         end
 
         if success
+          bought = true
           @adapter.setMoney(@adapter.getMoney(item)-price, item)
           for i in 0...@stock.length
             stockItem = @stock[i]
@@ -428,11 +449,11 @@ module ComplexMartInterface
           end
           @stock.compact!
           case @adapter.getPriceType(item)
-          when :Money      then pbDisplayPaused(_INTL(@messages[:success_money]))
-          when :RedEssence then pbDisplayPaused(_INTL(@messages[:success_re]))
-          when :Coins      then pbDisplayPaused(_INTL(@messages[:success_coins]))
-          when :AP         then pbDisplayPaused(_INTL(@messages[:success_ap]))
-          when :Item       then pbDisplayPaused(_INTL(@messages[:success_items], @adapter.getPriceItemName(item)))
+          when :Money      then pbDisplayPaused(_INTL(@messages[:success_money])) unless @messages[:success_money].empty?
+          when :RedEssence then pbDisplayPaused(_INTL(@messages[:success_re])) unless @messages[:success_re].empty?
+          when :Coins      then pbDisplayPaused(_INTL(@messages[:success_coins])) unless @messages[:success_coins].empty?
+          when :AP         then pbDisplayPaused(_INTL(@messages[:success_ap])) unless @messages[:success_ap].empty?
+          when :Item       then pbDisplayPaused(_INTL(@messages[:success_items], @adapter.getPriceItemName(item))) unless @messages[:success_items].empty?
           end
           if item[0] == :item
             if Rejuv && $Trainer.achievements
@@ -440,22 +461,50 @@ module ComplexMartInterface
             end
             if $PokemonBag && trueQuantity>=10 && pbIsPokeBall?(item[1])
               if trueQuantity < 20 && @adapter.addItem(:PREMIERBALL) 
-                pbDisplayPaused(_INTL(@messages[:premier_one])) 
+                pbDisplayPaused(_INTL(@messages[:premier_one])) unless @messages[:premier_one].empty?
               elsif trueQuantity >=20 && $PokemonBag.pbStoreItem(:PREMIERBALL,(trueQuantity/10).floor)
                 numballs = (trueQuantity/10).floor # I could put this in the next line but it would probably slow something down
-                pbDisplayPaused(_INTL(@messages[:premier_many], numballs))
+                pbDisplayPaused(_INTL(@messages[:premier_many], numballs)) unless @messages[:premier_many].empty?
               end
             end
           end
         end
       end
       @scene.pbEndBuyScene
+      return bought
     end
   end
 
   class ComplexPokemonMartScene < PokemonMartScene
     def initialize(hasPicture)
       @hasPicture = hasPicture
+    end
+
+    def pbDisplayPaused(msg)
+      while msg[/(?:\\[Ss][Ee]\[([^\]]*)\])/i]
+        msg = $~.pre_match + $~.post_match
+        pbSEPlay(pbStringToAudioFile($1))
+      end
+
+      super(msg)
+    end
+
+    def pbConfirm(msg)
+      while msg[/(?:\\[Ss][Ee]\[([^\]]*)\])/i]
+        msg = $~.pre_match + $~.post_match
+        pbSEPlay(pbStringToAudioFile($1))
+      end
+
+      super(msg)
+    end
+
+    def pbDisplay(msg)
+      while msg[/(?:\\[Ss][Ee]\[([^\]]*)\])/i]
+        msg = $~.pre_match + $~.post_match
+        pbSEPlay(pbStringToAudioFile($1))
+      end
+
+      super(msg)
     end
 
     def pbStartBuyOrSellScene(buying,stock,adapter)
@@ -738,19 +787,26 @@ module ComplexMartInterface
     commands[cmdBuy=commands.length]=_INTL("Buy")
     commands[cmdQuit=commands.length]=_INTL("Quit")
     cmd=Kernel.pbMessage(_INTL(interactMessages[:speech]), commands,cmdQuit+1)
+    bought = false
     loop do
       if cmdBuy>=0 && cmd==cmdBuy
         adapter = ComplexPokemonMartAdapter.new(inventory)
         scene=ComplexPokemonMartScene.new(hasPicture)
         screen=ComplexPokemonMartScreen.new(scene,adapter,messages)
-        screen.pbBuyScreen
+        bought = true if screen.pbBuyScreen
       else
-        Kernel.pbMessage(_INTL(interactMessages[:come_again]))
+        Kernel.pbMessage(_INTL(interactMessages[:come_again])) unless interactMessages[:come_again].empty?
         break
       end
       cmd=Kernel.pbMessage( _INTL(interactMessages[:anything_else]),commands,cmdQuit+1)
     end
+    return bought
   end
+
+  def self.vendorComplexMart(vendorInfo, hasPicture=false)
+    return self.pbComplexMart(vendorInfo[:inventory], hasPicture, vendorInfo.fetch(:messages, {}))
+  end
+end
 
 =begin
  Full format:
@@ -766,6 +822,8 @@ module ComplexMartInterface
 
   if type is pokemon, to have it start with an extra move:
     move: :MOVEID
+  if type is pokemon, to have it have a different form:
+    form: formnum
 
   price specifier - one of:
     price: { type: :Money | :RedEssence | :Coins | :AP, amount: amount }
@@ -782,154 +840,3 @@ module ComplexMartInterface
   to have the item only be purchasable once, tied to a switch:
     switch: :SwitchAlias | switchid
 =end
-
-  CAIRO_SHOP = [
-    { item: :JOYSCENT,
-      price: { type: :Money, amount: 5000 },
-      quantity: 10},
-    { item: :EXCITESCENT,
-      price: { type: :Money, amount: 8500 },
-      quantity: 10},
-    { item: :VIVIDSCENT,
-      price: { type: :Money, amount: 11000 },
-      quantity: 10},
-    { item: :RIFTFRAGMENT,
-      price: { type: :Money, amount: 4956 },
-      quantity: 5},
-
-    { item: :BIKEV,
-      price: { type: :RedEssence, amount: 250 },
-      condition: { switch: :Gym_15, is: false },
-      switch: :BikeVoucher},
-    { item: :BIKEV,
-      price: { type: :RedEssence, amount: 500 },
-      condition: { switch: :Gym_15, is: true },
-      switch: :BikeVoucher},
-
-    { item: :NOCCREST,
-      price: { type: :RedEssence, amount: 2000 },
-      switch: :NoctowlCrest},
-    { item: :SAGECREST,
-      price: { type: :RedEssence, amount: 2000 },
-      switch: :SimisageCrest},
-    { item: :SEARCREST,
-      price: { type: :RedEssence, amount: 2000 },
-      switch: :SimisearCrest},
-    { item: :POURCREST,
-      price: { type: :RedEssence, amount: 2000 },
-      switch: :SimipourCrest},
-
-    { item: :LUXCREST,
-      price: { type: :RedEssence, amount: 5000 },
-      condition: { switch: :Gym_8, is: true },
-      switch: :LuxrayCrest},
-    { item: :DRUDDICREST,
-      price: { type: :RedEssence, amount: 5000 },
-      condition: { switch: :Gym_8, is: true },
-      switch: :DruddigonCrest},
-    { item: :THIEVCREST,
-      price: { type: :RedEssence, amount: 5000 },
-      condition: { switch: :Gym_8, is: true },
-      switch: :ThievulCrest},
-    { item: :SAMUCREST,
-      price: { type: :RedEssence, amount: 5000 },
-      condition: { switch: :Gym_8, is: true },
-      switch: :SamurottCrest},
-
-    { item: :BOLTCREST,
-      price: { type: :RedEssence, amount: 9000 },
-      condition: { switch: :Gym_13, is: true },
-      switch: :BoltundCrest},
-    { item: :PROBOCREST,
-      price: { type: :RedEssence, amount: 9000 },
-      condition: { switch: :Gym_13, is: true },
-      switch: :ProbopassCrest},
-    { item: :SWACREST,
-      price: { type: :RedEssence, amount: 9000 },
-      condition: { switch: :Gym_13, is: true },
-      switch: :SwalotCrest},
-    { item: :CINCCREST,
-      price: { type: :RedEssence, amount: 9000 },
-      condition: { switch: :Gym_13, is: true },
-      switch: :CinccinoCrest},
-
-    { item: :DELCREST,
-      price: { type: :RedEssence, amount: 14000 },
-      condition: { switch: :Gym_15, is: true },
-      switch: :DelcattyCrest},
-  ]
-
-  DEFAULT_MESSAGES_INTERACT = {
-    speech: "Welcome!\nHow may I serve you?",
-    come_again: "Please come again!",
-    anything_else: "Is there anything else I can help you with?"
-  }
-
-  DEFAULT_MESSAGES_MART = {
-    no_money: "You don't have enough money.",
-    no_coins: "You don't have enough Coins.",
-    no_ap: "You don't have enough AP.",
-    no_re: "You don't have enough Red Essence.",
-    no_items: "You don't have enough {1}.",
-
-    purchase_important: "Certainly. You want {1}.\nThat will be {2}. OK?",
-    choose_quantity: "{1}? Certainly.\nHow many would you like?",
-    purchase_quantity: "{1}, and you want {2}.\nThat will be {3}. OK?",
-
-    full_puppet: "You're too full of coins.",
-    full_coins: "Your Coin Case is too full.",
-    full_item: "You have no more room in the Bag.",
-
-    success_money: "Here you are!\nThank you!",
-    success_coins: "Here you are!\nThank you!",
-    success_ap: "Here you are!\nThank you!",
-    success_re: "Here you are!\nThank you!",
-    success_items: "Here you are!\nThank you!",
-
-    premier_one: "I'll throw in a Premier Ball, too.",
-    premier_many: "I'll throw in {1} Premier Balls, too."
-  }
-
-  def self.pbCairoMart
-    pbComplexMart(CAIRO_SHOP, true, {
-      speech: $game_variables[:RedEssence] > 0 ? "CAIRO: I see that you have Red Essence.\nLet's see what we got." : "CAIRO: Well met. I see you made it to my humble abode.",
-      come_again: "CAIRO: Darkness need not hide from me. I will find it no matter what.",
-      anything_else: "CAIRO: Is that all?",
-
-      no_money: "CAIRO: No money.",
-      no_re: "CAIRO: Not enough! I can't do anything with this amount.",
-
-      purchase_important: "CAIRO: Very well. That will be {2}.",
-      choose_quantity: "CAIRO: {1}? How many?",
-      purchase_quantity: "CAIRO: {2} {1}s.\nThat will be {3}.",
-
-      full_item: "CAIRO: Your bag is full. Absurd.",
-
-      success_money: "CAIRO: Hmph.",
-      success_re: "CAIRO: You've earned it."
-    })
-  end
-end
-
-def testshop1
-  ComplexMartInterface.pbComplexMart([
-    {pokemon: :SNEASEL, form: 1, price: {type: :Item, item: :BLUESHARD}},
-    {move: :TOXIC, price: {type: :Item, item: :BIGMUSHROOM}}
-  ])
-end
-
-InjectionHelper.defineMapPatch(168, 16) { |event| # Cairo
-  event.patch(:cairo_shop_interface) { |page|
-    if page.condition.self_switch_valid && page.condition.self_switch_ch == "A"
-      matched = page.lookForSequence([:ShowText, /^CAIRO: Well met\./])
-
-      if matched
-        page.insertBefore(matched,
-          [:Script, 'ComplexMartInterface.pbCairoMart'],
-          [:JumpToLabel, 'Exit shop'])
-        next true
-      end
-    end
-  }
-}
-

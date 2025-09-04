@@ -606,7 +606,7 @@ module InjectionHelper
           mapVariable(params, 4)
           mapVariable(params, 5)
         end
-      when :PlaySoundEvent, :PlayMusicEvent, :PlayBackgroundMusic, :PlayBackgroundSound, :ChangeBattleBackgroundMusic, :ChangeBattleEndME
+      when :PlaySoundEvent, :PlayMusicEvent, :PlayBackgroundMusic, :PlayBackgroundSound, :ChangeBattleBackgroundMusic, :ChangeBattleEndME, :PlaySound
         if params[0].is_a?(String)
           audio = params[0]
           volume = 100
