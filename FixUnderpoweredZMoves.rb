@@ -156,6 +156,12 @@ class PokeBattle_Move
       end
     end
 
+    # Logic hole here in vanilla, leaves nil
+    if oldmove.basedamage > 130
+      base = oldmove.basedamage unless base
+      oldmove.basedamage = 140
+    end
+
     ret = underpowerz_old_ZMoveBaseDamage(oldmove)
 
     oldmove.basedamage = base if base
