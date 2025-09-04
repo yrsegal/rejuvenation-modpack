@@ -71,7 +71,7 @@ module ComplexMartInterface
         }
         next unless stockItem
         stockItem.push(stockInfo.fetch(:quantity, 1)) if stockItem[0] == :item
-        stockItem.push(stockInfo[:move]) if stockItem[0] == :pokemon
+        stockItem.push(stockInfo[:move], stockInfo.fetch(:form, 0)) if stockItem[0] == :pokemon
 
         next if stockItem[0] == :move && $Trainer.tutorlist.length>0 && $Trainer.tutorlist.include?(stockItem[1])
 
@@ -159,13 +159,17 @@ module ComplexMartInterface
       return "Graphics/Icons/itemBack" if !item
       iconitem = nil
       case item[0]
-        when :puppet then iconitem = :PUPPETCOIN
-        when :coins  then iconitem = :COINCASE
+        when :puppet  then iconitem = :PUPPETCOIN
+        when :coins   then iconitem = :COINCASE
         when :move
           type = $cache.moves[item[1]].type
-          typename = getTypeName(type)
-          return sprintf("Graphics/Icons/TM - %s",typename)
-        when :item   then iconitem = item[1]
+          return sprintf("#{__dir__[Dir.pwd.length+1..]}/TextureOverrides/TRs/%s",type.downcase)
+        when :item    then iconitem = item[1]
+        when :pokemon 
+          pkmn = PokeBattle_Pokemon.new(item[1],10,$Trainer,false,item[3])
+          pkmn.makeNotShiny
+          pkmn.makeMale
+          return pkmn
       end
       return pbItemIconFile(iconitem)
     end
@@ -198,7 +202,7 @@ module ComplexMartInterface
       case item[0]
         when :puppet  then return quantity * item[1]
         when :coins   then return quantity * item[1]
-        when :move    then return quantity * item[1]
+        when :move    then return quantity
         when :item    then return quantity * item[2]
         when :pokemon then return quantity
       end
@@ -236,7 +240,11 @@ module ComplexMartInterface
         when :RedEssence then formatter,  fancyformatter = "{1} RE", "{1} Red Essence"
         when :Coins      then formatter = fancyformatter = "{1} Coins"
         when :AP         then formatter = fancyformatter = "{1} AP"
-        when :Item       then formatter = fancyformatter = "{1} #{getItemName(item[1])}"
+        when :Item
+          formatter = fancyformatter = "{1} #{getItemName(@inventory[item][:price][:item])}" # first character differentiation todo
+          if [:REDSHARD,:BLUESHARD,:GREENSHARD,:YELLOWSHARD].include?(@inventory[item][:price][:item])
+            formatter = formatter.gsub(/ Shard$/, '')
+          end
         else                  formatter = fancyformatter = "{1}"
       end
       return _INTL(fancyformatter, pbCommaNumber(price)) if fancy
@@ -256,9 +264,9 @@ module ComplexMartInterface
         when :item    then return $cache.items[item[1]].desc
         when :pokemon 
           if item[2]
-            return _INTL("The {1} Pokémon. Comes knowing {2}.", $cache.pkmn[item[1]].kind, getMoveDesc(item[2]))
+            return _INTL("Obtain the {1} Pokémon. Comes knowing {2}.", $cache.pkmn[item[1]].kind, getMoveDesc(item[2]))
           else
-            return _INTL("The {1} Pokémon.", $cache.pkmn[item[1]].kind)
+            return _INTL("Obtain the {1} Pokémon.", $cache.pkmn[item[1]].kind)
           end
 
       end
@@ -272,7 +280,7 @@ module ComplexMartInterface
         #when :move # Handled specially.
         when :item    then $PokemonBag.pbStoreItem(item[1])
         when :pokemon
-          pkmn = PokeBattle_Pokemon.new(item[1],10,$Trainer)
+          pkmn = PokeBattle_Pokemon.new(item[1],10,$Trainer,true,item[3])
           pkmn.pbLearnMove(item[2]) if item[2]
           Kernel.pbAddPokemon(pkmn)
       end
@@ -352,7 +360,7 @@ module ComplexMartInterface
           next
         end
         if !@adapter.showQuantity?(item)
-          if !pbConfirm(_INTL(@messages[:purchase_important],itemname,pbCommaNumber(price)))
+          if !pbConfirm(_INTL(@messages[:purchase_important],itemname,@adapter.formatPrice(price, item, true)))
             next
           end
           quantity=1
@@ -369,7 +377,7 @@ module ComplexMartInterface
           end
           trueQuantity = @adapter.getTrueQuantity(item,quantity)
           price*=quantity
-          if !pbConfirm(_INTL(@messages[:purchase_quantity],@adapter.getName(item),trueQuantity,pbCommaNumber(price)))
+          if !pbConfirm(_INTL(@messages[:purchase_quantity],@adapter.getName(item),trueQuantity,@adapter.formatPrice(price, item, true)))
             next
           end
         end
@@ -460,6 +468,12 @@ module ComplexMartInterface
       @sprites={}
       @sprites["background"]=IconSprite.new(0,0,@viewport)
       @sprites["background"].setBitmap("Graphics/Pictures/martScreen")
+
+      @sprites["pkmnicon"]=PokemonIconSprite.new(nil,@viewport)
+      @sprites["pkmnicon"].x = 2
+      @sprites["pkmnicon"].y = Graphics.height-88
+      @sprites["pkmnicon"].visible = true
+
       @sprites["icon"]=IconSprite.new(12,Graphics.height-74,@viewport)
       winAdapter=buying ? BuyAdapter.new(adapter) : SellAdapter.new(adapter)
       @sprites["itemwindow"]=Window_PokemonMart.new(stock,winAdapter,
@@ -515,8 +529,16 @@ module ComplexMartInterface
       if !@subscene
         itemwindow=@sprites["itemwindow"]
         filename=@adapter.getItemIcon(itemwindow.item)
-        @sprites["icon"].setBitmap(filename)
-        @sprites["icon"].src_rect=@adapter.getItemIconRect(itemwindow.item)   
+        ### MODDED/
+        if filename.is_a?(PokeBattle_Pokemon)
+          @sprites["pkmnicon"].pokemon = filename
+          @sprites["icon"].clearBitmaps
+        elsif filename.is_a?(String)
+          @sprites["pkmnicon"].pokemon = nil
+          @sprites["icon"].setBitmap(filename)
+          @sprites["icon"].src_rect=@adapter.getItemIconRect(itemwindow.item)   
+        end
+        ### /MODDED
         @sprites["itemtextwindow"].text=(itemwindow.item.nil?) ? _INTL("Quit shopping.") :
            @adapter.getDescription(itemwindow.item)
         itemwindow.refresh
@@ -570,6 +592,46 @@ module ComplexMartInterface
       ### /MODDED
     end
 
+    def pbChooseBuyItem
+      itemwindow=@sprites["itemwindow"]
+      @sprites["helpwindow"].visible=false
+      pbActivateWindow(@sprites,"itemwindow"){
+        pbRefresh
+        loop do
+          Graphics.update
+          Input.update
+          olditem=itemwindow.item
+          self.update
+          if itemwindow.item!=olditem
+            filename=@adapter.getItemIcon(itemwindow.item)
+            ### MODDED/
+            if filename.is_a?(PokeBattle_Pokemon)
+              @sprites["pkmnicon"].pokemon = filename
+              @sprites["icon"].clearBitmaps
+            elsif filename.is_a?(String)
+              @sprites["pkmnicon"].pokemon = nil
+              @sprites["icon"].setBitmap(filename)
+              @sprites["icon"].src_rect=@adapter.getItemIconRect(itemwindow.item)   
+            end
+            ### /MODDED
+            @sprites["itemtextwindow"].text=(itemwindow.item.nil?) ? _INTL("Quit shopping.") :
+              @adapter.getDescription(itemwindow.item)
+          end
+          if Input.trigger?(Input::B)
+            return nil
+          end
+          if Input.trigger?(Input::C)
+            if itemwindow.index<@stock.length
+              pbRefresh
+              return @stock[itemwindow.index]
+            else
+              return nil
+            end
+          end
+        end
+      }
+    end
+
     def pbChooseNumber(helptext,item,maximum,purchaseQuantity=1)
       curnumber=1
       ret=0
@@ -609,7 +671,7 @@ module ComplexMartInterface
             else
               inbagwindow.visible=false
             end
-            numwindow.text=_INTL("x{1}<r>{2}",@adapter.getTrueQuantity(item,curnumber), @adapter.formatPrice(pbCommaNumber(curnumber*itemprice), item))
+            numwindow.text=_INTL("x{1}<r>{2}",@adapter.getTrueQuantity(item,curnumber), @adapter.formatPrice(curnumber*itemprice, item, true))
             ### /MODDED
             pbBottomRight(numwindow)
             numwindow.y-=helpwindow.height
@@ -626,28 +688,28 @@ module ComplexMartInterface
                 curnumber-=10
                 curnumber=1 if curnumber<1
                 ### MODDED/
-                numwindow.text=_INTL("x{1}<r>{2}",@adapter.getTrueQuantity(item,curnumber),@adapter.formatPrice(pbCommaNumber(curnumber*itemprice), item))
+                numwindow.text=_INTL("x{1}<r>{2}",@adapter.getTrueQuantity(item,curnumber),@adapter.formatPrice(curnumber*itemprice, item, true))
                 ### /MODDED
               elsif Input.repeat?(Input::RIGHT)
                 pbPlayCursorSE()
                 curnumber+=10
                 curnumber=maximum if curnumber>maximum
                 ### MODDED/
-                numwindow.text=_INTL("x{1}<r>{2}",@adapter.getTrueQuantity(item,curnumber),@adapter.formatPrice(pbCommaNumber(curnumber*itemprice), item))
+                numwindow.text=_INTL("x{1}<r>{2}",@adapter.getTrueQuantity(item,curnumber),@adapter.formatPrice(curnumber*itemprice, item, true))
                 ### /MODDED
               elsif Input.repeat?(Input::UP)
                 pbPlayCursorSE()
                 curnumber+=1
                 curnumber=1 if curnumber>maximum
                 ### MODDED/
-                numwindow.text=_INTL("x{1}<r>{2}",@adapter.getTrueQuantity(item,curnumber),@adapter.formatPrice(pbCommaNumber(curnumber*itemprice), item))
+                numwindow.text=_INTL("x{1}<r>{2}",@adapter.getTrueQuantity(item,curnumber),@adapter.formatPrice(curnumber*itemprice, item, true))
                 ### /MODDED
               elsif Input.repeat?(Input::DOWN)
                 pbPlayCursorSE()
                 curnumber-=1
                 curnumber=maximum if curnumber<1
                 ### MODDED/
-                numwindow.text=_INTL("x{1}<r>{2}",@adapter.getTrueQuantity(item,curnumber),@adapter.formatPrice(pbCommaNumber(curnumber*itemprice), item))
+                numwindow.text=_INTL("x{1}<r>{2}",@adapter.getTrueQuantity(item,curnumber),@adapter.formatPrice(curnumber*itemprice, item, true))
                 ### /MODDED
               elsif Input.trigger?(Input::C)
                 pbPlayDecisionSE()
@@ -712,6 +774,8 @@ module ComplexMartInterface
     { var: :VariableAlias | variableid, is: predicate }
     { var: :VariableAlias | variableid, is: :== | :>= | :> | :<= | :<, than: comparingValue }
     { map: mapid, event: eventid, selfswitch: chr, is: targetState }
+  as
+    condition: [conditions...] | condition
 
   to have the item only be purchasable once, tied to a switch:
     switch: :SwitchAlias | switchid
@@ -835,7 +899,7 @@ module ComplexMartInterface
 
       purchase_important: "CAIRO: Very well. That will be {2}.",
       choose_quantity: "CAIRO: {1}? How many?",
-      purchase_quantity: "CAIRO: {2} {1}s.\nThat will be ${3}.",
+      purchase_quantity: "CAIRO: {2} {1}s.\nThat will be {3}.",
 
       full_item: "CAIRO: Your bag is full. Absurd.",
 
@@ -843,6 +907,13 @@ module ComplexMartInterface
       success_re: "CAIRO: You've earned it."
     })
   end
+end
+
+def testshop1
+  ComplexMartInterface.pbComplexMart([
+    {pokemon: :SNEASEL, form: 1, price: {type: :Item, item: :BLUESHARD}},
+    {move: :TOXIC, price: {type: :Item, item: :BIGMUSHROOM}}
+  ])
 end
 
 InjectionHelper.defineMapPatch(168, 16) { |event| # Cairo
