@@ -76,6 +76,11 @@ module ComplexMartInterface
         end
 
         conditions.push({ switch: stockInfo[:switch], is: false }) if stockInfo[:switch]
+        conditions.push({ var: stockInfo[:var][0], is: :<, than: stockInfo[:var][1] }) if stockInfo[:var]
+        if stockInfo[:selfswitch]
+          ssw = stockInfo[:selfswitch]
+          conditions.push({ map: ssw[0], event: ssw[1], selfswitch: ssw[2], is: false })
+        end
 
         next unless ComplexMartInterface.evaluateConditions(conditions)
 
@@ -121,6 +126,14 @@ module ComplexMartInterface
       if @inventory[item][:switch]
         $game_switches[@inventory[item][:switch]] = true if item == purchasedItem
         return $game_switches[@inventory[item][:switch]]
+      elsif @inventory[item][:var]
+        varid, value = @inventory[item][:var]
+        $game_variables[varid] = value if item == purchasedItem && $game_variables[varid] < value
+        return $game_switches[varid] >= value
+      elsif @inventory[item][:selfswitch]
+        key = @inventory[item][:selfswitch]
+        $game_self_switches[key] = true if item == purchasedItem
+        return $game_self_switches[key]
       elsif item[0] == :item && pbIsImportantItem?(item[1]) && $PokemonBag.pbQuantity(item[1]) > 0
         return true
       elsif item[0] == :move && $Trainer.tutorlist.length>0 && $Trainer.tutorlist.include?(item[1]) # Is added to move tutors
@@ -138,6 +151,38 @@ module ComplexMartInterface
     # Added for complex
     def getPriceItemName(item)
       return getItemName(@inventory[item][:price][:item])
+    end
+
+    # Added for complex
+    def getPurchaseMessage(messages, item, price, quantity=0)
+      if quantity == 0
+        message = @inventory[item].fetch(:purchase_message, messages[:purchase_important])
+        return _INTL(message,getDisplayName(item),formatPrice(price, item, true))
+      else
+        message = @inventory[item].fetch(:purchase_message, messages[:purchase_quantity])
+        return _INTL(message,getName(item),quantity,formatPrice(price, item, true))
+      end
+    end
+
+    # Added for complex
+    def getQuantitySelectMessage(messages, item)
+      message = @inventory[item].fetch(:quantity_message, messages[:choose_quantity])
+      return _INTL(@inventory[item][:quantity_message],getDisplayName(item)) if @inventory[item][:quantity_message]
+      return _INTL(messages[:choose_quantity],getDisplayName(item))
+    end
+
+    # Added for complex
+    def getSuccessMessage(messages, item)
+      return _INTL(@inventory[item][:success_message]) unless !@inventory[item][:success_message] || @inventory[item][:success_message].empty?
+
+      case getPriceType(item)
+      when :Money      then return _INTL(messages[:success_money]) unless messages[:success_money].empty?
+      when :RedEssence then return _INTL(messages[:success_re]) unless messages[:success_re].empty?
+      when :Coins      then return _INTL(messages[:success_coins]) unless messages[:success_coins].empty?
+      when :AP         then return _INTL(messages[:success_ap]) unless messages[:success_ap].empty?
+      when :Item       then return _INTL(messages[:success_items], getPriceItemName(item)) unless messages[:success_items].empty?
+      end
+      return ""
     end
 
     def getMoney(item)
@@ -196,6 +241,9 @@ module ComplexMartInterface
     end
 
     def getDisplayName(item)
+      return _INTL(@inventory[item][:display_name]) if @inventory[item][:display_name]
+      return _INTL(@inventory[item][:name]) if @inventory[item][:name]
+
       case item[0]
         when :puppet then return _INTL("{1} Puppet Coins", item[1])
         when :coins  then return _INTL("{1} Coins", item[1])
@@ -239,6 +287,8 @@ module ComplexMartInterface
     end
 
     def getName(item)
+      return _INTL(@inventory[item][:name]) if @inventory[item][:name]
+
       case item[0]
         when :puppet  then return _INTL("Puppet Coins")
         when :coins   then return _INTL("Coins")
@@ -258,10 +308,11 @@ module ComplexMartInterface
         when :Coins      then formatter = fancyformatter = "{1} Coins"
         when :AP         then formatter = fancyformatter = "{1} AP"
         when :Item
-          formatter = fancyformatter = "{1} #{getItemName(@inventory[item][:price][:item])}" # first character differentiation todo
+          formatter = fancyformatter = "{1} #{getItemName(@inventory[item][:price][:item])}"
           if [:REDSHARD,:BLUESHARD,:GREENSHARD,:YELLOWSHARD].include?(@inventory[item][:price][:item])
             formatter = formatter.gsub(/ Shard$/, '')
           end
+          formatter = priceinfo[:shortname] if priceinfo[:shortname]
         else                  formatter = fancyformatter = "{1}"
       end
       return _INTL(fancyformatter, pbCommaNumber(price)) if fancy
@@ -305,10 +356,10 @@ module ComplexMartInterface
 
     def getQuantity(item)
       case item[0]
-        when :puppet  then $game_variables[:PuppetCoins]
-        when :coins   then $PokemonGlobal.coins
+        when :puppet  then return $game_variables[:PuppetCoins]
+        when :coins   then return $PokemonGlobal.coins
         when :move    then return 0
-        when :item    then $PokemonBag.pbQuantity(item[1])
+        when :item    then return $PokemonBag.pbQuantity(item[1])
         when :pokemon then return 0
       end
       return 0
@@ -378,7 +429,7 @@ module ComplexMartInterface
           next
         end
         if !@adapter.showQuantity?(item)
-          if !pbConfirm(_INTL(@messages[:purchase_important],itemname,@adapter.formatPrice(price, item, true)))
+          if !pbConfirm(@adapter.getPurchaseMessage(@messages,item,price))
             next
           end
           quantity=1
@@ -388,14 +439,13 @@ module ComplexMartInterface
           maxquantity /= @adapter.getTrueQuantity(item)
           maxafford=(price<=0) ? maxquantity : @adapter.getMoney(item)/price
           maxafford=maxquantity if maxafford>maxquantity
-          quantity=@scene.pbChooseNumber(
-             _INTL(@messages[:choose_quantity],itemname),item,maxafford)
+          quantity=@scene.pbChooseNumber(@adapter.getQuantitySelectMessage(@messages,item),item,maxafford)
           if quantity==0
             next
           end
           trueQuantity = @adapter.getTrueQuantity(item,quantity)
           price*=quantity
-          if !pbConfirm(_INTL(@messages[:purchase_quantity],@adapter.getName(item),trueQuantity,@adapter.formatPrice(price, item, true)))
+          if !pbConfirm(@adapter.getPurchaseMessage(@messages,item,price,trueQuantity))
             next
           end
         end
@@ -441,20 +491,8 @@ module ComplexMartInterface
         if success
           bought = true
           @adapter.setMoney(@adapter.getMoney(item)-price, item)
-          for i in 0...@stock.length
-            stockItem = @stock[i]
-            if @adapter.removeAfterPurchase(stockItem, item)
-              @stock[i]=nil
-            end
-          end
-          @stock.compact!
-          case @adapter.getPriceType(item)
-          when :Money      then pbDisplayPaused(_INTL(@messages[:success_money])) unless @messages[:success_money].empty?
-          when :RedEssence then pbDisplayPaused(_INTL(@messages[:success_re])) unless @messages[:success_re].empty?
-          when :Coins      then pbDisplayPaused(_INTL(@messages[:success_coins])) unless @messages[:success_coins].empty?
-          when :AP         then pbDisplayPaused(_INTL(@messages[:success_ap])) unless @messages[:success_ap].empty?
-          when :Item       then pbDisplayPaused(_INTL(@messages[:success_items], @adapter.getPriceItemName(item))) unless @messages[:success_items].empty?
-          end
+          successMessage = @adapter.getSuccessMessage(@messages, item)
+          pbDisplayPaused(successMessage) unless successMessage.empty?
           if item[0] == :item
             if Rejuv && $Trainer.achievements
               $Trainer.achievements.progress(:itemsBought, trueQuantity)
@@ -468,6 +506,14 @@ module ComplexMartInterface
               end
             end
           end
+
+          for i in 0...@stock.length
+            stockItem = @stock[i]
+            if @adapter.removeAfterPurchase(stockItem, item)
+              @stock[i]=nil
+            end
+          end
+          @stock.compact!
         end
       end
       @scene.pbEndBuyScene
@@ -476,8 +522,9 @@ module ComplexMartInterface
   end
 
   class ComplexPokemonMartScene < PokemonMartScene
-    def initialize(hasPicture)
+    def initialize(hasPicture, clampBottom)
       @hasPicture = hasPicture
+      @clampBottom = clampBottom
     end
 
     def pbDisplayPaused(msg)
@@ -486,6 +533,7 @@ module ComplexMartInterface
         pbSEPlay(pbStringToAudioFile($1))
       end
 
+      # pbSetSystemFont(@sprites["helpwindow"].contents)
       super(msg)
     end
 
@@ -495,16 +543,18 @@ module ComplexMartInterface
         pbSEPlay(pbStringToAudioFile($1))
       end
 
+      # pbSetSystemFont(@sprites["helpwindow"].contents)
       super(msg)
     end
 
-    def pbDisplay(msg)
+    def pbDisplay(msg,brief=false)
       while msg[/(?:\\[Ss][Ee]\[([^\]]*)\])/i]
         msg = $~.pre_match + $~.post_match
         pbSEPlay(pbStringToAudioFile($1))
       end
 
-      super(msg)
+      # pbSetSystemFont(@sprites["helpwindow"].contents)
+      super(msg,brief)
     end
 
     def pbStartBuyOrSellScene(buying,stock,adapter)
@@ -555,7 +605,7 @@ module ComplexMartInterface
       @sprites["moneywindow"].viewport=@viewport
       @sprites["moneywindow"].x=0
       ### MODDED/
-      @sprites["moneywindow"].y=@hasPicture ? Graphics.height-96-96-8 : 0
+      @sprites["moneywindow"].y=@clampBottom ? Graphics.height-96-96-8 : 0
       ### /MODDED
       @sprites["moneywindow"].width=190
       @sprites["moneywindow"].height=96
@@ -632,11 +682,11 @@ module ComplexMartInterface
         end
 
         for type in priceTypes
-          moneywindow.push(_INTL("{1}:\n<r>{2}", getItemName(type), $PokemonBag.pbQuantity(type)))
+          moneywindow.push(_INTL("{1}s:\n<r>{2}", getItemName(type), $PokemonBag.pbQuantity(type)))
         end
 
         @sprites["moneywindow"].height=32 + 64 * moneywindow.size
-        @sprites["moneywindow"].y=Graphics.height-96-@sprites["moneywindow"].height-8 if @hasPicture
+        @sprites["moneywindow"].y=Graphics.height-96-@sprites["moneywindow"].height-8 if @clampBottom
         @sprites["moneywindow"].text=moneywindow.join("\n")
         @sprites["moneywindow"].visible = false if moneywindow.empty?
       end
@@ -704,10 +754,11 @@ module ComplexMartInterface
             ### MODDED/
             locationname = nil
             case item[0]
-              when :puppet then locationname = _INTL("Puppet Coins")
-              when :coins  then locationname = _INTL("Coins")
+              when :puppet  then locationname = _INTL("Puppet Coins")
+              when :coins   then locationname = _INTL("Coins")
               #when :move # Moves have no "in bag" window
-              when :item   then locationname = _INTL("In Bag")
+              when :item    then locationname = _INTL("In Bag")
+              #when :pokemon # Moves have no "in bag" window
             end
 
             if locationname
@@ -779,7 +830,7 @@ module ComplexMartInterface
     end
   end
 
-  def self.pbComplexMart(inventory,hasPicture=false,messages={})
+  def self.pbComplexMart(inventory,hasPicture=false,clampBottom=false,messages={})
     interactMessages = DEFAULT_MESSAGES_INTERACT.merge(messages)
     commands=[]
     cmdBuy=-1
@@ -791,7 +842,7 @@ module ComplexMartInterface
     loop do
       if cmdBuy>=0 && cmd==cmdBuy
         adapter = ComplexPokemonMartAdapter.new(inventory)
-        scene=ComplexPokemonMartScene.new(hasPicture)
+        scene=ComplexPokemonMartScene.new(hasPicture, clampBottom)
         screen=ComplexPokemonMartScreen.new(scene,adapter,messages)
         bought = true if screen.pbBuyScreen
       else
@@ -803,8 +854,8 @@ module ComplexMartInterface
     return bought
   end
 
-  def self.vendorComplexMart(vendorInfo, hasPicture=false)
-    return self.pbComplexMart(vendorInfo[:inventory], hasPicture, vendorInfo.fetch(:messages, {}))
+  def self.vendorComplexMart(vendorInfo, hasPicture=false,clampBottom=false)
+    return self.pbComplexMart(vendorInfo[:inventory], hasPicture, clampBottom, vendorInfo.fetch(:messages, {}))
   end
 end
 
@@ -827,7 +878,7 @@ end
 
   price specifier - one of:
     price: { type: :Money | :RedEssence | :Coins | :AP, amount: amount }
-    price: { type: :Item, item: :ITEMID, [amount: amount] }
+    price: { type: :Item, item: :ITEMID, [amount: amount], [shortname: "name"] }
 
   condition specifier - one of or array of:
     { switch: :SwitchAlias | switchid, is: targetState }
@@ -837,6 +888,16 @@ end
   as
     condition: [conditions...] | condition
 
-  to have the item only be purchasable once, tied to a switch:
+  to have a different message - any of
+    name: "Name"
+    display_name: "Fancy Name"
+    purchase_message: "{1} at price {2}"
+    purchase_message: "{1} x {2} at price {3}"
+    quantity_message: "select quantity of {1}"
+    success_message: "nice"
+
+  to have the item only be purchasable once, tied to a switch or variable or selfswitch - one of:
     switch: :SwitchAlias | switchid
+    var: [:SwitchAlias | switchid, threshold]
+    selfswitch: [map, event, chr]
 =end
