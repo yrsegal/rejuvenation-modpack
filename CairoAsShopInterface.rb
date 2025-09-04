@@ -106,7 +106,9 @@ module ComplexMartInterface
       if @inventory[item][:switch]
         $game_switches[@inventory[item][:switch]] = true if item == purchasedItem
         return $game_switches[@inventory[item][:switch]]
-      elsif item[0] == :item && pbIsImportantItem?(item[1])
+      elsif item[0] == :item && pbIsImportantItem?(item[1]) && $PokemonBag.pbQuantity(item[1]) > 0
+        return true
+      elsif item[0] == :move && $Trainer.tutorlist.length>0 && $Trainer.tutorlist.include?(stockItem[1]) # Is added to move tutors
         return true
       end
 
