@@ -22,6 +22,8 @@ Switches[:DelcattyCrest] = 1775
 
 Switches[:Gym_13] = 295
 
+Variables[:QuestLuckPoison] = 808
+
 module ComplexMartSpecifiers
   VENDOR_DATA = {
     NEO_EAST_GEAREN: {
@@ -288,26 +290,26 @@ module ComplexMartSpecifiers
           success_items: "GOOMATORA: GOOOOOM!"
         },
         inventory: [{ move: :BODYSLAM,
-                      price: { type: :Item, item: :BIGMUSHROOM, amount: 2, shortname: "{1} Shrooms" }},
+                      price: { type: :Item, item: :BIGMUSHROOM, amount: 2 }},
                     { move: :SEEDBOMB,
-                      price: { type: :Item, item: :BIGMUSHROOM, amount: 2, shortname: "{1} Shrooms" }},
+                      price: { type: :Item, item: :BIGMUSHROOM, amount: 2 }},
                     { move: :DRAGONPULSE,
-                      price: { type: :Item, item: :BIGMUSHROOM, amount: 3, shortname: "{1} Shrooms" }},
+                      price: { type: :Item, item: :BIGMUSHROOM, amount: 3 }},
                     { move: :MEGAHORN,
-                      price: { type: :Item, item: :BIGMUSHROOM, amount: 3, shortname: "{1} Shrooms" }},
+                      price: { type: :Item, item: :BIGMUSHROOM, amount: 3 }},
                     { move: :SCORCHINGSANDS,
-                      price: { type: :Item, item: :BIGMUSHROOM, amount: 3, shortname: "{1} Shrooms" }},
+                      price: { type: :Item, item: :BIGMUSHROOM, amount: 3 }},
                     { move: :ZENHEADBUTT,
-                      price: { type: :Item, item: :BIGMUSHROOM, amount: 2, shortname: "{1} Shrooms" }},
+                      price: { type: :Item, item: :BIGMUSHROOM, amount: 2 }},
                     { move: :LIQUIDATION,
-                      price: { type: :Item, item: :BIGMUSHROOM, amount: 3, shortname: "{1} Shrooms" }},
+                      price: { type: :Item, item: :BIGMUSHROOM, amount: 3 }},
                     { move: :MUDDYWATER,
-                      price: { type: :Item, item: :BIGMUSHROOM, amount: 2, shortname: "{1} Shrooms" }},
+                      price: { type: :Item, item: :BIGMUSHROOM, amount: 2 }},
                     { move: :DEFOG,
                       purchase_message: "Give GOOMATORA {2}?",
-                      price: { type: :Item, item: :BIGMUSHROOM, amount: 1, shortname: "{1} Shroom" }},
+                      price: { type: :Item, item: :BIGMUSHROOM, amount: 1 }},
                     { move: :DUALWINGBEAT,
-                      price: { type: :Item, item: :BIGMUSHROOM, amount: 2, shortname: "{1} Shrooms" }}]
+                      price: { type: :Item, item: :BIGMUSHROOM, amount: 2 }}]
       },
       meteor: {
         messages: {
@@ -322,7 +324,7 @@ module ComplexMartSpecifiers
         },
         inventory: [{ move: :DRACOMETEOR,
                       name: "GOoMy mEtEOr",
-                      price: { type: :Item, item: :BALMMUSHROOM, amount: 1, shortname: "{1} Shroom" }}]
+                      price: { type: :Item, item: :BALMMUSHROOM, amount: 1 }}]
       }
     },
     LUCK_TENT: { 
@@ -591,31 +593,263 @@ module ComplexMartSpecifiers
           success_items: "DOXIE: Okie."
         },
         inventory: [{ item: :GREENSHARD, quantity: 10,
-                      price: { type: :Item, item: :BLKPRISM, amount: 3, shortname: "{1} Prisms" }},
+                      price: { type: :Item, item: :BLKPRISM, amount: 3 }},
                     { item: :REDSHARD, quantity: 10,
-                      price: { type: :Item, item: :BLKPRISM, amount: 3, shortname: "{1} Prisms" }},
+                      price: { type: :Item, item: :BLKPRISM, amount: 3 }},
                     { item: :BLUESHARD, quantity: 10,
-                      price: { type: :Item, item: :BLKPRISM, amount: 3, shortname: "{1} Prisms" }},
+                      price: { type: :Item, item: :BLKPRISM, amount: 3 }},
                     { item: :YELLOWSHARD, quantity: 10,
-                      price: { type: :Item, item: :BLKPRISM, amount: 3, shortname: "{1} Prisms" }},
+                      price: { type: :Item, item: :BLKPRISM, amount: 3 }},
                     { item: :NUGGET, quantity: 4,
-                      price: { type: :Item, item: :BLKPRISM, amount: 5, shortname: "{1} Prisms" }},
+                      price: { type: :Item, item: :BLKPRISM, amount: 5 }},
                     { item: :PEARLSTRING, quantity: 3,
-                      price: { type: :Item, item: :BLKPRISM, amount: 8, shortname: "{1} Prisms" }},
+                      price: { type: :Item, item: :BLKPRISM, amount: 8 }},
                     { item: :CELLIMPRINT, quantity: 2,
-                      price: { type: :Item, item: :BLKPRISM, amount: 10, shortname: "{1} Prisms" }},
+                      price: { type: :Item, item: :BLKPRISM, amount: 10 }},
                     { item: :GLITTERBALL, quantity: 3,
-                      price: { type: :Item, item: :BLKPRISM, amount: 15, shortname: "{1} Prisms" }}]
+                      price: { type: :Item, item: :BLKPRISM, amount: 15 }}]
+      },
+      doxine: {
+        messages: {
+          speech: "DOXINE: We sell rare Pokemon found fresh in desert!",
+          come_again: "DOXINE: Maybe! Maybe!",
+          anything_else: "DOXINE: Are you interested? It is rare!",
+
+          choose_quantity: "\\se[802Cry:80:100]DOXIE: {1}? How many?",
+          purchase_quantity: "I will take {3} for {1} {2}s. Is ok?",
+
+          no_items: "DOXINE: NOT ENOUGH! NOT ENOUGH!",
+          success_items: "DOXINE: Wee! A deal has been made! Take it!"
+        },
+        inventory: [{ pokemon: :JANGMOO, level: 30, form: 1, move: [:BREAKINGSWIPE, :BULLDOZE],
+                      price: { type: :Item, item: :BLKPRISM, amount: 13 },
+                      var: [1, 1]}]
+      }
+    },
+    NIGHTMARE: {
+      converter: {
+        messages: {
+          speech: "CLERK: Hey. Convert currency? I hear it's really fun...",
+          come_again: "CLERK: Sksk, okay bye!",
+          anything_else: "CLERK: Any more...?",
+
+          choose_quantity: "CLERK: And how many {1}?",
+          purchase_quantity: "CLERK: {2} {1} will be {3}...",
+
+          full_puppet: "CLERK: You're so full of coins, though...",
+
+          no_coins: "CLERK: NOT ENOUGH. NOT ENOUGH!",
+          success_coins: "CLERK: Excellent, here are your Puppet Coins... You currently have \\v[597] now."
+        },
+        inventory: [{ puppet: 500,
+                      price: { type: :Coins, amount: 1000 }},
+                    { puppet: 3500,
+                      price: { type: :Coins, amount: 5000 }},
+                    { puppet: 8500,
+                      price: { type: :Coins, amount: 10000 }}]
       }
     }
   }
 
-  ##### TODO
-  # Map 434 luck's tent - event 53 page 2, convert to shop
-  # Map 230 chrisola hotel - events 49, 57, 58, 60, convert to shop
-  # Map 360 gdc arcade - events 24, 28, 39, convert to shop
-  # Map 85 nightmare casino - events 35, 36, convert to shop
+  CAIRO_SHOP = [
+    { item: :JOYSCENT,
+      price: { type: :Money, amount: 5000 },
+      quantity: 10},
+    { item: :EXCITESCENT,
+      price: { type: :Money, amount: 8500 },
+      quantity: 10},
+    { item: :VIVIDSCENT,
+      price: { type: :Money, amount: 11000 },
+      quantity: 10},
+    { item: :RIFTFRAGMENT,
+      price: { type: :Money, amount: 4956 },
+      quantity: 5},
 
+    { item: :BIKEV,
+      price: { type: :RedEssence, amount: 250 },
+      condition: { switch: :Gym_15, is: false },
+      switch: :BikeVoucher},
+    { item: :BIKEV,
+      price: { type: :RedEssence, amount: 500 },
+      condition: { switch: :Gym_15, is: true },
+      switch: :BikeVoucher},
+
+    { item: :NOCCREST,
+      price: { type: :RedEssence, amount: 2000 },
+      switch: :NoctowlCrest},
+    { item: :SAGECREST,
+      price: { type: :RedEssence, amount: 2000 },
+      switch: :SimisageCrest},
+    { item: :SEARCREST,
+      price: { type: :RedEssence, amount: 2000 },
+      switch: :SimisearCrest},
+    { item: :POURCREST,
+      price: { type: :RedEssence, amount: 2000 },
+      switch: :SimipourCrest},
+
+    { item: :LUXCREST,
+      price: { type: :RedEssence, amount: 5000 },
+      condition: { switch: :Gym_8, is: true },
+      switch: :LuxrayCrest},
+    { item: :DRUDDICREST,
+      price: { type: :RedEssence, amount: 5000 },
+      condition: { switch: :Gym_8, is: true },
+      switch: :DruddigonCrest},
+    { item: :THIEVCREST,
+      price: { type: :RedEssence, amount: 5000 },
+      condition: { switch: :Gym_8, is: true },
+      switch: :ThievulCrest},
+    { item: :SAMUCREST,
+      price: { type: :RedEssence, amount: 5000 },
+      condition: { switch: :Gym_8, is: true },
+      switch: :SamurottCrest},
+
+    { item: :BOLTCREST,
+      price: { type: :RedEssence, amount: 9000 },
+      condition: { switch: :Gym_13, is: true },
+      switch: :BoltundCrest},
+    { item: :PROBOCREST,
+      price: { type: :RedEssence, amount: 9000 },
+      condition: { switch: :Gym_13, is: true },
+      switch: :ProbopassCrest},
+    { item: :SWACREST,
+      price: { type: :RedEssence, amount: 9000 },
+      condition: { switch: :Gym_13, is: true },
+      switch: :SwalotCrest},
+    { item: :CINCCREST,
+      price: { type: :RedEssence, amount: 9000 },
+      condition: { switch: :Gym_13, is: true },
+      switch: :CinccinoCrest},
+
+    { item: :DELCREST,
+      price: { type: :RedEssence, amount: 14000 },
+      condition: { switch: :Gym_15, is: true },
+      switch: :DelcattyCrest},
+  ]
+  
+  GAME_CORNER = {
+    tms: [
+      { item: :TM70,
+        price: { type: :Coins, amount: 1000 },
+        switch: :TM70},
+      { item: :TM10,
+        price: { type: :Coins, amount: 5000 },
+        switch: :TM10}
+    ],
+    gearenPokemon: [
+      { pokemon: :SEEL, move: :STOCKPILE,
+        price: { type: :Coins, amount: 1000 }},
+      { pokemon: :SPOINK, move: :FUTURESIGHT,
+        price: { type: :Coins, amount: 4000 }},
+      { pokemon: :MARACTUS, move: :SPIKES,
+        price: { type: :Coins, amount: 5000 }},
+      { pokemon: :HELIOPTILE, move: :GLARE,
+        price: { type: :Coins, amount: 6500 }}
+    ],
+    ap: [
+      [{ item: :GOLDENAXE,
+         price: { type: :AP, amount: 10 }},
+       { item: :GOLDENHAMMER,
+         price: { type: :AP, amount: 10 }},
+       { item: :GOLDENLANTERN,
+         price: { type: :AP, amount: 10 }},
+       { item: :GOLDENSURFBOARD,
+         price: { type: :AP, amount: 15 }},
+       { item: :GOLDENGAUNTLET,
+         price: { type: :AP, amount: 15 }},
+       { item: :GOLDENSCUBAGEAR,
+         price: { type: :AP, amount: 15 }},
+       { item: :GOLDENWINGS,
+         price: { type: :AP, amount: 20 }},
+       { item: :GOLDENJETPACK,
+         price: { type: :AP, amount: 20 }},
+       { item: :GOLDENDRIFTBOARD,
+         price: { type: :AP, amount: 20 }},
+       { item: :GOLDENCLAWS,
+         price: { type: :AP, amount: 20 }},
+       { item: :EXPALL,
+         price: { type: :AP, amount: 30 },
+         condition: proc { !$PokemonBag.pbHasItem?(:EXPALLOFF) },
+         switch: :Exp_All_On },
+       { item: :HPCARD,
+         price: { type: :AP, amount: 10 }},
+       { item: :ATKCARD,
+         price: { type: :AP, amount: 10 }},
+       { item: :DEFCARD,
+         price: { type: :AP, amount: 10 }},
+       { item: :SPATKCARD,
+         price: { type: :AP, amount: 10 }},
+       { item: :SPDEFCARD,
+         price: { type: :AP, amount: 10 }},
+       { item: :SPEEDCARD,
+         price: { type: :AP, amount: 10 }},
+       { item: :TM56,
+         price: { type: :AP, amount: 5 },
+         condition: { switch: :Gym_4, is: true },
+         switch: :TM56},
+       { item: :TM47,
+         price: { type: :AP, amount: 5 },
+         condition: { switch: :Gym_4, is: true },
+         switch: :TM47},
+       { item: :ABILITYCAPSULE,
+         price: { type: :AP, amount: 3 }},
+       { item: :PPUP,
+         price: { type: :AP, amount: 6 }}],
+
+      [{ item: :SERIOUSMINT,
+         price: { type: :AP, amount: 3 }},
+       { item: :LONELYMINT,
+         price: { type: :AP, amount: 3 }},
+       { item: :ADAMANTMINT,
+         price: { type: :AP, amount: 3 }},
+       { item: :NAUGHTYMINT,
+         price: { type: :AP, amount: 3 }},
+       { item: :BRAVEMINT,
+         price: { type: :AP, amount: 3 }},
+       { item: :BOLDMINT,
+         price: { type: :AP, amount: 3 }},
+       { item: :IMPISHMINT,
+         price: { type: :AP, amount: 3 }},
+       { item: :LAXMINT,
+         price: { type: :AP, amount: 3 }},
+       { item: :RELAXEDMINT,
+         price: { type: :AP, amount: 3 }},
+       { item: :MODESTMINT,
+         price: { type: :AP, amount: 3 }},
+       { item: :MILDMINT,
+         price: { type: :AP, amount: 3 }}, 
+       { item: :RASHMINT,
+         price: { type: :AP, amount: 3 }},
+       { item: :QUIETMINT,
+         price: { type: :AP, amount: 3 }},
+       { item: :CALMMINT,
+         price: { type: :AP, amount: 3 }},
+       { item: :GENTLEMINT,
+         price: { type: :AP, amount: 3 }},
+       { item: :CAREFULMINT,
+         price: { type: :AP, amount: 3 }},
+       { item: :SASSYMINT,
+         price: { type: :AP, amount: 3 }},
+       { item: :TIMIDMINT,
+         price: { type: :AP, amount: 3 }},
+       { item: :HASTYMINT,
+         price: { type: :AP, amount: 3 }},
+       { item: :JOLLYMINT,
+         price: { type: :AP, amount: 3 }},
+       { item: :NAIVEMINT,
+         price: { type: :AP, amount: 3 }}]
+    ],
+    gdcPokemon: [
+      { pokemon: :ROOKIDEE,
+        price: { type: :Coins, amount: 3000 }},
+      { pokemon: :MIENFOO, move: :KNOCKOFF,
+        price: { type: :Coins, amount: 4000 }},
+      { pokemon: :DURANT, move: :BATONPASS,
+        price: { type: :Coins, amount: 7500 }},
+      { pokemon: :AXEW, move: :NIGHTSLASH,
+        price: { type: :Coins, amount: 9000 }}
+    ]
+  }
 
   VENDORS = {
     19 => { # Neo East Gearen
@@ -716,85 +950,29 @@ module ComplexMartSpecifiers
       ], 
       46 => [ # Macbeth
         [:Script, 'ComplexMartSpecifiers.mart(:LUCK_TENT,:macbeth)']
+      ],
+      [53, 2] => [ # Doxine, page 2 (jangmo-o shop)
+        [:ControlVariable, 1, :[]=, :Constant, 0],
+        [:ConditionalBranch, :Script, 'ComplexMartSpecifiers.mart(:LUCK_TENT,:doxine)'],
+          [:ShowText, "DOXINE: Thank you for patronage! Thank you! Contract complete!"],
+          [:CallCommonEvent, 110], # QuestComplete! (norm)
+          [:Script, "completeQuest(:PoisonLuck)"],
+          [:CallCommonEvent, 109], # QuestCompleteRem
+          [:ChangeScreenColorTone, Tone.new(-255,-255,-255,0), 20],
+          [:Wait, 20],
+          [:ControlVariable, :QuestLuckPoison, :[]=, :Constant, 4],
+          [:ChangeScreenColorTone, Tone.new(-21,-21,-21,0), 20],
+          [:Wait, 20],
+        :Done
+      ]
+    },
+    85 => { # Nightmare Toy Box
+      36 => [ # Currency Converter
+        [:Script, 'ComplexMartSpecifiers.mart(:NIGHTMARE,:converter)']
       ]
     }
   }
 
-  CAIRO_SHOP = [
-    { item: :JOYSCENT,
-      price: { type: :Money, amount: 5000 },
-      quantity: 10},
-    { item: :EXCITESCENT,
-      price: { type: :Money, amount: 8500 },
-      quantity: 10},
-    { item: :VIVIDSCENT,
-      price: { type: :Money, amount: 11000 },
-      quantity: 10},
-    { item: :RIFTFRAGMENT,
-      price: { type: :Money, amount: 4956 },
-      quantity: 5},
-
-    { item: :BIKEV,
-      price: { type: :RedEssence, amount: 250 },
-      condition: { switch: :Gym_15, is: false },
-      switch: :BikeVoucher},
-    { item: :BIKEV,
-      price: { type: :RedEssence, amount: 500 },
-      condition: { switch: :Gym_15, is: true },
-      switch: :BikeVoucher},
-
-    { item: :NOCCREST,
-      price: { type: :RedEssence, amount: 2000 },
-      switch: :NoctowlCrest},
-    { item: :SAGECREST,
-      price: { type: :RedEssence, amount: 2000 },
-      switch: :SimisageCrest},
-    { item: :SEARCREST,
-      price: { type: :RedEssence, amount: 2000 },
-      switch: :SimisearCrest},
-    { item: :POURCREST,
-      price: { type: :RedEssence, amount: 2000 },
-      switch: :SimipourCrest},
-
-    { item: :LUXCREST,
-      price: { type: :RedEssence, amount: 5000 },
-      condition: { switch: :Gym_8, is: true },
-      switch: :LuxrayCrest},
-    { item: :DRUDDICREST,
-      price: { type: :RedEssence, amount: 5000 },
-      condition: { switch: :Gym_8, is: true },
-      switch: :DruddigonCrest},
-    { item: :THIEVCREST,
-      price: { type: :RedEssence, amount: 5000 },
-      condition: { switch: :Gym_8, is: true },
-      switch: :ThievulCrest},
-    { item: :SAMUCREST,
-      price: { type: :RedEssence, amount: 5000 },
-      condition: { switch: :Gym_8, is: true },
-      switch: :SamurottCrest},
-
-    { item: :BOLTCREST,
-      price: { type: :RedEssence, amount: 9000 },
-      condition: { switch: :Gym_13, is: true },
-      switch: :BoltundCrest},
-    { item: :PROBOCREST,
-      price: { type: :RedEssence, amount: 9000 },
-      condition: { switch: :Gym_13, is: true },
-      switch: :ProbopassCrest},
-    { item: :SWACREST,
-      price: { type: :RedEssence, amount: 9000 },
-      condition: { switch: :Gym_13, is: true },
-      switch: :SwalotCrest},
-    { item: :CINCCREST,
-      price: { type: :RedEssence, amount: 9000 },
-      condition: { switch: :Gym_13, is: true },
-      switch: :CinccinoCrest},
-
-    { item: :DELCREST,
-      price: { type: :RedEssence, amount: 14000 },
-      condition: { switch: :Gym_15, is: true },
-      switch: :DelcattyCrest},
-  ]
 
   def self.pbCairoMart
     ComplexMartInterface.pbComplexMart(CAIRO_SHOP, true, true, {
@@ -819,12 +997,72 @@ module ComplexMartSpecifiers
   def self.mart(location, key, hasPicture=false, clampBottom=false)
     return ComplexMartInterface.vendorComplexMart(VENDOR_DATA[location][key], hasPicture, clampBottom)
   end
+
+  def self.coins(mapid)
+    if mapid == 85
+      messages = {
+        speech: "CLERK: Would you like to buy some coins?",
+        come_again: "CLERK: ...",
+        anything_else: "CLERK: Would you like to buy some coins?",
+
+        choose_quantity: "CLERK: And how many {1}...",
+        purchase_quantity: "CLERK: {2} {1}... {3}...",
+
+        full_coins: "CLERK: Your Coin Case is too full...",
+
+        no_money: "CLERK: No cash, no service...",
+
+        success_money: "CLERK: Thank you..."
+      }
+    else
+      messages = {
+        speech: "Would you like to buy some coins?",
+        come_again: "Enjoy the games!",
+        anything_else: "Would you like to buy some coins?",
+
+        choose_quantity: "And how many {1} would you like?",
+        purchase_quantity: "You want {2} {1}. That'll be {3}. OK?",
+
+        no_money: "I'm afraid you don't have the cash. Please come back soon!",
+
+        success_money: "Thank you very much!"
+      }
+    end
+
+    return ComplexMartInterface.pbComplexMart([{coins: 50, price: { type: :Money, amount: 1000 }}], false, false, messages)
+  end
+end
+
+def gameCornerShop(index)
+  case index
+  when 0
+    ComplexMartInterface.pbComplexMart(ComplexMartSpecifiers::GAME_CORNER[:tms], false, false, {
+      speech: "We exchange your coins for prizes."
+    })
+  when 1
+    ComplexMartInterface.pbComplexMart(ComplexMartSpecifiers::GAME_CORNER[:gearenPokemon], false, false, {
+      speech: "We exchange your coins for prizes."
+    })
+  when 2
+    ComplexMartInterface.pbMultiComplexMart(ComplexMartSpecifiers::GAME_CORNER[:ap], [_INTL("AP Shop"), _INTL("Mint Shop")], false, false, {
+      speech: "We exchange your achievement points for prizes."
+    })
+  when 3
+    ComplexMartInterface.pbComplexMart(ComplexMartSpecifiers::GAME_CORNER[:gdcPokemon], false, false, {
+      speech: "We exchange your coins for prizes."
+    })
+  end
 end
 
 InjectionHelper.defineMapPatch(-1) { |map, mapid|
   if ComplexMartSpecifiers::VENDORS[mapid]
     for evtid, script in ComplexMartSpecifiers::VENDORS[mapid]
-      map.events[evtid].patch(:complexmart) { |page|
+      if evtid.is_a?(Array)
+        patchTarget = map.events[evtid[0]].pages[evtid[1]-1]
+      else
+        patchTarget = map.events[evtid]
+      end
+      patchTarget.patch(:complexmart) { |page|
 
         textMatches = !page.lookForAll([:ShowText, /\\ch\[/]).empty? || !page.lookForAll([:ShowTextContinued, /\\ch\[/]).empty?
 
@@ -848,6 +1086,21 @@ InjectionHelper.defineMapPatch(-1) { |map, mapid|
       }
     end
   end
+}
+
+
+[[85, 35], [230, 58], [260, 29]].each { |mapid, evtid| # Coin sellers in Nightmare Toy Box, Chrisola Hotel, and GDC Arcade
+  InjectionHelper.defineMapPatch(mapid, evtid) { |event|
+    event.patch(:coin_seller_interface) { |page|
+      matched = page.lookForSequence([:ShowText, /^Coins can be purchased at 50 for \$1000/])
+      if matched
+        page.insertBefore(matched,
+          [:Script, "ComplexMartSpecifiers.coins(#{mapid})"],
+          :ExitEventProcessing)
+        next true
+      end
+    }
+  }
 }
 
 InjectionHelper.defineMapPatch(434, 28) { |event| # Doxie

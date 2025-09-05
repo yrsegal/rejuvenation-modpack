@@ -10,6 +10,7 @@ module ComplexMartInterface
 
   DEFAULT_MESSAGES_MART = {
     no_money: "You don't have enough money.",
+    no_puppet: "You don't have enough Puppet Coins.",
     no_coins: "You don't have enough Coins.",
     no_ap: "You don't have enough AP.",
     no_re: "You don't have enough Red Essence.",
@@ -25,6 +26,7 @@ module ComplexMartInterface
 
     success_money: "Here you are!\nThank you!",
     success_coins: "Here you are!\nThank you!",
+    success_puppet: "Here you are!\nThank you!",
     success_ap: "Here you are!\nThank you!",
     success_re: "Here you are!\nThank you!",
     success_items: "Here you are!\nThank you!",
@@ -33,24 +35,39 @@ module ComplexMartInterface
     premier_many: "I'll throw in {1} Premier Balls, too."
   }
 
+  DEFAULT_SHORTNAMES = pbHashForwardizer({
+    "{1} Shroom" => [:TINYMUSHROOM,:BIGMUSHROOM,:BALMMUSHROOM],
+    "{1} Prism" => [:BLKPRISM],
+    "{1} Red" => [:REDSHARD],
+    "{1} Blue" => [:BLUESHARD],
+    "{1} Green" => [:GREENSHARD],
+    "{1} Yellow" => [:YELLOWSHARD]
+  })
+
   def self.evaluateConditions(conditions)
     for condition in conditions
-      if condition[:var]
-        state = $game_variables[condition[:var]]
-        if condition[:is].is_a?(Proc) && !condition[:is].call(state)
-          return false
-        elsif condition[:is].is_a?(Symbol) && !state.send(condition[:is], condition[:than])
+      if condition.is_a?(Proc)
+        if !condition.call
           return false
         end
-      elsif condition[:switch]
-        state = $game_switches[condition[:switch]]
-        if state != condition[:is]
-          return false
-        end
-      elsif condition[:selfswitch]
-        state = $game_self_switches[[condition[:map],condition[:event],condition[:selfswitch]]]
-        if state != condition[:is]
-          return false
+      else
+        if condition[:var]
+          state = $game_variables[condition[:var]]
+          if condition[:is].is_a?(Proc) && !condition[:is].call(state)
+            return false
+          elsif condition[:is].is_a?(Symbol) && !state.send(condition[:is], condition[:than])
+            return false
+          end
+        elsif condition[:switch]
+          state = $game_switches[condition[:switch]]
+          if state != condition[:is]
+            return false
+          end
+        elsif condition[:selfswitch]
+          state = $game_self_switches[[condition[:map],condition[:event],condition[:selfswitch]]]
+          if state != condition[:is]
+            return false
+          end
         end
       end
     end
@@ -90,8 +107,11 @@ module ComplexMartInterface
           stockItem = [it, stockInfo[it]] if stockInfo[it]
         }
         next unless stockItem
+
+        next if stockItem[0] == :item && pbIsImportantItem?(stockItem[1]) && $PokemonBag.pbHasItem?(stockItem[1])
+
         stockItem.push(stockInfo.fetch(:quantity, 1)) if stockItem[0] == :item
-        stockItem.push(stockInfo[:move], stockInfo.fetch(:form, 0)) if stockItem[0] == :pokemon
+        stockItem.push(stockInfo.fetch(:level, 10), stockInfo[:move], stockInfo.fetch(:form, 0)) if stockItem[0] == :pokemon
 
         next if stockItem[0] == :move && $Trainer.tutorlist.length>0 && $Trainer.tutorlist.include?(stockItem[1])
 
@@ -105,6 +125,12 @@ module ComplexMartInterface
           end
         else
           @priceTypes.push(stockInfo[:price][:type])
+        end
+
+        if stockItem[0] == :puppet
+          @priceTypes.push(:PuppetCoins)
+        elsif stockItem[0] == :coins
+          @priceTypes.push(:Coins)
         end
       end
 
@@ -129,7 +155,7 @@ module ComplexMartInterface
       elsif @inventory[item][:var]
         varid, value = @inventory[item][:var]
         $game_variables[varid] = value if item == purchasedItem && $game_variables[varid] < value
-        return $game_switches[varid] >= value
+        return $game_variables[varid] >= value
       elsif @inventory[item][:selfswitch]
         key = @inventory[item][:selfswitch]
         $game_self_switches[key] = true if item == purchasedItem
@@ -167,8 +193,8 @@ module ComplexMartInterface
     # Added for complex
     def getQuantitySelectMessage(messages, item)
       message = @inventory[item].fetch(:quantity_message, messages[:choose_quantity])
-      return _INTL(@inventory[item][:quantity_message],getDisplayName(item)) if @inventory[item][:quantity_message]
-      return _INTL(messages[:choose_quantity],getDisplayName(item))
+      return _INTL(@inventory[item][:quantity_message],getName(item)) if @inventory[item][:quantity_message]
+      return _INTL(messages[:choose_quantity],getName(item))
     end
 
     # Added for complex
@@ -176,32 +202,35 @@ module ComplexMartInterface
       return _INTL(@inventory[item][:success_message]) unless !@inventory[item][:success_message] || @inventory[item][:success_message].empty?
 
       case getPriceType(item)
-      when :Money      then return _INTL(messages[:success_money]) unless messages[:success_money].empty?
-      when :RedEssence then return _INTL(messages[:success_re]) unless messages[:success_re].empty?
-      when :Coins      then return _INTL(messages[:success_coins]) unless messages[:success_coins].empty?
-      when :AP         then return _INTL(messages[:success_ap]) unless messages[:success_ap].empty?
-      when :Item       then return _INTL(messages[:success_items], getPriceItemName(item)) unless messages[:success_items].empty?
+      when :Money       then return _INTL(messages[:success_money]) unless messages[:success_money].empty?
+      when :RedEssence  then return _INTL(messages[:success_re]) unless messages[:success_re].empty?
+      when :Coins       then return _INTL(messages[:success_coins]) unless messages[:success_coins].empty?
+      when :PuppetCoins then return _INTL(messages[:success_coins]) unless messages[:success_coins].empty?
+      when :AP          then return _INTL(messages[:success_ap]) unless messages[:success_ap].empty?
+      when :Item        then return _INTL(messages[:success_items], getPriceItemName(item)) unless messages[:success_items].empty?
       end
       return ""
     end
 
     def getMoney(item)
       case getPriceType(item)
-      when :Money      then return $Trainer.money
-      when :RedEssence then return $game_variables[:RedEssence]
-      when :Coins      then return $PokemonGlobal.coins
-      when :AP         then return $game_variables[:APPoints]
-      when :Item       then return $PokemonBag.pbQuantity(@inventory[item][:price][:item])
+      when :Money       then return $Trainer.money
+      when :RedEssence  then return $game_variables[:RedEssence]
+      when :Coins       then return $PokemonGlobal.coins
+      when :PuppetCoins then return $game_variables[:PuppetCoins]
+      when :AP          then return $game_variables[:APPoints]
+      when :Item        then return $PokemonBag.pbQuantity(@inventory[item][:price][:item])
       end
       return 0
     end
 
     def setMoney(value, item)
       case getPriceType(item)
-      when :Money      then $Trainer.money = value
-      when :RedEssence then $game_variables[:RedEssence] = value
-      when :Coins      then $PokemonGlobal.coins = value
-      when :AP         then $game_variables[:APPoints] = value
+      when :Money       then $Trainer.money = value
+      when :RedEssence  then $game_variables[:RedEssence] = value
+      when :Coins       then $PokemonGlobal.coins = value
+      when :PuppetCoins then $game_variables[:PuppetCoins] = value
+      when :AP          then $game_variables[:APPoints] = value
       when :Item
         itemKey = @inventory[item][:price][:item]
         current = $PokemonBag.pbQuantity(itemKey)
@@ -221,14 +250,14 @@ module ComplexMartInterface
       return "Graphics/Icons/itemBack" if !item
       iconitem = nil
       case item[0]
-        when :puppet  then iconitem = :PUPPETCOIN
+        when :puppet  then return "#{__dir__[Dir.pwd.length+1..]}/ShopIcons/puppetcoin"
         when :coins   then iconitem = :COINCASE
         when :move
           type = $cache.moves[item[1]].type
-          return sprintf("#{__dir__[Dir.pwd.length+1..]}/TextureOverrides/TRs/%s",type.downcase)
+          return sprintf("#{__dir__[Dir.pwd.length+1..]}/ShopIcons/%s",type.downcase)
         when :item    then iconitem = item[1]
         when :pokemon 
-          pkmn = PokeBattle_Pokemon.new(item[1],10,$Trainer,false,item[3])
+          pkmn = PokeBattle_Pokemon.new(item[1],item[2],$Trainer,false,item[4])
           pkmn.makeNotShiny
           pkmn.makeMale
           return pkmn
@@ -303,19 +332,24 @@ module ComplexMartInterface
     def formatPrice(price, item, fancy = false)
       priceinfo = @inventory[item][:price]
       case priceinfo[:type]
-        when :Money      then formatter = fancyformatter = "$ {1}"
-        when :RedEssence then formatter,  fancyformatter = "{1} RE", "{1} Red Essence"
-        when :Coins      then formatter = fancyformatter = "{1} Coins"
-        when :AP         then formatter = fancyformatter = "{1} AP"
+        when :Money       then formatter = fancyformatter = fancyplural = "$ {1}"
+        when :RedEssence  then formatter,  fancyformatter,  fancyplural = "{1} RE", "{1} Red Essence", "{1} Red Essence"
+        when :Coins       then formatter,  fancyformatter,  fancyplural = "{1} C", "{1} Coin", "{1} Coins"
+        when :PuppetCoins then formatter,  fancyformatter,  fancyplural = "{1} PC", "{1} Puppet Coin", "{1} Puppet Coins"
+        when :AP          then formatter = fancyformatter = fancyplural = "{1} AP"
         when :Item
-          formatter = fancyformatter = "{1} #{getItemName(@inventory[item][:price][:item])}"
-          if [:REDSHARD,:BLUESHARD,:GREENSHARD,:YELLOWSHARD].include?(@inventory[item][:price][:item])
-            formatter = formatter.gsub(/ Shard$/, '')
+          formatter = fancyformatter = "{1} #{getItemName(priceinfo[:item])}"
+          fancyplural = fancyformatter + "s"
+          formatter = DEFAULT_SHORTNAMES[priceinfo[:item]] if DEFAULT_SHORTNAMES[priceinfo[:item]]
+          if price > 1
+            formatter += "s"
           end
+
           formatter = priceinfo[:shortname] if priceinfo[:shortname]
-        else                  formatter = fancyformatter = "{1}"
+        else
+          formatter = fancyformatter = fancyplural = "{1}"
       end
-      return _INTL(fancyformatter, pbCommaNumber(price)) if fancy
+      return _INTL(price == 1 ? fancyformatter : fancyplural, pbCommaNumber(price)) if fancy
       return _INTL(formatter,price)
     end
 
@@ -331,8 +365,22 @@ module ComplexMartInterface
         when :move    then return getMoveDesc(item[1])
         when :item    then return $cache.items[item[1]].desc
         when :pokemon 
-          if item[2]
-            return _INTL("Obtain the {1} Pokémon. Comes knowing {2}.", $cache.pkmn[item[1]].kind, getMoveDesc(item[2]))
+          if item[3]
+            if item[3].is_a?(Array)
+              movenames = item[3][0...4].map(&method(:getMoveName))
+              if movenames.size > 2
+                movename = movenames[0...(movenames.size - 1)].join(", ") + ", and " + movenames[-1]
+              elsif movenames.size > 1
+                movename = movenames.join(" and ")
+              elsif !movenames.empty?
+                movename = movenames[0]
+              else
+                return _INTL("Obtain the {1} Pokémon.", $cache.pkmn[item[1]].kind)
+              end
+            else
+              movename = getMoveName(item[3])
+            end
+            return _INTL("Obtain the {1} Pokémon. Comes knowing {2}.", $cache.pkmn[item[1]].kind, movename)
           else
             return _INTL("Obtain the {1} Pokémon.", $cache.pkmn[item[1]].kind)
           end
@@ -343,13 +391,19 @@ module ComplexMartInterface
 
     def addItem(item)
       case item[0]
-        when :puppet  then $game_variables[:PuppetCoins] += item[1]
-        when :coins   then $PokemonGlobal.coins += item[1]
+        when :puppet  then $game_variables[:PuppetCoins] += 1
+        when :coins   then $PokemonGlobal.coins += 1
         #when :move # Handled specially.
         when :item    then $PokemonBag.pbStoreItem(item[1])
         when :pokemon
-          pkmn = PokeBattle_Pokemon.new(item[1],10,$Trainer,true,item[3])
-          pkmn.pbLearnMove(item[2]) if item[2]
+          pkmn = PokeBattle_Pokemon.new(item[1],item[2],$Trainer,true,item[4])
+          if item[3]
+            if item[3].is_a?(Array)
+              item[3].each(&pkmn.method(:pbLearnMove))
+            else
+              pkmn.pbLearnMove(item[3])
+            end
+          end
           Kernel.pbAddPokemon(pkmn)
       end
     end
@@ -367,8 +421,8 @@ module ComplexMartInterface
 
     def removeItem(item)
       case item[0]
-        when :puppet then $game_variables[:PuppetCoins] -= item[1]
-        when :coins  then $PokemonGlobal.coins -= item[1]
+        when :puppet then $game_variables[:PuppetCoins] -= 1
+        when :coins  then $PokemonGlobal.coins -= 1
         #when :move # This never occurs.
         when :item   then return $PokemonBag.pbDeleteItem(item[1])
         #when :pokemon # This never occurs.
@@ -420,11 +474,12 @@ module ComplexMartInterface
         price=@adapter.getPrice(item)
         if @adapter.getMoney(item)<price
           case @adapter.getPriceType(item)
-          when :Money      then pbDisplayPaused(_INTL(@messages[:no_money])) unless @messages[:no_money].empty?
-          when :RedEssence then pbDisplayPaused(_INTL(@messages[:no_re])) unless @messages[:no_re].empty?
-          when :Coins      then pbDisplayPaused(_INTL(@messages[:no_coins])) unless @messages[:no_coins].empty?
-          when :AP         then pbDisplayPaused(_INTL(@messages[:no_ap])) unless @messages[:no_ap].empty?
-          when :Item       then pbDisplayPaused(_INTL(@messages[:no_items], @adapter.getPriceItemName(item))) unless @messages[:no_items].empty?
+          when :Money       then pbDisplayPaused(_INTL(@messages[:no_money])) unless @messages[:no_money].empty?
+          when :RedEssence  then pbDisplayPaused(_INTL(@messages[:no_re])) unless @messages[:no_re].empty?
+          when :Coins       then pbDisplayPaused(_INTL(@messages[:no_coins])) unless @messages[:no_coins].empty?
+          when :PuppetCoins then pbDisplayPaused(_INTL(@messages[:no_coins])) unless @messages[:no_puppet].empty?
+          when :AP          then pbDisplayPaused(_INTL(@messages[:no_ap])) unless @messages[:no_ap].empty?
+          when :Item        then pbDisplayPaused(_INTL(@messages[:no_items], @adapter.getPriceItemName(item))) unless @messages[:no_items].empty?
           end
           next
         end
@@ -451,11 +506,12 @@ module ComplexMartInterface
         end
         if @adapter.getMoney(item)<price
           case @adapter.getPriceType(item)
-          when :Money      then pbDisplayPaused(_INTL(@messages[:no_money])) unless @messages[:no_money].empty?
-          when :RedEssence then pbDisplayPaused(_INTL(@messages[:no_re])) unless @messages[:no_re].empty?
-          when :Coins      then pbDisplayPaused(_INTL(@messages[:no_coins])) unless @messages[:no_coins].empty?
-          when :AP         then pbDisplayPaused(_INTL(@messages[:no_ap])) unless @messages[:no_ap].empty?
-          when :Item       then pbDisplayPaused(_INTL(@messages[:no_items], @adapter.getPriceItemName(item))) unless @messages[:no_items].empty?
+          when :Money       then pbDisplayPaused(_INTL(@messages[:no_money])) unless @messages[:no_money].empty?
+          when :RedEssence  then pbDisplayPaused(_INTL(@messages[:no_re])) unless @messages[:no_re].empty?
+          when :Coins       then pbDisplayPaused(_INTL(@messages[:no_coins])) unless @messages[:no_coins].empty?
+          when :PuppetCoins then pbDisplayPaused(_INTL(@messages[:no_coins])) unless @messages[:no_puppet].empty?
+          when :AP          then pbDisplayPaused(_INTL(@messages[:no_ap])) unless @messages[:no_ap].empty?
+          when :Item        then pbDisplayPaused(_INTL(@messages[:no_items], @adapter.getPriceItemName(item))) unless @messages[:no_items].empty?
           end
           next
         end
@@ -666,6 +722,11 @@ module ComplexMartInterface
           priceTypes.delete(:Coins)
         end
 
+        if priceTypes.include?(:PuppetCoins)
+          moneywindow.push(_INTL("Puppet Coins:\n<r><c3=8B28C9,c9bed1>{1}</c3>",$game_variables[:PuppetCoins]))
+          priceTypes.delete(:PuppetCoins)
+        end
+
         if priceTypes.include?(:AP)
           moneywindow.push(_INTL("AP:\n<r>{1}",$game_variables[:APPoints]))
           priceTypes.delete(:AP)
@@ -752,16 +813,7 @@ module ComplexMartInterface
             numwindow.shadowColor=Color.new(168,184,184)
 
             ### MODDED/
-            locationname = nil
-            case item[0]
-              when :puppet  then locationname = _INTL("Puppet Coins")
-              when :coins   then locationname = _INTL("Coins")
-              #when :move # Moves have no "in bag" window
-              when :item    then locationname = _INTL("In Bag")
-              #when :pokemon # Moves have no "in bag" window
-            end
-
-            if locationname
+            if item[0] == :item
               inbagwindow.visible=@buying
               inbagwindow.viewport=@viewport
               inbagwindow.width=190
@@ -769,11 +821,11 @@ module ComplexMartInterface
               inbagwindow.baseColor=Color.new(88,88,80)
               inbagwindow.shadowColor=Color.new(168,184,184)
 
-              inbagwindow.text= _INTL("{1}:<r>{2}  ",locationname,qty)
+              inbagwindow.text= _INTL("In Bag:<r>{2}  ",qty)
             else
               inbagwindow.visible=false
             end
-            numwindow.text=_INTL("x{1}<r>{2}",@adapter.getTrueQuantity(item,curnumber), @adapter.formatPrice(curnumber*itemprice, item, true))
+            numwindow.text=_INTL("x{1}<r>{2}",@adapter.getTrueQuantity(item,curnumber), @adapter.formatPrice(curnumber*itemprice, item, false))
             ### /MODDED
             pbBottomRight(numwindow)
             numwindow.y-=helpwindow.height
@@ -790,28 +842,28 @@ module ComplexMartInterface
                 curnumber-=10
                 curnumber=1 if curnumber<1
                 ### MODDED/
-                numwindow.text=_INTL("x{1}<r>{2}",@adapter.getTrueQuantity(item,curnumber),@adapter.formatPrice(curnumber*itemprice, item, true))
+                numwindow.text=_INTL("x{1}<r>{2}",@adapter.getTrueQuantity(item,curnumber),@adapter.formatPrice(curnumber*itemprice, item, false))
                 ### /MODDED
               elsif Input.repeat?(Input::RIGHT)
                 pbPlayCursorSE()
                 curnumber+=10
                 curnumber=maximum if curnumber>maximum
                 ### MODDED/
-                numwindow.text=_INTL("x{1}<r>{2}",@adapter.getTrueQuantity(item,curnumber),@adapter.formatPrice(curnumber*itemprice, item, true))
+                numwindow.text=_INTL("x{1}<r>{2}",@adapter.getTrueQuantity(item,curnumber),@adapter.formatPrice(curnumber*itemprice, item, false))
                 ### /MODDED
               elsif Input.repeat?(Input::UP)
                 pbPlayCursorSE()
                 curnumber+=1
                 curnumber=1 if curnumber>maximum
                 ### MODDED/
-                numwindow.text=_INTL("x{1}<r>{2}",@adapter.getTrueQuantity(item,curnumber),@adapter.formatPrice(curnumber*itemprice, item, true))
+                numwindow.text=_INTL("x{1}<r>{2}",@adapter.getTrueQuantity(item,curnumber),@adapter.formatPrice(curnumber*itemprice, item, false))
                 ### /MODDED
               elsif Input.repeat?(Input::DOWN)
                 pbPlayCursorSE()
                 curnumber-=1
                 curnumber=maximum if curnumber<1
                 ### MODDED/
-                numwindow.text=_INTL("x{1}<r>{2}",@adapter.getTrueQuantity(item,curnumber),@adapter.formatPrice(curnumber*itemprice, item, true))
+                numwindow.text=_INTL("x{1}<r>{2}",@adapter.getTrueQuantity(item,curnumber),@adapter.formatPrice(curnumber*itemprice, item, false))
                 ### /MODDED
               elsif Input.trigger?(Input::C)
                 pbPlayDecisionSE()
@@ -830,18 +882,14 @@ module ComplexMartInterface
     end
   end
 
-  def self.pbComplexMart(inventory,hasPicture=false,clampBottom=false,messages={})
+  def self.pbMultiComplexMart(inventories, names, hasPicture=false, clampBottom=false, messages={})
     interactMessages = DEFAULT_MESSAGES_INTERACT.merge(messages)
-    commands=[]
-    cmdBuy=-1
-    cmdQuit=-1
-    commands[cmdBuy=commands.length]=_INTL("Buy")
-    commands[cmdQuit=commands.length]=_INTL("Quit")
-    cmd=Kernel.pbMessage(_INTL(interactMessages[:speech]), commands,cmdQuit+1)
+    commands=[*names, _INTL("Quit")]
+    cmd=Kernel.pbMessage(_INTL(interactMessages[:speech]), commands,-1)
     bought = false
     loop do
-      if cmdBuy>=0 && cmd==cmdBuy
-        adapter = ComplexPokemonMartAdapter.new(inventory)
+      if cmd >= 0 && cmd < names.length
+        adapter = ComplexPokemonMartAdapter.new(inventories[cmd])
         scene=ComplexPokemonMartScene.new(hasPicture, clampBottom)
         screen=ComplexPokemonMartScreen.new(scene,adapter,messages)
         bought = true if screen.pbBuyScreen
@@ -849,9 +897,13 @@ module ComplexMartInterface
         Kernel.pbMessage(_INTL(interactMessages[:come_again])) unless interactMessages[:come_again].empty?
         break
       end
-      cmd=Kernel.pbMessage( _INTL(interactMessages[:anything_else]),commands,cmdQuit+1)
+      cmd=Kernel.pbMessage( _INTL(interactMessages[:anything_else]),commands,-1)
     end
     return bought
+  end
+
+  def self.pbComplexMart(inventory,hasPicture=false,clampBottom=false,messages={})
+    return self.pbMultiComplexMart([inventory], [_INTL("Buy")], hasPicture, clampBottom, messages)
   end
 
   def self.vendorComplexMart(vendorInfo, hasPicture=false,clampBottom=false)
@@ -871,10 +923,11 @@ end
   if type is item, to have it purchased in bulk:
     quantity: bulkQuantity
 
-  if type is pokemon, to have it start with an extra move:
-    move: :MOVEID
+  if type is pokemon, to have it start with one or more extra moves:
+    move: [:MOVEID...] | :MOVEID
   if type is pokemon, to have it have a different form:
     form: formnum
+  if type is pokemon: to have it start at a level
 
   price specifier - one of:
     price: { type: :Money | :RedEssence | :Coins | :AP, amount: amount }
@@ -885,6 +938,7 @@ end
     { var: :VariableAlias | variableid, is: predicate }
     { var: :VariableAlias | variableid, is: :== | :>= | :> | :<= | :<, than: comparingValue }
     { map: mapid, event: eventid, selfswitch: chr, is: targetState }
+    predicate
   as
     condition: [conditions...] | condition
 
@@ -898,6 +952,6 @@ end
 
   to have the item only be purchasable once, tied to a switch or variable or selfswitch - one of:
     switch: :SwitchAlias | switchid
-    var: [:SwitchAlias | switchid, threshold]
+    var: [:VariableAlias | variableid, threshold]
     selfswitch: [map, event, chr]
 =end

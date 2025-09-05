@@ -22,7 +22,7 @@ Dir["./Data/Mods/WireModpack/*.rb"].each {|file| load File.expand_path(file) }
   Reworks the ingame tileset editor to be more robust and also adds functions `tleditor`, `tleditor2`, `tlget`, `tlset`, and `tlopen`.
 
 Libraries:
-- 0000.complexmart.rb *(experimental)*  
+- 0000.complexmart.rb  
   Adds a framework for "complex" marts, which can sell multiple types of things for multiple currencies, and sell items in bulk.
 - 0000.formattedchoices.rb  
   Fixes an issue with the unused "advanced-formatting" choices menu, and allows it to be used.
@@ -149,8 +149,8 @@ QoL mods:
   Expand the "Find" functionality of Pokémon boxes, and make Pokéballs visible from the box.
 - CleanerPrismPower.rb  
   Makes a Rejuvenation-exclusive ability cleaner.
-- ComplexShops.rb (not yet complete) (depends on 0000.injection.rb, 0000.complexmart.rb)  
-  Turns Cairo, ~~Doxie, Coin shops, AP shops, and Move Tutors~~ into a shop interface, so you don't need to remember which crests or moves you've purchased.
+- ComplexShops.rb (depends on 0000.injection.rb, 0000.complexmart.rb)  
+  Turns Cairo, Doxie, Coin shops, AP shops, and Move Tutors into a shop interface, so you don't need to remember which crests or moves you've purchased.
 - DeleteEndWaits.rb (depends on 0000.injection.rb)  
   Generally remove end-of-message waits, whichcan cause you to accidentally select an option when you didn't mean to.
 - FLHUDStatus.rb  
