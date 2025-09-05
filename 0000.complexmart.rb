@@ -628,7 +628,7 @@ module ComplexMartInterface
 
       @sprites["pkmnicon"]=PokemonIconSprite.new(nil,@viewport)
       @sprites["pkmnicon"].x = 2
-      @sprites["pkmnicon"].y = Graphics.height-88
+      @sprites["pkmnicon"].y = Graphics.height-86
       @sprites["pkmnicon"].visible = true
 
       @sprites["icon"]=IconSprite.new(12,Graphics.height-74,@viewport)
