@@ -1,3 +1,10 @@
+begin
+  missing = ['BetterBattleUI'].select { |f| !File.exist?(File.join(__dir__, f)) }
+  missing.map! { |it| it[/\./] ? it : "folder " + it }
+  print "Dependency #{missing[0]} is required by #{__FILE__}. Please install it." if missing.length == 1
+  print "Dependencies #{missing.join(", ")} are required by #{__FILE__}. Please install them." if missing.length > 1
+  raise "Missing dependencies for mod #{__FILE__}, cannot load" unless missing.empty?
+end
 $betterBattleUI_typeIcons_bitmaps = nil # Force the reloading of disposed graphics on soft resetting
 $betterBattleUI_statBoosts_data = nil
 

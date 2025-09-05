@@ -32,9 +32,9 @@ Libraries:
   A framework for music overrides.
 - 0000.textures.rb  
   A framework for texture overrides.
-- 0001.boundedentry.rb (depends on 0000.textures.rb)  
+- 0001.boundedentry.rb (depends on 0000.textures.rb, Windowskins/)  
   Adds "bounded" text entries, which allow you to choose from a preexisting set.
-- 0001.pcservices.rb (depends on 0000.textures.rb)  
+- 0001.pcservices.rb (depends on 0000.textures.rb, ServiceIcons/)  
   Adds a "service directory" to the PC, which lets you call NPCs for various services. Also makes the Rotom Phone a Remote PC.
 - 9999.lateloader.rb  
   Adds a "late-loader" which executes code only once the modpack's dependencies have been loaded. This is for dependent mods in different packs to use.  
@@ -73,7 +73,7 @@ Libraries:
 Fix/hotfix mods:
 - AddMissingEncounterAreas.rb (depends on 0000.injection.rb)  
   Add the missing encounter types to the Scholar's District and Route Z.
-- AnaFixes.rb (depends on 0000.injection.rb, 0000.textures.rb)  
+- AnaFixes.rb (depends on 0000.injection.rb, 0000.textures.rb, TextureOverrides/)  
   Fixes some issues with the character Ana's sprites.
 - BagReclassification.rb  
   Reclassifies some items that are improperly classified.
@@ -135,7 +135,7 @@ QoL mods:
   Fishing requires no timing, and always succeeds if possible.
 - AutoSpeedUpBattles.rb  
   The game will always speed up at the start of battles, then return to the state it was in prior to the battle.
-- BetterBattleUI.rb  
+- BetterBattleUI.rb (depends on BetterBattleUI/)  
   Show types and stat boosts visually in battle. In addition:  
   Hitting the "back" button when selecting a command in battle will move your cursor over "Run". 
   There's a keybind for Q (which is L) in wild battle to throw the last ball you've used.
@@ -145,7 +145,7 @@ QoL mods:
     Improves the select-a-Pokémon menu.
   - MoveHelpDisplayBBUI.rb (depends on BetterBattleUI.rb)  
     Adds a move-info display controlled by the Inspect key (A).
-- BoxExtensions.rb (depends on 0001.boundedentry.rb)  
+- BoxExtensions.rb (depends on 0001.boundedentry.rb, BoxExtensions/)  
   Expand the "Find" functionality of Pokémon boxes, and make Pokéballs visible from the box.
 - CleanerPrismPower.rb  
   Makes a Rejuvenation-exclusive ability cleaner.
@@ -188,23 +188,23 @@ QoL mods:
   Fix some deliberately poorly formatted dialogue from being unintentionally poorly formatted.
 
 Other mods:
-- AevianLarvestaEgg.rb (depends on 0000.textures.rb, 0000.injection.rb)  
+- AevianLarvestaEgg.rb (depends on 0000.textures.rb, 0000.injection.rb, LarvestaEgg.png)  
   Adds an Aevian Larvesta egg to the Rose Theatre post Badge 13.
-- AshGreninja.rb (depends on 0000.textures.rb)  
+- AshGreninja.rb (depends on 0000.textures.rb, AshGreninja/)  
   Adds Battle Bond and Ash-Greninja.
   - AshGreninjaEvent.rb (depends on AshGreninja.rb, 0000.injection.rb)  
     Adds an Ash boss fight in Neo Gearen which rewards you with Battle Bond Greninja.
-- AxelOutfits.rb (depends on 0000.injection.rb, 0000.textures.rb)  
+- AxelOutfits.rb (depends on 0000.injection.rb, 0000.textures.rb, TextureOverrides/)  
   Gives Axel's Darchlight Form and Interceptor Form full spriting.
 - BoostPickupOdds.rb  
   Makes Pickup more likely (33%) to trigger after battle.
-- ChatotCrest.rb (depends on 0000.injection.rb, 0000.textures.rb, 0000.music.rb)  
+- ChatotCrest.rb (depends on 0000.injection.rb, 0000.textures.rb, 0000.music.rb, TetoSwears/)  
   Adds a Chatot Crest which grants additional effects on sound-based moves, adds Torment to Chatter, gives a 30% Speed boost, and sets its ability to Berserk.
-- ConditionItems.rb (depends on 0000.injection.rb, 0000.textures.rb)  
+- ConditionItems.rb (depends on 0000.injection.rb, 0000.textures.rb, ConditionItems/)  
   Adds items which cause status conditions.
-- DarchlightTrainerSprites.rb (depends on 0000.textures.rb)  
+- DarchlightTrainerSprites.rb (depends on 0000.textures.rb, TextureOverrides/)  
   Adds some relevant sprites to the Darchlight Caves segment.
-- DarkCutsceneAna.rb (depends on 0000.injection.rb)  
+- DarkCutsceneAna.rb (depends on 0000.injection.rb, TextureOverrides/)  
   Adds an Ana route to a specific cutscene.
 - EncounterablePikipek.rb (depends on 0000.injection.rb)  
   Makes some Pikipek in certain maps encounterable. (It was a pet peeve, okay?)
@@ -214,7 +214,7 @@ Other mods:
   Makes the GDC Central Pillars able to check your reputation (like the game tells you they can).
 - MeggChoices.rb (depends on 0000.injection.rb)  
   Mystery Eggs give you a chance to choose what egg you get from them.
-- MiningOverhaul.rb  
+- MiningOverhaul.rb (depends on MiningItems.png, MiningTiles.png)  
   More items for mining! Nicer sprites, too. Also, you can keep mining after you've fully cracked the bar by spending money.
 - MoveTweak.rb  
   A few tweaks to moves. Specifically:
@@ -233,7 +233,7 @@ Other mods:
   - Teleport acts as in Gen 8, as a switching move with -6 priority.
 - MrLuckIsBlind.rb  
   Mr. Luck can no longer tell if you cheat.
-- MusicSignpost.rb (depends on 0000.textures.rb)  
+- MusicSignpost.rb (depends on 0000.textures.rb, MusicTypes/, Windowskins/)  
   Show music near the map signpost.
 - OricorioHoldNectar.rb  
   Oricorio hold their Nectar in the wild, as in gen 9, allowing you to get Pink and Yellow Nectars (otherwise unobtainable).
@@ -253,5 +253,5 @@ Other mods:
   Makes Dyre's Torchic doll an actual Torchic event.
 - WLLRiolu.rb (depends on 0000.injection.rb)  
   Adds the Where Love Lies password Riolu back into GDC Central.
-- Woop.rb (depends on 0000.textures.rb)  
+- Woop.rb (depends on 0000.textures.rb, Woop/)  
   Woop.
