@@ -621,7 +621,7 @@ module ComplexMartSpecifiers
           no_items: "DOXINE: NOT ENOUGH! NOT ENOUGH!",
           success_items: "DOXINE: Wee! A deal has been made! Take it!"
         },
-        inventory: [{ pokemon: :JANGMOO, level: 30, form: 1, move: [:BREAKINGSWIPE, :BULLDOZE],
+        inventory: [{ pokemon: :JANGMOO, level: 30, form: 1, move: [:BREAKINGSWIPE, :BULLDOZE], name: "A-Jangmo-o",
                       price: { type: :Item, item: :BLKPRISM, amount: 13 },
                       var: [1, 1]}]
       }

@@ -928,6 +928,7 @@ end
   if type is pokemon, to have it have a different form:
     form: formnum
   if type is pokemon: to have it start at a level
+    level: levelnum
 
   price specifier - one of:
     price: { type: :Money | :RedEssence | :Coins | :AP, amount: amount }
