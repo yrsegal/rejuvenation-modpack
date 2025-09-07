@@ -1,5 +1,5 @@
 class PokeBattle_Battle
-    def pbPriority(ignorequickclaw = true,megacalc = false)
+  def pbPriority(ignorequickclaw = true,megacalc = false)
     return @priority if @usepriority && !megacalc # use stored priority if round isn't over yet (best ged rid of this in gen 8)
     @priority.clear
     priorityarray = []

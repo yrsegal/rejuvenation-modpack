@@ -1,65 +1,84 @@
-def partialdebug_wrap(name, debugState=true, bindings=TOPLEVEL_BINDING)
-  eval <<__END__, bindings
-  alias :partialdebug_old_#{name} :#{name}
-  def #{name}(*args, **kwargs)
-    wasdebug = $DEBUG
-    $DEBUG = #{debugState}
-    ret = partialdebug_old_#{name}(*args, **kwargs)
-    $DEBUG = wasdebug
-    return ret
+class Object
+  def partialdebug_wrap(sym, debugState=true)
+    self.class.partialdebug_wrap(sym, debugState)
   end
-__END__
 end
 
-def partialdebug_wrap_class(clazz, name, debugState=true)
-  clazz.class_eval { partialdebug_wrap(name, debugState, binding) }
+class Module
+  def partialdebug_wrap(sym, debugState=true)
+    m = instance_method(sym)
+    define_method(sym) { |*args, **kwargs|
+      wasdebug = $DEBUG
+      $DEBUG = debugState
+      ret = m.bind(self).call(*args, **kwargs)
+      $DEBUG = wasdebug
+      next ret
+    }
+  end
 end
 
-def partialdebug_wrap_inst(clazz, name, debugState=true)
-  clazz.instance_eval { partialdebug_wrap(name, debugState, binding) }
+=begin
+
+basing the wrapping code off of:
+
+class Object
+  def wrap_method(sym, &block)
+    self.class.wrap_method(sym, &block)
+  end
 end
+
+class Module
+  
+  def wrap_method(sym, &block)
+    m = instance_method(sym)
+    define_method(sym) { |*args, **kwargs|
+      instance_exec(m.bind(self), *args, **kwargs, &block)
+    }
+  end
+end
+=end
 
 # Always catch, option to force win with ctrl
-partialdebug_wrap_class PokeBattle_BattleCommon, :pbThrowPokeBall
-partialdebug_wrap_class PokeBattle_Battle, :pbRun
+PokeBattle_BattleCommon.partialdebug_wrap :pbThrowPokeBall
+PokeBattle_Battle.partialdebug_wrap :pbRun
 
 # Hold ctrl for 100% effect chance
-partialdebug_wrap_class PokeBattle_Battler, :pbProcessMoveAgainstTarget
+PokeBattle_Battler.partialdebug_wrap :pbProcessMoveAgainstTarget
 
 # Debug menu in party
-partialdebug_wrap_class PokemonScreen, :pbPokemonScreen
+PokemonScreen.partialdebug_wrap :pbPokemonScreen
 
 # Debug menu in box
-partialdebug_wrap_class PokemonStorageScreen, :pbStartScreen
+PokemonStorageScreen.partialdebug_wrap :pbStartScreen
 
 # Debug menu in party
-partialdebug_wrap_class PokemonMenu, :pbStartPokemonMenu
+PokemonMenu.partialdebug_wrap :pbStartPokemonMenu
 
 # Toss items that are normally untossable
-partialdebug_wrap_class PokemonBagScreen, :pbStartScreen
+PokemonBagScreen.partialdebug_wrap :pbStartScreen
 
 # Forget HM moves
-partialdebug_wrap_class PokemonSummary, :pbStartForgetScreen
+PokemonSummary.partialdebug_wrap :pbStartForgetScreen
 
 # Pass through walls if holding ctrl
-partialdebug_wrap_class Game_Player, :passable?
+Game_Player.partialdebug_wrap :passable?
 
 # Mine without damage if ctrl
-partialdebug_wrap_class MiningGameScene, :pbHit
+MiningGameScene.partialdebug_wrap :pbHit
 
 # Enable debug inputs
-partialdebug_wrap_inst Input, :update
+Input.singleton_class.partialdebug_wrap :update
 
 # Force berry growth
 partialdebug_wrap :pbBerryPlant
 
 # No hms early
 [:pbRockSmash, :pbStrength, :pbSurf, :pbLavaSurf, :pbWaterfall, :pbDive, :pbSurfacing, :pbRockClimb, :pbCut].each { |m|
-  partialdebug_wrap_inst Kernel, m, false
+  Kernel.singleton_class.partialdebug_wrap m, false
 }
 
 [:pbHeadbutt, :pbHeadbutt2].each { |m|
-  partialdebug_wrap_inst Kernel, m
+  Kernel.singleton_class.partialdebug_wrap m
 }
 
 # Skip battles with ctrl

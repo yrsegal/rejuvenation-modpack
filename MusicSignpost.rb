@@ -1,5 +1,5 @@
 begin
-  missing = ['0000.textures.rb', 'MusicTypes'].select { |f| !File.exist?(File.join(__dir__, f)) }
+  missing = ['0000.textures.rb', 'MusicTypes', 'Windowskins'].select { |f| !File.exist?(File.join(__dir__, f)) }
   missing.map! { |it| it[/\./] ? it : "folder " + it }
   print "Dependency #{missing[0]} is required by #{__FILE__}. Please install it." if missing.length == 1
   print "Dependencies #{missing.join(", ")} are required by #{__FILE__}. Please install them." if missing.length > 1
