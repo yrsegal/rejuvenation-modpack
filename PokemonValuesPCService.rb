@@ -158,7 +158,7 @@ class PokemonValuesPCService
     natureidx = $builtNatures.index(pkmn.nature)
     natureidx = 0 if natureidx.nil?
     natures = isDarkWindowskin(window.windowskin) ? $builtCommandsDarkWindow : $builtCommandsLightWindow
-    nature = natures[natureidx]
+    nature = natures[natureidx].gsub("<r>", '')
     ability = getAbilityName(pkmn.ability)
     return _INTL("{5}IVs:</c3>\n<ar>{1}</ar>\n{5}EVs:</c3>\n<ar>{2}</ar>\n{5}Nature:</c3>\n<ar>{3}</ar>\n{5}Ability:</c3>\n<ar>{4}</ar>", ivs, evs, nature, ability, color(6))
   end
