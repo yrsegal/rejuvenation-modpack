@@ -229,6 +229,13 @@ module InjectionHelper
     This: 0
   }
 
+  SUBTRACT_MODE = {
+    Add: 0,
+    :+ => 0,
+    Subtract: 1,
+    :- => 1,
+  }
+
   MORE_OR_LESS = {
     OrMore: 0,
     :>= => 0,
@@ -593,9 +600,10 @@ module InjectionHelper
         if params.size == 2 && params[1].is_a?(Numeric)
           amount = params[1]
           params[1] = amount.abs
-          params.unshift(amount.negative? ? 1 : 0)
+          params.unshift(amount.negative? ? :- : :+)
         end
 
+        mapValue(params, 0, SUBTRACT_MODE)
         if mapValue(params, 1, APPOINTMENT_METHODS) == :Variable
           mapVariable(params, 2)
         end
