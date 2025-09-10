@@ -210,6 +210,8 @@ Other mods:
   Makes some Pikipek in certain maps encounterable. (It was a pet peeve, okay?)
 - FullOutfitOptions.rb (depends on 0000.injection.rb)  
   You get full options for outfits, and they're supported a little more in cutscenes. This does not add sprites for them, and the only character given spritework currently for this is Ana.
+- FurfrouForms.rb (depends on 0000.injection.rb, 0000.textures.rb, Furfrou/)  
+  Furfrou trims! An NPC in each salon (East Gearen, GDC, Neo East Gearen mall) has been given the ability to trim your Furfrou as you'd like.
 - GDCCentralReputationPillars.rb (depends on 0000.injection.rb)  
   Makes the GDC Central Pillars able to check your reputation (like the game tells you they can).
 - MeggChoices.rb (depends on 0000.injection.rb)  

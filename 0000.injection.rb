@@ -144,6 +144,7 @@ module InjectionHelper
     Enemy: 5,
     Character: 6,
     Money: 7,
+    Gold: 7, # Alias
     Item: 8,
     Weapon: 9,
     Armor: 10,
@@ -541,7 +542,7 @@ module InjectionHelper
           when :Character
             mapValue(params, 1, SPECIAL_EVENT_IDS)
             mapValue(params, 2, FACING_DIRECTIONS)
-          when :Gold
+          when :Money, :Gold
             mapValue(params, 2, MORE_OR_LESS)
         end
       when :InputNumber
@@ -588,6 +589,16 @@ module InjectionHelper
         end
       when :ControlSelfSwitch
         mapValue(params, 1, TRUTH)
+      when :ChangeGold
+        if params.size == 2 && params[1].is_a?(Numeric)
+          amount = params[1]
+          params[1] = amount.abs
+          params.unshift(amount.negative? ? 1 : 0)
+        end
+
+        if mapValue(params, 1, APPOINTMENT_METHODS) == :Variable
+          mapVariable(params, 2)
+        end
       when :TransferPlayer
         if mapValue(params, 0, APPOINTMENT_METHODS) == :Variable
           mapVariable(params, 1)
