@@ -640,7 +640,7 @@ module ComplexMartSpecifiers
           full_puppet: "CLERK: You're so full of coins, though...",
 
           no_coins: "CLERK: NOT ENOUGH. NOT ENOUGH!",
-          success_coins: "CLERK: Excellent, here are your Puppet Coins... You currently have \\v[597] now."
+          success_coins: "CLERK: Excellent, here are your Puppet Coins..."
         },
         inventory: [{ puppet: 500,
                       price: { type: :Coins, amount: 1000 }},

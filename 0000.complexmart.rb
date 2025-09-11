@@ -391,10 +391,16 @@ module ComplexMartInterface
 
     def addItem(item)
       case item[0]
-        when :puppet  then $game_variables[:PuppetCoins] += 1
-        when :coins   then $PokemonGlobal.coins += 1
+        when :puppet
+          return false if getMaxQuantity(item) >= $game_variables[:PuppetCoins]
+          $game_variables[:PuppetCoins] += 1
+          return true
+        when :coins
+          return false if getMaxQuantity(item) >= $PokemonGlobal.coins
+          $PokemonGlobal.coins += 1
+          return true
         #when :move # Handled specially.
-        when :item    then $PokemonBag.pbStoreItem(item[1])
+        when :item    then return $PokemonBag.pbStoreItem(item[1])
         when :pokemon
           pkmn = PokeBattle_Pokemon.new(item[1],item[2],$Trainer,true,item[4])
           if item[3]
@@ -404,7 +410,7 @@ module ComplexMartInterface
               pkmn.pbLearnMove(item[3])
             end
           end
-          Kernel.pbAddPokemon(pkmn)
+          return Kernel.pbAddPokemon(pkmn)
       end
     end
 
@@ -490,10 +496,18 @@ module ComplexMartInterface
           quantity=1
           trueQuantity = @adapter.getTrueQuantity(item,quantity)
         else
-          maxquantity = @adapter.getMaxQuantity(item)
+          maxquantity = @adapter.getMaxQuantity(item) - @adapter.getQuantity(item)
           maxquantity /= @adapter.getTrueQuantity(item)
           maxafford=(price<=0) ? maxquantity : @adapter.getMoney(item)/price
           maxafford=maxquantity if maxafford>maxquantity
+          if maxafford == 0
+            case item[0]
+              when :puppet  then pbDisplayPaused(_INTL(@messages[:full_puppet])) unless @messages[:full_puppet].empty?
+              when :coins   then pbDisplayPaused(_INTL(@messages[:full_coins])) unless @messages[:full_coins].empty?
+              when :item    then pbDisplayPaused(_INTL(@messages[:full_item])) unless @messages[:full_item].empty?
+            end
+            next
+          end
           quantity=@scene.pbChooseNumber(@adapter.getQuantitySelectMessage(@messages,item),item,maxafford)
           if quantity==0
             next
@@ -821,7 +835,7 @@ module ComplexMartInterface
               inbagwindow.baseColor=Color.new(88,88,80)
               inbagwindow.shadowColor=Color.new(168,184,184)
 
-              inbagwindow.text= _INTL("In Bag:<r>{2}  ",qty)
+              inbagwindow.text= _INTL("In Bag:<r>{1}  ",qty)
             else
               inbagwindow.visible=false
             end
