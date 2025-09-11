@@ -392,11 +392,11 @@ module ComplexMartInterface
     def addItem(item)
       case item[0]
         when :puppet
-          return false if getMaxQuantity(item) >= $game_variables[:PuppetCoins]
+          return false if getMaxQuantity(item) <= $game_variables[:PuppetCoins]
           $game_variables[:PuppetCoins] += 1
           return true
         when :coins
-          return false if getMaxQuantity(item) >= $PokemonGlobal.coins
+          return false if getMaxQuantity(item) <= $PokemonGlobal.coins
           $PokemonGlobal.coins += 1
           return true
         #when :move # Handled specially.
@@ -410,7 +410,7 @@ module ComplexMartInterface
               pkmn.pbLearnMove(item[3])
             end
           end
-          return Kernel.pbAddPokemon(pkmn)
+          Kernel.pbAddPokemon(pkmn)
       end
     end
 
