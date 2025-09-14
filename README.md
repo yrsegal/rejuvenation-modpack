@@ -62,7 +62,6 @@ Libraries:
   Adds a Hidden Power Changer/checker service. Unlocked by speaking to the relevant NPC in Kristiline.
 - MoveRelearnerPCService.rb (depends on 0000.injection.rb, 0001.pcservices.rb)  
   Adds a service which allows relearning, teaching egg moves, and move deletion (always free). Free after 10 Heart Scales.  
-  Also fixes missing Egg Move pools and allows evolutions to learn preevo moves.
 - PokeballTransferPCService.rb (depends on 0001.pcservices.rb)  
   Adds a Pokeball Transfer service, unlocked after The Inconsistency.
 - PokemonValuesPCService.rb (depends on 0000.formattedchoices.rb, 0001.pcservices.rb)  
@@ -127,6 +126,8 @@ Fix/hotfix mods:
   A typo in a puzzle causes it to not select the proper type of Pokémon.
 - LivelierAmbipom.rb (depends on 0000.injection.rb)  
   The Ambipom on Route 2 look around like the Aipom do.
+- MovesetTweaks.rb  
+  Fixes missing Egg Move pools, adds a few moves to movesets, and allows evolutions to learn preevo moves.
 - QuicksilverImplementation.rb  
   Implements the move Quicksilver Spear's effect to do what it says it does.
 
