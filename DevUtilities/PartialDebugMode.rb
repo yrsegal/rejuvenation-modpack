@@ -45,6 +45,9 @@ PokeBattle_Battle.partialdebug_wrap :pbRun
 # Hold ctrl for 100% effect chance
 PokeBattle_Battler.partialdebug_wrap :pbProcessMoveAgainstTarget
 
+# Obedience check still works
+PokeBattle_Battler.partialdebug_wrap :pbObedienceCheck?, false
+
 # Debug menu in party
 PokemonScreen.partialdebug_wrap :pbPokemonScreen
 

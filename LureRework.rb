@@ -205,9 +205,11 @@ def pbGenerateWildPokemon(species,level,sos=false)
 __END__
       end
     elsif $PokemonEncounters.pbShouldFilterOtherPkmnFromEncounter?
-      oldforminit = data.formInit
-      forms = $Trainer.party.select { |it| it.species == species && it.item == :MIRRORLURE }.map(&:form)
-      data.formInit = "proc {#{forms.inspect}.sample}"
+      if data.formInit && data.formInit.is_a?(String) && data.formInit[/^proc\{rand\((\d+)\)\}$/]
+        oldforminit = data.formInit
+        forms = $Trainer.party.select { |it| it.species == species && it.item == :MIRRORLURE }.map(&:form)
+        data.formInit = "proc {#{forms.inspect}.sample}"
+      end
     end
   end
 
