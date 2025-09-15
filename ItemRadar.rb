@@ -60,13 +60,15 @@ class Game_Screen
     for event in $game_map.events.values
       biggestid = event.id if event.id > biggestid
 
-      next if event.name.strip != 'HiddenItem' && event.character_name != 'Zygarde Cell' && event.character_name != 'Object Cell'
+      hiName = event.name.gsub(/\s/, '')
+
+      next if hiName != 'HiddenItem' && event.character_name != 'Zygarde Cell' && event.character_name != 'Object Cell'
       next if $game_self_switches[[$game_map.map_id, event.id, 'A']]
       next if $game_self_switches[[$game_map.map_id, event.id, 'B']]
       next if $game_self_switches[[$game_map.map_id, event.id, 'C']]
       next if $game_self_switches[[$game_map.map_id, event.id, 'D']]
 
-      if event.name == 'HiddenItem'
+      if hiName == 'HiddenItem'
         if itemRadar_checkIsItemRadarOn?
           event.itemRadar_green_ball
         else
