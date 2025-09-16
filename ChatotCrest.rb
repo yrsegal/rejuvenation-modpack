@@ -352,13 +352,13 @@ class PokeBattle_Move
 
     origBaseDamage = @basedamage
 
-    if origBaseDamage > 0 && isSoundBased? && attacker.ability == (:SHEERFORCE)
+    if origBaseDamage > 0 && isSoundBased? && attacker.ability == (:SHEERFORCE) && attacker.crested == :CHATOT
       @basedamage *= 1.3
     end
 
     dmg = chatotcrest_old_pbEffect(attacker,opponent,hitnum,alltargets,showanimation)
 
-    if origBaseDamage > 0 && isSoundBased? && attacker.ability == (:SHEERFORCE)
+    if origBaseDamage > 0 && isSoundBased? && attacker.ability == (:SHEERFORCE) && attacker.crested == :CHATOT
       @basedamage = origBaseDamage
     end
 
