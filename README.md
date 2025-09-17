@@ -215,6 +215,8 @@ Other mods:
   Furfrou trims! An NPC in each salon (East Gearen, GDC, Neo East Gearen mall) has been given the ability to trim your Furfrou as you'd like.
 - GDCCentralReputationPillars.rb (depends on 0000.injection.rb)  
   Makes the GDC Central Pillars able to check your reputation (like the game tells you they can).
+- LastRespects.rb  
+  Add the move Last Respects, which Basculegion can get by Egg Move.
 - MeggChoices.rb (depends on 0000.injection.rb)  
   Mystery Eggs give you a chance to choose what egg you get from them.
 - MiningOverhaul.rb (depends on MiningItems.png, MiningTiles.png)  
