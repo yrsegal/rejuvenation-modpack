@@ -36,10 +36,8 @@ $cache.moves[:LASTRESPECTS] = MoveData.new(:LASTRESPECTS, {
   desc: "The user attacks to avenge its allies. The more defeated allies there are in the user's party, the greater the move's power."
 })
 
-
-$WIRE_LATE_LOAD = [] unless defined?($WIRE_LATE_LOAD)
-$WIRE_LATE_LOAD << proc {
+begin
   formdata = $cache.pkmn[:BASCULIN].formData["White-Striped"]
   formdata[:EggMoves] = [] unless formdata[:EggMoves]
   formdata[:EggMoves].push(:LASTRESPECTS) unless formdata[:EggMoves].include?(:LASTRESPECTS)
-}
+end

@@ -61,14 +61,14 @@ class Game_System
 end
 
 [:bgm, :bgs, :me, :se].each { |it|
-  Audio.instance_eval(<<__END__)
+  Audio.instance_eval(<<~END)
     unless defined?(musicoverride_old_#{it}_play)
       alias :musicoverride_old_#{it}_play :#{it}_play
     end
     def #{it}_play(name, *args, **kwargs)
       musicoverride_old_#{it}_play(MusicOverrides.mapPath(name, '#{it}'), *args, **kwargs)
     end
-__END__
+  END
 }
 
 FileTest.instance_eval do 
