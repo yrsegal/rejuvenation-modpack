@@ -66,8 +66,8 @@ class Pokedex
     (@dexList.keys - $cache.pkmn.keys).each(&@dexList.method(:delete))
     lurerework_old_refreshDex
 
-
     # Formdata refresh
+    @formList = {} if !@formList
     (@formList.keys - $cache.pkmn.keys).each(&@formList.method(:delete))
     $cache.pkmn.each{|monKey, data|
       next if @formList.keys.include?(monKey) && @formList[monKey][:forms].length == $cache.pkmn[monKey].forms.length
