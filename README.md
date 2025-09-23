@@ -209,6 +209,8 @@ Other mods:
   Adds an Ana route to a specific cutscene.
 - EncounterablePikipek.rb (depends on 0000.injection.rb)  
   Makes some Pikipek in certain maps encounterable. (It was a pet peeve, okay?)
+- FriendshipCheckers.rb (depends on 0000.injection.rb)  
+  Adds friendship checker NPCs to the two salons that don't have them.
 - FullOutfitOptions.rb (depends on 0000.injection.rb)  
   You get full options for outfits, and they're supported a little more in cutscenes. This does not add sprites for them, and the only character given spritework currently for this is Ana.
 - FurfrouForms.rb (depends on 0000.injection.rb, 0000.textures.rb, Furfrou/)  
