@@ -58,7 +58,7 @@ InjectionHelper.defineMapPatch(287, 55) { |event| # Dream District Interiors, sa
   friendshipcheckers_friendshipchecker(event, "Want to see if your Pokemon think you're the best of the best?") 
 }
 
-InjectionHelper.defineMapPatch(187) { |map|
+InjectionHelper.defineMapPatch(187) { |map| # Everglade Mall
   map.createSinglePageEvent(7, 33, "Friendship Checker") { |page|
     page.setGraphic("trchar020 (2)")
     page.interact

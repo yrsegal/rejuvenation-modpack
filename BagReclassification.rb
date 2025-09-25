@@ -33,6 +33,7 @@ for item in $cache.items.values
   end
 end
 
+$cache.items[:FAIRYGEM].flags[:gem] = true
 $cache.items[:BALMMUSHROOM].flags[:justsell] = true
 $cache.items[:AMPLIFIELDROCK].flags[:battlehold] = true
 $cache.items[:BELLMCHN].flags[:keyitem] = true
