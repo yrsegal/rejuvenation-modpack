@@ -183,6 +183,8 @@ QoL mods:
   Hidden Power, Revelation Dance, and such all display their correct type in summaries and move listings. Abilities such as Galvanize and Aerilate are also applied.
 - VendorQuantityDisplay.rb (depends on 0000.injection.rb)  
   Move Tutors and other vendors will show the resources they ask for.
+- VoltorbFlipHelper.rb (depends on VoltorbFlipExtras.png)  
+  Adds a hint button to Voltorb Flip.
 - ZygardeCaffeine.rb  
   Zygarde Cells become indifferent to time of day.
 - ZZRenBetterDialogue.rb (depends on 0000.injection.rb)  
