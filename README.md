@@ -122,7 +122,7 @@ Fix/hotfix mods:
   Shadow Pokémon regain their old moves over time, as they're supposed to.
 - Route4GlobalChange.rb  
   Makes Route 4's reset trigger work in all areas as intended.
-- LabyrinthPuzzleFix.rb  
+- LabyrinthPuzzleFix.rb (depends on 0000.injection.rb)  
   A typo in a puzzle causes it to not select the proper type of Pokémon.
 - LivelierAmbipom.rb (depends on 0000.injection.rb)  
   The Ambipom on Route 2 look around like the Aipom do.

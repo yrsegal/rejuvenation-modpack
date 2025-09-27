@@ -1491,6 +1491,7 @@ class Cache_Game
     end
 
     if InjectionHelper::MAP_ID_ASSIGNMENTS.values.include?(mapid)
+      @cachedmaps = [] if !@cachedmaps
       ret = @cachedmaps[mapid] = InjectionHelper.createMap(mapid)
     else
       ret = injectionhelper_old_map_load(mapid)
