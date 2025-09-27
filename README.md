@@ -136,6 +136,8 @@ QoL mods:
   Fishing requires no timing, and always succeeds if possible.
 - AutoSpeedUpBattles.rb  
   The game will always speed up at the start of battles, then return to the state it was in prior to the battle.
+- BadgeCard.rb  
+  Using the Badge Card will tell you how many Virtual Badges you have.
 - BetterBattleUI.rb (depends on BetterBattleUI/)  
   Show types and stat boosts visually in battle. In addition:  
   Hitting the "back" button when selecting a command in battle will move your cursor over "Run". 
