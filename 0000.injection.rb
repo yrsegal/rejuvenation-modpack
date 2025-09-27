@@ -751,6 +751,16 @@ module InjectionHelper
     for savetag in CREATE_MAPS.keys
       mapid = openids.shift
       MAP_ID_ASSIGNMENTS[savetag] = mapid
+
+      width, height, name, parent, meta, block = CREATE_MAPS[savetag]
+      newmapinfo = RPG::MapInfo.new
+      newmapinfo.parent_id = parent if parent.is_a?(Numeric)
+      newmapinfo.parent_id = MAP_ID_ASSIGNMENTS[parent] if parent.is_a?(String)
+      newmapinfo.name = name
+      newmapmeta = MapMetadata.new(mapid, meta, meta) # Encounters and meta merged
+
+      $cache.mapinfos[mapid] = newmapinfo
+      $cache.mapdata[mapid] = newmapmeta
     end
   end
 
@@ -763,11 +773,6 @@ module InjectionHelper
 
       width, height, name, parent, meta, block = CREATE_MAPS[savetag]
       newmap = RPG::Map.new(width, height)
-      newmapinfo = RPG::MapInfo.new
-      newmapinfo.parent_id = parent if parent.is_a?(Numeric)
-      newmapinfo.parent_id = MAP_ID_ASSIGNMENTS[parent] if parent.is_a?(String)
-      newmapinfo.name = name
-      newmapmeta = MapMetadata.new(mapid, meta, meta) # Encounters and meta merged
 
       clearEventBuilders
       block.call(newmap)
@@ -783,9 +788,6 @@ module InjectionHelper
           end
         end
       end
-
-      $cache.mapinfos[mapid] = newmapinfo
-      $cache.mapdata[mapid] = newmapmeta
       return newmap
     rescue
       clearEventBuilders
