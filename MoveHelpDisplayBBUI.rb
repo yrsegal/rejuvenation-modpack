@@ -1731,7 +1731,7 @@ class PokeBattle_Scene
 
     knownFoe = nil
 
-    if @battle.doublebattle
+    if battler.battle.doublebattle
       knownFoe = battler.pbOpposing2 if battler.pbOpposing1.isFainted?
       knownFoe = battler.pbOpposing1 if battler.pbOpposing2.isFainted?
     else
