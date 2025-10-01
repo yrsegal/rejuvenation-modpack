@@ -104,7 +104,7 @@ module MovesetTweaks
     injectTMMoves(pkmn(:UNFEZANT), :COVET)
 
     # Give Quiver Dance to oricorio, as is its right
-    injectTMMoves(pkmn(:ORICORIO), :QUIVERDANCE)
+    injectEggMoves(pkmn(:ORICORIO), :QUIVERDANCE)
     spreadEggMoves(pkmn(:ORICORIO))
 
     # Give Flabebe and Deerling forms, and partner Eevee, their egg moves
