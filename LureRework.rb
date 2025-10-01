@@ -196,7 +196,7 @@ def pbGenerateWildPokemon(species,level,sos=false)
     if $PokemonEncounters.pbShouldFilterKnownPkmnFromEncounter?
       if data.formInit && data.formInit.is_a?(String) && data.formInit[/^proc\{rand\((\d+)\)\}$/]
         formData = $Trainer.pokedex.formList[species]
-        unless (0...$1).all? { |it| !formData[:forms][data.forms[it]] }
+        unless (0...($1.to_i)).all? { |it| !formData[:forms][data.forms[it]] }
           oldforminit = data.formInit
           data.formInit = <<~END
             proc {
