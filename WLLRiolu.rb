@@ -101,7 +101,7 @@ $cache.RXtilesets[126].passages[1266] = 0b1010 # <^
 
 InjectionHelper.defineMapPatch(426) { |map| # Sensei's Garden
   # Cherry blossom tree
-  InjectionHelper.fillArea(map, 12, 6,
+  map.fillArea(12, 6,
     ["ABC",
      "DEF",
      "GHI",

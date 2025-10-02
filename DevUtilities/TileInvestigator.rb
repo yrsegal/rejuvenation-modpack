@@ -117,7 +117,7 @@ def tleditor2
       doneAny = true
     end
 
-    if Input.pressex?(Input::LeftMouseKey) && prevmpos != mousepos
+    if Input.pressex?(Input::LeftMouseKey) && prevmpos != mousepos && mousepos
       prevmpos = mousepos
       overlaywidth = 128
       overlayheight = (Graphics.height / 2) - 32
@@ -177,7 +177,7 @@ def tleditor2
           end
         end
       end
-    elsif Input.pressex?(Input::RightMouseKey)
+    elsif Input.pressex?(Input::RightMouseKey) && mousepos
       prevmpos = mousepos
       overlaywidth = 128
       overlayheight = (Graphics.height / 2) - 32

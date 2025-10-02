@@ -30,6 +30,8 @@ module InjectionHelper
     ControlVariables: 122,
     ControlSelfSwitch: 123,
     ControlTimer: 124,
+    TimerOff: 124, # Handled specially
+    TimerOn: 124, # Handled specially
     ChangeGold: 125,
     ChangeItems: 126,
     ChangeWeapons: 127,
@@ -625,6 +627,10 @@ module InjectionHelper
           mapVariable(params, 4)
           mapVariable(params, 5)
         end
+      when :ControlTimer, :TimerOn, :TimerOff
+        params.unshift(true) if sym == :TimerOn && params.size == 1
+        params.unshift(false) if sym == :TimerOff && params.size == 0
+        mapValue(params, 0, TRUTH)
       when :PlaySoundEvent, :PlayMusicEvent, :PlayBackgroundMusic, :PlayBackgroundSound, :ChangeBattleBackgroundMusic, :ChangeBattleEndME, :PlaySound
         if params[0].is_a?(String)
           audio = params[0]
