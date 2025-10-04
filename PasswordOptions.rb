@@ -273,15 +273,14 @@ InjectionHelper.defineMapPatch(1, 1) { |event| # Intro, Intro Sequence
     if matched
       labelPoint = page.lookForAll([:ShowPicture, 1, 'introOak2', 0, 0, 0, 0, 100, 100, 255, 0])
 
-      next false if labelPoint.size == 0
-      page.insertBefore(labelPoint[0], [:Label, 'passwordoptions_pwend'])
+      unless labelPoint.empty?
+        page.insertBefore(labelPoint[0], [:Label, 'passwordoptions_pwend'])
 
-      page.replaceRange(matched[0], matched[-1], 
-        [:ConditionalBranch, :Script, 'mod_passwordoptions_scene'],
-          [:JumpToLabel, 'passwordoptions_pwend'],
-        :Done)
+        page.replaceRange(matched[0], matched[-1], 
+          [:ConditionalBranch, :Script, 'mod_passwordoptions_scene'],
+            [:JumpToLabel, 'passwordoptions_pwend'],
+          :Done)
+      end
     end
-
-    next matched
   }
 }

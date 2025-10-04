@@ -62,7 +62,6 @@ def darchaxel_inject_special_sprite(event, special)
         *darchaxel_special_sprite_section(special, 'int'),
         *darchaxel_special_sprite_section(special, 4))
     end
-    next matched
   }
 end
 
@@ -75,7 +74,6 @@ def darchaxel_hotfix_battyfriends(event)
           *darchaxel_batty_section(3),
           *darchaxel_batty_section(4))
     end
-    next matched
   }
 end
 

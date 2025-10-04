@@ -1083,7 +1083,6 @@ InjectionHelper.defineMapPatch(-1) { |map, mapid|
         end
 
         page.insertAtStart(*script, :ExitEventProcessing) if textMatches
-        next textMatches
       }
     end
   end
@@ -1098,7 +1097,6 @@ InjectionHelper.defineMapPatch(-1) { |map, mapid|
         page.insertBefore(matched,
           [:Script, "ComplexMartSpecifiers.coins(#{mapid})"],
           :ExitEventProcessing)
-        next true
       end
     }
   }
@@ -1115,7 +1113,6 @@ InjectionHelper.defineMapPatch(434, 28) { |event| # Doxie
         [:JumpToLabel, 'Exit shop'])
       page.insertBefore(labelLoc,
         [:Label, 'Exit shop'])
-      next true
     end
   }
 }
@@ -1129,7 +1126,6 @@ InjectionHelper.defineMapPatch(168, 16) { |event| # Cairo
         page.insertBefore(matched,
           [:Script, 'ComplexMartSpecifiers.pbCairoMart'],
           [:JumpToLabel, 'Exit shop'])
-        next true
       end
     end
   }

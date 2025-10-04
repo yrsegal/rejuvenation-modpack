@@ -30,8 +30,6 @@ module FixFactoryAreas
           page.insertBefore(insn, [:Script, "$game_variables[:Forced_BaseField] = '#{insn.parameters[2] ? 'ShortCircuit' : 'Factory'}'"])
         end
       end
-
-      next !setShorted.empty?
     }
   end
 
@@ -50,8 +48,6 @@ module FixFactoryAreas
         page.insertBefore(insn, 
           [:ControlSwitch, :ShortedOut, true]) # To ensure message sent
       end
-
-      next !resetSwitches.empty? || !flipLightsOn.empty?
     }
   end
 
@@ -61,15 +57,13 @@ module FixFactoryAreas
       flipLightsOn = page.lookForAll([:ControlSwitch, :ReusableSwitch1, true])
 
       for insn in setLighting
-        insn.parameters[0] = Tone.new(-136,-136,-136,0)
-        insn.parameters[1] = 0
+        insn[0] = Tone.new(-136,-136,-136,0)
+        insn[1] = 0
       end
 
       for insn in flipLightsOn
         page.insertBefore(insn, [:ChangeScreenColorTone, Tone.new(0,0,0,0), 10])
       end
-
-      next !setLighting.empty? || !flipLightsOn.empty?
     }
   end
 
@@ -138,8 +132,6 @@ module FixFactoryAreas
       for insn in fieldDamage
         insn.parameters[0] = 'FixFactoryAreas.pbFieldDamage' + type
       end
-
-      next !fieldDamage.empty?
     }
   end
 
@@ -223,7 +215,6 @@ module FixFactoryAreas
   def self.killEvent(event)
     event.patch(:EventIsKill) { |page|
       event.insertAtStart(:ExitEventProcessing)
-      next true
     }
   end
 
@@ -249,7 +240,6 @@ InjectionHelper.defineMapPatch(79) { |map| # Oceana Pier Interiors
   FixFactoryAreas.patchOceanaPierFieldEffect(map.events[23], false) # Field toggler
   FixFactoryAreas.patchOceanaPierFieldEffect(map.events[47], true) # Exit door
   FixFactoryAreas.createFactoryMessageEvent(map, 32, 32)
-  next true
 }
 
 InjectionHelper.defineMapPatch(616) { |map| # Celgearn Manufactory

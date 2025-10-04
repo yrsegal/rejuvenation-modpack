@@ -16,18 +16,16 @@ if defined?(InjectionHelper)
     event.patch(:daycarepc_preferBreedablePokemon) { |page|
       matched = page.lookForAll([:Script, "pbChooseNonEggPokemon(1,3)"])
       for insn in matched
-        insn.parameters[0] = "daycarepc_selectPokemon(1,3)"
+        insn[0] = "daycarepc_selectPokemon(1,3)"
       end
-      next !matched.empty?
     }
   }
   InjectionHelper.defineMapPatch(282, 13) { |event| # Dream District Interiors, pseudo-Day Care Lady
     event.patch(:daycarepc_preferBreedablePokemon) { |page|
       matched = page.lookForAll([:Script, "pbChooseNonEggPokemon(1,3)"])
       for insn in matched
-        insn.parameters[0] = "daycarepc_selectPokemon(1,3)"
+        insn[0] = "daycarepc_selectPokemon(1,3)"
       end
-      next !matched.empty?
     }
   }
 end

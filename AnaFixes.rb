@@ -62,7 +62,7 @@ def anafixes_fix_darchsprite(event)
 
     for insn in matched
       insn.parameters[1].list.each { |movecommand|
-        movecommand.parameters[0] = 'BGirlwalk_4' if submatcher.matches?(movecommand)
+        movecommand[0] = 'BGirlwalk_4' if submatcher.matches?(movecommand)
       }
     end
 
@@ -78,11 +78,9 @@ def anafixes_replacewitheyesprite(event)
 
     for insn in matched
       insn.parameters[1].list.each { |movecommand|
-        movecommand.parameters[0] = 'BGirlwalk_1' if submatcher.matches?(movecommand)
+        movecommand[0] = 'BGirlwalk_1' if submatcher.matches?(movecommand)
       }
     end
-
-    next !matched.empty?
   }
 end
 
@@ -95,7 +93,6 @@ def anafixes_inject_special_sprite(event, special)
         *anafixes_special_sprite_section(special, 3),
         *anafixes_special_sprite_section(special, 4))
     end
-    next matched
   }
 end
 
@@ -121,7 +118,6 @@ def anafixes_addLegacyRedCarpet(event)
           matched,
         :Done)
     end
-    next matched
   }
 end
 
@@ -143,7 +139,6 @@ def anafixes_hotfix_battyfriends(event)
       # event[event.idxOf(matched[0])..event.idxOf(matched[1])] = anasection
       # event[event.idxOf(tempMarker)..event.idxOf(tempMarker)] = aeviasection
     end
-    next matched
   }
 
   event.patch(:anafixes_batty_sprites) {
@@ -154,7 +149,6 @@ def anafixes_hotfix_battyfriends(event)
           *anafixes_batty_section(3),
           *anafixes_batty_section(4))
     end
-    next matched
   }
 end
 
@@ -185,10 +179,8 @@ def anafixes_fix_protagname(page)
     end
 
     for matched in textMatches
-      matched.parameters[0].gsub! /\\v\[701\]/, '\\v[5]'
+      matched[0] = matched.parameters[0].gsub /\\v\[701\]/, '\\v[5]'
     end
-
-    next labelMatch && !textMatches.empty?
   }
 end
 

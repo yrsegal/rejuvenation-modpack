@@ -561,10 +561,8 @@ def selectfromboxes_patch_partycheck(event)
       [:ConditionalBranch, :Script, proc{|script| script == '$Trainer.pokemonCount<=1' || script == '$Trainer.party.length>=6'}])
 
     for insn in matched
-      insn.parameters[0] = 'false'
+      insn[0] = 'false'
     end
-
-    next !matched.empty?
   }
 end
 
@@ -580,7 +578,6 @@ def selectfromboxes_patch_daycarelady(event)
         page.delete(matched[0])
         page.insertAfter(matched[1], matched[0])
       end
-      next !matched.nil?
   }
 end
 

@@ -11,9 +11,7 @@ InjectionHelper.defineMapPatch(537, 85) { |event| # Zorrialyn Labyrinth Floor 3,
     matched = page.lookForAll([:ScriptContinued, 'poke.hasType?(:ROCK)'])
 
     for insn in matched
-      insn.parameters[0] += ' &&'
+      insn[0] += ' &&'
     end
-
-    next !matched.empty?
   }
 }

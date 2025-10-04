@@ -26,8 +26,6 @@ InjectionHelper.defineMapPatch(321, 28) { |event| # Crawli megg
           [:ControlVariable, :CrawliMysteryEgg, :+, :Constant, 1], # Because 0 is "unchosen", shift by 1
         :Done)
     end
-
-    next choices
   }
 }
 
@@ -45,8 +43,6 @@ InjectionHelper.defineMapPatch(69, 3) { |event| # Route 3 megg
           [:ShowText, "(Which Pokémon do you want?)\\ch[#{Variables[:Route3MysteryEgg]},0,Azurill,Aron,Absol,Togepi,Sneasel,Dhelmise,A-Litwick,Axew,Mienfoo,Pawniard,Trapinch,Hippopotas,Cottonee,Darumaka,Hatenna,Starly,Tyrunt,Larvesta,Mareanie,Stufful,Rookidee]"],
         :Done)
     end
-
-    next choices
   }
 }
 
@@ -65,8 +61,6 @@ InjectionHelper.defineMapPatch(26, 14) { |event| # Aevian megg
           [:ControlVariable, :AevianMysteryEgg, :+, :Constant, 1], # Because 0 is "unchosen", shift by 1
         :Done)
     end
-
-    next choices
   }
 }
 
@@ -85,7 +79,5 @@ InjectionHelper.defineMapPatch(199, 75) { |event| # Route 2 megg
           [:ShowText, "Which Pokémon do you want?\\ch[#{Variables[:Route2MysteryEgg]},#{page.condition.variable_value + 1},Skiddo,Mudbray,G-Ponyta]"],
         :Done)
     end
-
-    next choices
   }
 }

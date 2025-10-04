@@ -401,7 +401,7 @@ module InjectionHelper
 
   def self.getPatchComment(insns, create)
     insns.each { |insn|
-      if insn.code == EVENT_INSNS[:Comment] && insn.parameters[0] == 'InjectionHelper-Patches'
+      if insn.command == :Comment && insn.parameters[0] == 'InjectionHelper-Patches'
         return insn
       end
     }
@@ -421,6 +421,10 @@ module InjectionHelper
     @@anyPatches = nil
   end
 
+  def self.declarePatched
+    @@anyPatches = true
+  end
+
   def self.endPatch
     @@anyPatches
   end
@@ -433,10 +437,8 @@ module InjectionHelper
     @@anyPatches = false if @@anyPatches.nil?
     begin
       if !patched?(insns, tag)
-        if yield
-          @@anyPatches = true
-          markPatched(insns, tag)
-        end
+        yield # Declare patches explicitly now
+        markPatched(insns, tag) if @@anyPatches
       end
     rescue
       pbPrintException($!)
@@ -622,6 +624,8 @@ module InjectionHelper
           mapVariable(params, 2)
           mapVariable(params, 3)
         end
+      when :ScrollMap
+        mapValue(params, 0, FACING_DIRECTIONS)
       when :ShowPicture, :MovePicture
         if mapValue(params, 3, APPOINTMENT_METHODS) == :Variable
           mapVariable(params, 4)
@@ -1165,20 +1169,24 @@ module EventListHolder
   end
 
   def []=(*args, **kwargs)
+    InjectionHelper.declarePatched
     self.list.send(:[]=, *args, **kwargs)
   end
 
   def insertAtStart(*commands)
+    InjectionHelper.declarePatched
     self.unshift(*InjectionHelper.parseEventCommands(*commands))
   end
 
   def insertBefore(insn, *commands)
+    InjectionHelper.declarePatched
     insn = self[insn] if insn.is_a?(Numeric)
 
     self.insert(self.idxOf(insn), *InjectionHelper.parseEventCommands(*commands, baseIndent: insn.indent))
   end
 
   def insertBeforeEnd(*commands)
+    InjectionHelper.declarePatched
     locations = self.lookForAll(:ExitEventProcessing) + [self[-1]]
     for location in locations
       self.insertBefore(location, *commands)
@@ -1186,6 +1194,7 @@ module EventListHolder
   end
 
   def insertAfter(insn, *commands)
+    InjectionHelper.declarePatched
     insn = self[insn] if insn.is_a?(Numeric)
 
     blockdepth = insn.indent
@@ -1195,6 +1204,7 @@ module EventListHolder
   end
 
   def replace(insn, *commands)
+    InjectionHelper.declarePatched
     insn = self[insn] if insn.is_a?(Numeric)
     self.insertBefore(insn, *commands)
     self.delete(insn)
@@ -1202,12 +1212,14 @@ module EventListHolder
   end
 
   def replaceRange(insn1, insn2, *commands)
+    InjectionHelper.declarePatched
     insn1 = self[insn1] if insn1.is_a?(Numeric)
     insn2 = self[insn2] if insn1.is_a?(Numeric)
     self[self.idxOf(insn1)..self.idxOf(insn2)] = InjectionHelper.parseEventCommands(*commands, baseIndent: insn1.indent)
   end
 
   def swap(rangeA1, rangeA2, rangeB1, rangeB2)
+    InjectionHelper.declarePatched
     rangeA1 = self[rangeA1] if rangeA1.is_a?(Numeric)
     rangeA2 = self[rangeA2] if rangeA2.is_a?(Numeric)
     rangeB1 = self[rangeB1] if rangeB1.is_a?(Numeric)
@@ -1223,23 +1235,28 @@ module EventListHolder
   end
 
   def reformat(*commands)
+    InjectionHelper.declarePatched
     self.list.clear()
     self.list.push(*InjectionHelper.parseEventCommands(*commands, :Done))
   end
 
   def insert(*args, **kwargs)
+    InjectionHelper.declarePatched
     self.list.insert(*args, **kwargs)
   end
 
   def unshift(*args, **kwargs)
+    InjectionHelper.declarePatched
     self.list.unshift(*args, **kwargs)
   end
 
   def delete(*args, **kwargs)
+    InjectionHelper.declarePatched
     self.list.delete(*args, **kwargs)
   end
 
   def delete_at(*args, **kwargs)
+    InjectionHelper.declarePatched
     self.list.delete_at(*args, **kwargs)
   end
 
@@ -1310,11 +1327,29 @@ module RPG
     def command
       return InjectionHelper::EVENT_INSNS.invert[@code]
     end
+
+    def [](*args)
+      parameters.[] *args
+    end
+
+    def []=(*args)
+      InjectionHelper.declarePatched
+      parameters.[]= *args
+    end
   end
 
   class MoveCommand
     def command
       return InjectionHelper::MOVE_INSNS.invert[@code]
+    end
+
+    def [](*args)
+      parameters.[] *args
+    end
+
+    def []=(*args)
+      InjectionHelper.declarePatched
+      parameters.[]= *args
     end
   end
 
@@ -1336,6 +1371,7 @@ module RPG
       include EventListHolder
 
       def setTile(tileid, hueShift: 0, direction: :Down, pattern: 0, opacity: 255, blendType: :Normal)
+        InjectionHelper.declarePatched
         self.graphic.tile_id = tileid
         self.graphic.character_hue = hueShift
         self.graphic.direction = InjectionHelper::FACING_DIRECTIONS[direction] || direction
@@ -1346,6 +1382,7 @@ module RPG
       end
 
       def setGraphic(name, hueShift: 0, direction: :Down, pattern: 0, opacity: 255, blendType: :Normal)
+        InjectionHelper.declarePatched
         self.graphic.character_name = name
         self.graphic.character_hue = hueShift
         self.graphic.direction = InjectionHelper::FACING_DIRECTIONS[direction] || direction
@@ -1356,6 +1393,7 @@ module RPG
       end
 
       def setMoveType(movetype)
+        InjectionHelper.declarePatched
         self.move_type = InjectionHelper::EVENT_MOVE_TYPES[movetype] || movetype
         return self
       end
@@ -1369,6 +1407,7 @@ module RPG
       end
 
       def requiresVariable(varid, value)
+        InjectionHelper.declarePatched
         self.condition.variable_valid = true
         self.condition.variable_id = Variables[varid] || InjectionHelper.getScriptVariable(varid) || varid
         self.condition.variable_value = value
@@ -1376,6 +1415,7 @@ module RPG
       end
 
       def requiresSwitch(switch, switch2=nil)
+        InjectionHelper.declarePatched
         self.condition.switch1_valid = true
         self.condition.switch1_id = Switches[switch] || InjectionHelper.getScriptSwitch(switch) || switch
         if switch2
@@ -1386,12 +1426,14 @@ module RPG
       end
 
       def requiresSelfSwitch(selfswitch)
+        InjectionHelper.declarePatched
         self.condition.self_switch_valid = true
         self.condition.self_switch_ch = selfswitch
         return self
       end
 
       def changeTrigger(triggerType)
+        InjectionHelper.declarePatched
         self.trigger = InjectionHelper::EVENT_TRIGGER_TYPES[triggerType] || triggerType
         return self
       end

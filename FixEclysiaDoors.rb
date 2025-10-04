@@ -11,7 +11,6 @@ Variables[:LocationData] = 681
 InjectionHelper.defineMapPatch(581, 20) { |event| # Eclysia, door in hallway to Garufa Inc door
   event.patch(:fixEclysiaDoors) { |page|
     page.changeTrigger(:PlayerTouch)
-    next true
   }
 }
 
@@ -27,7 +26,6 @@ InjectionHelper.defineMapPatch(581, 20) { |event| # Eclysia, door in hallway to 
                                  [:ControlVariable, :LocationData, :[]=, :Constant, 0])
           page.insertAtStart([:ControlVariable, :LocationData, :[]=, :Constant, 3])
           page.insertBeforeEnd([:ControlVariable, :LocationData, :[]=, :Constant, 0])
-          next true
         end
       end
     }
@@ -38,8 +36,7 @@ InjectionHelper.defineMapPatch(584, 36) { |event| # Eclysia Garufa, door to hall
   event.patch(:fixEclysiaDoors) { |page|
     matched = page.lookForAll([:TransferPlayer, :Constant, 581, 24, 57, nil, nil]) # Transfer player to (24,47)
     for insn in matched
-      insn.parameters[2..3] = [128, 22]
+      insn[2..3] = [128, 22]
     end
-    next !matched.empty?
   }
 }

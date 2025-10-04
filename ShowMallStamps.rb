@@ -97,8 +97,6 @@ module ShowSomniamMallStamps
         targetIdx += 1 while [:Script,:ScriptContinued].include?(page[targetIdx].command)
         page.insertBefore(targetIdx, [:Script, "showmallstamps_disposefully"])
       end
-
-      next !textMatches.empty? || !martMatches.empty?
     }
   end
 
@@ -113,8 +111,6 @@ module ShowSomniamMallStamps
         targetIdx += 1 while [:ShowText,:ShowTextContinued].include?(page[targetIdx].command)
         page.insertBefore(targetIdx, [:Script, "showmallstamps_disposefully"])
       end
-
-      next !textMatches.empty?
     }
   end
 

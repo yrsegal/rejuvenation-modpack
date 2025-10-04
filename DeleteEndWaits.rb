@@ -13,18 +13,14 @@ InjectionHelper.defineMapPatch(-1) { |map| # Apply to every map
 
   map.patch(:deleteendwaits_patchinsns) { |page|
     i = 0
-    anypatch = false
     while i < page.size - 1
       insn = page[i]
 
       if (textmatcher.matches?(insn) || textcmatcher.matches?(insn)) && !nextmatcher.matches?(page[i + 1])
-        insn.parameters[0].gsub!(%r"((\\[\.\|])|(</ac>))$", '')
-        anypatch = true
+        insn[0] = insn.parameters[0].gsub!(%r"((\\[\.\|])|(</ac>))$", '')
       end
 
       i += 1
     end
-
-    next anypatch
   }
 }

@@ -41,22 +41,18 @@ def zzren_multiline_patch(event)
           idx = page.idxOf(insn)
           page.delete_at(idx)
           for i in 0...mapping.length
-            page[idx + i].parameters[0] = mapping[i]
+            page[idx + i][0] = mapping[i]
           end
-          doneAny = true
         elsif mapping.is_a?(Array) && mapping.length == usinglines.length
           idx = page.idxOf(insn)
           for i in 0...mapping.length
-            page[idx + i].parameters[0] = mapping[i]
+            page[idx + i][0] = mapping[i]
           end
-          doneAny = true
         elsif mapping.is_a?(Numeric)
-          insn.parameters[0] = "\\l[#{mapping}]" + insn.parameters[0]
-          doneAny = true
+          insn[0] = "\\l[#{mapping}]" + insn.parameters[0]
         end
       end
     end
-    next doneAny
   }
 end
 

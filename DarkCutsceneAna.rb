@@ -756,7 +756,7 @@ module DarkAnaCutscene
         dialogueidx += 1
       elsif insn.command == :SetMoveRoute
         insn.parameters[1].list.each { |movecommand|
-          movecommand.parameters[0] = 'BGirlwalk_5' if spriteMatcher.matches?(movecommand)
+          movecommand[0] = 'BGirlwalk_5' if spriteMatcher.matches?(movecommand)
         }
         page.list.push(insn)
       else
@@ -959,10 +959,8 @@ module DarkAnaCutscene
       matched = page.lookForAll([:Script, '$Trainer.outfit=5'])
 
       for insn in matched
-        insn.parameters[0] = 'darkana_set_outfit_for_desolate'
+        insn[0] = 'darkana_set_outfit_for_desolate'
       end
-
-      next !matched.empty?
     }
   end
 

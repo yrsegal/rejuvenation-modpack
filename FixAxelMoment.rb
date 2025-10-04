@@ -14,11 +14,9 @@ def axelfixes_fix_stormsprite(event)
 
     for insn in matched
       insn.parameters[1].list.each { |movecommand|
-        movecommand.parameters[0] = 'PlayerHeadache_3' if submatcher.matches?(movecommand)
+        movecommand[0] = 'PlayerHeadache_3' if submatcher.matches?(movecommand)
       }
     end
-
-    next !matched.empty?
   }
 end
 

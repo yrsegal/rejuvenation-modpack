@@ -50,7 +50,6 @@ def friendshipcheckers_friendshipchecker(event, startdialogue="Hello! Can I see 
             :Done,
         :Done,
       :Done)
-    next true
   }
 end
 

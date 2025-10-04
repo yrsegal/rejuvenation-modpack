@@ -64,10 +64,8 @@ def outfitoptions_arbitrary_outfit(event)
   event.patch(:outfitoptions_arbitrary_outfit) { |page|
     matched = page.lookForAll([:Script, /^\$Trainer\.outfit=[0-24-9]/])
     for insn in matched
-      insn.parameters[0] = '$Trainer.outfit=$game_variables[:Outfit]'
+      insn[0] = '$Trainer.outfit=$game_variables[:Outfit]'
     end
-
-    next !matched.empty?
   }
 end
 
@@ -78,8 +76,6 @@ def outfitoptions_replace_outfits_with_darchflag(event)
     for insn in matched
       page.replaceRange(insn, insn, [:ControlSwitch, :DarchOutfit, true])
     end
-
-    next !matched.empty?
   }
 end
 
@@ -94,8 +90,6 @@ def outfitoptions_nix_darchoutfit_set(event, replaceWithChoices)
         page.delete_at(page.idxOf(insn))
       end
     end
-
-    next !matched.empty?
   }
 end
 
@@ -117,7 +111,6 @@ def outfitoptions_wake_up(page)
 
       page.insertAfter(matched[1], *payload)
     end
-    next matched
   }
 end
 
@@ -131,7 +124,6 @@ def outfitoptions_injectBeforeOutfit0(event, event_id, nums, running, direction=
 
       subevent.insertBefore(matched, *newinsns)
     end
-    next matched
   }
 end
 
@@ -142,8 +134,6 @@ def outfitoptions_set_icep_outfit_fight(event)
     for insn in matched
       page.insertAfter(insn, [:Script, '$game_screen.outfitoptions_iceptOutfit=true'])
     end
-
-    next !matched.empty?
   }
 end
 
@@ -161,7 +151,6 @@ def outfitoptions_patch_outfit_management(event)
           [:ControlVariable, :Outfit, :[]=, :Constant, 4],
           [:Script, '$Trainer.outfit=4'])
     end
-    next matched
   }
 end
 
@@ -178,7 +167,6 @@ def outfitoptions_restore_sprite(event)
     if matched
       event.insertAfter(matched, [:Script, '$game_player.character_name=pbGetPlayerCharset(:walk)'])
     end
-    next matched
   }
 end
 

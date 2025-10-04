@@ -83,8 +83,6 @@ module VendorQuantityDisplay
         page.insertBefore(targetIdx, [:Script, script])
       end
 
-      anyChoice = false
-
       for insn in choiceMatches
         choiceIdx = page.idxOf(insn)
         insertIdx = choiceIdx - 1
@@ -93,11 +91,8 @@ module VendorQuantityDisplay
         end
         if insertIdx >= 0 && page[insertIdx].command == :ShowText
           page.insertBefore(insertIdx, [:Script, script])
-          anyChoice = true
         end
       end
-
-      next !textMatches.empty? || anyChoice
     }
     injectCleanup(eventlike)
   end
@@ -126,14 +121,12 @@ module VendorQuantityDisplay
                page.lookForAll([:ShowText, /^CAIRO: Darkness need not hide from me\./])
 
       for insn in showMoney
-        insn.parameters[0] = "\\G" + insn.parameters[0]
+        insn[0] = "\\G" + insn.parameters[0]
       end
 
       for insn in showRE
         page.insertBefore(insn, InjectionHelper.parseEventCommand(insn.indent, :Script, 'vendorquantity_show_redessence_window'))
       end
-
-      next !showRE.empty? || !showMoney.empty?
     }
     injectCleanup(event)
   end
@@ -187,8 +180,6 @@ module VendorQuantityDisplay
       for insn in choices
         page.insertBefore(insn, [:ShowText, "Let's spiffen them up, shall we?"])
       end
-
-      next choices.size > 0 || spiffen.size > 0
     }
   end
 
@@ -200,16 +191,13 @@ module VendorQuantityDisplay
       for insn in showRE
         page.insertBefore(insn,[:Script, 'vendorquantity_show_redessence_window'])
       end
-
-      next !showRE.empty?
     }
     injectCleanup(event)
   end
 
   def self.injectCleanup(eventlike)
     eventlike.patch(:VendorQuantityCleanup) { |page|
-      ends = page.insertBeforeEnd([:Script, 'vendorquantity_disposefully'])
-      next true
+      page.insertBeforeEnd([:Script, 'vendorquantity_disposefully'])
     }
   end
 

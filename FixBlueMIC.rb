@@ -13,10 +13,8 @@ def fixbluemic_patchShop(event)
     checks = page.lookForAll([:ConditionalBranch, :Variable, :Random1, :Constant, nil, :==])
 
     for insn in checks
-      insn.parameters[1] = Variables[:IceCream]
+      insn[1] = Variables[:IceCream]
     end
-
-    next !checks.empty?
   }
 end
 

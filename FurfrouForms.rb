@@ -92,7 +92,6 @@ def furfrouforms_trimvendor(event, startdialogue = "Do you have a Furfrou who ne
       [:When, 1, "No"],
         [:ShowText, "\\G" + chartag + "Changed your mind? Have a nice day!"],
       :Done)
-    next true
   }
 end
 
