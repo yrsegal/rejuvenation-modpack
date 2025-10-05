@@ -551,6 +551,28 @@ Selectfromboxes_SelectionArray = Array
 
 ####### END BAD CODE
 
+###### HANDLE CHOOSENUMBERPARAMS OFF A VARIABLE WE USED
+
+class ChooseNumberParams
+  alias :selectfromboxes_old_setDefaultValue :setDefaultValue
+
+  def setDefaultValue(number)
+    selectfromboxes_old_setDefaultValue(number.is_a?(Numeric) ? number : 0)
+  end
+
+  alias :selectfromboxes_old_setInitialValue :setInitialValue
+
+  def setInitialValue(number)
+    selectfromboxes_old_setInitialValue(number.is_a?(Numeric) ? number : 0)
+  end
+
+  alias :selectfromboxes_old_setCancelValue :setCancelValue
+
+  def setCancelValue(number)
+    selectfromboxes_old_setCancelValue(number.nil? || number.is_a?(Numeric) ? number : 0)
+  end
+end
+
 ######
 
 ###### PATCHING DAY CARE

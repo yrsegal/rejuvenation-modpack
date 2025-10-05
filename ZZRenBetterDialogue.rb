@@ -15,12 +15,12 @@ def zzren_multiline_patch(event)
       crushlines = lines.clone
       crushed = false
       idx = page.idxOf(insn)
-      if page.size > idx + 1 && page[idx + 1].code == InjectionHelper::EVENT_INSNS[:ShowText]
+      if page.size > idx + 1 && page[idx + 1].command == :ShowText
         idx += 1
         crushlines.push(page[idx].parameters[0])
         crushed = true
       end
-      while page.size > idx + 1 && page[idx + 1].code == InjectionHelper::EVENT_INSNS[:ShowTextContinued]
+      while page.size > idx + 1 && page[idx + 1].command == :ShowTextContinued
         idx += 1
         crushlines.push(page[idx].parameters[0])
         lines.push(page[idx].parameters[0]) unless crushed
