@@ -773,6 +773,19 @@ module ComplexMartInterface
       @sprites["helpwindow"].visible=false
       pbActivateWindow(@sprites,"itemwindow"){
         pbRefresh
+        ### CRAWLI PACK/
+        if defined?(tts)
+          tts(toUnformattedText(@sprites["moneywindow"].text))
+          if !itemwindow.item.nil?
+            tts(@adapter.getDisplayName(itemwindow.item))
+            tts(@adapter.formatPrice(@adapter.getPrice(itemwindow.item), itemwindow.item, true))
+            tts(@adapter.getDescription(itemwindow.item))
+          else
+            tts("CANCEL")
+            tts("Quit shopping.")
+          end
+        end
+        ### /CRAWLI PACK
         loop do
           Graphics.update
           Input.update
@@ -792,6 +805,18 @@ module ComplexMartInterface
             ### /MODDED
             @sprites["itemtextwindow"].text=(itemwindow.item.nil?) ? _INTL("Quit shopping.") :
               @adapter.getDescription(itemwindow.item)
+            ### CRAWLI PACK/
+            if defined?(tts)
+              if !itemwindow.item.nil?
+                tts(@adapter.getDisplayName(itemwindow.item))
+                tts(@adapter.formatPrice(@adapter.getPrice(itemwindow.item), itemwindow.item, true))
+                tts(@adapter.getDescription(itemwindow.item))
+              else
+                tts("CANCEL")
+                tts("Quit shopping.")
+              end
+            end
+            ### /CRAWLI PACK
           end
           if Input.trigger?(Input::B)
             return nil
@@ -836,6 +861,7 @@ module ComplexMartInterface
               inbagwindow.shadowColor=Color.new(168,184,184)
 
               inbagwindow.text= _INTL("In Bag:<r>{1}  ",qty)
+              tts("In Bag: " + qty.to_s) if defined?(tts) ### CRAWLI PACK
             else
               inbagwindow.visible=false
             end
@@ -857,6 +883,7 @@ module ComplexMartInterface
                 curnumber=1 if curnumber<1
                 ### MODDED/
                 numwindow.text=_INTL("x{1}<r>{2}",@adapter.getTrueQuantity(item,curnumber),@adapter.formatPrice(curnumber*itemprice, item, false))
+                tts(@adapter.formatPrice(curnumber * itemprice, item, true)) if defined?(tts) ### CRAWLI PACK
                 ### /MODDED
               elsif Input.repeat?(Input::RIGHT)
                 pbPlayCursorSE()
@@ -864,6 +891,7 @@ module ComplexMartInterface
                 curnumber=maximum if curnumber>maximum
                 ### MODDED/
                 numwindow.text=_INTL("x{1}<r>{2}",@adapter.getTrueQuantity(item,curnumber),@adapter.formatPrice(curnumber*itemprice, item, false))
+                tts(@adapter.formatPrice(curnumber * itemprice, item, true)) if defined?(tts) ### CRAWLI PACK
                 ### /MODDED
               elsif Input.repeat?(Input::UP)
                 pbPlayCursorSE()
@@ -871,6 +899,7 @@ module ComplexMartInterface
                 curnumber=1 if curnumber>maximum
                 ### MODDED/
                 numwindow.text=_INTL("x{1}<r>{2}",@adapter.getTrueQuantity(item,curnumber),@adapter.formatPrice(curnumber*itemprice, item, false))
+                tts(@adapter.formatPrice(curnumber * itemprice, item, true)) if defined?(tts) ### CRAWLI PACK
                 ### /MODDED
               elsif Input.repeat?(Input::DOWN)
                 pbPlayCursorSE()
@@ -878,6 +907,7 @@ module ComplexMartInterface
                 curnumber=maximum if curnumber<1
                 ### MODDED/
                 numwindow.text=_INTL("x{1}<r>{2}",@adapter.getTrueQuantity(item,curnumber),@adapter.formatPrice(curnumber*itemprice, item, false))
+                tts(@adapter.formatPrice(curnumber * itemprice, item, true)) if defined?(tts) ### CRAWLI PACK
                 ### /MODDED
               elsif Input.trigger?(Input::C)
                 pbPlayDecisionSE()
