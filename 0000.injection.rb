@@ -1328,13 +1328,13 @@ module RPG
       return InjectionHelper::EVENT_INSNS.invert[@code]
     end
 
-    def [](*args)
-      parameters.[] *args
+    def [](key)
+      parameters[key]
     end
 
-    def []=(*args)
-      InjectionHelper.declarePatched
-      parameters.[]= *args
+    def []=(key, value)
+      InjectionHelper.declarePatched if parameters[key] != value
+      parameters[key] = value
     end
   end
 
@@ -1343,13 +1343,13 @@ module RPG
       return InjectionHelper::MOVE_INSNS.invert[@code]
     end
 
-    def [](*args)
-      parameters.[] *args
+    def [](key)
+      parameters[key]
     end
 
-    def []=(*args)
-      InjectionHelper.declarePatched
-      parameters.[]= *args
+    def []=(key, value)
+      InjectionHelper.declarePatched if parameters[key] != value
+      parameters[key] = value
     end
   end
 
