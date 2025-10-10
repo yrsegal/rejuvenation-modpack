@@ -1,6 +1,11 @@
 class Window_AdvancedCommandPokemon
   def commands=(value)
     @commands=value
+    ### CRAWLI PACK
+    if defined?(tts)
+      speak_command(0) if @commands && @commands[0] && @tts
+    end
+    ### /CRAWLI PACK
     @item_max=commands.length
     ### MODDED/
     self.build_format_cache(value)
@@ -113,6 +118,12 @@ def Kernel.advanced_pbShowCommandsWithHelp(msgwindow,commands,help,cmdIfCancel=0
     command=0
     msgwin.text=help[cmdwindow.index]
     msgwin.width=msgwin.width # Necessary evil to make it use the proper margins.
+    ### CRAWLI PACK
+    if defined?(tts)
+      tts(commands[cmdwindow.index])
+      tts(help[cmdwindow.index])
+    end
+    ### /CRAWLI PACK
     loop do
       Graphics.update
       Input.update
@@ -120,6 +131,12 @@ def Kernel.advanced_pbShowCommandsWithHelp(msgwindow,commands,help,cmdIfCancel=0
       cmdwindow.update
       if oldindex!=cmdwindow.index
         msgwin.text=help[cmdwindow.index]
+        ### CRAWLI PACK
+        if defined?(tts)
+          tts(commands[cmdwindow.index])
+          tts(help[cmdwindow.index])
+        end
+        ### /CRAWLI PACK
       end
       msgwin.update
       yield if block_given?
