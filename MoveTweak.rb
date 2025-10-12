@@ -374,6 +374,9 @@ move_tweak(:TELEPORT,
   priority: -6,
   desc: "The user switches places with a party Pokémon in waiting, if any. If a wild Pokémon uses this move, it flees.")
 
+move_tweak(:TAKEHEART,
+  desc: "The user lifts its spirits, curing its own status conditions and boosting its Sp. Atk and Sp. Def stats.")
+
 # move_tweak(:ALLYSWITCH,
 #   priority: 2)
 

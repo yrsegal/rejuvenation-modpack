@@ -63,6 +63,27 @@ module MovesetTweaks
     }
   end
 
+  def self.injectLevelUpMove(pokemon, level, move)
+    if pokemon.is_a?(MonData)
+      pokemon.Moveset = [] unless pokemon.Moveset
+      moves = pokemon.Moveset
+    else
+      pokemon[:Moveset] = [] unless pokemon[:Moveset]
+      moves = pokemon[:Moveset]
+    end
+
+    insertion = [level, move]
+
+    unless moves.include?(insertion)
+      mvbefore = moves.first { |lv, mv| lv >= level }
+      if mvbefore
+        moves.insert(moves.index(mvbefore), insertion)
+      else
+        moves.push(insertion)
+      end
+    end
+  end
+
   def self.injectEggMoves(pokemon, *moves)
     if pokemon.is_a?(MonData)
       pokemon.EggMoves = [] unless pokemon.EggMoves
@@ -106,6 +127,10 @@ module MovesetTweaks
     # Give Quiver Dance to oricorio, as is its right
     injectEggMoves(pkmn(:ORICORIO), :QUIVERDANCE)
     spreadEggMoves(pkmn(:ORICORIO))
+
+    # Give Take Heart to Manaphy and Phione
+    injectLevelUpMove(pkmn(:PHIONE), 75, :TAKEHEART)
+    injectLevelUpMove(pkmn(:MANAPHY), 76, :TAKEHEART)
 
     # Give Flabebe and Deerling forms, and partner Eevee, their egg moves
     spreadEggMoves(pkmn(:FLABEBE))
