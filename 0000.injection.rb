@@ -1609,11 +1609,11 @@ module InjectionDSL
       def stop_se; @insns << :StopSoundEvent; end
       def fade_out_bgm(seconds:); @insns << [:FadeOutBackgroundMusic, seconds]; end
       def fade_out_bgs(seconds:); @insns << [:FadeOutBackgroundSound, seconds]; end
-      def change_tone(red:, green:, blue:, gray: 0, frames:); @insns << [:ChangeScreenColorTone, Tone.new(red, green, blue, gray), frames]; end
-      def change_fog_tone(red:, green:, blue:, gray: 0, frames:); @insns << [:ChangeFogColorTone, Tone.new(red, green, blue, gray), frames]; end
+      def change_tone(red, green, blue, gray: 0, frames:); @insns << [:ChangeScreenColorTone, Tone.new(red, green, blue, gray), frames]; end
+      def change_fog_tone(red, green, blue, gray: 0, frames:); @insns << [:ChangeFogColorTone, Tone.new(red, green, blue, gray), frames]; end
       def change_fog_opacity(opacity:, frames:); @insns << [:ChangeFogOpacity, opacity, frames]; end
       def change_picture_tone(number:, red:, green:, blue:, gray: 0, frames:); @insns << [:ChangePictureColorTone, number, Tone.new(red, green, blue, gray), frames]; end
-      def screen_flash(red:, green:, blue:, alpha: 0, frames:); @insns << [:ScreenFlash, Color.new(red, green, blue, alpha), frames]; end
+      def screen_flash(red, green, blue, alpha: 0, frames:); @insns << [:ScreenFlash, Color.new(red, green, blue, alpha), frames]; end
       def screen_shake(power:, speed:, frames:); @insns << [:ScreenShake, power, speed, frames]; end
 
       def transfer_player(map:, x:, y:, direction:, fading:)
@@ -1627,11 +1627,12 @@ module InjectionDSL
       end
 
       def swap_event_locations(character, target:, direction:); @insns << [:SetEventLocation, unwrap(character), :ExchangeWithEvent, unwrap(target), direction]; end
+
       def branch(on, *args, &block)
         if on.is_a?(InjectionDSL::Wrappers::Switch)
-          @insns << [:ConditionalBranch, :Switch, unwrap(on), args[0]]
+          @insns << [:ConditionalBranch, :Switch, unwrap(on), args.empty? ? true : args[0]]
         elsif on.is_a?(InjectionDSL::Wrappers::SelfSwitch)
-          @insns << [:ConditionalBranch, :SelfSwitch, unwrap(on), args[0]]
+          @insns << [:ConditionalBranch, :SelfSwitch, unwrap(on), args.empty? ? true : args[0]]
         elsif on.is_a?(InjectionDSL::Wrappers::Variable)
           operation = args[0]
           state = args[1]
@@ -1662,7 +1663,11 @@ module InjectionDSL
         @insns << ChoiceContext.create(&block)
       end
 
-      def set_move_route(character, &block); @insns << [:SetMoveRoute, unwrap(character), MoveRouteContext.create(&block).compile]; end
+      def set_move_route(character, &block)
+        @insns << [:SetMoveRoute, unwrap(character), MoveRouteContext.create(&block).compile]
+        return InjectionDSL::Wrappers::MoveRouteWaiter.new(self)
+      end
+
       def control_variables(start, done, operator = :[]=, *args); @insns << [:ControlVariables, unwrap(start), unwrap(done), operator, *args]; end
       def control_variable(variable, operator = :[]=, *args); control_variables(variable, variable, operator, *args); end
       def control_switches(start, done, value); @insns << [:ControlSwitches, unwrap(start), unwrap(done), value]; end
@@ -1893,13 +1898,13 @@ module InjectionDSL
       def change_speed(speed); @insns << [:MoveSpeed, speed]; end
       def change_frequency(freq); @insns << [:MoveFrequency, freq]; end
 
-      def animate_walking(state=true); @insns << state ? :AnimateWalking : :DontAnimateWalking; end
-      def animate_steps(state=true); @insns << state ? :AnimateSteps : :DontAnimateSteps; end
-      def lock_direction(state=true); @insns << state ? :FixDirection : :DontFixDirection; end
-      def set_intangible(state=true); @insns << state ? :SetIntangible : :SetTangible; end
-      def set_always_foreground(state=true); @insns << state ? :SetAlwaysForeground : :UnsetAlwaysForeground; end
+      def animate_walking(state=true); @insns << (state ? :AnimateWalking : :DontAnimateWalking); end
+      def animate_steps(state=true); @insns << (state ? :AnimateSteps : :DontAnimateSteps); end
+      def lock_direction(state=true); @insns << (state ? :FixDirection : :DontFixDirection); end
+      def set_intangible(state=true); @insns << (state ? :SetIntangible : :SetTangible); end
+      def set_always_foreground(state=true); @insns << (state ? :SetAlwaysForeground : :UnsetAlwaysForeground); end
       def set_character(name, hue: 0, direction: :Down, pattern: 0); @insns << [:SetCharacter, name, hue, direction, pattern]; end
-      def remove_graphic; change_graphic(""); end
+      def remove_graphic; set_character(""); end
       def set_opacity(opacity); @insns << [:SetOpacity, opacity]; end
       def set_blend_type(blend); @insns << [:BlendType, blend]; end
 
@@ -1926,7 +1931,7 @@ module InjectionDSL
 
         compile_end(list)
 
-        route = InjectionHelper.parseMoveRoute(list, repeat: @repeat)
+        route = InjectionHelper.parseMoveRoute(*list, repeat: @repeat)
         route.skippable = @skippable
 
         return route
@@ -1951,17 +1956,16 @@ module InjectionDSL
       def variables; InjectionDSL::Wrappers::Variables.new(self); end
       def switches; InjectionDSL::Wrappers::Switches.new(self); end
       def events; InjectionDSL::Wrappers::EventSourceProxy.new(self); end
-      def selfswitch; InjectionDSL::Wrappers::OwnSelfSwitches.new(self); end
+      def self_switch; InjectionDSL::Wrappers::OwnSelfSwitches.new(self); end
       def map_id; InjectionDSL::Wrappers::GlobalValue.new(:map_id); end
       def party_size; InjectionDSL::Wrappers::GlobalValue.new(:party_size); end
-      def gold; InjectionDSL::Wrappers::GoldValue.new(:gold); end
 
       def steps; InjectionDSL::Wrappers::GlobalValue.new(:steps); end
       def play_time; InjectionDSL::Wrappers::GlobalValue.new(:play_time); end
       def timer; InjectionDSL::Wrappers::GlobalValue.new(:timer); end
       def save_count; InjectionDSL::Wrappers::GlobalValue.new(:save_count); end
 
-      def player; InjectionDSL::Wrappers::EventProxy.new(:Player, self); end
+      def player; InjectionDSL::Wrappers::PlayerEventProxy.new(self); end
       def this; InjectionDSL::Wrappers::OwnEventProxy.new(self); end
     end
   end
@@ -2015,7 +2019,9 @@ module InjectionDSL
       end
 
       def []=(idx, value)
-        operate(idx, :[]=, value)
+        operator = :[]=
+        operator, value = value if value.is_a?(Array)
+        operate(idx, operator, value)
       end
     end
 
@@ -2063,12 +2069,12 @@ module InjectionDSL
       attr_reader :event
       attr_reader :dsl
 
-      def initialize(event, dsl)
-        @event = event
+      def initialize(dsl, event)
         @dsl = dsl
+        @event = event
       end
 
-      def selfswitch; SelfSwitches.new(event, dsl); end
+      def self_switch; SelfSwitches.new(event, dsl); end
 
       def x; CharacterValue.new(event, :x); end
       def y; CharacterValue.new(event, :y); end
@@ -2085,18 +2091,18 @@ module InjectionDSL
 
     class OwnEventProxy < EventProxy
       def initialize(dsl)
-        super(:This, dsl)
+        super(dsl, :This)
       end
 
-      def selfswitch; OwnSelfSwitches.new(dsl); end
+      def self_switch; OwnSelfSwitches.new(dsl); end
     end
 
     class PlayerEventProxy < EventProxy
       def initialize(dsl)
-        super(:This, dsl)
+        super(dsl, :Player)
       end
 
-      def selfswitch; OwnSelfSwitches.new(dsl); end
+      def self_switch; OwnSelfSwitches.new(dsl); end
 
       def gold; GoldValue.new(:gold); end
 
@@ -2109,7 +2115,7 @@ module InjectionDSL
     class EventSourceProxy
       attr_reader :dsl
 
-      def initialize(event, dsl)
+      def initialize(dsl)
         @dsl = dsl
       end
 
@@ -2118,9 +2124,28 @@ module InjectionDSL
       end
     end
 
+    class MoveRouteWaiter
+      attr_reader :dsl
+
+      def initialize(dsl)
+        @dsl = dsl
+      end
+
+      def wait
+        dsl.wait_for_move_completion
+      end
+    end
+
+
     class GlobalValue < HolderProxy; end
     class CharacterValue < EventHolderProxy; end
-    class Variable < HolderProxy; end
+    class Variable < HolderProxy
+      def +(value); [:+, value]; end
+      def -(value); [:-, value]; end
+      def *(value); [:*, value]; end
+      def /(value); [:/, value]; end
+      def %(value); [:%, value]; end
+    end
     class Switch < HolderProxy; end
     class SelfSwitch < EventHolderProxy; end
 

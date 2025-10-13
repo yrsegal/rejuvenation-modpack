@@ -371,468 +371,457 @@ SILENT_ANGRY_ANIMATION_ID = 32
 
 KARMA_ANIMATION_ID = 115
 
-InjectionHelper.defineMapPatch(44) { |map| # Neo East Gearen (east)
+InjectionHelper.defineMapPatch(44) { # Neo East Gearen (east)
   # Define in namespace so procs can reference later
   pikachu, ash, greninja = nil, nil, nil 
 
-  ash = map.createNewEvent(63, 76, "Ash Ketchum", "ashgreninja_ashnpc") { |event|
-    event.newPage { |page|
-      page.setGraphic("NPC AshKetchum")
-      page.requiresVariable(:Karma, 30)
+  ash = createNewEvent(63, 76, "Ash Ketchum", "ashgreninja_ashnpc") {
+    newPage {
+      setGraphic "NPC AshKetchum"
+      requiresVariable :Karma, 30
 
-      page.interact( 
-        [:ShowText, "???: ..."],
-        [:ShowText, "???: Ah. So it's you."],
-        [:ShowAnimation, :Player, QUESTION_ANIMATION_ID],
-        [:Wait, 20],
-        [:ShowChoices, ["What do you mean?", "Who are you?", "Bye dude."], 3],
-        [:When, 0, "What do you mean?"],
-          [:ShowText, "???: Just recognizing a kindred spirit."],
-          [:ShowText, "And hey, you're not being all weird about me."],
-          [:ShowText, "It's kinda nice to talk to someone who doesn't want autographs."],
-          [:ShowAnimation, :Player, ELIPSES_ANIMATION_ID],
-          [:Wait, 30],
-          [:SetMoveRoute, :Player, [false,
-            :AnimateSteps,
-            [:Wait, 17],
-            :DontAnimateSteps,
-            :Done]],
-          :WaitForMovement,
-          [:ConditionalBranch, :Character, :Player, :Left],
-            [:SetMoveRoute, pikachu.id, [false,
-              :FaceRight,
-              :Done]],
-          :Done,
-          [:ShowAnimation, :This, LAUGH_ANIMATION_ID],
-          [:ShowAnimation, pikachu.id, LAUGH_ANIMATION_ID],
-          [:Wait, 20],
-          [:ConditionalBranch, :Character, :Player, :Left],
-            [:SetMoveRoute, pikachu.id, [false,
-              :FaceDown,
-              :Done]],
-            :WaitForMovement,
-          :Done,
-          [:ShowText, "???: You haven't heard of me? Hah! That's new!"],
-          [:ShowText, "Let me introduce myself, then!"],
-          [:ShowText, "My name is \\c[6]Ash Ketchum.\n\\|\\c[0]The \\c[6]World Champion.\1"],
-          [:ShowAnimation, :Player, EXCLAMATION_ANIMATION_ID],
-          [:Wait, 20],
-          [:SetMoveRoute, :Player, [false,
-            :AnimateSteps,
-            [:Wait, 17],
-            :DontAnimateSteps,
-            :Done]],
-          :WaitForMovement,
-          [:ShowText, "ASH: Didn't know you were hanging out with THAT Ash, did you!"],
-          [:ShowText, "Though, after I won, the copycats became way too common..."],
-          [:ConditionalBranch, :Character, :Player, :Left],
-            [:SetMoveRoute, pikachu.id, [false,
-              :FaceRight,
-              :Done]],
-          :Done,
-          [:ShowAnimation, :This, SWEAT_DROP_ANIMATION_ID],
-          [:ShowAnimation, pikachu.id, LAUGH_ANIMATION_ID],
-          [:Wait, 20],
-          [:ConditionalBranch, :Character, :Player, :Left],
-            [:SetMoveRoute, pikachu.id, [false,
-              :FaceDown,
-              :Done]],
-            :WaitForMovement,
-          :Done,
-          [:ShowText, "And I know it's Monarch, but that sounds so... bleh. Champion is cooler."],
-        :Done,
-        [:When, 1, "Who are you?"],
-          [:ShowText, "???: Really? That's surprising. I figure everyone would have heard."],
-          [:ShowText, "My name is \\c[6]Ash Ketchum.\n\\|\\c[0]The \\c[6]World Champion.\1"],
-          [:ShowAnimation, :Player, EXCLAMATION_ANIMATION_ID],
-          [:Wait, 20],
-          [:SetMoveRoute, :Player, [false,
-            :AnimateSteps,
-            [:Wait, 17],
-            :DontAnimateSteps,
-            :Done]],
-          :WaitForMovement,
-          [:ShowText, "ASH: Yep!"],
-        :Done,
-        [:When, 2, "Bye dude."],
-          :ExitEventProcessing,
-        :Done,
-        [:SetMoveRoute, :This, [false,
-          :FaceLeft,
-          [:Wait, 10],
-          :Done]],
-        :WaitForMovement,
-        [:ShowAnimation, :This, ELIPSES_ANIMATION_ID],
-        [:Wait, 40],
-        [:SetMoveRoute, :This, [false,
-          :FaceTowardsPlayer,
-          :Done]],
-        :WaitForMovement,
-        [:ShowText, "ASH: ... I know what you're wondering. I can't."],
-        [:ShowAnimation, :This, SWEAT_DROP_ANIMATION_ID],
-        [:ShowText, "Evil teams really are everywhere, huh?"],
-        [:ShowText, "I'd love to help, it's just... \\c[6]I'm not the one who needs to do this."],
-        [:SetMoveRoute, pikachu.id, [false,
-          :FaceRight,
-          :Done]],
-        [:ShowAnimation, pikachu.id, HEART_ANIMATION_ID],
-        [:SetMoveRoute, :This, [false,
-          [:Wait, 5],
-          :FaceLeft,
-          :Done]],
-        [:Wait, 20],
-        [:SetMoveRoute, pikachu.id, [false,
-          :FaceDown,
-          :Done]],
-        :WaitForMovement,
-        [:SetMoveRoute, :This, [false,
-          :FaceTowardsPlayer,
-          :Done]],
-        [:ShowText, "ASH: Thanks, Pikachu. I know, I know, there's nothing I can do about it."],
-        [:ShowText, "But.\\| One of my partners wants to lend a bit of aid.\1"],
-        [:ConditionalBranch, :Character, :Player, :Left],
-          [:SetMoveRoute, :Player, [false,
-            :MoveDown,
-            :MoveLeft,
-            :FaceUp,
-            :Done]],
-          :WaitForMovement,
-        :Done,
-        [:SetMoveRoute, :This, [false,
-          :FaceRight,
-          :Done]],
-        :WaitForMovement,
-        [:ShowAnimation, greninja.id, POKE_COME_OUT_ANIMATION_ID],
-        [:PlaySoundEvent, '658Cry', 80, 100],
-        [:Script, "pbSetSelfSwitch(#{greninja.id},'A',true)"],
-        [:SetMoveRoute, greninja.id, [false,
-          [:SetCharacter, "pkmn_greninja_ashfight", 0, :Down, 0],
-          [:Wait, 20],
-          :Done]],
-        [:SetMoveRoute, :This, [false,
-          [:Wait, 20],
-          :FaceDown,
-          :Done]],
-        :WaitForMovement,
-        [:ShowText, "ASH: \\c[6]Greninja wants to go with you."],
-        [:ShowAnimation, :Player, EXCLAMATION_ANIMATION_ID],
-        [:Wait, 20],
-        [:ShowChoices, ["Surely it's not that easy.", "Gimme!"], 0],
-        [:When, 0, "Surely it's not that easy."],
-          [:ShowAnimation, :This, LAUGH_ANIMATION_ID],
-          [:ShowText, "ASH: You're right, you're right. He isn't just going to go with you."],
-          [:ShowText, "No, he's decided he'll only join you if you can \\c[6]beat me."],
-        :Done,
-        [:When, 1, "Gimme!"],
-          [:ShowAnimation, :This, LYRICAL_ANIMATION_ID],
-          [:ShowText, "ASH: Eager? I get it. He's really something."],
-          [:ShowText, "But he wants you to show him who he'd team up with first."],
-          [:ShowText, "His condition is that he'll join you if you can \\c[6]beat me."],
-        :Done,
-        [:ShowText, "I'll be staying for a while in Aevium. I'll be ready for you all, so just let me know when."],
-        [:ControlSelfSwitch, "A", true])
+      interact {
+        text "???: ..."
+        text "???: Ah. So it's you."
+        player.show_animation(QUESTION_ANIMATION_ID)
+        wait 20
+        show_choices {
+          choice("What do you mean?") {
+            text "???: Just recognizing a kindred spirit."
+            text "And hey, you're not being all weird about me."
+            text "It's kinda nice to talk to someone who doesn't want autographs."
+
+            player.show_animation(ELIPSES_ANIMATION_ID)
+            wait 30
+            player.set_move_route {
+              animate_steps
+              wait 17
+              animate_steps false
+            }.wait
+
+            branch(player, :Left) {
+              events[pikachu.id].set_move_route { face_right }
+            }
+            this.show_animation(LAUGH_ANIMATION_ID)
+            events[pikachu.id].show_animation(LAUGH_ANIMATION_ID)
+            wait 20
+            branch(player, :Left) {
+              events[pikachu.id].set_move_route { face_down }.wait
+            }
+
+            text "???: You haven't heard of me? Hah! That's new!"
+            text "Let me introduce myself, then!"
+            text "My name is \\c[6]Ash Ketchum.\n\\|\\c[0]The \\c[6]World Champion.\1"
+
+            player.show_animation(EXCLAMATION_ANIMATION_ID)
+            wait 20
+            player.set_move_route {
+              animate_steps
+              wait 17
+              animate_steps false
+            }.wait
+
+            text "ASH: Didn't know you were hanging out with THAT Ash, did you!"
+            text "Though, after I won, the copycats became way too common..."
+
+            branch(player, :Left) {
+              events[pikachu.id].set_move_route { face_right }
+            }
+            this.show_animation(SWEAT_DROP_ANIMATION_ID)
+            events[pikachu.id].show_animation(LAUGH_ANIMATION_ID)
+            wait 20
+            branch(player, :Left) {
+              events[pikachu.id].set_move_route { face_down }.wait
+            }
+
+            text "And I know it's Monarch, but that sounds so... bleh. Champion is cooler."
+          }
+
+          choice("Who are you?") {
+            text "???: Really? That's surprising. I figure everyone would have heard."
+            text "My name is \\c[6]Ash Ketchum.\n\\|\\c[0]The \\c[6]World Champion.\1"
+
+            player.show_animation(EXCLAMATION_ANIMATION_ID)
+            wait 20
+            player.set_move_route {
+              animate_steps
+              wait 17
+              animate_steps false
+            }.wait
+
+            text "ASH: Yep!"
+          }
+
+          default_choice("Bye dude.") {
+            exit_event_processing
+          }
+        }
+
+        this.set_move_route {
+          face_left
+          wait 10
+        }.wait
+
+        this.show_animation(ELIPSES_ANIMATION_ID)
+        wait 40
+        this.set_move_route { face_toward_player }.wait
+
+        text "ASH: ... I know what you're wondering. I can't."
+        this.show_animation(SWEAT_DROP_ANIMATION_ID)
+        text "Evil teams really are everywhere, huh?"
+        text "I'd love to help, it's just... \\c[6]I'm not the one who needs to do this."
+        events[pikachu.id].set_move_route {
+          face_right
+        }
+        events[pikachu.id].show_animation(HEART_ANIMATION_ID)
+        this.set_move_route {
+          wait 5
+          face_left
+        }
+        wait 20
+        events[pikachu.id].set_move_route {
+          face_down
+        }.wait
+
+        this.set_move_route { face_toward_player }
+
+        text "ASH: Thanks, Pikachu. I know, I know, there's nothing I can do about it."
+        text "But.\\| One of my partners wants to lend a bit of aid.\1"
+
+        branch(player, :Left) {
+          player.set_move_route {
+            move_down
+            move_left
+            face_up
+          }.wait
+        }
+
+        this.set_move_route { face_right }.wait
+        events[greninja.id].show_animation(POKE_COME_OUT_ANIMATION_ID)
+        play_se '658Cry', 80, 100
+        script "pbSetSelfSwitch(#{greninja.id},'A',true)"
+        events[greninja.id].set_move_route {
+          set_character "pkmn_greninja_ashfight"
+          wait 20
+        }
+        this.set_move_route {
+          wait 20
+          face_down
+        }.wait
+
+        text "ASH: \\c[6]Greninja wants to go with you."
+        player.show_animation(EXCLAMATION_ANIMATION_ID)
+        wait 20
+        show_choices {
+          choice("Surely it's not that easy.") {
+            this.show_animation(LAUGH_ANIMATION_ID)
+            text "ASH: You're right, you're right. He isn't just going to go with you."
+            text "No, he's decided he'll only join you if you can \\c[6]beat me."
+          }
+
+          choice("Gimme!") {
+            this.show_animation(LYRICAL_ANIMATION_ID)
+            text "ASH: Eager? I get it. He's really something."
+            text "But he wants you to show him who he'd team up with first."
+            text "His condition is that he'll join you if you can \\c[6]beat me."
+          }
+        }
+        text "I'll be staying for a while in Aevium. I'll be ready for you all, so just let me know when."
+        self_switch["A"] = true
+      }
     }
 
 
-    event.newPage { |page|
-      page.setGraphic("NPC AshKetchum")
-      page.requiresVariable(:Karma, 30)
-      page.requiresSelfSwitch("A")
+    newPage {
+      setGraphic "NPC AshKetchum"
+      requiresVariable :Karma, 30
+      requiresSelfSwitch "A"
 
-      page.interact(
-        [:ConditionalBranch, :SelfSwitch, "B", true],
-          [:ShowText, "ASH: Ready to try again?\n<o=175>Face the World Champion? (Rec. Lv. 85+)</o>\\ch[1,1,No,Yes]"],
-        :Else,
-          [:ShowText, "ASH: Are you ready? I won't hold back.\n<o=175>Face the World Champion? (Rec. Lv. 85+)</o>\\ch[1,1,No,Yes]"],
-        :Done,
-        [:ConditionalBranch, :Variable, 1, :Constant, 1, :==],
-          [:FadeOutBackgroundMusic, 2],
-          [:SetMoveRoute, greninja.id, [false,
-            :MoveDown,
-            :MoveLeft,
-            :MoveLeft,
-            :MoveLeft,
-            :MoveUp,
-            :MoveUp,
-            :FaceDown,
-            :Done]],
-          [:SetMoveRoute, pikachu.id, [false,
-            :FaceLeft,
-            :Done]],
-          [:SetMoveRoute, :Player, [false,
-            :MoveLeft,
-            :MoveLeft,
-            :MoveLeft,
-            :MoveUp,
-            :Done]],
-          [:SetMoveRoute, :This, [false,
-            [:Wait, 20],
-            :FaceLeft,
-            :Done]],
-          :WaitForMovement,
-          [:SetMoveRoute, :Player, [false,
-            :FaceRight,
-            :Done]],
-          :WaitForMovement,
-          [:PlayBackgroundSound, 'Amb-Wind', 100, 100],
-          [:Wait, 20],
-          [:ConditionalBranch, :SelfSwitch, "B", true],
-            [:ShowText, "ASH: It's time! Show me how much you've grown!"],
-          :Else,
-            [:ShowText, "ASH: I've been looking forward to this, you know."],
-            [:ShowText, "Come at me, \\|\\c[6]my fellow Chosen One."],
-          :Done,
-          [:ConditionalBranch, :Script, "pbTrainerBattle(:ASHKETCHUM,'Ash',_I('Amazing.'),false,0,true,0)"],
-            [:SetMoveRoute, pikachu.id, [false,
-              :MoveDown,
-              :MoveRight,
-              :MoveRight,
-              :MoveUp,
-              :FaceLeft,
-              :Done]],
-            [:ShowText, "ASH: Amazing. Just... wow!"],
-            [:ShowText, "You won! That makes you the World Champion now!"],
-            [:ShowChoices, ["I won't let you down.", "That doesn't seem right."], 0],
-            [:When, 0, "I won't let you down."],
-              [:ShowAnimation, :This, LAUGH_ANIMATION_ID],
-              [:Wait, 20],
-              [:ShowText, "ASH: I was kidding! This wasn't a league-sanctioned battle anyway."],
-              [:ShowText, "Though you might have a good shot at it!"],
-            :Done,
-            [:When, 1, "That doesn't seem right."],
-              [:ShowText, "ASH: No, it isn't, but I had you going there for a moment, didn't I?"],
-            :Done,
-            :WaitForMovement,
-            [:ShowAnimation, greninja.id, HAPPY_ANIMATION_ID],
-            [:PlaySoundEvent, '658Cry', 80, 100],
-            [:SetMoveRoute, greninja.id, [false,
-              [:Wait, 20],
-              :MoveDown,
-              :FaceRight,
-              :AnimateSteps,
-              [:Wait, 17],
-              :DontAnimateSteps,
-              [:Wait, 20],
-              :Done]],
-            :WaitForMovement,
-            [:ShowText, "ASH: You approve, buddy?"],
-            [:ShowAnimation, greninja.id, LYRICAL_ANIMATION_ID],
-            [:Wait, 20],
-            [:ShowText, "ASH: Good! Good. I'm glad."],
-            [:Wait, 20],
-            [:SetMoveRoute, greninja.id, [false,
-              :MoveRight,
-              :Done]],
-            :WaitForMovement,
-            [:ShowAnimation, greninja.id, POKE_COME_IN_ANIMATION_ID],
-            [:SetMoveRoute, greninja.id, [false,
-              [:SetCharacter, '', 0, :Down, 0],
-              :SetIntangible,
-              :Done]],
-            :WaitForMovement,
-            [:Wait, 20],
-            [:Script,          'poke=PokeBattle_Pokemon.new(:GRENINJA,85,$Trainer,false,1)'],
-            [:ScriptContinued, 'poke.iv = [20,20,20,20,20,20] if !$game_switches[:Full_IVs] && !$game_switches[:Empty_IVs_Password]'],
-            [:ScriptContinued, 'poke.setNature(:MODEST)'],
-            [:ScriptContinued, 'poke.hptype = :GROUND'],
-            [:ScriptContinued, 'poke.pbLearnMove(:WATERSHURIKEN)'],
-            [:ScriptContinued, 'poke.pbLearnMove(:DARKPULSE)'],
-            [:ScriptContinued, 'poke.pbLearnMove(:EXTRASENSORY)'],
-            [:ScriptContinued, 'poke.pbLearnMove(:HIDDENPOWER)'],
-            [:ScriptContinued, 'poke.makeMale'],
+      interact {
+        branch(self_switch["B"]) {
+          text "ASH: Ready to try again?\n<o=175>Face the World Champion? (Rec. Lv. 85+)</o>\\ch[1,1,No,Yes]"
+        }.else {
+          text "ASH: Are you ready? I won't hold back.\n<o=175>Face the World Champion? (Rec. Lv. 85+)</o>\\ch[1,1,No,Yes]"
+        }
 
-            # OT Properties
-            [:ScriptContinued, 'timediverge = $Settings.unrealTimeDiverge'],
-            [:ScriptContinued, '$Settings.unrealTimeDiverge = 0'],
-            [:ScriptContinued, 'poke.timeReceived = Time.unrealTime_oldTimeNew(2013, 10, 17, 12, 0, 0)'], # Air date of episode where he got his Froakie - October 24, 2013 
-            [:ScriptContinued, '$Settings.unrealTimeDiverge = timediverge'],
-            [:ScriptContinued, 'poke.obtainText = _INTL("The Alola region")'],
-            [:ScriptContinued, 'poke.obtainMode = 0'],
-            [:ScriptContinued, 'poke.obtainLevel = 5'],
-            [:ScriptContinued, 'poke.ot = _INTL("Ash")'],
-            [:ScriptContinued, 'poke.trainerID = 7150'],
-            [:ScriptContinued, 'pbSet(1,poke)'],
-            [:SetMoveRoute, :This, [false,
-              :MoveLeft,
-              :MoveLeft,
-              :Done]],
-            :WaitForMovement,
-            [:ConditionalBranch, :Script, 'ashgreninja_addPokemonNoTimeSet(pbGet(1))'],
-              [:Script, "pbSetSelfSwitch(#{greninja.id},'B',true)"],
-            :Done,
-            [:SetMoveRoute, :This, [false,
-              :MoveRight,
-              :MoveRight,
-              :FaceLeft,
-              :Done]],
-            :WaitForMovement,
-            [:ShowText, "ASH: Take good care of him."],
-            [:ShowText, "It's about time for me to leave Aevium anyway."],
-            [:ShowTextContinued, "I'm probably going to head back to Galar, give Leon a visit."],
-            [:ShowAnimation, pikachu.id, EXCLAMATION_ANIMATION_ID],
-            [:SetMoveRoute, :This, [false,
-              [:Wait, 5],
-              :FaceRight,
-              :Done]],
-            [:Wait, 20],
-            [:ShowAnimation, pikachu.id, SILENT_ANGRY_ANIMATION_ID],
-            [:PlaySoundEvent, 'PRSFX- Catastropika2', 80, 100],
-            [:Wait, 30],
-            [:ShowAnimation, :This, LAUGH_ANIMATION_ID],
-            [:Wait, 20],
-            [:ShowText, "ASH: Oh, alright. I'll call up Goh. Make a day of it."],
-            [:Wait, 10],
-            [:SetMoveRoute, :This, [false,
-              :FaceLeft,
-              :Done]],
-            :WaitForMovement,
-            [:ShowText, "See you around, \\PN."],
-            [:PlaySoundEvent, 'Exit Door', 80, 100],
-            [:ChangeScreenColorTone, Tone.new(-255,-255,-255,0), 10],
-            [:Wait, 10],
+        branch(variables[1], :==, 1) {
+          fade_out_bgm seconds: 2
+          events[greninja.id].set_move_route {
+            move_down
+            move_left
+            move_left
+            move_left
+            move_up
+            move_up
+            face_down
+          }
+          events[pikachu.id].set_move_route { face_left }
+          player.set_move_route {
+            move_left
+            move_left
+            move_left
+            move_up
+          }
+          this.set_move_route {
+            wait 20
+            face_left
+          }.wait
+          player.set_move_route { face_right }.wait
+          play_bgs 'Amb-Wind'
+          wait 20
+          branch(self_switch["B"]) {
+            text "ASH: It's time! Show me how much you've grown!"
+          }.else {
+            text "ASH: I've been looking forward to this, you know."
+            text "Come at me, \\|\\c[6]my fellow Chosen One."
+          }
+          branch("pbTrainerBattle(:ASHKETCHUM,'Ash',_I('Amazing.'),false,0,true,0)") {
+            events[pikachu.id].set_move_route {
+              move_down
+              move_right
+              move_right
+              move_up
+              face_left
+            }
+            text "ASH: Amazing. Just... wow!"
+            show_choices("You won! That makes you the World Champion now!") {
+              choice("I won't let you down.") {
+                this.show_animation(LAUGH_ANIMATION_ID)
+                wait 20
+                text "ASH: I was kidding! This wasn't a league-sanctioned battle anyway."
+                text "Though you might have a good shot at it!"
+              }
 
-            [:ControlSelfSwitch, "C", true],
-            [:Script, "pbSetSelfSwitch(#{pikachu.id},'A',true)"],
-            [:ConditionalBranch, :Script, "$game_self_switches[[@map_id,#{greninja.id},'B']]!=true"],
-              [:SetEventLocation, greninja.id, :Constant, greninja.x, greninja.y, :Down],
-              [:Script, "pbSetSelfSwitch(#{greninja.id},'C',true)"],
-              [:SetMoveRoute, greninja.id, [false,
-                [:SetCharacter, "pkmn_greninja_ashfight", 0, :Down, 0],
-                :SetTangible,
-                :Done]],
-            :Done,
-            [:SetMoveRoute, :This, [false,
-              [:SetCharacter, '', 0, :Down, 0],
-              :Done]],
-            [:SetMoveRoute, pikachu.id, [false,
-              [:SetCharacter, '', 0, :Down, 0],
-              :Done]],
-            :WaitForMovement,
+              choice("That doesn't seem right.") {
+                text "ASH: No, it isn't, but I had you going there for a moment, didn't I?"
+              }
+            }
 
-            [:ChangeScreenColorTone, Tone.new(0,0,0,0), 10],
-            [:Wait, 10],
-            [:ShowAnimation, :Player, ELIPSES_ANIMATION_ID],
-            [:Wait, 40],
-            [:ShowText, "(... you never told him your name.)"],
-            [:Wait, 16],
-            [:ControlVariable, :Karma, :+, :Constant, 1],
-            [:ShowAnimation, :Player, KARMA_ANIMATION_ID],
-          :Else,
-            [:SetMoveRoute, greninja.id, [false,
-              :MoveDown,
-              :MoveDown,
-              :MoveRight,
-              :MoveRight,
-              :MoveRight,
-              :MoveUp,
-              :FaceDown,
-              :Done]],
-            [:SetMoveRoute, pikachu.id, [false,
-              :FaceDown,
-              :Done]],
-            [:SetMoveRoute, :Player, [false,
-              [:Wait, 30],
-              :MoveDown,
-              :MoveRight,
-              :MoveRight,
-              :MoveRight,
-              :FaceUp,
-              :Done]],
-            [:SetMoveRoute, :This, [false,
-              [:Wait, 40],
-              :FaceDown,
-              :Done]],
-            :WaitForMovement,
-            [:ControlSelfSwitch, "B", true],
-            [:ShowAnimation, :Player, SWEAT_DROP_ANIMATION_ID],
-            [:Wait, 20],
-            [:ShowText, "ASH: Don't feel too bad. The World Champion title isn't for show!"],
-            [:ShowText, "Come back whenever you want to try again."],
-          :Done,
-        :Else,
-          [:ShowText, "ASH: No worries."],
-        :Done)
+            wait_for_move_completion
+
+            events[greninja.id].show_animation(HAPPY_ANIMATION_ID)
+            play_se '658Cry', 80, 100
+            events[greninja.id].set_move_route {
+              wait 20
+              move_down
+              face_right
+              animate_steps
+              wait 17
+              animate_steps false
+              wait 20
+            }.wait
+            p @insns[-2]
+
+            text "ASH: You approve, buddy?"
+            events[greninja.id].show_animation(LYRICAL_ANIMATION_ID)
+            wait 20
+            text "ASH: Good! Good. I'm glad."
+            wait 20
+            events[greninja.id].set_move_route { move_right }.wait
+
+            events[greninja.id].show_animation(POKE_COME_IN_ANIMATION_ID)
+            events[greninja.id].set_move_route { 
+              remove_graphic
+              set_intangible
+            }.wait
+            wait 20
+
+            script 'Ash=PokeBattle_Trainer.new("Ash",:ASHKETCHUM)
+                    Ash.id = 7150
+                    poke=PokeBattle_Pokemon.new(:GRENINJA,85,Ash,false,1)
+                    poke.iv = [20,20,20,20,20,20] if !$game_switches[:Full_IVs] && !$game_switches[:Empty_IVs_Password]
+                    poke.setNature(:MODEST)
+                    poke.hptype = :GROUND
+                    poke.pbLearnMove(:WATERSHURIKEN)
+                    poke.pbLearnMove(:DARKPULSE)
+                    poke.pbLearnMove(:EXTRASENSORY)
+                    poke.pbLearnMove(:HIDDENPOWER)
+                    poke.makeMale
+
+                    # OT Properties
+                    timediverge = $Settings.unrealTimeDiverge
+                    $Settings.unrealTimeDiverge = 0
+                    poke.timeReceived = Time.unrealTime_oldTimeNew(2013, 10, 17, 12, 0, 0) # Air date of episode where he got his Froakie - October 24, 2013 
+                    $Settings.unrealTimeDiverge = timediverge
+                    poke.obtainText = _INTL("The Alola region")
+                    poke.obtainMode = 0
+                    poke.obtainLevel = 5
+                    poke.ot = _INTL("Ash")
+                    poke.trainerID = 7150
+                    pbSet(1,poke)'
+
+            this.set_move_route {
+              move_left
+              move_left
+            }.wait
+
+            branch("ashgreninja_addPokemonNoTimeSet(pbGet(1))") {
+              script "pbSetSelfSwitch(#{greninja.id},'B',true)"
+            }
+
+            this.set_move_route {
+              move_right
+              move_right
+              face_left
+            }.wait
+
+            text "ASH: Take good care of him."
+            text "It's about time for me to leave Aevium anyway."
+            text "I'm probably going to head back to Galar, give Leon a visit."
+
+            events[pikachu.id].show_animation(EXCLAMATION_ANIMATION_ID)
+            this.set_move_route {
+              wait 5
+              face_right
+            }
+            wait 20
+            events[pikachu.id].show_animation(SILENT_ANGRY_ANIMATION_ID)
+            play_se 'PRSFX- Catastropika2', 80, 100
+            wait 30
+            this.show_animation(LAUGH_ANIMATION_ID)
+            wait 20
+            text "ASH: Oh, alright. I'll call up Goh. Make a day of it."
+            wait 10
+            this.set_move_route { face_left }.wait
+
+            text "See you around, \\PN."
+            play_se 'Exit Door', 80, 100
+            change_tone -255, -255, -255, frames: 10
+            wait 10
+            script "pbSetSelfSwitch(#{pikachu.id},'A',true)"
+            branch("$game_self_switches[[@map_id,#{greninja.id},'B']]!=true") {
+              events[greninja.id].set_event_location(x: greninja.x, y: greninja.y, direction: :Down)
+              script "pbSetSelfSwitch(#{greninja.id},'C',true)"
+              events[greninja.id].set_move_route { 
+                set_character "pkmn_greninja_ashfight"
+                set_intangible false
+              }
+            }
+
+            this.set_move_route { remove_graphic }
+            events[pikachu.id].set_move_route { remove_graphic }.wait
+            change_tone 0, 0, 0, frames: 10
+            wait 10
+
+            player.show_animation(ELIPSES_ANIMATION_ID)
+            wait 40
+            text "(... you never told him your name.)"
+            wait 16
+            variables[:Karma] += 1
+            player.show_animation(KARMA_ANIMATION_ID)
+          }.else {
+            events[greninja.id].set_move_route {
+              move_down
+              move_down
+              move_right
+              move_right
+              move_right
+              move_up
+              face_down
+            }
+            events[pikachu.id].set_move_route { face_down }
+            player.set_move_route {
+              wait 30
+              move_down
+              move_right
+              move_right
+              move_right
+            }
+            this.set_move_route {
+              wait 40
+              face_down
+            }.wait
+            self_switch["B"] = true
+
+            player.show_animation(SWEAT_DROP_ANIMATION_ID)
+            wait 20
+            text "ASH: Don't feel too bad. The World Champion title isn't for show!"
+            text "Come back whenever you want to try again."
+          }
+        }.else {
+          text "ASH: No worries."
+        }
+        
+      }
     }
 
-    event.newPage { |page|
-      page.requiresSelfSwitch("C")
+    newPage {
+      requiresSelfSwitch "C"
+    }
+  }
+
+  pikachu = createNewEvent(62, 76, "Ash's Pikachu", "ashgreninja_pikachunpc") {
+    newPage {
+      setGraphic "pkmn_pikachu_ash" 
+      requiresVariable :Karma, 30
+      self.move_speed -= 1
+      interact {
+        play_se 'PRSFX- Catastropika2', 80, 100
+        text "PIKACHU: Bika!"
+      }
+    }
+
+    newPage {
+      requiresSelfSwitch "A"
     }
   }
 
 
-
-
-  pikachu = map.createNewEvent(62, 76, "Ash's Pikachu", "ashgreninja_pikachunpc") { |event|
-    event.newPage { |page|
-      page.setGraphic("pkmn_pikachu_ash")
-      page.requiresVariable(:Karma, 30)
-      page.move_speed -= 1
-      page.interact(
-        [:PlaySoundEvent, 'PRSFX- Catastropika2', 80, 100],
-        [:ShowText, "PIKACHU: Bika!"])
+  greninja = createNewEvent(64, 76, "Ash's Greninja", "ashgreninja_greninjanpc") {
+    newPage {
+      requiresVariable :Karma, 30
     }
 
-    event.newPage { |page|
-      page.requiresSelfSwitch("A")
-    }
-  }
-
-
-
-
-
-  greninja = map.createNewEvent(64, 76, "Ash's Greninja", "ashgreninja_greninjanpc") { |event|
-    event.newPage { |page|
-      page.requiresVariable(:Karma, 30)
+    newPage {
+      setGraphic "pkmn_greninja_ashfight"
+      requiresVariable :Karma, 30
+      requiresSelfSwitch "A"
+      interact {
+        play_se '658Cry', 80, 100
+        text "GRENINJA: Grenin!"
+      }
     }
 
-    event.newPage { |page|
-      page.setGraphic("pkmn_greninja_ashfight")
-      page.requiresVariable(:Karma, 30)
-      page.requiresSelfSwitch("A")
-      page.interact(
-        [:PlaySoundEvent, '658Cry', 80, 100],
-        [:ShowText, "GRENINJA: Grenin!"])
+    newPage {
+      setGraphic "pkmn_greninja_ashfight"
+      requiresVariable :Karma, 30
+      requiresSelfSwitch "C"
+      interact {
+        play_se '658Cry', 80, 100
+        text "GRENINJA: Gre! Nin-ja!"
+
+        script 'Ash=PokeBattle_Trainer.new("Ash",:ASHKETCHUM)
+                Ash.id = 7150
+                poke=PokeBattle_Pokemon.new(:GRENINJA,85,Ash,false,1)
+                poke.iv = [20,20,20,20,20,20] if !$game_switches[:Full_IVs] && !$game_switches[:Empty_IVs_Password]
+                poke.setNature(:MODEST)
+                poke.hptype = :GROUND
+                poke.pbLearnMove(:WATERSHURIKEN)
+                poke.pbLearnMove(:DARKPULSE)
+                poke.pbLearnMove(:EXTRASENSORY)
+                poke.pbLearnMove(:HIDDENPOWER)
+                poke.makeMale
+
+                # OT Properties
+                timediverge = $Settings.unrealTimeDiverge
+                $Settings.unrealTimeDiverge = 0
+                poke.timeReceived = Time.unrealTime_oldTimeNew(2013, 10, 17, 12, 0, 0) # Air date of episode where he got his Froakie - October 24, 2013 
+                $Settings.unrealTimeDiverge = timediverge
+                poke.obtainText = _INTL("The Alola region")
+                poke.obtainMode = 0
+                poke.obtainLevel = 5
+                poke.ot = _INTL("Ash")
+                poke.trainerID = 7150
+                pbSet(1,poke)'
+        branch("ashgreninja_addPokemonNoTimeSet(pbGet(1))") {
+          self_switch["B"] = true
+          self_switch["C"] = false
+        }
+      }
     }
 
-    event.newPage { |page|
-      page.setGraphic("pkmn_greninja_ashfight")
-      page.requiresVariable(:Karma, 30)
-      page.requiresSelfSwitch("C")
-      page.interact(
-        [:PlaySoundEvent, '658Cry', 80, 100],
-        [:ShowText, "GRENINJA: Gre! Nin-ja!"],
-
-        [:Script,          'Ash=PokeBattle_Trainer.new("Ash",:ASHKETCHUM)'],
-        [:ScriptContinued, 'Ash.id = 7150'],
-        [:ScriptContinued, 'poke=PokeBattle_Pokemon.new(:GRENINJA,85,Ash,false,1)'],
-        [:ScriptContinued, 'poke.iv = [20,20,20,20,20,20] if !$game_switches[:Full_IVs] && !$game_switches[:Empty_IVs_Password]'],
-        [:ScriptContinued, 'poke.setNature(:MODEST)'],
-        [:ScriptContinued, 'poke.hptype = :GROUND'],
-        [:ScriptContinued, 'poke.pbLearnMove(:WATERSHURIKEN)'],
-        [:ScriptContinued, 'poke.pbLearnMove(:DARKPULSE)'],
-        [:ScriptContinued, 'poke.pbLearnMove(:EXTRASENSORY)'],
-        [:ScriptContinued, 'poke.pbLearnMove(:HIDDENPOWER)'],
-        [:ScriptContinued, 'poke.makeMale'],
-
-        # OT Properties
-        [:ScriptContinued, 'timediverge = $Settings.unrealTimeDiverge'],
-        [:ScriptContinued, '$Settings.unrealTimeDiverge = 0'],
-        [:ScriptContinued, 'poke.timeReceived = Time.unrealTime_oldTimeNew(2013, 10, 17, 12, 0, 0)'], # Air date of episode where he got his Froakie - October 24, 2013 
-        [:ScriptContinued, '$Settings.unrealTimeDiverge = timediverge'],
-        [:ScriptContinued, 'poke.obtainText = _INTL("The Alola region")'],
-        [:ScriptContinued, 'poke.obtainMode = 0'],
-        [:ScriptContinued, 'poke.obtainLevel = 5'],
-        [:ScriptContinued, 'pbSet(1,poke)'],
-
-        [:ConditionalBranch, :Script, 'ashgreninja_addPokemonNoTimeSet(pbGet(1))'],
-          [:ControlSelfSwitch, "B", true],
-          [:ControlSelfSwitch, "C", false],
-        :Done)
-    }
-
-    event.newPage { |page|
-      page.requiresSelfSwitch("B")
+    newPage {
+      requiresSelfSwitch "B"
     }
   }
 }

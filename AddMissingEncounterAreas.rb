@@ -6,15 +6,17 @@ begin
   raise "Missing dependencies for mod #{__FILE__}, cannot load" unless missing.empty?
 end
 
-InjectionHelper.defineMapPatch(474) { |map| # Route Z
-  map.createSinglePageEvent(27, 35, "Headbutt Tree") { |page|
-    page.interact([:Script, "pbHeadbutt"])
+InjectionHelper.defineMapPatch(474) { # Route Z
+  createSinglePageEvent(27, 35, "Headbutt Tree") {
+    interact {
+      script 'pbHeadbutt'
+    }
   }
 }
 
 
-InjectionHelper.defineMapPatch(257) { |map| # GDC Scholar's District
-  InjectionHelper.fillArea(map, 33, 19, 
+InjectionHelper.defineMapPatch(257) { # GDC Scholar's District
+  fillArea(33, 19, 
     ["   ",
      "___",
      "YGY",

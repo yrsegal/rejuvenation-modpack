@@ -12,30 +12,31 @@ Switches[:Gym_13] = 295
 
 TextureOverrides.registerTextureOverride(TextureOverrides::CHARS + "egg_aevian_larvesta", TextureOverrides::MODBASE + "LarvestaEgg")
 
-InjectionHelper.defineMapPatch(315) { |map| # Rose Theatre
-  map.createNewEvent(4, 25, "Larvesta Egg", "aevianlarvestaegg_egg") { |event|
-    event.newPage { |page|
-      page.setGraphic("egg_aevian_larvesta")
-      page.requiresSwitch(:Gym_13)
-      page.interact(
-        [:ShowText, "The egg is nestled here, as if waiting for you to return for it."],
-        [:ShowText, "Take it?"],
-        [:ShowChoices, ["Yes", "No"], 2],
-        [:When, 0, "Yes"],
-          [:Script,          "egg=Kernel.pbGenerateEgg(:LARVESTA,1)"],
-          [:ScriptContinued, "egg.pbLearnMove(:HURRICANE)"],
-          [:ScriptContinued, "pbAddPokemonSilent(egg)"],
-          [:PlaySoundEvent, "itemlevel", 100, 100],
-          [:ShowText, "\\PN got the egg!"],
-          [:ControlSelfSwitch, "A", true],
-        :Done,
-        [:When, 1, "No"],
-          [:ShowText, "You left the egg alone."],
-        :Done)
+InjectionHelper.defineMapPatch(315) { # Rose Theatre
+  createNewEvent(4, 25, "Larvesta Egg", "aevianlarvestaegg_egg") {
+    newPage {
+      setGraphic "egg_aevian_larvesta"
+      requiresSwitch :Gym_13
+      interact {
+        text "The egg is nestled here, as if waiting for you to return for it."
+        show_choices("Take it?") {
+          choice("Yes") {
+            script "egg=Kernel.pbGenerateEgg(:LARVESTA,1)
+                    egg.pbLearnMove(:HURRICANE)
+                    pbAddPokemonSilent(egg)"
+            play_se "itemlevel"
+            text "\\PN got the egg!"
+            self_switch["A"] = true
+          }
+          default_choice("No") {
+            text "You left the egg alone."
+          }
+        }
+      }
     }
 
-    event.newPage { |page|
-      page.requiresSelfSwitch("A")
+    newPage {
+      requiresSelfSwitch "A"
     }
   }
 }
