@@ -28,70 +28,75 @@ end
 LYRICAL_ANIMATION_ID = 18
 
 def furfrouforms_trimvendor(event, startdialogue = "Do you have a Furfrou who needs trimming? It'll cost $2500.", chartag = '')
-  event.patch(:furfrouforms_trimvendor) { |page|
-    page.insertBeforeEnd(
-      [:ShowText, "\\G" + chartag + startdialogue],
-      [:ShowChoices, ["Yes", "No"], 2],
-      [:When, 0, "Yes"],
-        [:ConditionalBranch, :Money, 2500, :OrMore],
-          [:Script,          'pbChoosePokemon(1,3,'],
-          [:ScriptContinued, 'proc {|poke|'],
-          [:ScriptContinued, ' !poke.egg? &&'],
-          [:ScriptContinued, ' !(poke.isShadow? rescue false) &&'],
-          [:ScriptContinued, '  poke.species==:FURFROU'],
-          [:ScriptContinued, '})'],
-          [:ConditionalBranch, :Variable, 1, :Constant, -1, :==],
-            [:ShowText, "\\G" + chartag + "Changed your mind? Have a nice day!"],
-            :ExitEventProcessing,
-          :Else,
-            [:ShowText, "\\G" + chartag + "And how should I trim your \\v[3]?\\ch[2,11,Natural Trim,Heart Trim,Star Trim,Diamond Trim,Debutante Trim,Matron Trim,Dandy Trim,La Reine Trim,Kabuki Trim,Pharaoh Trim,Cancel]"],            
-            [:ConditionalBranch, :Variable, 2, :Constant, 10, :==],
-              [:ShowText, "\\G" + chartag + "Changed your mind? Have a nice day!"],
-              :ExitEventProcessing,
-            :Done,
-            [:Script, "$game_variables[4] = $cache.pkmn[:FURFROU].forms[pbGet(2)]"],
-            [:ConditionalBranch, :Script, '$game_variables[2] == pbGetPokemon(1).form'],
-              [:ShowText, "\\G" + chartag + "Your \\v[3] is already in its \\v[4]. Want me to touch it up?"],
-              [:ShowChoices, ["Yes", "No"], 2],
-              [:When, 0, "Yes"],
-              :Done,
-              [:When, 1, "No"],
-                [:ShowText, "\\G" + chartag + "Okay! Have a nice day!"],
-                :ExitEventProcessing,
-              :Done,
-            :Else,
-              [:ConditionalBranch, :Variable, 2, :Constant, 0, :==],
-                [:ShowText, "\\G" + chartag + "Back to basics, then? Alright!"],
-              :Else,
-                [:ShowText, "\\G" + chartag + "\\v[4]? Alright!"],
-              :Done,
-            :Done,
-            [:ChangeGold, :Constant, -2500],
-            [:ShowText, "\\G" + chartag + "Okay, this will only take a moment..."],
-            [:ChangeScreenColorTone, Tone.new(-255, -255, -255, 0), 10],
-            [:Script,          'poke=pbGetPokemon(1)'],
-            [:ScriptContinued, 'poke.changeHappiness("Regular")'],
-            [:ScriptContinued, 'poke.form=pbGet(2)'],
-            [:Wait, 22],
-            [:PlaySoundEvent, 'Cut', 80, 120],
-            [:Wait, 10],
-            [:PlaySoundEvent, 'Cut', 80, 150],
-            [:Wait, 6],
-            [:PlaySoundEvent, 'Cut', 80, 150],
-            [:Wait, 22],
-            [:ChangeScreenColorTone, Tone.new(0, 0, 0, 0), 10],
-            [:Wait, 10],
-            [:ShowAnimation, :This, LYRICAL_ANIMATION_ID],
-            [:ShowText, chartag + "Done! Your \\v[3] is so adorable in its \\v[4]!"],
-            [:ShowText, chartag + "Come back soon!"],
-          :Done,
-        :Else,
-          [:ShowText, "\\G" + chartag + "Sorry, you don't have enough money."],
-        :Done,
-      :Done,
-      [:When, 1, "No"],
-        [:ShowText, "\\G" + chartag + "Changed your mind? Have a nice day!"],
-      :Done)
+  event.patch(:furfrouforms_trimvendor) {
+    insertBeforeEnd {
+      show_choices("\\G" + chartag + startdialogue) {
+        choice("Yes") {
+          branch(gold, :>=, 2500) {
+            script 'pbChoosePokemon(1,3,
+                    proc {|poke|
+                     !poke.egg? &&
+                     !(poke.isShadow? rescue false) &&
+                     poke.species == :FURFROU
+                    })'
+            branch(variables[1], :==, -1) {
+              text "\\G" + chartag + "Changed your mind? Have a nice day!"
+              exit_event_processing
+            }
+
+            text "\\G" + chartag + "And how should I trim your \\v[3]?\\ch[2,11,Natural Trim,Heart Trim,Star Trim,Diamond Trim,Debutante Trim,Matron Trim,Dandy Trim,La Reine Trim,Kabuki Trim,Pharaoh Trim,Cancel]"
+            branch(variables[2], :==, 10) {
+              text "\\G" + chartag + "Changed your mind? Have a nice day!"
+              exit_event_processing
+            }
+
+            script "$game_variables[4] = $cache.pkmn[:FURFROU].forms[pbGet(2)]"
+            
+            branch('$game_variables[2] == pbGetPokemon(1).form') {
+              show_choices("\\G" + chartag + "Your \\v[3] is already in its \\v[4]. Want me to touch it up?") {
+                choice("Yes") {}
+                default_choice("No") {
+                  text "\\G" + chartag + "Okay! Have a nice day!"
+                  exit_event_processing
+                }
+              }
+            }.else {
+              branch(variables[2], :==, 0) {
+                text "\\G" + chartag + "Back to basics, then? Alright!"
+              }.else {
+                text "\\G" + chartag + "\\v[4]? Alright!"
+              }
+            }
+            self.gold -= 2500
+
+            text "\\G" + chartag + "Okay, this will only take a moment..."
+            change_tone red: -255, green: -255, blue: -255, frames: 10
+            script 'poke=pbGetPokemon(1)
+                    poke.changeHappiness("Regular")
+                    poke.form=pbGet(2)'
+            wait 22
+            play_se 'Cut', 80, 120
+            wait 10
+            play_se 'Cut', 80, 150
+            wait 6
+            play_se 'Cut', 80, 150
+            wait 22
+            change_tone red: 0, green: 0, blue: 0, frames: 10
+            wait 10
+            this.show_animation(LYRICAL_ANIMATION_ID)
+            text chartag + "Done! Your \\v[3] is so adorable in its \\v[4]!"
+            text chartag + "Come back soon!"
+
+          }.else {
+            text "\\G" + chartag + "Sorry, you don't have enough money."
+          }
+        }
+
+        default_choice("No") {
+          text "\\G" + chartag + "Changed your mind? Have a nice day!"
+        }
+      }
+    }
   }
 end
 

@@ -13,6 +13,7 @@ module InjectionHelper
     ButtonInputProcessing: 105,
     Wait: 106,
     Comment: 108,
+    CommentContinued: 408,
     ConditionalBranch: 111,
     BranchEndConditional: 412,
     Else: 411,
@@ -250,6 +251,11 @@ module InjectionHelper
     false => 1
   }
 
+  DENY = {
+    true => 1,
+    false => 0
+  }
+
   EVENT_TRIGGER_TYPES = {
     Interact: 0,
     PlayerTouch: 1,
@@ -269,6 +275,30 @@ module InjectionHelper
     Normal: 0,
     Additive: 1,
     Subtractive: 2
+  }
+
+  MESSAGE_POSITIONS = {
+    Top: 0,
+    Middle: 1,
+    Botton: 2
+  }
+
+  MAP_SETTINGS = {
+    Panorama: 0,
+    Fog: 1,
+    BattleBack: 2
+  }
+
+  PICTURE_ORIGINS = {
+    TopLeft: 0,
+    Center: 1
+  }
+
+  WEATHER = {
+    None: 0,
+    Rain: 1,
+    Storm: 2,
+    Snow: 3
   }
 
   BLOCK_TYPES = {
@@ -329,7 +359,7 @@ module InjectionHelper
   def self.applyEventBuilders
     for event, configure in @@eventsToLoad
       event.pages = []
-      configure.call(event)
+      event.instance_exec(event, &configure)
       event.pages.push(RPG::Event::Page.new) if event.pages.empty? # No pages is a bad thing!
     end
     return !@@eventsToLoad.empty? || @@anyMapChange
@@ -342,8 +372,8 @@ module InjectionHelper
   end
 
   def self.createSinglePageEvent(map, x, y, name, savetag=nil, &block)
-    createNewEvent(map, x, y, name, savetag) { |event|
-      event.newPage(&block)
+    createNewEvent(map, x, y, name, savetag) {
+      newPage(&block)
     }
   end
 
@@ -365,7 +395,7 @@ module InjectionHelper
       gameev = Game_Event.new(map.map_id, newEvent, map)
       map.events[newEvent.id] = gameev
       newEvent.pages = [] if block_given?
-      block.call(newEvent) if block_given?
+      newEvent.instance_exec(newEvent, &block) if block_given?
       newEvent.pages.push(RPG::Event::Page.new) if newEvent.pages.empty? # No pages is a bad thing!
     end
 
@@ -400,14 +430,14 @@ module InjectionHelper
   end
 
   def self.getPatchComment(insns, create)
-    insns.each { |insn|
+    insns.list.each { |insn|
       if insn.command == :Comment && insn.parameters[0] == 'InjectionHelper-Patches'
         return insn
       end
     }
 
     insn = parseEventCommand(0, :Comment, 'InjectionHelper-Patches')
-    insns.unshift(insn) if create
+    insns.list.unshift(insn) if create
     return insn
   end
 
@@ -433,11 +463,11 @@ module InjectionHelper
     return self.getPatchComment(insns, false).parameters.include?(tag)
   end
 
-  def self.patch(insns, tag)
+  def self.patch(insns, tag, &block)
     @@anyPatches = false if @@anyPatches.nil?
     begin
       if !patched?(insns, tag)
-        yield # Declare patches explicitly now
+        insns.instance_exec(&block) # Declare patches explicitly now
         markPatched(insns, tag) if @@anyPatches
       end
     rescue
@@ -558,17 +588,20 @@ module InjectionHelper
         end
       when :InputNumber
         mapVariable(params, 0)
+      when :ChangeTextOptions
+        mapValue(params, 0, MESSAGE_POSITIONS)
+        mapValue(params, 1, TRUTH)
       when :ShowAnimation
         mapValue(params, 0, SPECIAL_EVENT_IDS)
       when :SetEventLocation
         mapValue(params, 0, SPECIAL_EVENT_IDS)
         case mapValue(params, 1, APPOINTMENT_METHODS) 
-        when :Variable
-          mapVariable(params, 2)
-          mapVariable(params, 3)
-        when :Constant
-        else
-          mapValue(params, 2, SPECIAL_EVENT_IDS)
+          when :Variable
+            mapVariable(params, 2)
+            mapVariable(params, 3)
+          when :Constant
+          else
+            mapValue(params, 2, SPECIAL_EVENT_IDS)
         end
         mapValue(params, 4, FACING_DIRECTIONS)
       when :SetMoveRoute
@@ -611,6 +644,10 @@ module InjectionHelper
         if mapValue(params, 1, APPOINTMENT_METHODS) == :Variable
           mapVariable(params, 2)
         end
+      when :ChangeMapSettings
+        if mapValue(params, 0, MAP_SETTINGS) == :Fog
+          mapValue(params, 4, BLEND_TYPES)
+        end
       when :TransferPlayer
         if mapValue(params, 0, APPOINTMENT_METHODS) == :Variable
           mapVariable(params, 1)
@@ -627,10 +664,18 @@ module InjectionHelper
       when :ScrollMap
         mapValue(params, 0, FACING_DIRECTIONS)
       when :ShowPicture, :MovePicture
+        mapValue(params, 2, PICTURE_ORIGINS)
         if mapValue(params, 3, APPOINTMENT_METHODS) == :Variable
           mapVariable(params, 4)
           mapVariable(params, 5)
         end
+        mapValue(params, 9, BLEND_TYPES)
+      when :SetWeatherEffects
+        mapValue(params, 0, WEATHER)
+      when :ChangeTransparentFlag
+        mapValue(params, 0, TRUTH)
+      when :ChangeSaveAccess, :ChangeMenuAccess, :ChangeEncounter
+        mapValue(params, 0, DENY)
       when :ControlTimer, :TimerOn, :TimerOff
         params.unshift(true) if sym == :TimerOn && params.size == 1
         params.unshift(false) if sym == :TimerOff && params.size == 0
@@ -785,7 +830,7 @@ module InjectionHelper
       newmap = RPG::Map.new(width, height)
 
       clearEventBuilders
-      block.call(newmap)
+      newmap.instance_exec(newmap, &block)
       processEventBuilders
 
       if meta[:FlyData]
@@ -997,7 +1042,7 @@ module InjectionHelper
     def applyToMap(map, mapid)
       InjectionHelper.clearEventBuilders
       InjectionHelper.beginPatch
-      ret = @proc.call(map, mapid)
+      ret = map.instance_exec(map, mapid, &@proc)
       endPatch = InjectionHelper.endPatch
       return true if InjectionHelper.processEventBuilders
       return endPatch unless endPatch.nil? || ret == true
@@ -1007,7 +1052,7 @@ module InjectionHelper
     def applyToEvent(event)
       InjectionHelper.clearEventBuilders
       InjectionHelper.beginPatch
-      ret = @proc.call(event)
+      ret = event.instance_exec(event, &@proc)
       endPatch = InjectionHelper.endPatch
       return true if InjectionHelper.processEventBuilders
       return endPatch unless endPatch.nil? || ret == true
@@ -1017,7 +1062,7 @@ module InjectionHelper
     def applyToPage(page)
       InjectionHelper.clearEventBuilders
       InjectionHelper.beginPatch
-      ret = @proc.call(page)
+      ret = page.instance_exec(page, &@proc)
       endPatch = InjectionHelper.endPatch
       return true if InjectionHelper.processEventBuilders
       return endPatch unless endPatch.nil? || ret == true
@@ -1035,7 +1080,7 @@ module InjectionHelper
 
     def apply(event)
       InjectionHelper.beginPatch
-      ret = @proc.call(event)
+      ret = event.instance_exec(event, &@proc)
       endPatch = InjectionHelper.endPatch
       return endPatch unless endPatch.nil? || ret == true
       return ret
@@ -1145,11 +1190,11 @@ end
 
 module EventListHolder
   def patch(tag, &block)
-    InjectionHelper.patch(self.list, tag) { block.call(self) }
+    InjectionHelper.patch(self, tag) { self.instance_exec(self, &block) }
   end
 
   def patched?(tag)
-    InjectionHelper.patched?(self.list, tag)
+    InjectionHelper.patched?(self, tag)
   end
 
   def lookForSequence(*insnMatchers)
@@ -1173,48 +1218,62 @@ module EventListHolder
     self.list.send(:[]=, *args, **kwargs)
   end
 
-  def insertAtStart(*commands)
+  def insertAtStart(*commands, &block)
     InjectionHelper.declarePatched
+
+    commands = InjectionDSL.parse(commands, &block) if block_given?
+
     self.unshift(*InjectionHelper.parseEventCommands(*commands))
   end
 
-  def insertBefore(insn, *commands)
+  def insertBefore(insn, *commands, &block)
     InjectionHelper.declarePatched
     insn = self[insn] if insn.is_a?(Numeric)
+
+    commands = InjectionDSL.parse(commands, &block) if block_given?
 
     self.insert(self.idxOf(insn), *InjectionHelper.parseEventCommands(*commands, baseIndent: insn.indent))
   end
 
-  def insertBeforeEnd(*commands)
+  def insertBeforeEnd(*commands, &block)
     InjectionHelper.declarePatched
     locations = self.lookForAll(:ExitEventProcessing) + [self[-1]]
+
+    commands = InjectionDSL.parse(commands, &block) if block_given?
+
     for location in locations
       self.insertBefore(location, *commands)
     end
   end
 
-  def insertAfter(insn, *commands)
+  def insertAfter(insn, *commands, &block)
     InjectionHelper.declarePatched
     insn = self[insn] if insn.is_a?(Numeric)
 
     blockdepth = insn.indent
     blockdepth += 1 if InjectionHelper::BLOCK_TYPES[InjectionHelper::EVENT_INSNS.invert[insn.code]]
     blockdepth += 1 if InjectionHelper::EVENT_INSNS.invert[insn.code] == :Else
+
+    commands = InjectionDSL.parse(commands, &block) if block_given?
+
     self.insert(self.idxOf(insn) + 1, *InjectionHelper.parseEventCommands(*commands, baseIndent: blockdepth))
   end
 
-  def replace(insn, *commands)
+  def replace(insn, *commands, &block)
     InjectionHelper.declarePatched
     insn = self[insn] if insn.is_a?(Numeric)
-    self.insertBefore(insn, *commands)
+    self.insertBefore(insn, *commands, &block)
     self.delete(insn)
     return self
   end
 
-  def replaceRange(insn1, insn2, *commands)
+  def replaceRange(insn1, insn2, *commands, &block)
     InjectionHelper.declarePatched
     insn1 = self[insn1] if insn1.is_a?(Numeric)
     insn2 = self[insn2] if insn1.is_a?(Numeric)
+
+    commands = InjectionDSL.parse(commands, &block) if block_given?
+
     self[self.idxOf(insn1)..self.idxOf(insn2)] = InjectionHelper.parseEventCommands(*commands, baseIndent: insn1.indent)
   end
 
@@ -1234,9 +1293,12 @@ module EventListHolder
     self[self.idxOf(tempMrk)..self.idxOf(tempMrk)] = sectionA
   end
 
-  def reformat(*commands)
+  def reformat(*commands, &block)
     InjectionHelper.declarePatched
     self.list.clear()
+    
+    commands = InjectionDSL.parse(commands, &block) if block_given?
+
     self.list.push(*InjectionHelper.parseEventCommands(*commands, :Done))
   end
 
@@ -1355,9 +1417,9 @@ module RPG
 
   class Event
 
-    def newPage
+    def newPage(&block)
       page = RPG::Event::Page.new
-      yield page
+      page.instance_exec(page, &block)
       self.pages.push(page)
     end
 
@@ -1438,31 +1500,1208 @@ module RPG
         return self
       end
 
-      def code(triggerType, *params)
+      def code(triggerType, *params, &block)
         self.changeTrigger(triggerType)
+
+        params = InjectionDSL.parse(params, &block) if block_given?
+
         self.list = InjectionHelper.parseEventCommands(*params, :Done)
         return self
       end
 
-      def interact(*params)
-        code(:Interact, *params)
+      def interact(*params, &block)
+        code(:Interact, *params, &block)
       end
 
-      def playerTouch(*params)
-        code(:PlayerTouch, *params)
+      def playerTouch(*params, &block)
+        code(:PlayerTouch, *params, &block)
       end
 
-      def eventTouch(*params)
-        code(:EventTouch, *params)
+      def eventTouch(*params, &block)
+        code(:EventTouch, *params, &block)
       end
 
-      def autorun(*params)
-        code(:Autorun, *params)
+      def autorun(*params, &block)
+        code(:Autorun, *params, &block)
       end
 
-      def runInParallel(*params)
-        code(:RunInParallel, *params)
+      def runInParallel(*params, &block)
+        code(:RunInParallel, *params, &block)
       end
+    end
+  end
+end
+
+# DSL
+
+module InjectionDSL
+
+  def self.parse(params = [], &block)
+    list = params.clone
+    list.push *Contexts::OrphanedExecutionContext.create(&block).compile
+    return list
+  end
+
+  module Contexts
+    module DSLLike
+      def self.included(othermod)
+        othermod.define_singleton_method(:create) { |&block| 
+          inst = self.new
+          inst.instance_exec(&block)
+          next inst
+        }
+      end
+    end
+    
+    class ExecutionContext
+      include DSLLike
+
+      def initialize
+        @insns = []
+      end
+
+      def appoint(isvar)
+        return isvar ? :Variable : :Constant
+      end
+
+      ### ========================
+      ###         COMMANDS
+      ### ========================
+
+      def script(script)
+        parts = script.lines
+        commands = parts.map { |text| [:ScriptContinued, text.lstrip.chomp] }
+        commands = [[:Script, ""]] if commands == []
+        commands[0][0] = :Script
+        @insns.push *commands
+      end
+
+      def text(*parts)
+        commands = parts.map { |text| [:ShowTextContinued, text] }
+        commands[0][0] = :ShowText
+        @insns.push *commands
+      end
+
+      def comment(*parts)
+        commands = parts.map { |text| [:CommentContinued, text] }
+        commands[0][0] = :Comment
+        @insns.push *commands
+      end
+
+      def input_number(variable, digits:); @insns << [:InputNumber, unwrap(variable), digits]; end
+      def change_text_options(position:, window:); @insns << [:ChangeTextOptions, position, window]; end
+      def button_input_processing(variable); @insns << [:ButtonInputProcessing, unwrap(variable)]; end
+      def wait(time); @insns << [:Wait, time]; end
+      def wait_for_move_completion; @insns << :WaitForMovement; end
+      def exit_event_processing; @insns << :ExitEventProcessing; end
+      def erase_event; @insns << :EraseEvent; end
+      def call_common_event(id); @insns << [:CallCommonEvent, id]; end
+      def label(name); @insns << [:Label, name]; end
+      def jump_label(name); @insns << [:JumpToLabel, name]; end
+
+      def battle_bgm(param,volume=nil,pitch=nil); @insns << [:ChangeBattleBackgroundMusic, pbResolveAudioFile(param,volume,pitch)]; end
+      def battle_me(param,volume=nil,pitch=nil); @insns << [:ChangeBattleEndME, pbResolveAudioFile(param,volume,pitch)]; end
+      def play_bgm(param,volume=nil,pitch=nil); @insns << [:PlayBackgroundMusic, pbResolveAudioFile(param,volume,pitch)]; end
+      def play_bgs(param,volume=nil,pitch=nil); @insns << [:PlayBackgroundSound, pbResolveAudioFile(param,volume,pitch)]; end
+      def play_me(param,volume=nil,pitch=nil); @insns << [:PlayMusicEvent, pbResolveAudioFile(param,volume,pitch)]; end
+      def play_se(param,volume=nil,pitch=nil); @insns << [:PlaySoundEvent, pbResolveAudioFile(param,volume,pitch)]; end
+
+      def stop_se; @insns << :StopSoundEvent; end
+      def fade_out_bgm(seconds:); @insns << [:FadeOutBackgroundMusic, seconds]; end
+      def fade_out_bgs(seconds:); @insns << [:FadeOutBackgroundSound, seconds]; end
+      def change_tone(red:, green:, blue:, gray: 0, frames:); @insns << [:ChangeScreenColorTone, Tone.new(red, green, blue, gray), frames]; end
+      def change_fog_tone(red:, green:, blue:, gray: 0, frames:); @insns << [:ChangeFogColorTone, Tone.new(red, green, blue, gray), frames]; end
+      def change_fog_opacity(opacity:, frames:); @insns << [:ChangeFogOpacity, opacity, frames]; end
+      def change_picture_tone(number:, red:, green:, blue:, gray: 0, frames:); @insns << [:ChangePictureColorTone, number, Tone.new(red, green, blue, gray), frames]; end
+      def screen_flash(red:, green:, blue:, alpha: 0, frames:); @insns << [:ScreenFlash, Color.new(red, green, blue, alpha), frames]; end
+      def screen_shake(power:, speed:, frames:); @insns << [:ScreenShake, power, speed, frames]; end
+
+      def transfer_player(map:, x:, y:, direction:, fading:)
+        isvar = any_variable?(map, x, y)
+        @insns << [:TransferPlayer, unwrap(character), appoint(isvar), unwrap(map), unwrap(x), unwrap(y), direction, fading]
+      end
+
+      def set_event_location(character, x:, y:, direction:)
+        isvar = any_variable?(x, y)
+        @insns << [:SetEventLocation, unwrap(character), appoint(isvar), unwrap(x), unwrap(y), direction]
+      end
+
+      def swap_event_locations(character, target:, direction:); @insns << [:SetEventLocation, unwrap(character), :ExchangeWithEvent, unwrap(target), direction]; end
+      def branch(on, *args, &block)
+        if on.is_a?(InjectionDSL::Wrappers::Switch)
+          @insns << [:ConditionalBranch, :Switch, unwrap(on), args[0]]
+        elsif on.is_a?(InjectionDSL::Wrappers::SelfSwitch)
+          @insns << [:ConditionalBranch, :SelfSwitch, unwrap(on), args[0]]
+        elsif on.is_a?(InjectionDSL::Wrappers::Variable)
+          operation = args[0]
+          state = args[1]
+          isvar = any_variable?(state)
+          @insns << [:ConditionalBranch, :Variable, unwrap(on), appoint(isvar), unwrap(state), operation]
+        elsif on.is_a?(InjectionDSL::Wrappers::GoldValue)
+          @insns << [:ConditionalBranch, :Gold, args[1], args[0]]
+        elsif on.is_a?(String)
+          @insns << [:ConditionalBranch, :Script, on]
+        elsif on.is_a?(InjectionDSL::Wrappers::EventProxy)
+          @insns << [:ConditionalBranch, :Character, unwrap(on), args[0]]
+        elsif on.is_a?(Numeric)
+          @insns << [:ConditionalBranch, :Button, on]
+        end
+
+        context = BranchExecutionContext.create(&block)
+        @insns << context
+        return context
+      end
+        
+      def loop(&block)
+        @insns << :Loop
+        @insns << LoopExecutionContext.create(&block)
+      end
+
+      def show_choices(text=nil, &block)
+        @insns << [:ShowText, text] if text
+        @insns << ChoiceContext.create(&block)
+      end
+
+      def set_move_route(character, &block); @insns << [:SetMoveRoute, unwrap(character), MoveRouteContext.create(&block).compile]; end
+      def control_variables(start, done, operator = :[]=, *args); @insns << [:ControlVariables, unwrap(start), unwrap(done), operator, *args]; end
+      def control_variable(variable, operator = :[]=, *args); control_variables(variable, variable, operator, *args); end
+      def control_switches(start, done, value); @insns << [:ControlSwitches, unwrap(start), unwrap(done), value]; end
+      def control_switch(switch, value); control_switches(switch, switch, value); end
+      def control_self_switch(chr, value); @insns << [:ControlSelfSwitch, chr, value]; end
+
+      def gold=(operation)
+        sign, value = operation
+        change_gold(value, sign: sign)
+      end
+
+      def change_gold(value, sign: 1)
+        isvar = any_variable?(value)
+        if !isvar
+          sign = value
+          value = value.abs
+        end
+
+        @insns << [:ChangeGold, sign.negative? ? :- : :+, appoint(isvar), unwrap(value)]
+      end
+
+      def scroll_map(direction:, distance:, speed:); @insns << [:ScrollMap, direction, distance, speed]; end
+      def change_windowskin(name); @insns << [:ChangeWindowskin, name]; end
+      def show_animation(character, animation); @insns << [:ShowAnimation, unwrap(character), animation]; end
+      def heal_party(party = 0); @insns << [:HealParty, party]; end
+      def change_panorama(graphic:, hue: 0); @insns << [:ChangeMapSettings, :Panorama, graphic, hue]; end
+      def change_fog(graphic:, hue: 0, opacity: 0, blending:, zoom:, sx: 0, sy: 0); @insns << [:ChangeMapSettings, :Fog, graphic, hue, opacity, blending, zoom, sx, sy]; end
+      def change_battleback(graphic:); @insns << [:ChangeMapSettings, :BattleBack, graphic]; end
+
+      def show_picture(number:, graphic:, origin:, x:, y:, zoom_x:, zoom_y:, opacity: 255, blending:)
+        isvar = any_variable?(x, y)
+        @insns << [:ShowPicture, number, graphic, origin, appoint(isvar), x, y, zoom_x, zoom_y, opacity, blending]
+      end
+
+      def move_picture(number:, frames:, origin:, x:, y:, zoom_x:, zoom_y:, opacity: 255, blending:)
+        isvar = any_variable?(x, y)
+        @insns << [:MovePicture, number, frames, origin, appoint(isvar), x, y, zoom_x, zoom_y, opacity, blending]
+      end
+
+      def rotate_picture(number:, speed:); @insns << [:RotatePicture, number, speed]; end
+      def erase_picture(number:); @insns << [:ErasePicture, number]; end
+      def weather_effect(weather:, power:, frames:); @insns << [:SetWeatherEffects, weather, power, frames]; end
+      def set_transparent_flag(flag); @insns << [:ChangeTransparentFlag, flag]; end
+      def disable_save_access(flag); @insns << [:ChangeSaveAccess, flag]; end
+      def disable_menu_access(flag); @insns << [:ChangeMenuAccess, flag]; end
+      def disable_encounters(flag); @insns << [:ChangeEncounter, flag]; end
+      def prepare_for_transition; @insns << :PrepareForTransition; end
+      def transition(graphic:); @insns << [:ExecuteTransition, graphic]; end
+      def call_menu_screen; @insns << :CallMenuScreen; end
+      def call_save_screen; @insns << :CallSaveScreen; end
+      def game_over; @insns << :GameOver; end
+      def title_screen; @insns << :ReturnToTitleScreen; end
+      def memorize_bgm_bgs; @insns << :MemorizeBackgroundSound; end
+      def restore_bgm_bgs; @insns << :RestoreBackgroundSound; end
+      def timer_on; @insns << [:ControlTimer, true]; end
+      def timer_off; @insns << [:ControlTimer, false]; end
+
+      ### ============================
+      ###         END COMMANDS
+      ### ============================
+
+      def compile_end(list)
+        list << :Done
+      end
+
+      def compile
+        list = []
+        for insn in @insns
+          if insn.is_a?(Array) || insn.is_a?(Symbol)
+            list << insn
+          elsif insn.respond_to?("compile")
+            list.push *insn.compile
+          end
+        end
+
+        compile_end(list)
+
+        return list
+      end
+    end
+
+    class BranchExecutionContext < ExecutionContext
+      include DSLLike
+
+      ### ========================
+      ###         COMMANDS
+      ### ========================
+      def else(&block); @else = ExecutionContext.create(&block); end
+      ### ============================
+      ###         END COMMANDS
+      ### ============================
+
+      def compile_end(list)
+        if @else
+          list << :Else
+          list.push *@else.compile
+        else
+          super
+        end
+      end
+    end
+
+    class LoopExecutionContext < ExecutionContext
+      include DSLLike
+
+      ### ========================
+      ###         COMMANDS
+      ### ========================
+      def break_loop; @insns << :BreakLoop; end
+      ### ============================
+      ###         END COMMANDS
+      ### ============================
+    end
+
+    class OrphanedExecutionContext < ExecutionContext
+      include DSLLike
+
+      def compile_end(list)
+        # NO-OP
+      end
+    end
+
+    class ChoiceContext
+      include DSLLike
+
+      def initialize
+        @choices = []
+        @contexts = []
+        @cancel = nil
+        @cancelcode = nil
+      end
+
+      ### ========================
+      ###         COMMANDS
+      ### ========================
+
+      def choice(name, &block)
+        @choices << name
+        @contexts << ExecutionContext.create(&block)
+      end
+
+      def when_cancel(value = nil, &block)
+        if value
+          @cancel = value
+        elsif block_given?
+          @cancelcode = ExecutionContext.create(&block)
+        end
+      end
+
+      def default_choice(name, &block)
+        choice(name, &block)
+        when_cancel(name)
+      end
+
+      ### ============================
+      ###         END COMMANDS
+      ### ============================
+
+      def compile
+        list = []
+        cancelmode = 0
+
+        if @cancelcode
+          cancelmode = 4 # Branch
+        elsif @cancel.is_a?(Numeric)
+          cancelmode = @cancel
+        elsif @cancel.is_a?(String)
+          cancelmode = (@choices.index(@cancel) || -1) + 1
+        end
+
+        list << [:ShowChoices, @choices, cancelmode]
+        for choice, i in @choices.each_with_index
+          context = @contexts[i]
+          list << [:When, i, choice]
+          list.push *context.compile
+        end
+
+        if @cancelcode
+          list << :WhenCancel
+          list.push *@cancelcode.compile
+        end
+
+        return list
+      end
+    end
+
+    class MoveRouteContext
+      include DSLLike
+
+      def initialize
+        @repeat = false
+        @skippable = false
+        @insns = []
+      end
+
+      ### ========================
+      ###         COMMANDS
+      ### ========================
+
+      def mark_as_repeat; @repeat = true; end
+
+      def mark_as_skippable; @skippable = true; end
+
+
+      def move_down; @insns << :MoveDown; end
+      def move_left; @insns << :MoveLeft; end
+      def move_right; @insns << :MoveRight; end
+      def move_up; @insns << :MoveUp; end
+      def move_down_left; @insns << :MoveDownLeft; end
+      def move_down_right; @insns << :MoveDownRight; end
+      def move_up_left; @insns << :MoveUpLeft; end
+      def move_up_right; @insns << :MoveUpRight; end
+      def move_random; @insns << :MoveRandomly; end
+      def move_toward_player; @insns << :MoveTowardPlayer; end
+      def move_away_from_player; @insns << :MoveAwayFromPlayer; end
+      def move_forward; @insns << :MoveForward; end
+      def move_backward; @insns << :MoveBackward; end
+      def jump_to(x:, y:); @insns << [:Jump, x, y]; end
+      def wait(frames); @insns << [:Wait, frames]; end
+      def face_down; @insns << :FaceDown; end
+      def face_left; @insns << :FaceLeft; end
+      def face_right; @insns << :FaceRight; end
+      def face_up; @insns << :FaceUp; end
+      def turn_right; @insns << :TurnRight; end
+      def turn_left; @insns << :TurnLeft; end
+      def turn_around; @insns << :TurnAround; end
+      def turn_randomly; @insns << :TurnRandomly; end
+      def face_randomly; @insns << :FaceRandomly; end
+      def face_toward_player; @insns << :FaceTowardsPlayer; end
+      def face_away_from_player; @insns << :FaceAwayFromPlayer; end
+
+      def set_switch(switch, state:); @insns << [state ? :SetSwitch : :UnsetSwitch, unwrap(switch)]; end
+      def change_speed(speed); @insns << [:MoveSpeed, speed]; end
+      def change_frequency(freq); @insns << [:MoveFrequency, freq]; end
+
+      def animate_walking(state=true); @insns << state ? :AnimateWalking : :DontAnimateWalking; end
+      def animate_steps(state=true); @insns << state ? :AnimateSteps : :DontAnimateSteps; end
+      def lock_direction(state=true); @insns << state ? :FixDirection : :DontFixDirection; end
+      def set_intangible(state=true); @insns << state ? :SetIntangible : :SetTangible; end
+      def set_always_foreground(state=true); @insns << state ? :SetAlwaysForeground : :UnsetAlwaysForeground; end
+      def set_character(name, hue: 0, direction: :Down, pattern: 0); @insns << [:SetCharacter, name, hue, direction, pattern]; end
+      def remove_graphic; change_graphic(""); end
+      def set_opacity(opacity); @insns << [:SetOpacity, opacity]; end
+      def set_blend_type(blend); @insns << [:BlendType, blend]; end
+
+      def play_se(param,volume=nil,pitch=nil); @insns << [:PlaySound, pbResolveAudioFile(param,volume,pitch)]; end
+      def script(script); @insns << [:Script, script]; end
+
+      ### ============================
+      ###         END COMMANDS
+      ### ============================
+
+      def compile_end(list)
+        list << :Done
+      end
+
+      def compile
+        list = []
+        for insn in @insns
+          if insn.is_a?(Array) || insn.is_a?(Symbol)
+            list.push(insn)
+          elsif insn.respond_to?("compile")
+            list.push(insn.compile)
+          end
+        end
+
+        compile_end(list)
+
+        route = InjectionHelper.parseMoveRoute(list, repeat: @repeat)
+        route.skippable = @skippable
+
+        return route
+      end
+    end
+  
+  ### ==========================================
+  ###         Syntactic Sugar goes below
+  ### ==========================================
+
+    module DSLLike
+      def unwrap(holder)
+        return holder.event if holder.is_a?(InjectionDSL::Wrappers::EventProxy)
+        return holder.key if holder.is_a?(InjectionDSL::Wrappers::HolderProxy)
+        return holder
+      end
+
+      def any_variable?(*holders)
+        return holders.any? { |it| it.is_a?(InjectionDSL::Wrappers::HolderProxy) }
+      end
+
+      def variables; InjectionDSL::Wrappers::Variables.new(self); end
+      def switches; InjectionDSL::Wrappers::Switches.new(self); end
+      def events; InjectionDSL::Wrappers::EventSourceProxy.new(self); end
+      def selfswitch; InjectionDSL::Wrappers::OwnSelfSwitches.new(self); end
+      def map_id; InjectionDSL::Wrappers::GlobalValue.new(:map_id); end
+      def party_size; InjectionDSL::Wrappers::GlobalValue.new(:party_size); end
+      def gold; InjectionDSL::Wrappers::GoldValue.new(:gold); end
+
+      def steps; InjectionDSL::Wrappers::GlobalValue.new(:steps); end
+      def play_time; InjectionDSL::Wrappers::GlobalValue.new(:play_time); end
+      def timer; InjectionDSL::Wrappers::GlobalValue.new(:timer); end
+      def save_count; InjectionDSL::Wrappers::GlobalValue.new(:save_count); end
+
+      def player; InjectionDSL::Wrappers::EventProxy.new(:Player, self); end
+      def this; InjectionDSL::Wrappers::OwnEventProxy.new(self); end
+    end
+  end
+
+  module Wrappers
+
+    ### Proxies for passing around variables
+
+    class HolderProxy
+      attr_reader :key
+
+      def initialize(key)
+        @key = key
+      end
+    end
+
+    class EventHolderProxy < HolderProxy
+      attr_reader :event
+
+      def initialize(event, key)
+        @event = event
+        @key = key
+      end
+    end
+
+    ### End proxies
+
+    class Variables
+      attr_reader :dsl
+
+      def initialize(dsl)
+        @dsl = dsl
+      end
+
+      def [](idx)
+        return Variable.new(idx)
+      end
+
+      def operate(idx, operator, value)
+        if value.is_a?(Variable)
+          dsl.control_variable(idx, operator, :Variable, value.key)
+        elsif value.is_a?(Range)
+          dsl.control_variable(idx, operator, :RandomBetween, value.begin, value.end)
+        elsif value.is_a?(CharacterValue)
+          dsl.control_variable(idx, operator, :Character, value.event, value.key)
+        elsif value.is_a?(GlobalValue)
+          dsl.control_variable(idx, operator, :Other, value.key)
+        elsif value.is_a?(Numeric)
+          dsl.control_variable(idx, operator, :Constant, value)
+        end
+      end
+
+      def []=(idx, value)
+        operate(idx, :[]=, value)
+      end
+    end
+
+    class Switches
+      attr_reader :dsl
+
+      def initialize(dsl)
+        @dsl = dsl
+      end
+
+      def [](idx)
+        return Switch.new(idx)
+      end
+
+      def []=(idx, value)
+        dsl.control_switch(idx, value)
+      end
+    end
+
+    class SelfSwitches
+      attr_reader :event
+      attr_reader :dsl
+
+      def initialize(event, dsl)
+        @event = event
+        @dsl = dsl
+      end
+
+      def [](idx)
+        return SelfSwitch.new(event, idx)
+      end
+    end
+
+    class OwnSelfSwitches < SelfSwitches
+      def initialize(dsl)
+        super(:This, dsl)
+      end
+
+      def []=(idx, value)
+        dsl.control_self_switch(idx, value)
+      end
+    end
+
+    class EventProxy
+      attr_reader :event
+      attr_reader :dsl
+
+      def initialize(event, dsl)
+        @event = event
+        @dsl = dsl
+      end
+
+      def selfswitch; SelfSwitches.new(event, dsl); end
+
+      def x; CharacterValue.new(event, :x); end
+      def y; CharacterValue.new(event, :y); end
+      def direction; CharacterValue.new(event, :direction); end
+      def screen_x; CharacterValue.new(event, :screen_x); end
+      def screen_y; CharacterValue.new(event, :screen_y); end
+      def terrain_tag; CharacterValue.new(event, :terrain_tag); end
+
+      def set_event_location(x:, y:, direction:); dsl.set_event_location(self, x: x, y: y, direction: direction); end
+      def swap_event_locations(target:, direction:); dsl.swap_event_locations(self, target: target, direction: direction); end
+      def set_move_route(&block); dsl.set_move_route(self, &block); end
+      def show_animation(animation); dsl.show_animation(self, animation); end
+    end
+
+    class OwnEventProxy < EventProxy
+      def initialize(dsl)
+        super(:This, dsl)
+      end
+
+      def selfswitch; OwnSelfSwitches.new(dsl); end
+    end
+
+    class EventSourceProxy
+      attr_reader :dsl
+
+      def initialize(event, dsl)
+        @dsl = dsl
+      end
+
+      def [](idx)
+        return EventProxy.new(dsl, idx)
+      end
+    end
+
+    class GlobalValue < HolderProxy; end
+    class CharacterValue < EventHolderProxy; end
+    class Variable < HolderProxy; end
+    class Switch < HolderProxy; end
+    class SelfSwitch < EventHolderProxy; end
+
+    class GoldValue < GlobalValue
+      def +(value); [1, value]; end
+      def -(value); [-1, value]; end
+    end
+  end
+endmodule InjectionDSL
+
+  def self.parse(params = [], &block)
+    list = params.clone
+    list.push *Contexts::OrphanedExecutionContext.create(&block).compile
+    return list
+  end
+
+  module Contexts
+    module DSLLike
+      def self.included(othermod)
+        othermod.define_singleton_method(:create) { |&block| 
+          inst = self.new
+          inst.instance_exec(&block)
+          next inst
+        }
+      end
+    end
+    
+    class ExecutionContext
+      include DSLLike
+
+      def initialize
+        @insns = []
+      end
+
+      def appoint(isvar)
+        return isvar ? :Variable : :Constant
+      end
+
+      ### ========================
+      ###         COMMANDS
+      ### ========================
+
+      def script(script)
+        parts = script.lines
+        commands = parts.map { |text| [:ScriptContinued, text.lstrip.chomp] }
+        commands = [[:Script, ""]] if commands == []
+        commands[0][0] = :Script
+        @insns.push *commands
+      end
+
+      def text(*parts)
+        commands = parts.map { |text| [:ShowTextContinued, text] }
+        commands[0][0] = :ShowText
+        @insns.push *commands
+      end
+
+      def comment(*parts)
+        commands = parts.map { |text| [:CommentContinued, text] }
+        commands[0][0] = :Comment
+        @insns.push *commands
+      end
+
+      def input_number(variable, digits:); @insns << [:InputNumber, unwrap(variable), digits]; end
+      def change_text_options(position:, window:); @insns << [:ChangeTextOptions, position, window]; end
+      def button_input_processing(variable); @insns << [:ButtonInputProcessing, unwrap(variable)]; end
+      def wait(time); @insns << [:Wait, time]; end
+      def wait_for_move_completion; @insns << :WaitForMovement; end
+      def exit_event_processing; @insns << :ExitEventProcessing; end
+      def erase_event; @insns << :EraseEvent; end
+      def call_common_event(id); @insns << [:CallCommonEvent, id]; end
+      def label(name); @insns << [:Label, name]; end
+      def jump_label(name); @insns << [:JumpToLabel, name]; end
+
+      def battle_bgm(param,volume=nil,pitch=nil); @insns << [:ChangeBattleBackgroundMusic, pbResolveAudioFile(param,volume,pitch)]; end
+      def battle_me(param,volume=nil,pitch=nil); @insns << [:ChangeBattleEndME, pbResolveAudioFile(param,volume,pitch)]; end
+      def play_bgm(param,volume=nil,pitch=nil); @insns << [:PlayBackgroundMusic, pbResolveAudioFile(param,volume,pitch)]; end
+      def play_bgs(param,volume=nil,pitch=nil); @insns << [:PlayBackgroundSound, pbResolveAudioFile(param,volume,pitch)]; end
+      def play_me(param,volume=nil,pitch=nil); @insns << [:PlayMusicEvent, pbResolveAudioFile(param,volume,pitch)]; end
+      def play_se(param,volume=nil,pitch=nil); @insns << [:PlaySoundEvent, pbResolveAudioFile(param,volume,pitch)]; end
+
+      def stop_se; @insns << :StopSoundEvent; end
+      def fade_out_bgm(seconds:); @insns << [:FadeOutBackgroundMusic, seconds]; end
+      def fade_out_bgs(seconds:); @insns << [:FadeOutBackgroundSound, seconds]; end
+      def change_tone(red:, green:, blue:, gray: 0, frames:); @insns << [:ChangeScreenColorTone, Tone.new(red, green, blue, gray), frames]; end
+      def change_fog_tone(red:, green:, blue:, gray: 0, frames:); @insns << [:ChangeFogColorTone, Tone.new(red, green, blue, gray), frames]; end
+      def change_fog_opacity(opacity:, frames:); @insns << [:ChangeFogOpacity, opacity, frames]; end
+      def change_picture_tone(number:, red:, green:, blue:, gray: 0, frames:); @insns << [:ChangePictureColorTone, number, Tone.new(red, green, blue, gray), frames]; end
+      def screen_flash(red:, green:, blue:, alpha: 0, frames:); @insns << [:ScreenFlash, Color.new(red, green, blue, alpha), frames]; end
+      def screen_shake(power:, speed:, frames:); @insns << [:ScreenShake, power, speed, frames]; end
+
+      def transfer_player(map:, x:, y:, direction:, fading:)
+        isvar = any_variable?(map, x, y)
+        @insns << [:TransferPlayer, unwrap(character), appoint(isvar), unwrap(map), unwrap(x), unwrap(y), direction, fading]
+      end
+
+      def set_event_location(character, x:, y:, direction:)
+        isvar = any_variable?(x, y)
+        @insns << [:SetEventLocation, unwrap(character), appoint(isvar), unwrap(x), unwrap(y), direction]
+      end
+
+      def swap_event_locations(character, target:, direction:); @insns << [:SetEventLocation, unwrap(character), :ExchangeWithEvent, unwrap(target), direction]; end
+      def branch(on, *args, &block)
+        if on.is_a?(InjectionDSL::Wrappers::Switch)
+          @insns << [:ConditionalBranch, :Switch, unwrap(on), args[0]]
+        elsif on.is_a?(InjectionDSL::Wrappers::SelfSwitch)
+          @insns << [:ConditionalBranch, :SelfSwitch, unwrap(on), args[0]]
+        elsif on.is_a?(InjectionDSL::Wrappers::Variable)
+          operation = args[0]
+          state = args[1]
+          isvar = any_variable?(state)
+          @insns << [:ConditionalBranch, :Variable, unwrap(on), appoint(isvar), unwrap(state), operation]
+        elsif on.is_a?(InjectionDSL::Wrappers::GoldValue)
+          @insns << [:ConditionalBranch, :Gold, args[1], args[0]]
+        elsif on.is_a?(String)
+          @insns << [:ConditionalBranch, :Script, on]
+        elsif on.is_a?(InjectionDSL::Wrappers::EventProxy)
+          @insns << [:ConditionalBranch, :Character, unwrap(on), args[0]]
+        elsif on.is_a?(Numeric)
+          @insns << [:ConditionalBranch, :Button, on]
+        end
+
+        context = BranchExecutionContext.create(&block)
+        @insns << context
+        return context
+      end
+        
+      def loop(&block)
+        @insns << :Loop
+        @insns << LoopExecutionContext.create(&block)
+      end
+
+      def show_choices(text=nil, &block)
+        @insns << [:ShowText, text] if text
+        @insns << ChoiceContext.create(&block)
+      end
+
+      def set_move_route(character, &block); @insns << [:SetMoveRoute, unwrap(character), MoveRouteContext.create(&block).compile]; end
+      def control_variables(start, done, operator = :[]=, *args); @insns << [:ControlVariables, unwrap(start), unwrap(done), operator, *args]; end
+      def control_variable(variable, operator = :[]=, *args); control_variables(variable, variable, operator, *args); end
+      def control_switches(start, done, value); @insns << [:ControlSwitches, unwrap(start), unwrap(done), value]; end
+      def control_switch(switch, value); control_switches(switch, switch, value); end
+      def control_self_switch(chr, value); @insns << [:ControlSelfSwitch, chr, value]; end
+
+      def gold=(operation)
+        sign, value = operation
+        change_gold(value, sign: sign)
+      end
+
+      def change_gold(value, sign: 1)
+        isvar = any_variable?(value)
+        if !isvar
+          sign = value
+          value = value.abs
+        end
+
+        @insns << [:ChangeGold, sign.negative? ? :- : :+, appoint(isvar), unwrap(value)]
+      end
+
+      def scroll_map(direction:, distance:, speed:); @insns << [:ScrollMap, direction, distance, speed]; end
+      def change_windowskin(name); @insns << [:ChangeWindowskin, name]; end
+      def show_animation(character, animation); @insns << [:ShowAnimation, unwrap(character), animation]; end
+      def heal_party(party = 0); @insns << [:HealParty, party]; end
+      def change_panorama(graphic:, hue: 0); @insns << [:ChangeMapSettings, :Panorama, graphic, hue]; end
+      def change_fog(graphic:, hue: 0, opacity: 0, blending:, zoom:, sx: 0, sy: 0); @insns << [:ChangeMapSettings, :Fog, graphic, hue, opacity, blending, zoom, sx, sy]; end
+      def change_battleback(graphic:); @insns << [:ChangeMapSettings, :BattleBack, graphic]; end
+
+      def show_picture(number:, graphic:, origin:, x:, y:, zoom_x:, zoom_y:, opacity: 255, blending:)
+        isvar = any_variable?(x, y)
+        @insns << [:ShowPicture, number, graphic, origin, appoint(isvar), x, y, zoom_x, zoom_y, opacity, blending]
+      end
+
+      def move_picture(number:, frames:, origin:, x:, y:, zoom_x:, zoom_y:, opacity: 255, blending:)
+        isvar = any_variable?(x, y)
+        @insns << [:MovePicture, number, frames, origin, appoint(isvar), x, y, zoom_x, zoom_y, opacity, blending]
+      end
+
+      def rotate_picture(number:, speed:); @insns << [:RotatePicture, number, speed]; end
+      def erase_picture(number:); @insns << [:ErasePicture, number]; end
+      def weather_effect(weather:, power:, frames:); @insns << [:SetWeatherEffects, weather, power, frames]; end
+      def set_transparent_flag(flag); @insns << [:ChangeTransparentFlag, flag]; end
+      def disable_save_access(flag); @insns << [:ChangeSaveAccess, flag]; end
+      def disable_menu_access(flag); @insns << [:ChangeMenuAccess, flag]; end
+      def disable_encounters(flag); @insns << [:ChangeEncounter, flag]; end
+      def prepare_for_transition; @insns << :PrepareForTransition; end
+      def transition(graphic:); @insns << [:ExecuteTransition, graphic]; end
+      def call_menu_screen; @insns << :CallMenuScreen; end
+      def call_save_screen; @insns << :CallSaveScreen; end
+      def game_over; @insns << :GameOver; end
+      def title_screen; @insns << :ReturnToTitleScreen; end
+      def memorize_bgm_bgs; @insns << :MemorizeBackgroundSound; end
+      def restore_bgm_bgs; @insns << :RestoreBackgroundSound; end
+      def timer_on; @insns << [:ControlTimer, true]; end
+      def timer_off; @insns << [:ControlTimer, false]; end
+
+      ### ============================
+      ###         END COMMANDS
+      ### ============================
+
+      def compile_end(list)
+        list << :Done
+      end
+
+      def compile
+        list = []
+        for insn in @insns
+          if insn.is_a?(Array) || insn.is_a?(Symbol)
+            list << insn
+          elsif insn.respond_to?("compile")
+            list.push *insn.compile
+          end
+        end
+
+        compile_end(list)
+
+        return list
+      end
+    end
+
+    class BranchExecutionContext < ExecutionContext
+      include DSLLike
+
+      ### ========================
+      ###         COMMANDS
+      ### ========================
+      def else(&block); @else = ExecutionContext.create(&block); end
+      ### ============================
+      ###         END COMMANDS
+      ### ============================
+
+      def compile_end(list)
+        if @else
+          list << :Else
+          list.push *@else.compile
+        else
+          super
+        end
+      end
+    end
+
+    class LoopExecutionContext < ExecutionContext
+      include DSLLike
+
+      ### ========================
+      ###         COMMANDS
+      ### ========================
+      def break_loop; @insns << :BreakLoop; end
+      ### ============================
+      ###         END COMMANDS
+      ### ============================
+    end
+
+    class OrphanedExecutionContext < ExecutionContext
+      include DSLLike
+
+      def compile_end(list)
+        # NO-OP
+      end
+    end
+
+    class ChoiceContext
+      include DSLLike
+
+      def initialize
+        @choices = []
+        @contexts = []
+        @cancel = nil
+        @cancelcode = nil
+      end
+
+      ### ========================
+      ###         COMMANDS
+      ### ========================
+
+      def choice(name, &block)
+        @choices << name
+        @contexts << ExecutionContext.create(&block)
+      end
+
+      def when_cancel(value = nil, &block)
+        if value
+          @cancel = value
+        elsif block_given?
+          @cancelcode = ExecutionContext.create(&block)
+        end
+      end
+
+      def default_choice(name, &block)
+        choice(name, &block)
+        when_cancel(name)
+      end
+
+      ### ============================
+      ###         END COMMANDS
+      ### ============================
+
+      def compile
+        list = []
+        cancelmode = 0
+
+        if @cancelcode
+          cancelmode = 4 # Branch
+        elsif @cancel.is_a?(Numeric)
+          cancelmode = @cancel
+        elsif @cancel.is_a?(String)
+          cancelmode = (@choices.index(@cancel) || -1) + 1
+        end
+
+        list << [:ShowChoices, @choices, cancelmode]
+        for choice, i in @choices.each_with_index
+          context = @contexts[i]
+          list << [:When, i, choice]
+          list.push *context.compile
+        end
+
+        if @cancelcode
+          list << :WhenCancel
+          list.push *@cancelcode.compile
+        end
+
+        return list
+      end
+    end
+
+    class MoveRouteContext
+      include DSLLike
+
+      def initialize
+        @repeat = false
+        @skippable = false
+        @insns = []
+      end
+
+      ### ========================
+      ###         COMMANDS
+      ### ========================
+
+      def mark_as_repeat; @repeat = true; end
+
+      def mark_as_skippable; @skippable = true; end
+
+
+      def move_down; @insns << :MoveDown; end
+      def move_left; @insns << :MoveLeft; end
+      def move_right; @insns << :MoveRight; end
+      def move_up; @insns << :MoveUp; end
+      def move_down_left; @insns << :MoveDownLeft; end
+      def move_down_right; @insns << :MoveDownRight; end
+      def move_up_left; @insns << :MoveUpLeft; end
+      def move_up_right; @insns << :MoveUpRight; end
+      def move_random; @insns << :MoveRandomly; end
+      def move_toward_player; @insns << :MoveTowardPlayer; end
+      def move_away_from_player; @insns << :MoveAwayFromPlayer; end
+      def move_forward; @insns << :MoveForward; end
+      def move_backward; @insns << :MoveBackward; end
+      def jump_to(x:, y:); @insns << [:Jump, x, y]; end
+      def wait(frames); @insns << [:Wait, frames]; end
+      def face_down; @insns << :FaceDown; end
+      def face_left; @insns << :FaceLeft; end
+      def face_right; @insns << :FaceRight; end
+      def face_up; @insns << :FaceUp; end
+      def turn_right; @insns << :TurnRight; end
+      def turn_left; @insns << :TurnLeft; end
+      def turn_around; @insns << :TurnAround; end
+      def turn_randomly; @insns << :TurnRandomly; end
+      def face_randomly; @insns << :FaceRandomly; end
+      def face_toward_player; @insns << :FaceTowardsPlayer; end
+      def face_away_from_player; @insns << :FaceAwayFromPlayer; end
+
+      def set_switch(switch, state:); @insns << [state ? :SetSwitch : :UnsetSwitch, unwrap(switch)]; end
+      def change_speed(speed); @insns << [:MoveSpeed, speed]; end
+      def change_frequency(freq); @insns << [:MoveFrequency, freq]; end
+
+      def animate_walking(state=true); @insns << state ? :AnimateWalking : :DontAnimateWalking; end
+      def animate_steps(state=true); @insns << state ? :AnimateSteps : :DontAnimateSteps; end
+      def lock_direction(state=true); @insns << state ? :FixDirection : :DontFixDirection; end
+      def set_intangible(state=true); @insns << state ? :SetIntangible : :SetTangible; end
+      def set_always_foreground(state=true); @insns << state ? :SetAlwaysForeground : :UnsetAlwaysForeground; end
+      def set_character(name, hue: 0, direction: :Down, pattern: 0); @insns << [:SetCharacter, name, hue, direction, pattern]; end
+      def remove_graphic; change_graphic(""); end
+      def set_opacity(opacity); @insns << [:SetOpacity, opacity]; end
+      def set_blend_type(blend); @insns << [:BlendType, blend]; end
+
+      def play_se(param,volume=nil,pitch=nil); @insns << [:PlaySound, pbResolveAudioFile(param,volume,pitch)]; end
+      def script(script); @insns << [:Script, script]; end
+
+      ### ============================
+      ###         END COMMANDS
+      ### ============================
+
+      def compile_end(list)
+        list << :Done
+      end
+
+      def compile
+        list = []
+        for insn in @insns
+          if insn.is_a?(Array) || insn.is_a?(Symbol)
+            list.push(insn)
+          elsif insn.respond_to?("compile")
+            list.push(insn.compile)
+          end
+        end
+
+        compile_end(list)
+
+        route = InjectionHelper.parseMoveRoute(list, repeat: @repeat)
+        route.skippable = @skippable
+
+        return route
+      end
+    end
+  
+  ### ==========================================
+  ###         Syntactic Sugar goes below
+  ### ==========================================
+
+    module DSLLike
+      def unwrap(holder)
+        return holder.event if holder.is_a?(InjectionDSL::Wrappers::EventProxy)
+        return holder.key if holder.is_a?(InjectionDSL::Wrappers::HolderProxy)
+        return holder
+      end
+
+      def any_variable?(*holders)
+        return holders.any? { |it| it.is_a?(InjectionDSL::Wrappers::HolderProxy) }
+      end
+
+      def variables; InjectionDSL::Wrappers::Variables.new(self); end
+      def switches; InjectionDSL::Wrappers::Switches.new(self); end
+      def events; InjectionDSL::Wrappers::EventSourceProxy.new(self); end
+      def selfswitch; InjectionDSL::Wrappers::OwnSelfSwitches.new(self); end
+      def map_id; InjectionDSL::Wrappers::GlobalValue.new(:map_id); end
+      def party_size; InjectionDSL::Wrappers::GlobalValue.new(:party_size); end
+      def gold; InjectionDSL::Wrappers::GoldValue.new(:gold); end
+
+      def steps; InjectionDSL::Wrappers::GlobalValue.new(:steps); end
+      def play_time; InjectionDSL::Wrappers::GlobalValue.new(:play_time); end
+      def timer; InjectionDSL::Wrappers::GlobalValue.new(:timer); end
+      def save_count; InjectionDSL::Wrappers::GlobalValue.new(:save_count); end
+
+      def player; InjectionDSL::Wrappers::EventProxy.new(:Player, self); end
+      def this; InjectionDSL::Wrappers::OwnEventProxy.new(self); end
+    end
+  end
+
+  module Wrappers
+
+    ### Proxies for passing around variables
+
+    class HolderProxy
+      attr_reader :key
+
+      def initialize(key)
+        @key = key
+      end
+    end
+
+    class EventHolderProxy < HolderProxy
+      attr_reader :event
+
+      def initialize(event, key)
+        @event = event
+        @key = key
+      end
+    end
+
+    ### End proxies
+
+    class Variables
+      attr_reader :dsl
+
+      def initialize(dsl)
+        @dsl = dsl
+      end
+
+      def [](idx)
+        return Variable.new(idx)
+      end
+
+      def operate(idx, operator, value)
+        if value.is_a?(Variable)
+          dsl.control_variable(idx, operator, :Variable, value.key)
+        elsif value.is_a?(Range)
+          dsl.control_variable(idx, operator, :RandomBetween, value.begin, value.end)
+        elsif value.is_a?(CharacterValue)
+          dsl.control_variable(idx, operator, :Character, value.event, value.key)
+        elsif value.is_a?(GlobalValue)
+          dsl.control_variable(idx, operator, :Other, value.key)
+        elsif value.is_a?(Numeric)
+          dsl.control_variable(idx, operator, :Constant, value)
+        end
+      end
+
+      def []=(idx, value)
+        operate(idx, :[]=, value)
+      end
+    end
+
+    class Switches
+      attr_reader :dsl
+
+      def initialize(dsl)
+        @dsl = dsl
+      end
+
+      def [](idx)
+        return Switch.new(idx)
+      end
+
+      def []=(idx, value)
+        dsl.control_switch(idx, value)
+      end
+    end
+
+    class SelfSwitches
+      attr_reader :event
+      attr_reader :dsl
+
+      def initialize(event, dsl)
+        @event = event
+        @dsl = dsl
+      end
+
+      def [](idx)
+        return SelfSwitch.new(event, idx)
+      end
+    end
+
+    class OwnSelfSwitches < SelfSwitches
+      def initialize(dsl)
+        super(:This, dsl)
+      end
+
+      def []=(idx, value)
+        dsl.control_self_switch(idx, value)
+      end
+    end
+
+    class EventProxy
+      attr_reader :event
+      attr_reader :dsl
+
+      def initialize(event, dsl)
+        @event = event
+        @dsl = dsl
+      end
+
+      def selfswitch; SelfSwitches.new(event, dsl); end
+
+      def x; CharacterValue.new(event, :x); end
+      def y; CharacterValue.new(event, :y); end
+      def direction; CharacterValue.new(event, :direction); end
+      def screen_x; CharacterValue.new(event, :screen_x); end
+      def screen_y; CharacterValue.new(event, :screen_y); end
+      def terrain_tag; CharacterValue.new(event, :terrain_tag); end
+
+      def set_event_location(x:, y:, direction:); dsl.set_event_location(self, x: x, y: y, direction: direction); end
+      def swap_event_locations(target:, direction:); dsl.swap_event_locations(self, target: target, direction: direction); end
+      def set_move_route(&block); dsl.set_move_route(self, &block); end
+      def show_animation(animation); dsl.show_animation(self, animation); end
+    end
+
+    class OwnEventProxy < EventProxy
+      def initialize(dsl)
+        super(:This, dsl)
+      end
+
+      def selfswitch; OwnSelfSwitches.new(dsl); end
+    end
+
+    class EventSourceProxy
+      attr_reader :dsl
+
+      def initialize(event, dsl)
+        @dsl = dsl
+      end
+
+      def [](idx)
+        return EventProxy.new(dsl, idx)
+      end
+    end
+
+    class GlobalValue < HolderProxy; end
+    class CharacterValue < EventHolderProxy; end
+    class Variable < HolderProxy; end
+    class Switch < HolderProxy; end
+    class SelfSwitch < EventHolderProxy; end
+
+    class GoldValue < GlobalValue
+      def +(value); [1, value]; end
+      def -(value); [-1, value]; end
     end
   end
 end

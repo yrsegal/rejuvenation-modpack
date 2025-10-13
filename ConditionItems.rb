@@ -121,28 +121,48 @@ module StatusConditionItems
   end
 
   def self.createSomniamSeller(map)
-    map.createSinglePageEvent(37, 24, "Status Item seller") { |page|
-      page.setGraphic("NPC 22")
-      page.interact(
-        [:ConditionalBranch, :Variable, :Stamps, :Constant, 1, :>=],
-          [:Script, "showmallstamps_show_window('Status Items',1) if defined?(ShowSomniamMallStamps)"],
-          [:Script, "pbPokemonMart(["],
-          *ITEMS.keys.map { |item| [:ScriptContinued, ":#{item},"] },
-          [:ScriptContinued, "])"],
-          [:Script, 'showmallstamps_disposefully if defined?(ShowSomniamMallStamps)'],
-        :Done)
+    # map.createSinglePageEvent(37, 24, "Status Item seller") { |page|
+    #   page.setGraphic("NPC 22")
+    #   page.interact(
+    #     [:ConditionalBranch, :Variable, :Stamps, :Constant, 1, :>=],
+    #       [:Script, "showmallstamps_show_window('Status Items',1) if defined?(ShowSomniamMallStamps)"],
+    #       [:Script, "pbPokemonMart(["],
+    #       *ITEMS.keys.map { |item| [:ScriptContinued, ":#{item},"] },
+    #       [:ScriptContinued, "])"],
+    #       [:Script, 'showmallstamps_disposefully if defined?(ShowSomniamMallStamps)'],
+    #     :Done)
+    # }
+    map.createSinglePageEvent(37, 24, "Status Item seller") {
+      setGraphic "NPC 22"
+      interact {
+        branch(variables[:Stamps], :>=, 1) {
+          script "showmallstamps_show_window('Status Items',1) if defined?(ShowSomniamMallStamps)"
+          script "pbPokemonMart([" + ITEMS.keys.map { |item| ":#{item}" }.join(",") + "])"
+          script "showmallstamps_disposefully if defined?(ShowSomniamMallStamps)"
+        }
+      }
     }
   end
 
   def self.createGoldenleafSeller(map)
-    map.createSinglePageEvent(60, 49, "Status Item seller") { |page|
-      page.setGraphic("trchar072Dark")
-      page.interact(
-        [:Script, "pbPokemonMart(["],
-        *ITEMS.keys.map { |item| [:ScriptContinued, ":#{item},"] },
-        [:ScriptContinued, "], $game_switches[:NewTownOrdinance] ?"],
-        [:ScriptContinued, "_INTL('Sorry about before. I\\'m still selling the items, though.') :"],
-        [:ScriptContinued, "_INTL('Hey, kid. You should use these on your Pokémon.'))"])
+    # map.createSinglePageEvent(60, 49, "Status Item seller") { |page|
+    #   page.setGraphic("trchar072Dark")
+    #   page.interact(
+    #     [:Script, "pbPokemonMart(["],
+    #     *ITEMS.keys.map { |item| [:ScriptContinued, ":#{item},"] },
+    #     [:ScriptContinued, "], $game_switches[:NewTownOrdinance] ?"],
+    #     [:ScriptContinued, "_INTL('Sorry about before. I\\'m still selling the items, though.') :"],
+    #     [:ScriptContinued, "_INTL('Hey, kid. You should use these on your Pokémon.'))"])
+    # }
+    # p map
+    map.createSinglePageEvent(60, 49, "Status Item seller") {
+      setGraphic "trchar072Dark"
+      interact {
+        script "pbPokemonMart([" + ITEMS.keys.map { |item| ":#{item}" }.join(",") + "],
+        $game_switches[:NewTownOrdinance] ?
+        _INTL('Sorry about before. I\\'m still selling the items, though.') :
+        _INTL('Hey, kid. You should use these on your Pokémon.'))"
+      }
     }
   end
 end
@@ -172,11 +192,11 @@ class PokeBattle_Scene
   end
 end
 
-InjectionHelper.defineMapPatch(231) { |map| # Somniam Mall
-  StatusConditionItems.createSomniamSeller(map)
+InjectionHelper.defineMapPatch(231) { # Somniam Mall
+  StatusConditionItems.createSomniamSeller(self)
 }
-InjectionHelper.defineMapPatch(82) { |map| # Goldenleaf Town
-  StatusConditionItems.createGoldenleafSeller(map)
+InjectionHelper.defineMapPatch(82) { # Goldenleaf Town
+  StatusConditionItems.createGoldenleafSeller(self)
 }
 
 StatusConditionItems.createItems
