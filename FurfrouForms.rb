@@ -67,7 +67,7 @@ def furfrouforms_trimvendor(event, startdialogue = "Do you have a Furfrou who ne
                 text "\\G" + chartag + "\\v[4]? Alright!"
               }
             }
-            self.gold -= 2500
+            player.gold -= 2500
 
             text "\\G" + chartag + "Okay, this will only take a moment..."
             change_tone red: -255, green: -255, blue: -255, frames: 10
