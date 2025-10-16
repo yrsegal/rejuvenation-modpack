@@ -2,6 +2,8 @@ Variables[:PuppetCoins] = 597
 
 module ComplexMartInterface
 
+  BASE_DIRECTORY = "#{__dir__[Dir.pwd.length+1..]}/ShopIcons"
+
   DEFAULT_MESSAGES_INTERACT = {
     speech: "Welcome!\nHow may I serve you?",
     come_again: "Please come again!",
@@ -255,11 +257,11 @@ module ComplexMartInterface
       return "Graphics/Icons/itemBack" if !item
       iconitem = nil
       case item[0]
-        when :puppet  then return "#{__dir__[Dir.pwd.length+1..]}/ShopIcons/puppetcoin"
+        when :puppet  then return "#{BASE_DIRECTORY}/puppetcoin"
         when :coins   then iconitem = :COINCASE
         when :move
           type = $cache.moves[item[1]].type
-          return sprintf("#{__dir__[Dir.pwd.length+1..]}/ShopIcons/%s",type.downcase)
+          return sprintf("#{BASE_DIRECTORY}/%s",type.downcase)
         when :item    then iconitem = item[1]
         when :pokemon 
           pkmn = PokeBattle_Pokemon.new(item[1],item[2],$Trainer,false,item[4])
