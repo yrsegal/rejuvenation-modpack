@@ -74,7 +74,8 @@ def outfitoptions_replace_outfits_with_darchflag(event)
     matched = page.lookForAll([:Script, /^\$Trainer\.outfit=/])
 
     for insn in matched
-      page.replaceRange(insn, insn, [:ControlSwitch, :DarchOutfit, true])
+      page.insertAfter(insn, [:CallCommonEvent, 131])
+      page.replace(insn, [:ControlSwitch, :DarchOutfit, true])
     end
   }
 end
