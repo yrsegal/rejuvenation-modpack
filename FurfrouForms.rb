@@ -100,16 +100,18 @@ def furfrouforms_trimvendor(event, startdialogue = "Do you have a Furfrou who ne
   }
 end
 
-InjectionHelper.defineMapPatch(187) { |map| # Everglade Mall
-  map.createSinglePageEvent(13, 33, "Furfrou Trimmer") { |page|
-    page.setGraphic("trchar020")
-    page.interact([:ShowText, "We'll give your Pokemon the best haircut imaginable!"])
-    furfrouforms_trimvendor(page)
+InjectionHelper.defineMapPatch(187) { # Everglade Mall
+  createSinglePageEvent(13, 33, "Furfrou Trimmer") {
+    setGraphic "trchar020"
+    interact {
+      text "We'll give your Pokemon the best haircut imaginable!"
+    }
+    furfrouforms_trimvendor(self)
   }
 }
 
-InjectionHelper.defineMapPatch(61, 6) { |event| # East Gearen interiors, Sasha post-quest
-  furfrouforms_trimvendor(event, "I'm also training to trim Furfrou! It'll cost $2500 for a session.", "SASHA: ") 
+InjectionHelper.defineMapPatch(61, 6) { # East Gearen interiors, Sasha post-quest
+  furfrouforms_trimvendor(self, "I'm also training to trim Furfrou! It'll cost $2500 for a session.", "SASHA: ") 
 }
 InjectionHelper.defineMapPatch(287, 51, &method(:furfrouforms_trimvendor)) # Dream District Interiors, salon employee
 

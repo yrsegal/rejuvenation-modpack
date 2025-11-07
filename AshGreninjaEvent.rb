@@ -610,7 +610,6 @@ InjectionHelper.defineMapPatch(44) { # Neo East Gearen (east)
               animate_steps false
               wait 20
             }.wait
-            p @insns[-2]
 
             text "ASH: You approve, buddy?"
             events[greninja.id].show_animation(LYRICAL_ANIMATION_ID)
@@ -646,8 +645,6 @@ InjectionHelper.defineMapPatch(44) { # Neo East Gearen (east)
                     poke.obtainText = _INTL("The Alola region")
                     poke.obtainMode = 0
                     poke.obtainLevel = 5
-                    poke.ot = _INTL("Ash")
-                    poke.trainerID = 7150
                     pbSet(1,poke)'
 
             this.set_move_route {
@@ -810,8 +807,6 @@ InjectionHelper.defineMapPatch(44) { # Neo East Gearen (east)
                 poke.obtainText = _INTL("The Alola region")
                 poke.obtainMode = 0
                 poke.obtainLevel = 5
-                poke.ot = _INTL("Ash")
-                poke.trainerID = 7150
                 pbSet(1,poke)'
         branch("ashgreninja_addPokemonNoTimeSet(pbGet(1))") {
           self_switch["B"] = true

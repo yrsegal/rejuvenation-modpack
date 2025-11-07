@@ -6,8 +6,8 @@ begin
   raise "Missing dependencies for mod #{__FILE__}, cannot load" unless missing.empty?
 end
 
-InjectionHelper.defineMapPatch(520, 57) { |event| # Voidal Chasm, warp at (039,047)
-  for page in event.pages
+InjectionHelper.defineMapPatch(520, 57) { # Voidal Chasm, warp at (039,047)
+  for page in self.pages
     if page.condition.variable_valid && page.condition.variable_id == 767 # The offending variable
       page.condition.variable_valid = false
     end

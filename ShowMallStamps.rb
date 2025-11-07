@@ -77,39 +77,39 @@ module ShowSomniamMallStamps
   end
 
   def self.patchShop(event, stampsRequired, title)
-    event.patch(:ShowSomniamMallStamps) { |page|
-      textMatches = page.lookForAll([:ShowText, nil])
+    event.patch(:ShowSomniamMallStamps) {
+      textMatches = lookForAll([:ShowText, nil])
 
       for insn in textMatches
-        targetIdx = page.idxOf(insn)
-        page.insertBefore(targetIdx, [:Script, "showmallstamps_show_window('#{title}',#{stampsRequired})"])
+        targetIdx = idxOf(insn)
+        insertBefore(targetIdx, [:Script, "showmallstamps_show_window('#{title}',#{stampsRequired})"])
         targetIdx += 1
-        targetIdx += 1 while [:ShowText,:ShowTextContinued].include?(page[targetIdx].command)
-        page.insertBefore(targetIdx, [:Script, "showmallstamps_disposefully"])
+        targetIdx += 1 while [:ShowText,:ShowTextContinued].include?(self[targetIdx].command)
+        insertBefore(targetIdx, [:Script, "showmallstamps_disposefully"])
       end
 
-      martMatches = page.lookForAll([:Script, /^pbPokemonMart/])
+      martMatches = lookForAll([:Script, /^pbPokemonMart/])
 
       for insn in martMatches
-        targetIdx = page.idxOf(insn)
-        page.insertBefore(targetIdx, [:Script, "showmallstamps_show_window('#{title}',#{stampsRequired})"])
+        targetIdx = idxOf(insn)
+        insertBefore(targetIdx, [:Script, "showmallstamps_show_window('#{title}',#{stampsRequired})"])
         targetIdx += 1
-        targetIdx += 1 while [:Script,:ScriptContinued].include?(page[targetIdx].command)
-        page.insertBefore(targetIdx, [:Script, "showmallstamps_disposefully"])
+        targetIdx += 1 while [:Script,:ScriptContinued].include?(self[targetIdx].command)
+        insertBefore(targetIdx, [:Script, "showmallstamps_disposefully"])
       end
     }
   end
 
   def self.patchSign(event, stampsRequired)
-    event.patch(:ShowSomniamMallStamps) { |page|
-      textMatches = page.lookForAll([:ShowText, nil])
+    event.patch(:ShowSomniamMallStamps) {
+      textMatches = lookForAll([:ShowText, nil])
 
       for insn in textMatches
-        targetIdx = page.idxOf(insn)
-        page.insertBefore(targetIdx, [:Script, "showmallstamps_show_window(nil,#{stampsRequired})"])
+        targetIdx = idxOf(insn)
+        insertBefore(targetIdx, [:Script, "showmallstamps_show_window(nil,#{stampsRequired})"])
         targetIdx += 1
-        targetIdx += 1 while [:ShowText,:ShowTextContinued].include?(page[targetIdx].command)
-        page.insertBefore(targetIdx, [:Script, "showmallstamps_disposefully"])
+        targetIdx += 1 while [:ShowText,:ShowTextContinued].include?(self[targetIdx].command)
+        insertBefore(targetIdx, [:Script, "showmallstamps_disposefully"])
       end
     }
   end
@@ -179,11 +179,11 @@ end
 
 # Patch
 
-InjectionHelper.defineMapPatch(231) { |map| # Somniam Mall
+InjectionHelper.defineMapPatch(231) { # Somniam Mall
   ShowSomniamMallStamps::SHOPS.each_pair { |evt,info|
-    ShowSomniamMallStamps.patchShop(map.events[evt], info[0], info[1])
+    ShowSomniamMallStamps.patchShop(self.events[evt], info[0], info[1])
   }
   ShowSomniamMallStamps::SIGNS.each_pair { |evt,info|
-    ShowSomniamMallStamps.patchSign(map.events[evt], info)
+    ShowSomniamMallStamps.patchSign(self.events[evt], info)
   }
 }

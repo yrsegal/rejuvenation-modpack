@@ -260,9 +260,9 @@ def mod_passwordoptions_scene
   end
 end
 
-InjectionHelper.defineMapPatch(1, 1) { |event| # Intro, Intro Sequence
-  event.patch(:PasswordOptions) { |page|
-    matched = page.lookForSequence(
+InjectionHelper.defineMapPatch(1, 1) { # Intro, Intro Sequence
+  patch(:PasswordOptions) {
+    matched = lookForSequence(
       [:Script,          'pbFadeOutIn(99999){'],
       [:ScriptContinued, '    sscene=PokemonEntryScene.new'],
       [:ScriptContinued, '    sscreen=PokemonEntry.new(sscene)'],
@@ -271,15 +271,16 @@ InjectionHelper.defineMapPatch(1, 1) { |event| # Intro, Intro Sequence
       [:Script,          'addPassword($trainpass)'])
 
     if matched
-      labelPoint = page.lookForAll([:ShowPicture, 1, 'introOak2', 0, 0, 0, 0, 100, 100, 255, 0])
+      labelPoint = lookForAll([:ShowPicture, 1, 'introOak2', 0, 0, 0, 0, 100, 100, 255, 0])
 
       unless labelPoint.empty?
-        page.insertBefore(labelPoint[0], [:Label, 'passwordoptions_pwend'])
+        insertBefore(labelPoint[0]) { label 'passwordoptions_pwend' }
 
-        page.replaceRange(matched[0], matched[-1], 
-          [:ConditionalBranch, :Script, 'mod_passwordoptions_scene'],
-            [:JumpToLabel, 'passwordoptions_pwend'],
-          :Done)
+        replaceRange(matched[0], matched[-1]) {
+          branch('mod_passwordoptions_scene') {
+            jump_label 'passwordoptions_pwend'
+          }
+        }
       end
     end
   }

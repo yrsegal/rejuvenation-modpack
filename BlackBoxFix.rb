@@ -6,9 +6,9 @@ begin
   raise "Missing dependencies for mod #{__FILE__}, cannot load" unless missing.empty?
 end
 
-InjectionHelper.defineMapPatch(99, 58) { |event| # School of Nightmares, Make Anything Within Reason Machine
-  event.patch(:blackboxfixes_patchBlackBoxRemoval) { |page|
-    matched = page.lookForAll([:Script, '$PokemonBag.pbDeleteItem(:MYSTBLACKBOX2)'])
+InjectionHelper.defineMapPatch(99, 58) { # School of Nightmares, Make Anything Within Reason Machine
+  patch(:blackboxfixes_patchBlackBoxRemoval) {
+    matched = lookForAll([:Script, '$PokemonBag.pbDeleteItem(:MYSTBLACKBOX2)'])
 
     for insn in matched
       insn[0] = '$PokemonBag.pbDeleteItem(:MYSTBLACKBOX2,3)'

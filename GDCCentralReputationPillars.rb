@@ -10,57 +10,54 @@ Variables[:GDCReputation] = 745
 
 $GDC_REPUTATION_PILLARS = true
 
-InjectionHelper.defineMapPatch(294) { |map| # GDC Central
+InjectionHelper.defineMapPatch(294) { # GDC Central
   doneAny = false
-  for event in map.events.values
+  for event in self.events.values
     if event.pages[0].graphic.character_name == 'object_centerpillar' && event.pages[0].graphic.direction == 2
       event.pages[0].direction_fix = true
-      event.pages[0].interact(
-        [:ShowText, "Check your reputation standings?"],
-        [:ShowChoices, ["Yes", "No"], 2],
-        [:When, 0, "Yes"],
-          [:PlaySoundEvent, "accesspc"],
-          [:ShowText, "*CHECKING...*"],
-          [:ShowText, "Current reputation standings for \\PN: \\v[#{Variables[:GDCReputation]}]."],
-          [:ShowText, "Creating evaluation..."],
-          [:ConditionalBranch, :Variable, :GDCReputation, :Constant, 700, :>=],
-            [:ShowText, "Your reputation ranking is: \\c[1]GOLD STAR!"],
-            :ExitEventProcessing,
-          :Done,
-          [:ConditionalBranch, :Variable, :GDCReputation, :Constant, 600, :>=],
-            [:ShowText, "Your reputation ranking is: \\c[1]GOLD STAR!"],
-            :ExitEventProcessing,
-          :Done,
-          [:ConditionalBranch, :Variable, :GDCReputation, :Constant, 500, :>=],
-            [:ShowText, "Your reputation ranking is: \\c[1]SILVER STAR!"],
-            :ExitEventProcessing,
-          :Done,
-          [:ConditionalBranch, :Variable, :GDCReputation, :Constant, 400, :>=],
-            [:ShowText, "Your reputation ranking is: \\c[1]RISING STAR!"],
-            :ExitEventProcessing,
-          :Done,
-          [:ConditionalBranch, :Variable, :GDCReputation, :Constant, 300, :>=],
-            [:ShowText, "Your reputation ranking is: \\c[1]STAR!"],
-            :ExitEventProcessing,
-          :Done,
-          [:ConditionalBranch, :Variable, :GDCReputation, :Constant, 200, :>=],
-            [:ShowText, "Your reputation ranking is: \\c[1]BRONZE!"],
-            :ExitEventProcessing,
-          :Done,
-          [:ConditionalBranch, :Variable, :GDCReputation, :Constant, 100, :<=],
-            [:ShowText, "Your reputation ranking is: \\c[1]DUST!"],
-            :ExitEventProcessing,
-          :Done,
-          [:ConditionalBranch, :Variable, :GDCReputation, :Constant, 100, :>=],
-            [:ShowText, "Your reputation ranking is: \\c[1]STONE!"],
-            :ExitEventProcessing,
-          :Done,
-        :Done,
-        [:When, 1, "No"],
-          # Noop
-        :Done)
-      doneAny = true
+      event.pages[0].interact {
+        show_choices("Check your reputation standings?") {
+          choice("Yes") {
+            play_se "accesspc"
+            text "*CHECKING...*"
+            text "Current reputation standings for \\PN: \\v[745]."
+            text "Creating evaluation..."
+            branch(variables[:GDCReputation], :>=, 700) {
+              text "Your reputation ranking is: \\c[1]GOLD STAR!"
+              exit_event_processing 
+            }
+            branch(variables[:GDCReputation], :>=, 600) {
+              text "Your reputation ranking is: \\c[1]GOLD STAR!"
+              exit_event_processing 
+            }
+            branch(variables[:GDCReputation], :>=, 500) {
+              text "Your reputation ranking is: \\c[1]SILVER STAR!"
+              exit_event_processing 
+            }
+            branch(variables[:GDCReputation], :>=, 400) {
+              text "Your reputation ranking is: \\c[1]RISING STAR!"
+              exit_event_processing 
+            }
+            branch(variables[:GDCReputation], :>=, 300) {
+              text "Your reputation ranking is: \\c[1]STAR!"
+              exit_event_processing 
+            }
+            branch(variables[:GDCReputation], :>=, 200) {
+              text "Your reputation ranking is: \\c[1]BRONZE!"
+              exit_event_processing 
+            }
+            branch(variables[:GDCReputation], :<=, 100) {
+              text "Your reputation ranking is: \\c[1]DUST!"
+              exit_event_processing 
+            }
+            branch(variables[:GDCReputation], :>=, 100) {
+              text "Your reputation ranking is: \\c[1]STONE!"
+              exit_event_processing 
+            }
+          }
+          default_choice("No") {}
+        }
+      }
     end
   end
-  next doneAny
 }

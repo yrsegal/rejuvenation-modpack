@@ -18,51 +18,11 @@ class Game_Screen
   attr_accessor :outfitoptions_iceptOutfit
 end
 
-def outfitoptions_makeMoveRoute(base, outfit, direction = 2)
-  return [
-    false,
-    [:SetCharacter, base + '_' + outfit.to_s, 0, direction, 0],
-    :Done
-  ]
-end
-
-def outfitoptions_wakeup_section(outfit)
-  return [
-    [:ConditionalBranch, :Variable, :Outfit, :Constant, outfit, :==],
-      [:Script, '$Trainer.outfit=' + outfit.to_s],
-      [:JumpToLabel, 'outfitoptions-end'],
-    :Done
-  ]
-end
-
-def outfitoptions_generateWindstormBranch(outfit, running, event_id, direction=2)
-  return [
-    [:ConditionalBranch, :Variable, :Outfit, :Constant, outfit, :==],
-      *outfitoptions_charSection(outfit, event_id, :Ana, running ? 'BGirlrun2' : 'BGirlwalk', direction),
-      *outfitoptions_charSection(outfit, event_id, :Alain, running ? 'nb_run2' : 'nb_walk2', direction),
-      *outfitoptions_charSection(outfit, event_id, :Aero, running ? 'nb_run' : 'nb_walk', direction),
-      *outfitoptions_charSection(outfit, event_id, :Ariana, running ? 'BGirlRun' : 'trchar003', direction),
-      *outfitoptions_charSection(outfit, event_id, :Axel, running ? 'Boy_Run2' : 'trchar004', direction),
-      *outfitoptions_charSection(outfit, event_id, :Aevia, running ? 'girl_run' : 'trchar001', direction),
-      *outfitoptions_charSection(outfit, event_id, :Aevis, running ? 'boy_run' : 'trchar000', direction),
-    :Done
-  ]
-end
-
-def outfitoptions_charSection(outfit, event_id, variable, base, direction=2)
-  return [
-    [:ConditionalBranch, :Switch, variable, true],
-      [:SetMoveRoute, event_id, outfitoptions_makeMoveRoute(base, outfit, direction)],
-      :WaitForMovement,
-      [:JumpToLabel, 'End'],
-    :Done]
-end
-
 # Injections
 
 def outfitoptions_arbitrary_outfit(event)
-  event.patch(:outfitoptions_arbitrary_outfit) { |page|
-    matched = page.lookForAll([:Script, /^\$Trainer\.outfit=[0-24-9]/])
+  event.patch(:outfitoptions_arbitrary_outfit) {
+    matched = lookForAll([:Script, /^\$Trainer\.outfit=[0-24-9]/])
     for insn in matched
       insn[0] = '$Trainer.outfit=$game_variables[:Outfit]'
     end
@@ -70,24 +30,28 @@ def outfitoptions_arbitrary_outfit(event)
 end
 
 def outfitoptions_replace_outfits_with_darchflag(event)
-  event.patch(:outfitoptions_replace_outfits_with_darchflag) { |page|
-    matched = page.lookForAll([:Script, /^\$Trainer\.outfit=/])
+  event.patch(:outfitoptions_replace_outfits_with_darchflag) {
+    matched = lookForAll([:Script, /^\$Trainer\.outfit=/])
 
     for insn in matched
-      page.replaceRange(insn, insn, [:ControlSwitch, :DarchOutfit, true])
+      replaceRange(insn, insn) {
+        switches[:DarchOutfit] = true
+      }
     end
   }
 end
 
 def outfitoptions_nix_darchoutfit_set(event, replaceWithChoices)
-  event.patch(:outfitoptions_nix_darchoutfit_set) { |page|
-    matched = page.lookForAll([:ControlSwitch, :DarchOutfit, false])
+  event.patch(:outfitoptions_nix_darchoutfit_set) {
+    matched = lookForAll([:ControlSwitch, :DarchOutfit, false])
 
     for insn in matched
       if replaceWithChoices
-        page.replace(insn, [:Script, 'outfitoptions_handle_clothing_choices'])
+        replace(insn) {
+          script 'outfitoptions_handle_clothing_choices'
+        }
       else
-        page.delete_at(page.idxOf(insn))
+        delete(insn)
       end
     end
   }
@@ -95,77 +59,105 @@ end
 
 def outfitoptions_wake_up(page)
   page.patch(:outfitoptions_wake_up) {
-    matched = page.lookForSequence(
+    matched = lookForSequence(
       [:ConditionalBranch, :Variable, :Outfit, :Constant, 0, :==],
       :Else,
       [:Script, 'Kernel.pbSetPokemonCenter'])
 
     if matched
       # Done to end? if this breaks, return the done
-      page.insertBefore(matched[2], [:Label, 'outfitoptions-end']) # before pokemon center
+      insertBefore(matched[2]) { # before pokemon center
+        label 'outfitoptions-end'
+      }
 
-      payload = []
-      for outfit in [2,3,4,6]
-        payload += outfitoptions_wakeup_section(outfit)
-      end
-
-      page.insertAfter(matched[1], *payload)
+      insertAfter(matched[1]) {
+        for outfit in [2,3,4,6]
+          branch(variables[:Outfit], :==, outfit) {
+            script '$Trainer.outfit=' + outfit.to_s
+            jump_label 'outfitoptions-end'
+          }
+        end
+      }
     end
   }
 end
 
-def outfitoptions_injectBeforeOutfit0(event, event_id, nums, running, direction=2)
-  event.patch(:outfitoptions_injectBeforeOutfit0) { |subevent|
-    matched = subevent.lookForSequence([:ConditionalBranch, :Variable, :Outfit, :Constant, 0, :==])
+def outfitoptions_injectBeforeOutfit0(event, event_id, nums, running, direction=:Down)
+  event.patch(:outfitoptions_injectBeforeOutfit0) {
+    matched = lookForSequence([:ConditionalBranch, :Variable, :Outfit, :Constant, 0, :==])
 
     if matched
-      newinsns = []
-      nums.each {|num| newinsns += outfitoptions_generateWindstormBranch(num,running,event_id,direction) }
-
-      subevent.insertBefore(matched, *newinsns)
+      insertBefore(matched) {
+        for outfit in nums
+          branch(variables[:Outfit], :==, outfit) {
+            for switch, sprite in { Ana:    running ? 'BGirlrun2' : 'BGirlwalk',
+                                    Alain:  running ? 'nb_run2'   : 'nb_walk2',
+                                    Aero:   running ? 'nb_run'    : 'nb_walk',
+                                    Ariana: running ? 'BGirlRun'  : 'trchar003',
+                                    Axel:   running ? 'Boy_Run2'  : 'trchar004',
+                                    Aevia:  running ? 'girl_run'  : 'trchar001',
+                                    Aevis:  running ? 'boy_run'   : 'trchar000', }
+              branch(switches[switch], true) {
+                events[event_id].set_move_route { set_character sprite, direction: direction }.wait
+                jump_label 'End'
+              }
+            end
+          }
+        end
+      }
     end
   }
 end
 
 def outfitoptions_set_icep_outfit_fight(event)
-  event.patch(:outfitoptions_set_icep_outfit_fight) { |page|
-    matched = page.lookForAll([:Script, '$Trainer.outfit=3'])
+  event.patch(:outfitoptions_set_icep_outfit_fight) {
+    matched = lookForAll([:Script, '$Trainer.outfit=3'])
 
     for insn in matched
-      page.insertAfter(insn, [:Script, '$game_screen.outfitoptions_iceptOutfit=true'])
+      insertAfter(insn) {
+        branch(variables[:Outfit], :==, 3) {
+          script "$game_screen.outfitoptions_iceptOutfit=true"
+        }
+      }
     end
   }
 end
 
 def outfitoptions_patch_outfit_management(event)
   event.patch(:outfitoptions_patch_outfit_management) {
-    event.insertAtStart(
-      [:ConditionalBranch, :Variable, :Outfit, :Constant, 3, :==],
-        [:Script, "$game_screen.outfitoptions_iceptOutfit=true"],
-      :Done)
+    insertAtStart {
+      branch(variables[:Outfit], :==, 3) {
+        script "$game_screen.outfitoptions_iceptOutfit=true"
+      }
+    }
 
-    matched = event.lookForSequence([:ConditionalBranch, :Variable, :Outfit, :Constant, 4, :==])
+    matched = lookForSequence([:ConditionalBranch, :Variable, :Outfit, :Constant, 4, :==])
 
     if matched
-      event.insertAfter(matched,
-          [:ControlVariable, :Outfit, :[]=, :Constant, 4],
-          [:Script, '$Trainer.outfit=4'])
+      insertAfter(matched) {
+        variables[:Outfit] = 4
+        script '$Trainer.outfit=4'
+      }
     end
   }
 end
 
 def outfitoptions_override_outfit_choice(event)
   event.patch(:outfitoptions_override_outfit_choice) {
-    event.reformat([:Script, 'outfitoptions_handle_clothing_select'])
+    reformat {
+      script 'outfitoptions_handle_clothing_select'
+    }
   }
 end
 
 def outfitoptions_restore_sprite(event)
   event.patch(:outfitoptions_restore_sprite) {
-    matched = event.lookForSequence([:Script, 'characterRestore'])
+    matched = lookForSequence([:Script, 'characterRestore'])
 
     if matched
-      event.insertAfter(matched, [:Script, '$game_player.character_name=pbGetPlayerCharset(:walk)'])
+      insertAfter(matched) {
+        script '$game_player.character_name=pbGetPlayerCharset(:walk)'
+      }
     end
   }
 end
@@ -241,41 +233,41 @@ end
 
 # Patch common events
 
-InjectionHelper.defineCommonPatch(29) { |event| # Player Dupe
-  outfitoptions_injectBeforeOutfit0(event, 0, [4], false)
+InjectionHelper.defineCommonPatch(29) { # Player Dupe
+  outfitoptions_injectBeforeOutfit0(self, 0, [4], false)
 }
 InjectionHelper.defineCommonPatch(32, &method(:outfitoptions_restore_sprite)) # Change Back player
-InjectionHelper.defineCommonPatch(81) { |event| # Player Dupe 2
-  outfitoptions_injectBeforeOutfit0(event, 2, [4], false)
+InjectionHelper.defineCommonPatch(81) { # Player Dupe 2
+  outfitoptions_injectBeforeOutfit0(self, 2, [4], false)
 }
 InjectionHelper.defineCommonPatch(131, &method(:outfitoptions_patch_outfit_management)) # Outfit Management
 InjectionHelper.defineCommonPatch(133, &method(:outfitoptions_override_outfit_choice)) # Choose Outfit
 
-InjectionHelper.defineMapPatch(53) { |map| # I Nightmare Realm
+InjectionHelper.defineMapPatch(53) { # I Nightmare Realm
   # Mirror match
-  outfitoptions_injectBeforeOutfit0(map.events[66].pages[0], 0, [2, 3, 4, 6], true, 8)
-  outfitoptions_injectBeforeOutfit0(map.events[76].pages[0], 0, [2, 3, 4, 6], true, 8)
-  outfitoptions_injectBeforeOutfit0(map.events[86].pages[0], 0, [2, 3, 4, 6], true, 8)
-  outfitoptions_injectBeforeOutfit0(map.events[94].pages[0], 0, [2, 3, 4, 6], true, 8)
+  outfitoptions_injectBeforeOutfit0(self.events[66].pages[0], 0, [2, 3, 4, 6], true, :Up)
+  outfitoptions_injectBeforeOutfit0(self.events[76].pages[0], 0, [2, 3, 4, 6], true, :Up)
+  outfitoptions_injectBeforeOutfit0(self.events[86].pages[0], 0, [2, 3, 4, 6], true, :Up)
+  outfitoptions_injectBeforeOutfit0(self.events[94].pages[0], 0, [2, 3, 4, 6], true, :Up)
 }
 
-InjectionHelper.defineMapPatch(85) { |map| # Nightmare Toy Box
+InjectionHelper.defineMapPatch(85) { # Nightmare Toy Box
   # Beddtime
-  outfitoptions_wake_up(map.events[66].pages[0])
+  outfitoptions_wake_up(self.events[66].pages[0])
   # Clothing box
-  outfitoptions_nix_darchoutfit_set(map.events[63], true)
+  outfitoptions_nix_darchoutfit_set(self.events[63], true)
 }
 
-InjectionHelper.defineMapPatch(85, 22) { |event| # Nightbox Theater, PM talk
-  outfitoptions_nix_darchoutfit_set(event, false)
+InjectionHelper.defineMapPatch(85, 22) { # Nightbox Theater, PM talk
+  outfitoptions_nix_darchoutfit_set(self, false)
 }
 
-InjectionHelper.defineMapPatch(57) { |map| # Land of Broken Dreams
+InjectionHelper.defineMapPatch(57) { # Land of Broken Dreams
   # PM Fights
-  outfitoptions_arbitrary_outfit(map.events[91])
-  outfitoptions_arbitrary_outfit(map.events[103])
-  outfitoptions_set_icep_outfit_fight(map.events[91])
-  outfitoptions_set_icep_outfit_fight(map.events[103])
+  outfitoptions_arbitrary_outfit(self.events[91])
+  outfitoptions_arbitrary_outfit(self.events[103])
+  outfitoptions_set_icep_outfit_fight(self.events[91])
+  outfitoptions_set_icep_outfit_fight(self.events[103])
 }
 
 InjectionHelper.defineMapPatch(495, 78, &method(:outfitoptions_replace_outfits_with_darchflag)) # Decompression Lab, Elevator

@@ -20,41 +20,47 @@ Variables[:QuestStolenCargo] = 220
 
 module FixFactoryAreas
   def self.patchOceanaPierFieldEffect(event, resetter)
-    event.patch(:patchOceanaPierFieldEffect) { |page|
-      setShorted = page.lookForAll([:ControlSwitch, :ShortedOut, nil])
+    event.patch(:patchOceanaPierFieldEffect) {
+      setShorted = lookForAll([:ControlSwitch, :ShortedOut, nil])
 
       for insn in setShorted
         if resetter
-          page.insertBefore(insn, [:ControlVariable, :Forced_BaseField, :[]=, :Constant, 0])
+          insertBefore(insn) {
+            variables[:Forced_BaseField] = 0
+          }
         else
-          page.insertBefore(insn, [:Script, "$game_variables[:Forced_BaseField] = '#{insn.parameters[2] ? 'ShortCircuit' : 'Factory'}'"])
+          insertBefore(insn) {
+            script "$game_variables[:Forced_BaseField] = '#{insn.parameters[2] ? 'ShortCircuit' : 'Factory'}'"
+          }
         end
       end
     }
   end
 
   def self.patchResetCelgearnFieldEffect(event)
-    event.patch(:patchResetCelgearnFieldEffect) { |page|
-      resetSwitches = page.lookForAll([:ControlSwitches, :ReusableSwitch1, nil, false]) # Indicates light state
-      flipLightsOn = page.lookForAll([:ControlSwitches, :ReusableSwitch1, nil, true])
+    event.patch(:patchResetCelgearnFieldEffect) {
+      resetSwitches = lookForAll([:ControlSwitches, :ReusableSwitch1, nil, false]) # Indicates light state
+      flipLightsOn = lookForAll([:ControlSwitches, :ReusableSwitch1, nil, true])
 
       for insn in resetSwitches
-        page.insertBefore(insn, 
-          [:ControlVariable, :Forced_BaseField, :[]=, :Constant, 0],
-          [:ControlSwitch, :ShortedOut, false])
+        insertBefore(insn) {
+          variables[:Forced_BaseField] = 0
+          switches[:ShortedOut] = false
+        }
       end
 
       for insn in flipLightsOn
-        page.insertBefore(insn, 
-          [:ControlSwitch, :ShortedOut, true]) # To ensure message sent
+        insertBefore(insn) {
+          switches[:ShortedOut] = true
+        }
       end
     }
   end
 
   def self.patchCelgearnEntranceRiftBrightness(event)
-    event.pages[1].patch(:patchCelgearnEntranceRiftBrightness) { |page|
-      setLighting = page.lookForAll([:ChangeScreenColorTone, Tone.new(0,0,0,0), 40])
-      flipLightsOn = page.lookForAll([:ControlSwitch, :ReusableSwitch1, true])
+    event.pages[1].patch(:patchCelgearnEntranceRiftBrightness) {
+      setLighting = lookForAll([:ChangeScreenColorTone, Tone.new(0,0,0,0), 40])
+      flipLightsOn = lookForAll([:ControlSwitch, :ReusableSwitch1, true])
 
       for insn in setLighting
         insn[0] = Tone.new(-136,-136,-136,0)
@@ -62,7 +68,9 @@ module FixFactoryAreas
       end
 
       for insn in flipLightsOn
-        page.insertBefore(insn, [:ChangeScreenColorTone, Tone.new(0,0,0,0), 10])
+        insertBefore(insn) {
+          change_tone 0, 0, 0, frames: 10
+        }
       end
     }
   end
@@ -126,8 +134,8 @@ module FixFactoryAreas
   end
 
   def self.patchFieldDamage(event, type)
-    event.patch(:patchFieldDamage) { |page|
-      fieldDamage = page.lookForAll([:Script, 'pbFieldDamage'])
+    event.patch(:patchFieldDamage) {
+      fieldDamage = lookForAll([:Script, 'pbFieldDamage'])
 
       for insn in fieldDamage
         insn.parameters[0] = 'FixFactoryAreas.pbFieldDamage' + type
@@ -136,85 +144,91 @@ module FixFactoryAreas
   end
 
   def self.createFactoryMessageEvent(map, x, y)
-    map.createSinglePageEvent(x, y, "Factory field event message") { |page|
-      page.eventTouch(
-        [:ConditionalBranch, :Variable, :QuestStolenCargo, :Constant, 3, :>=],
-          [:Wait, 20],
-        :Done,
-        [:ShowText, 'The factory is humming away...'],
-        [:Script, '$game_variables[:Forced_BaseField] = "Factory"'],
-        :EraseEvent)
+    map.createSinglePageEvent(x, y, "Factory field event message") {
+      eventTouch {
+        branch(variables[:QuestStolenCargo], :>=, 3) {
+          wait 20
+        }
+        text "The factory is humming away..."
+        script "$game_variables[:Forced_BaseField] = \"Factory\""
+        erase_event 
+      }
     }
   end
 
   def self.createCelgearnFieldMessageEvent(map, x, y)
-    map.createNewEvent(x, y, "Factory field event message") { |event|
+    map.createNewEvent(x, y, "Factory field event message") {
       # If unshorted and lights are off, short
-      event.newPage { |page|
-        page.autorun(
-          [:Script, '$game_variables[:Forced_BaseField] = "ShortCircuit"'],
-          [:ShowText, 'The factory went quiet...'],
-          [:ControlSwitch, :ShortedOut, true])
+      newPage {
+        autorun {
+          script '$game_variables[:Forced_BaseField] = "ShortCircuit"'
+          text "The factory went quiet..."
+          switches[:ShortedOut] = true
+        }
       }
       # If shorted out and lights are off, don't do anything
-      event.newPage { |page|
-        page.requiresSwitch(:ShortedOut)
-      }
+      newPage { requiresSwitch :ShortedOut }
       # If unshorted and lights are on, don't do anything
-      event.newPage { |page|
-        page.requiresSwitch(:ReusableSwitch1)
-      }
+      newPage { requiresSwitch :ReusableSwitch1 }
+
       # If shorted out and lights are on, unshort
-      event.newPage { |page|
-        page.requiresSwitch(:ReusableSwitch1, :ShortedOut)
-        page.autorun(
-          [:Script, '$game_variables[:Forced_BaseField] = "Factory"'],
-          [:ShowText, 'The factory hummed to life...'],
-          [:ControlSwitch, :ShortedOut, false])
+      newPage { 
+        requiresSwitches :ReusableSwitch1, :ShortedOut
+        autorun {
+          script '$game_variables[:Forced_BaseField] = "Factory"'
+          text "The factory hummed to life..."
+          switches[:ShortedOut] = false
+        }
       }
     }
   end
 
   def self.createCelgearnFieldToggleEvent(map, x, y)
-    map.createNewEvent(x, y, "Field event controller") { |event|
-      event.newPage { |page|
-        page.runInParallel(
-          [:Wait, 5],
-          [:ConditionalBranch, :Script, '$game_variables[:Field_Effect_End_Of_Battle] == :FACTORY'],
-            [:PlaySoundEvent, 'SlotsCoin', 100, 150],
-            [:ChangeScreenColorTone, Tone.new(0, 0, 0), 5],
-            [:PlaySoundEvent, 'Exit Door', 80, 60],
-            [:ControlSwitch, :ReusableSwitch1, true],
-            [:ControlVariable, :Field_Effect_End_Of_Battle, :[]=, :Constant, 0],
-            [:Wait, 9],
-            [:ShowText, 'The factory sparked to life!'],
-            [:Script, '$game_variables[:Forced_BaseField] = "Factory"'],
-            [:ControlSwitch, :ShortedOut, false],
-          :Done)
+    map.createNewEvent(x, y, "Field event controller") {
+      newPage {
+        runInParallel {
+          wait 5
+          branch("$game_variables[:Field_Effect_End_Of_Battle] == :FACTORY") {
+            play_se "SlotsCoin", 150
+            change_tone 0, 0, 0, frames: 5
+            play_se "Exit Door", 80, 60
+            switches[:ReusableSwitch1] = true
+            variables[:Field_Effect_End_Of_Battle] = 0
+            wait 9
+            text "The factory sparked to life!"
+            script '$game_variables[:Forced_BaseField] = "Factory"'
+            switches[:ShortedOut] = false
+          }
+
+
+        }
       }
 
-      event.newPage { |page|
-        page.requiresSwitch(:ReusableSwitch1)
-        page.runInParallel(
-          [:Wait, 5],
-          [:ConditionalBranch, :Script, '$game_variables[:Field_Effect_End_Of_Battle] == :SHORTCIRCUIT'],
-            [:PlaySoundEvent, 'PRSFX- Thunderbolt2', 100, 150],
-            [:ChangeScreenColorTone, Tone.new(-136, -136, -136), 10],
-            [:PlaySoundEvent, 'Exit Door', 80, 60],
-            [:ControlSwitch, :ReusableSwitch1, false],
-            [:ControlVariable, :Field_Effect_End_Of_Battle, :[]=, :Constant, 0],
-            [:Wait, 9],
-            [:ShowText, 'The factory shorted out!'],
-            [:Script, '$game_variables[:Forced_BaseField] = "ShortCircuit"'],
-            [:ControlSwitch, :ShortedOut, true],
-          :Done)
+      newPage {
+        requiresSwitch :ReusableSwitch1
+        runInParallel {
+          wait 5
+          branch("$game_variables[:Field_Effect_End_Of_Battle] == :SHORTCIRCUIT") {
+            play_se "PRSFX- Thunderbolt2", 150
+            change_tone -136, -136, -136, frames: 10
+            play_se "Exit Door", 80, 60
+            switches[:ReusableSwitch1] = false
+            variables[:Field_Effect_End_Of_Battle] = 0
+            wait 9
+            text "The factory shorted out!"
+            script '$game_variables[:Forced_BaseField] = "ShortCircuit"'
+            switches[:ShortedOut] = true
+          }
+        }
       }
     }
   end
 
   def self.killEvent(event)
-    event.patch(:EventIsKill) { |page|
-      event.insertAtStart(:ExitEventProcessing)
+    event.patch(:EventIsKill) {
+      insertAtStart {
+        exit_event_processing
+      }
     }
   end
 
@@ -236,32 +250,32 @@ module FixFactoryAreas
   }
 end
 
-InjectionHelper.defineMapPatch(79) { |map| # Oceana Pier Interiors
-  FixFactoryAreas.patchOceanaPierFieldEffect(map.events[23], false) # Field toggler
-  FixFactoryAreas.patchOceanaPierFieldEffect(map.events[47], true) # Exit door
-  FixFactoryAreas.createFactoryMessageEvent(map, 32, 32)
+InjectionHelper.defineMapPatch(79) { # Oceana Pier Interiors
+  FixFactoryAreas.patchOceanaPierFieldEffect(self.events[23], false) # Field toggler
+  FixFactoryAreas.patchOceanaPierFieldEffect(self.events[47], true) # Exit door
+  FixFactoryAreas.createFactoryMessageEvent(self, 32, 32)
 }
 
-InjectionHelper.defineMapPatch(616) { |map| # Celgearn Manufactory
-  FixFactoryAreas.patchResetCelgearnFieldEffect(map.events[51]) # The rift
-  FixFactoryAreas.createCelgearnFieldToggleEvent(map, 6, 4)
-  FixFactoryAreas.createCelgearnFieldMessageEvent(map, 6, 3)
+InjectionHelper.defineMapPatch(616) { # Celgearn Manufactory
+  FixFactoryAreas.patchResetCelgearnFieldEffect(self.events[51]) # The rift
+  FixFactoryAreas.createCelgearnFieldToggleEvent(self, 6, 4)
+  FixFactoryAreas.createCelgearnFieldMessageEvent(self, 6, 3)
   for evtid in FixFactoryAreas::CELGEARN_AUTOSHUTOFF
-    FixFactoryAreas.killEvent(map.events[evtid])
+    FixFactoryAreas.killEvent(self.events[evtid])
   end
 }
 
-InjectionHelper.defineMapPatch(111, 120) { |event| # Axis Factory, the rift
-  FixFactoryAreas.patchResetCelgearnFieldEffect(event)
-  FixFactoryAreas.patchCelgearnEntranceRiftBrightness(event)
+InjectionHelper.defineMapPatch(111, 120) { # Axis Factory, the rift
+  FixFactoryAreas.patchResetCelgearnFieldEffect(self)
+  FixFactoryAreas.patchCelgearnEntranceRiftBrightness(self)
 }
 
-InjectionHelper.defineMapPatch(21, 40) { |event| # Oceana Pier, entrance to warehouse
-  FixFactoryAreas.patchOceanaPierFieldEffect(event, true)
+InjectionHelper.defineMapPatch(21, 40) { # Oceana Pier, entrance to warehouse
+  FixFactoryAreas.patchOceanaPierFieldEffect(self, true)
 }
 
-InjectionHelper.defineMapPatch(134, 40) { |event| # Neo Oceana Pier, entrance to warehouse
-  FixFactoryAreas.patchOceanaPierFieldEffect(event, true)
+InjectionHelper.defineMapPatch(134, 40) { # Neo Oceana Pier, entrance to warehouse
+  FixFactoryAreas.patchOceanaPierFieldEffect(self, true)
 }
 
 InjectionHelper.defineMapPatch(-1) { |map, mapid| # Apply to all maps

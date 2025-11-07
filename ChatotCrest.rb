@@ -80,65 +80,62 @@ ELIPSES_ANIMATION_ID = 16
 LYRICAL_ANIMATION_ID = 18
 EXPLOSION_ANIMATION_ID = 42
 
-InjectionHelper.defineMapPatch(28, 8) { |event| # Festival Plaza, Ass Chatot
-  event.newPage { |page|
-    page.requiresSelfSwitch('A')
-  }
+InjectionHelper.defineMapPatch(28, 8) { # Festival Plaza, Ass Chatot
+  newPage { requiresSelfSwitch "A" }
 }
 
-InjectionHelper.defineMapPatch(28, 9) { |event| # Festival Plaza, Chatot Girl
+InjectionHelper.defineMapPatch(28, 9) { # Festival Plaza, Chatot Girl
   idx = -1
-  event.pages[1].patch(:chatotcrest_fight) { |page|
-    page.insertBeforeEnd(
-      [:Wait, 10],
-      [:ShowAnimation, :Player, ELIPSES_ANIMATION_ID],
-      [:Wait, 30],
-      [:ShowText, "GIRL: What?"],
-      [:ShowChoices, ["Is it possible to learn this power?", "Nice."], 2],
-      [:When, 0, "Is it possible to learn this power?"],
-        [:ShowText, "GIRL: Not from a Jedi. Or a Sith."],
-        [:ShowText, "Lucky for you, I'm not a Sith. I'm a shit!\\.\\^"],
-        [:ConditionalBranch, :Script, "pbTrainerBattle(:CHATOTGIRL,'Girl',_I('Haha! Fuck!'))"],
-          [:ShowText, "GIRL: Nice. Here, I made this with the souls of my Chatot."],
-          [:Script, "Kernel.pbReceiveItem(:CHATCREST)"],
-          [:ShowText, "GIRL: Bye lol."],
-          [:ShowAnimation, :This, EXPLOSION_ANIMATION_ID],
-          [:SetMoveRoute, :This, [false,
-            [:SetCharacter, '', 0, :Down, 0],
-            :Done]],
-          [:ControlSelfSwitch, 'A', true],
-          [:Wait, 10],
-          [:ShowAnimation, :Player, ELIPSES_ANIMATION_ID],
-          [:Wait, 30],
-          [:PlaySoundEvent, 'PRSFX- Chatter', 100, 100],
-          [:ShowText, "CHATOT: AAASSSSSSSS-\\.\\^"],
-          [:ShowAnimation, 8, EXPLOSION_ANIMATION_ID], # Chatot
-          [:SetMoveRoute, 8, [false, # Chatot
-            [:SetCharacter, '', 0, :Down, 0],
-            :Done]],
-          [:Script, "pbSetSelfSwitch(8,'A',true)"], # Chatot
-          :EraseEvent,
-        :Done,
-      :Done,
-      [:When, 1, "Nice."],
-        [:ShowAnimation, :This, LYRICAL_ANIMATION_ID],
-      :Done)
+  pages[1].patch(:chatotcrest_fight) {
+    insertBeforeEnd {
+      wait 10
+      player.show_animation(ELIPSES_ANIMATION_ID)
+      wait 30
+      show_choices("GIRL: What?") {
+        choice("Is it possible to learn this power?") {
+          text "GIRL: Not from a Jedi. Or a Sith."
+          text "Lucky for you, I'm not a Sith. I'm a shit!\\.\\^"
+          branch("pbTrainerBattle(:CHATOTGIRL,'Girl',_I('Haha! Fuck!'))") {
+            text "GIRL: Nice. Here, I made this with the souls of my Chatot."
+            script "Kernel.pbReceiveItem(:CHATCREST)"
+            text "GIRL: Bye lol."
+            this.show_animation(EXPLOSION_ANIMATION_ID)
+            this.set_move_route { remove_graphic }
+            self_switch["A"] = true
+            wait 10
+            player.show_animation(ELIPSES_ANIMATION_ID)
+            wait 30
+            play_se "PRSFX- Chatter"
+            text "CHATOT: AAASSSSSSSS-\\.\\^"
+            # event 8 is Chatot
+            events[8].show_animation(EXPLOSION_ANIMATION_ID)
+            events[8].set_move_route { remove_graphic }
+            script "pbSetSelfSwitch(8,'A',true)"
+            erase_event 
+          }
+        }
+        default_choice("Nice.") {
+          this.show_animation(LYRICAL_ANIMATION_ID)
+        }
+      }
+    }
   }
-  event.pages[2].patch(:chatotcrest_itemball) { |page|
-    page.setGraphic('Object ball', hueShift: 310)
-    page.interact(
-      [:ConditionalBranch, :Variable, :Chatot, :Constant, 2, :>=],
-        [:ShowText, "Did she leave this behind?"],
-      :Else,
-        [:ShowText, "...?"],
-      :Done,
-      [:ConditionalBranch, :Script, "Kernel.pbItemBall(:CHATCREST)"],
-        [:ControlSelfSwitch, 'A', true],
-      :Done)
+
+  pages[2].patch(:chatotcrest_itemball) {
+    setGraphic 'Object ball', hueShift: 310
+    interact {
+      branch(variables[452], :>=, 2) {
+        text "Did she leave this behind?"
+      }.else {
+        text "...?"
+      }
+      condition("Kernel.pbItemBall(:CHATCREST)") {
+        self_switch["A"] = true
+      }
+    }
   }
-  event.newPage { |page|
-    page.requiresSelfSwitch('A')
-  }
+
+  newPage { requiresSelfSwitch 'A' }
 }
 
 TextureOverrides.registerTrainerClass(:CHATOTGIRL, {

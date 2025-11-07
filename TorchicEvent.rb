@@ -8,47 +8,43 @@ end
 
 Variables[:QuestXenogene] = 620
 
-InjectionHelper.defineMapPatch(203) { |map| # Pokestar Studios Interiors
+InjectionHelper.defineMapPatch(203) { # Pokestar Studios Interiors
   torchicDoll = nil
 
-  map.data[86,9,2] = 0 # Remove the torchic doll, so it's exclusively handled by the event
+  self.data[86,9,2] = 0 # Remove the torchic doll, so it's exclusively handled by the event
 
-  map.createNewEvent(86, 10, "Torchic", "torchicevent_interactableevent") { |event|
-    event.newPage { |page|
-      page.interact(
-        [:ShowText, "It's a stuffed Torchic doll!"],
-        [:ShowText, "It's warm..."])
+  createNewEvent(86, 10, "Torchic", "torchicevent_interactableevent") {
+    newPage {
+      interact {
+        text "It's a stuffed Torchic doll!"
+        text "It's warm..."
+      }
     }
 
-    event.newPage { |page|
-      page.requiresVariable(:QuestXenogene, 72)
-      page.interact(
-        [:ShowText, "It's a stuffed Torchic doll!"],
-        [:ShowText, "It's warm..."],
-        [:PlaySoundEvent, '255Cry', 80, 100],
-        [:ShowText, "TORCHIC: Torchic Tor!"],
-        [:ShowAnimation, :Player, EXCLAMATION_ANIMATION_ID],
-        [:ShowAnimation, 18, EXCLAMATION_ANIMATION_ID], # Dyre (visual location)
-        [:Wait, 20],
-        [:ShowText, "DYRE: Oh, yeah. That Torchic loves pretending to be a doll. Don't know why."],
-        [:ShowText, "I've been meaning to find a home for the fella anyway. Take it, I insist!"],
-        [:Script, "pbSetSelfSwitch(#{torchicDoll.id},'A',true)"],
-        [:Script, "Kernel.pbAddPokemon(:TORCHIC,10)"],
-        [:ControlSelfSwitch, "A", true])
+    newPage {
+      requiresVariable :QuestXenogene, 72
+      interact {
+        text "It's a stuffed Torchic doll!"
+        text "It's warm..."
+        play_se "255Cry", 80
+        text "TORCHIC: Torchic Tor!"
+        player.show_animation(ANIM(3))
+        events[18].show_animation(ANIM(3))
+        wait 20
+        text "DYRE: Oh, yeah. That Torchic loves pretending to be a doll. Don't know why."
+        text "I've been meaning to find a home for the fella anyway. Take it, I insist!"
+        script "pbSetSelfSwitch(#{torchicDoll.id},'A',true)"
+        script "Kernel.pbAddPokemon(:TORCHIC,10)"
+        self_switch["A"] = true
+      }
     }
 
-    event.newPage { |page|
-      page.requiresSelfSwitch("A")
-    }
+    newPage { requiresSelfSwitch "A" }
   }
 
-  torchicDoll = map.createNewEvent(86, 9, "Torchic Doll", "torchicevent_torchicdoll") { |event|
-    event.newPage { |page|
-      page.setTile(3046) # Torchic
-    }
+  torchicDoll = createNewEvent(86, 9, "Torchic Doll", "torchicevent_torchicdoll") {
+    newPage { setTile(3046) } # Torchic
 
-    event.newPage { |page|
-      page.requiresSelfSwitch("A")
-    }
+    newPage { requiresSelfSwitch("A") }
   }
 }

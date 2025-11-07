@@ -69,28 +69,28 @@ module VendorQuantityDisplay
   end
 
   def self.inject(eventlike, script)
-    eventlike.patch(:VendorQuantityDisplay) { |page|
-      textMatches = page.lookForAll([:ShowText, /\\ch\[/]) + 
-                    page.lookForAll([:ShowTextContinued, /\\ch\[/])
+    eventlike.patch(:VendorQuantityDisplay) {
+      textMatches = lookForAll([:ShowText, /\\ch\[/]) + 
+                    lookForAll([:ShowTextContinued, /\\ch\[/])
 
-      choiceMatches = page.lookForAll([:ShowChoices, nil, nil])
+      choiceMatches = lookForAll([:ShowChoices, nil, nil])
 
       for insn in textMatches
-        targetIdx = page.idxOf(insn)
-        while targetIdx > 0 && page[targetIdx].command == :ShowTextContinued
+        targetIdx = idxOf(insn)
+        while targetIdx > 0 && self[targetIdx].command == :ShowTextContinued
           targetIdx -= 1
         end
-        page.insertBefore(targetIdx, [:Script, script])
+        insertBefore(targetIdx, [:Script, script])
       end
 
       for insn in choiceMatches
-        choiceIdx = page.idxOf(insn)
+        choiceIdx = idxOf(insn)
         insertIdx = choiceIdx - 1
-        while insertIdx > 0 && page[insertIdx].command == :ShowTextContinued
+        while insertIdx > 0 && self[insertIdx].command == :ShowTextContinued
           insertIdx -= 1
         end
-        if insertIdx >= 0 && page[insertIdx].command == :ShowText
-          page.insertBefore(insertIdx, [:Script, script])
+        if insertIdx >= 0 && self[insertIdx].command == :ShowText
+          insertBefore(insertIdx, [:Script, script])
         end
       end
     }
@@ -105,49 +105,50 @@ module VendorQuantityDisplay
     end
   end
 
-  def self.injectAtStart(event, script)
-    event.patch(:VendorQuantityDisplay) { |page|
-      page.insertAtStart([:Script, script])
-      next true
+  def self.injectAtStart(event, scr)
+    event.patch(:VendorQuantityDisplay) {
+      insertAtStart {
+        script scr
+      }
     }
     injectCleanup(event)
   end
 
   def self.injectCairo(event)
-    event.patch(:VendorQuantityDisplay) { |page|
-      showMoney = page.lookForAll([:ShowText, /^CAIRO: Very well\./])
+    event.patch(:VendorQuantityDisplay) {
+      showMoney = lookForAll([:ShowText, /^CAIRO: Very well\./])
 
-      showRE = page.lookForAll([:ShowText, /^CAIRO: I see that you have Red Essence\./]) +
-               page.lookForAll([:ShowText, /^CAIRO: Darkness need not hide from me\./])
+      showRE = lookForAll([:ShowText, /^CAIRO: I see that you have Red Essence\./]) +
+               lookForAll([:ShowText, /^CAIRO: Darkness need not hide from me\./])
 
       for insn in showMoney
         insn[0] = "\\G" + insn.parameters[0]
       end
 
       for insn in showRE
-        page.insertBefore(insn, InjectionHelper.parseEventCommand(insn.indent, :Script, 'vendorquantity_show_redessence_window'))
+        insertBefore(insn, InjectionHelper.parseEventCommand(insn.indent, :Script, 'vendorquantity_show_redessence_window'))
       end
     }
     injectCleanup(event)
   end
 
   def self.injectEnsureChoices(event)
-    event.patch(:VendorQuantityDisplay_AddText) { |page|
-      choices = page.lookForAll([:ShowChoices, ["Yes", "No"], 2])
+    event.patch(:VendorQuantityDisplay_AddText) {
+      choices = lookForAll([:ShowChoices, ["Yes", "No"], 2])
 
       doneAny = false
 
       for insn in choices
-        targetIdx = page.idxOf(insn)
+        targetIdx = idxOf(insn)
 
         textStart = -1
         textEnd = -1
         while targetIdx > 0
           targetIdx -= 1
-          break if page[targetIdx].indent != insn.indent
-          if textEnd == -1 && page[targetIdx].command == :ShowTextContinued
+          break if self[targetIdx].indent != insn.indent
+          if textEnd == -1 && self[targetIdx].command == :ShowTextContinued
             textEnd = targetIdx
-          elsif page[targetIdx].command == :ShowText
+          elsif self[targetIdx].command == :ShowText
             textEnd = targetIdx if textEnd == -1
             textStart = targetIdx
             break
@@ -155,49 +156,53 @@ module VendorQuantityDisplay
         end
 
         if textStart != -1
-          dialogue = page[textStart..textEnd]
-          page[textStart..textEnd] = []
+          dialogue = self[textStart..textEnd]
+          self[textStart..textEnd] = []
 
-          targetIdx = page.idxOf(insn)
-          page.insert(targetIdx, *dialogue)
-          doneAny = true
+          targetIdx = idxOf(insn)
+          insert(targetIdx, *dialogue)
         end
       end
 
-      next doneAny
     }
   end
 
   def self.injectNerta(event)
-    event.patch(:VendorQuantityDisplay_AddText) { |page|
-      spiffen = page.lookForAll([:ShowText, "Let's spiffen them up, shall we?"])
-      choices = page.lookForAll([:ShowChoices, ["Yes", "No"], 2])
+    event.patch(:VendorQuantityDisplay_AddText) {
+      spiffen = lookForAll([:ShowText, "Let's spiffen them up, shall we?"])
+      choices = lookForAll([:ShowChoices, ["Yes", "No"], 2])
 
       for insn in spiffen
-        page.delete(insn)
+        delete(insn)
       end
 
       for insn in choices
-        page.insertBefore(insn, [:ShowText, "Let's spiffen them up, shall we?"])
+        insertBefore(insn) {
+          text "Let's spiffen them up, shall we?"
+        }
       end
     }
   end
 
 
   def self.injectBeldumRaidDen(event)
-    event.patch(:VendorQuantityDisplay) { |page|
-      showRE = page.lookForAll([:ShowText, /^Throw in some Red Essence\?/])
+    event.patch(:VendorQuantityDisplay) {
+      showRE = lookForAll([:ShowText, /^Throw in some Red Essence\?/])
 
       for insn in showRE
-        page.insertBefore(insn,[:Script, 'vendorquantity_show_redessence_window'])
+        insertBefore(insn) {
+          script 'vendorquantity_show_redessence_window'
+        }
       end
     }
     injectCleanup(event)
   end
 
   def self.injectCleanup(eventlike)
-    eventlike.patch(:VendorQuantityCleanup) { |page|
-      page.insertBeforeEnd([:Script, 'vendorquantity_disposefully'])
+    eventlike.patch(:VendorQuantityCleanup) {
+      insertBeforeEnd {
+        script 'vendorquantity_disposefully'
+      }
     }
   end
 
@@ -307,8 +312,8 @@ InjectionHelper.defineMapPatch(168, 16, &VendorQuantityDisplay.method(:injectCai
 
 InjectionHelper.defineMapPatch(201, 5, &VendorQuantityDisplay.method(:injectBeldumRaidDen)) # Helojak Island, Beldum Den
 
-InjectionHelper.defineMapPatch(117, 9) { |event| # Help Plaza (Gearen), Ayuda
-  VendorQuantityDisplay.injectAtStart(event, 'vendorquantity_show_zcell_window')
+InjectionHelper.defineMapPatch(117, 9) { # Help Plaza (Gearen), Ayuda
+  VendorQuantityDisplay.injectAtStart(self, 'vendorquantity_show_zcell_window')
 }
 
 InjectionHelper.defineMapPatch(329, 90, &VendorQuantityDisplay.method(:injectNerta)) # Kristiline Town, Nerta

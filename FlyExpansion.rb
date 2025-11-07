@@ -48,10 +48,12 @@ def pbEraseEscapePoint
   end
 end
 
-InjectionHelper.defineMapPatch(311) { |map| # Axis High University
-  map.createNewEvent(38, 7, "")
-  map.createSinglePageEvent(38, 7, "set gdc music") { |page|
-    page.autorun([:PlayBackgroundMusic, 'GDC - City of Dreams', 100, 100], :EraseEvent)
+InjectionHelper.defineMapPatch(311) { # Axis High University
+  createSinglePageEvent(38, 7, "set gdc music") {
+    autorun {
+      play_bgm "GDC - City of Dreams"
+      erase_event
+    }
   }
 }
 

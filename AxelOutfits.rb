@@ -10,14 +10,6 @@ end
 
 Variables[:Outfit] = 259
 
-def darchaxel_makeMoveRoute(graphic, direction = :Up)
-  return [
-    false,
-    [:SetCharacter, graphic, 0, direction, 0],
-    :Done
-  ]
-end
-
 def darchaxel_transmuteMoveRoute(prevRoute, replaceGraphic)
   newRoute = RPG::MoveRoute.new
   newRoute.repeat = prevRoute.repeat
@@ -31,34 +23,38 @@ def darchaxel_transmuteMoveRoute(prevRoute, replaceGraphic)
 end
 
 def darchaxel_batty_section(outfit)
-  return [
-    [:ConditionalBranch, :Variable, :Outfit, :Constant, outfit, :==],
-      [:SetMoveRoute, :This, darchaxel_makeMoveRoute('BattyFriends_Axel_' + outfit.to_s, :Down)],
-      [:JumpToLabel, 'done'],
-    :Done
-  ]
+  return InjectionDSL.parse {
+    branch(variables[:Outfit], :==, outfit) {
+      this.set_move_route {
+        set_character 'BattyFriends_Axel_' + outfit.to_s
+      }
+      jump_label 'done'
+    }
+  }
 end
 
 
 def darchaxel_special_sprite_section(special, outfit)
-  return [
-    [:ConditionalBranch, :Variable, :Outfit, :Constant, outfit, :==],
-      [:ConditionalBranch, :Switch, :Axel, true],
-        [:SetMoveRoute, :This, darchaxel_makeMoveRoute(special + '_' + outfit.to_s, :Down)],
-        [:JumpToLabel, 'End'],
-      :Done,
-    :Done
-  ]
+  return InjectionDSL.parse {
+    branch(variables[:Outfit], :==, outfit) {
+      branch(switches[:Axel], true) {
+        this.set_move_route {
+          set_character special + '_' + outfit.to_s
+        }
+        jump_label 'End'
+      }
+    }
+  }
 end
 
 # Injections
 
 def darchaxel_inject_special_sprite(event, special)
   event.patch(:darchaxel_inject_special_sprite) {
-    matched = event.lookForSequence([:ConditionalBranch, :Variable, :Outfit, :Constant, 0, :==])
+    matched = lookForSequence([:ConditionalBranch, :Variable, :Outfit, :Constant, 0, :==])
 
     if matched
-      event.insertBefore(matched,
+      insertBefore(matched,
         *darchaxel_special_sprite_section(special, 'int'),
         *darchaxel_special_sprite_section(special, 4))
     end
@@ -67,10 +63,10 @@ end
 
 def darchaxel_hotfix_battyfriends(event)
   event.patch(:darchaxel_batty_sprites) {
-    matched = event.lookForSequence([:ConditionalBranch, :Switch, :Axel, true])
+    matched = lookForSequence([:ConditionalBranch, :Switch, :Axel, true])
 
     if matched
-      event.insertAfter(matched,
+      insertAfter(matched,
           *darchaxel_batty_section(3),
           *darchaxel_batty_section(4))
     end
@@ -108,6 +104,6 @@ TextureOverrides.registerTextureOverrides({
     TextureOverrides::CHARS + 'BattyFriends_Axel_3' => TextureOverrides::MOD + 'Axel/Interceptor/BattyFriends'
 })
 
-InjectionHelper.defineCommonPatch(49) { |event| darchaxel_inject_special_sprite(event, 'PlayerHeadache_4') } # Player Dupe Distress
-InjectionHelper.defineCommonPatch(50) { |event| darchaxel_inject_special_sprite(event, 'PlayerKnockedOut_4') } # Player Dupe Knocked
+InjectionHelper.defineCommonPatch(49) { darchaxel_inject_special_sprite(self, 'PlayerHeadache_4') } # Player Dupe Distress
+InjectionHelper.defineCommonPatch(50) { darchaxel_inject_special_sprite(self, 'PlayerKnockedOut_4') } # Player Dupe Knocked
 InjectionHelper.defineCommonPatch(136, &method(:darchaxel_hotfix_battyfriends)) # Batty Friends

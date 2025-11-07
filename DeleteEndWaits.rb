@@ -11,12 +11,12 @@ InjectionHelper.defineMapPatch(-1) { |map| # Apply to every map
   textcmatcher = InjectionHelper.parseMatcher([:ShowTextContinued, %r"((\\[\.\|])|(</ac>))$"])
   nextmatcher = InjectionHelper.parseMatcher([:ShowTextContinued, nil])
 
-  map.patch(:deleteendwaits_patchinsns) { |page|
+  map.patch(:deleteendwaits_patchinsns) {
     i = 0
-    while i < page.size - 1
-      insn = page[i]
+    while i < self.size - 1
+      insn = self[i]
 
-      if (textmatcher.matches?(insn) || textcmatcher.matches?(insn)) && !nextmatcher.matches?(page[i + 1])
+      if (textmatcher.matches?(insn) || textcmatcher.matches?(insn)) && !nextmatcher.matches?(self[i + 1])
         insn[0] = insn.parameters[0].gsub!(%r"((\\[\.\|])|(</ac>))$", '')
       end
 

@@ -12,17 +12,17 @@ Switches[:EarlyIncubator] = 1776
 TextureOverrides.registerServiceSprites('DayCareLady', 'DayCareMan')
 
 if defined?(InjectionHelper)
-  InjectionHelper.defineMapPatch(425, 1) { |event| # Sheridan Interiors, Day Care Lady
-    event.patch(:daycarepc_preferBreedablePokemon) { |page|
-      matched = page.lookForAll([:Script, "pbChooseNonEggPokemon(1,3)"])
+  InjectionHelper.defineMapPatch(425, 1) { # Sheridan Interiors, Day Care Lady
+    patch(:daycarepc_preferBreedablePokemon) {
+      matched = lookForAll([:Script, "pbChooseNonEggPokemon(1,3)"])
       for insn in matched
         insn[0] = "daycarepc_selectPokemon(1,3)"
       end
     }
   }
-  InjectionHelper.defineMapPatch(282, 13) { |event| # Dream District Interiors, pseudo-Day Care Lady
-    event.patch(:daycarepc_preferBreedablePokemon) { |page|
-      matched = page.lookForAll([:Script, "pbChooseNonEggPokemon(1,3)"])
+  InjectionHelper.defineMapPatch(282, 13) { # Dream District Interiors, pseudo-Day Care Lady
+    patch(:daycarepc_preferBreedablePokemon) {
+      matched = lookForAll([:Script, "pbChooseNonEggPokemon(1,3)"])
       for insn in matched
         insn[0] = "daycarepc_selectPokemon(1,3)"
       end

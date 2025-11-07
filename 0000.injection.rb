@@ -1476,6 +1476,10 @@ module RPG
         return self
       end
 
+      def requiresSwitches(switch, switch2)
+        return requiresSwitch(switch, switch2)
+      end
+
       def requiresSwitch(switch, switch2=nil)
         InjectionHelper.declarePatched
         self.condition.switch1_valid = true
@@ -1957,9 +1961,9 @@ module InjectionDSL
       def switches; InjectionDSL::Wrappers::Switches.new(self); end
       def events; InjectionDSL::Wrappers::EventSourceProxy.new(self); end
       def self_switch; InjectionDSL::Wrappers::OwnSelfSwitches.new(self); end
+
       def map_id; InjectionDSL::Wrappers::GlobalValue.new(:map_id); end
       def party_size; InjectionDSL::Wrappers::GlobalValue.new(:party_size); end
-
       def steps; InjectionDSL::Wrappers::GlobalValue.new(:steps); end
       def play_time; InjectionDSL::Wrappers::GlobalValue.new(:play_time); end
       def timer; InjectionDSL::Wrappers::GlobalValue.new(:timer); end

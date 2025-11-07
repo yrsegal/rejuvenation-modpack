@@ -955,8 +955,8 @@ module DarkAnaCutscene
   end
 
   def self.patchDesolateOutfit(event)
-    event.patch(:darkana_patch_desolateoutfit) { |page|
-      matched = page.lookForAll([:Script, '$Trainer.outfit=5'])
+    event.patch(:darkana_patch_desolateoutfit) {
+      matched = lookForAll([:Script, '$Trainer.outfit=5'])
 
       for insn in matched
         insn[0] = 'darkana_set_outfit_for_desolate'
@@ -985,17 +985,17 @@ def darkana_determine_outfit_desolate
   return false
 end
 
-InjectionHelper.defineMapPatch(609) { |map| # Desolate ??? Inside
-  DarkAnaCutscene.addGraphicPage(map.events[12]) # Player Dupe First
-  DarkAnaCutscene.addGraphicPage(map.events[34]) # Player Dupe
-  DarkAnaCutscene.addGraphicPage(map.events[42]) # Player Dupe Final
-  DarkAnaCutscene.patchDesolateOutfit(map.events[43]) # 100th floor
-  DarkAnaCutscene.patchDesolateOutfit(map.events[13]) # first conversation
-  DarkAnaCutscene.patchDesolateOutfit(map.events[45]) # gain control on 100th floor
-  DarkAnaCutscene.patchDesolateOutfit(map.events[47]) # paradox gate
+InjectionHelper.defineMapPatch(609) { # Desolate ??? Inside
+  DarkAnaCutscene.addGraphicPage(self.events[12]) # Player Dupe First
+  DarkAnaCutscene.addGraphicPage(self.events[34]) # Player Dupe
+  DarkAnaCutscene.addGraphicPage(self.events[42]) # Player Dupe Final
+  DarkAnaCutscene.patchDesolateOutfit(self.events[43]) # 100th floor
+  DarkAnaCutscene.patchDesolateOutfit(self.events[13]) # first conversation
+  DarkAnaCutscene.patchDesolateOutfit(self.events[45]) # gain control on 100th floor
+  DarkAnaCutscene.patchDesolateOutfit(self.events[47]) # paradox gate
 
   DarkAnaCutscene::MAP_609_DIALOGUE.each_pair {|eventId,dialogues|
-    event = map.events[eventId]
+    event = self.events[eventId]
     if dialogues.is_a?(Numeric)
       dialogues = DarkAnaCutscene::MAP_609_DIALOGUE[dialogues]
     end
@@ -1009,12 +1009,12 @@ InjectionHelper.defineMapPatch(609) { |map| # Desolate ??? Inside
   }
 }
 
-InjectionHelper.defineMapPatch(243) { |map| # Desolate ??? Outside
-  DarkAnaCutscene.patchDesolateOutfit(map.events[10]) # M conversation
-  DarkAnaCutscene.addGraphicPage(map.events[30]) # Player Dupe
+InjectionHelper.defineMapPatch(243) { # Desolate ??? Outside
+  DarkAnaCutscene.patchDesolateOutfit(self.events[10]) # M conversation
+  DarkAnaCutscene.addGraphicPage(self.events[30]) # Player Dupe
 
   DarkAnaCutscene::MAP_243_DIALOGUE.each_pair {|eventId,dialogues|
-    event = map.events[eventId]
+    event = self.events[eventId]
     if dialogues.is_a?(Numeric)
       dialogues = DarkAnaCutscene::MAP_243_DIALOGUE[dialogues]
     end

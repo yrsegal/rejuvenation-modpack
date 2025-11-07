@@ -8,18 +8,19 @@ end
 
 def encounterablepikipek_patchEncounter(event, needsCollision=true)
   event.pages[0].through = false unless needsCollision
-  event.pages[0].interact(
-    [:PlaySoundEvent, '731Cry', 100, 100],
-    [:ShowText, 'PIKIPEK: Pikko!'],
-    [:ControlVariable, :WildMods, :[]=, :Constant, 57], # Chatot - Boomburst is in pikipek egg pool
-    [:Script, 'pbWildBattle(:PIKIPEK,5,100)'],
-    [:ControlVariable, :WildMods, :[]=, :Constant, 0],
-    :WaitForMovement,
-    :EraseEvent)
+  event.pages[0].interact {
+    play_se '731Cry'
+    text 'PIKIPEK: Pikko!'
+    variables[:WildMods] = 57
+    script 'pbWildBattle(:PIKIPEK,5,100)'
+    variables[:WildMods] = 0
+    wait_for_move_completion
+    erase_event
+  }
 end
 
-InjectionHelper.defineMapPatch(208, 83) { |event| # Deep Terajuma Jungle, Pikipek
-  encounterablepikipek_patchEncounter(event, false)
+InjectionHelper.defineMapPatch(208, 83) { # Deep Terajuma Jungle, Pikipek
+  encounterablepikipek_patchEncounter(self, false)
 }
 
 InjectionHelper.defineMapPatch(301, 94, &method(:encounterablepikipek_patchEncounter)) # Route 5, Pikipek

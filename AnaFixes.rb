@@ -11,13 +11,6 @@ Variables[:MCname] = 701
 
 # Code blocks
 
-def anafixes_makeMoveRoute(graphic, direction = :Up)
-  return [
-    false,
-    [:SetCharacter, graphic, 0, direction, 0],
-    :Done
-  ]
-end
 
 def anafixes_transmuteMoveRoute(prevRoute, replaceGraphic)
   newRoute = RPG::MoveRoute.new
@@ -32,31 +25,35 @@ def anafixes_transmuteMoveRoute(prevRoute, replaceGraphic)
 end
 
 def anafixes_batty_section(outfit)
-  return [
-    [:ConditionalBranch, :Variable, :Outfit, :Constant, outfit, :==],
-      [:SetMoveRoute, :This, anafixes_makeMoveRoute('BattyFriends_Ana_' + outfit.to_s, :Down)],
-      [:JumpToLabel, 'done'],
-    :Done
-  ]
+  return InjectionDSL.parse {
+    branch(variables[:Outfit], :==, outfit) {
+      this.set_move_route {
+        set_character 'BattyFriends_Ana_' + outfit.to_s
+      }
+      jump_label 'done'
+    }
+  }
 end
 
 
 def anafixes_special_sprite_section(special, outfit)
-  return [
-    [:ConditionalBranch, :Variable, :Outfit, :Constant, outfit, :==],
-      [:ConditionalBranch, :Switch, :Ana, true],
-        [:SetMoveRoute, :This, anafixes_makeMoveRoute(special + '_' + outfit.to_s, :Down)],
-        [:JumpToLabel, 'End'],
-      :Done,
-    :Done
-  ]
+  return InjectionDSL.parse {
+    branch(variables[:Outfit], :==, outfit) {
+      branch(switches[:Ana], true) {
+        this.set_move_route {
+          set_character special + '_' + outfit.to_s
+        }
+        jump_label 'End'
+      }
+    }
+  }
 end
 
 # Injections
 
 def anafixes_fix_darchsprite(event)
   event.patch(:anafixes_inject_special_sprite) {
-    matched = event.lookForAll([:SetMoveRoute, nil, nil])
+    matched = lookForAll([:SetMoveRoute, nil, nil])
 
     submatcher = InjectionHelper.parseMatcher([:SetCharacter, 'BGirlwalk', nil, nil, nil], InjectionHelper::MOVE_INSNS)
 
@@ -65,14 +62,12 @@ def anafixes_fix_darchsprite(event)
         movecommand[0] = 'BGirlwalk_4' if submatcher.matches?(movecommand)
       }
     end
-
-    next !matched.empty?
   }
 end
 
 def anafixes_replacewitheyesprite(event)
   event.patch(:anafixes_inject_special_sprite) {
-    matched = event.lookForAll([:SetMoveRoute, nil, nil])
+    matched = lookForAll([:SetMoveRoute, nil, nil])
 
     submatcher = InjectionHelper.parseMatcher([:SetCharacter, 'BGirlwalk', nil, nil, nil], InjectionHelper::MOVE_INSNS)
 
@@ -86,10 +81,10 @@ end
 
 def anafixes_inject_special_sprite(event, special)
   event.patch(:anafixes_inject_special_sprite) {
-    matched = event.lookForSequence([:ConditionalBranch, :Variable, :Outfit, :Constant, 0, :==])
+    matched = lookForSequence([:ConditionalBranch, :Variable, :Outfit, :Constant, 0, :==])
 
     if matched
-      event.insertBefore(matched,
+      insertBefore(matched,
         *anafixes_special_sprite_section(special, 3),
         *anafixes_special_sprite_section(special, 4))
     end
@@ -97,8 +92,8 @@ def anafixes_inject_special_sprite(event, special)
 end
 
 def anafixes_addLegacyRedCarpet(event)
-  event.patch(:anafixes_addLegacyRedCarpet) { |page|
-    matched = page.lookForSequence(
+  event.patch(:anafixes_addLegacyRedCarpet) {
+    matched = lookForSequence(
       [:SetMoveRoute, 93, [ false,
         :FaceUp,
         [:SetCharacter, 'xgene_ana_redcarpet', nil, nil, nil],
@@ -107,7 +102,7 @@ def anafixes_addLegacyRedCarpet(event)
 
 
     if matched
-      page.replaceRange(matched, matched,
+      replaceRange(matched, matched,
         [:ConditionalBranch, :Variable, :Outfit, :Constant, 2, :>=],
           [:ConditionalBranch, :Variable, :Outfit, :Constant, 5, :<],
             [:SetMoveRoute, matched.parameters[0], anafixes_transmuteMoveRoute(matched.parameters[1], 'xgene_legacyana_redcarpet')],
@@ -123,14 +118,14 @@ end
 
 def anafixes_hotfix_battyfriends(event)
   event.patch(:anafixes_hotfix_battyfriends) {
-    matched = event.lookForSequence(
+    matched = lookForSequence(
       [:ConditionalBranch, :Switch, :Aevia, true],
       :BranchEndConditional,
       [:ConditionalBranch, :Switch, :Ana, true],
       :BranchEndConditional)
 
     if matched
-      event.swap(*matched)
+      swap(*matched)
       # aeviasection = event[event.idxOf(matched[0])..event.idxOf(matched[1])]
       # anasection = event[event.idxOf(matched[2])..event.idxOf(matched[3])]
       # tempMarker = "Temporary Marker"
@@ -142,10 +137,10 @@ def anafixes_hotfix_battyfriends(event)
   }
 
   event.patch(:anafixes_batty_sprites) {
-    matched = event.lookForSequence([:ConditionalBranch, :Switch, :Ana, true])
+    matched = lookForSequence([:ConditionalBranch, :Switch, :Ana, true])
 
     if matched
-      event.insertAfter(matched,
+      insertAfter(matched,
           *anafixes_batty_section(3),
           *anafixes_batty_section(4))
     end
@@ -234,19 +229,19 @@ TextureOverrides.registerTextureOverrides({
 })
 
 InjectionHelper.defineCommonPatch(23, &method(:anafixes_fix_darchsprite)) # Player Dupe (D)
-InjectionHelper.defineCommonPatch(49) { |event| anafixes_inject_special_sprite(event, 'PlayerHeadache_8') } # Player Dupe Distress
-InjectionHelper.defineCommonPatch(50) { |event| anafixes_inject_special_sprite(event, 'PlayerKnockedOut_8') } # Player Dupe Knocked
+InjectionHelper.defineCommonPatch(49) { anafixes_inject_special_sprite(self, 'PlayerHeadache_8') } # Player Dupe Distress
+InjectionHelper.defineCommonPatch(50) { anafixes_inject_special_sprite(self, 'PlayerKnockedOut_8') } # Player Dupe Knocked
 InjectionHelper.defineCommonPatch(136, &method(:anafixes_hotfix_battyfriends)) # Batty Friends
 
-InjectionHelper.defineMapPatch(53, 2) { |event| # I Nightmare Realm, Aevis/Dupe
-  anapage = event.pages[1] # if Ana on
+InjectionHelper.defineMapPatch(53, 2) { # I Nightmare Realm, Aevis/Dupe
+  anapage = self.pages[1] # if Ana on
   if anapage.graphic.character_name == "BGirlwalk_1"
-    alainpage = event.pages[7] # if Alain on
+    alainpage = self.pages[7] # if Alain on
     anafixes_replacewitheyesprite(anapage)
     # Swap them so Ana always runs last, displaying properly
-    event.pages[1] = alainpage
-    event.pages[7] = anapage
-    next true
+    self.pages[1] = alainpage
+    self.pages[7] = anapage
+    InjectionHelper.markPatched
   end
 }
 

@@ -90,8 +90,11 @@ class Game_Screen
     end
 
     if foundz && itemRadar_checkIsItemRadarOn?
-      InjectionHelper.createSinglePageEvent($game_map, 0, 0, "ping") { |page|
-        page.autorun([:PlaySoundEvent, 'MiningPing', 60, 80], :EraseEvent)
+      InjectionHelper.createSinglePageEvent($game_map, 0, 0, "ping") {
+        autorun {
+          play_se 'MiningPing', 60, 80
+          erase_event
+        }
       }
     end
   end

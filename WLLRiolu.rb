@@ -99,9 +99,9 @@ end
 $cache.RXtilesets[126].passages[1264] = 0b1100 # ^> Allow walking up to the cherry tree
 $cache.RXtilesets[126].passages[1266] = 0b1010 # <^
 
-InjectionHelper.defineMapPatch(426) { |map| # Sensei's Garden
+InjectionHelper.defineMapPatch(426) { # Sensei's Garden
   # Cherry blossom tree
-  map.fillArea(12, 6,
+  fillArea(12, 6,
     ["ABC",
      "DEF",
      "GHI",
@@ -115,63 +115,70 @@ InjectionHelper.defineMapPatch(426) { |map| # Sensei's Garden
 
 }
 
-InjectionHelper.defineMapPatch(294, 70) { |event| # GDC Central, clerk
-    hasReputationPillars = defined?($GDC_REPUTATION_PILLARS)
-    event.pages[0].interact(
-      [:ConditionalBranch, :Switch, :Finished_WLL, false],
-        [:ShowText, hasReputationPillars ? "STAFF: Welcome to the GDC Central Building!" : "STAFF: Welcome to the GDC Central Building! How may I help you today?"],
-        *(hasReputationPillars ? [[:ShowText, 'You can check your reputation using the pillars in the lobby.'], [:ShowText, 'How may I help you?']] : []),
-        [:ShowChoices, ["Password", "Never mind"], 2],
+InjectionHelper.defineMapPatch(294, 70) { # GDC Central, clerk
+  hasReputationPillars = defined?($GDC_REPUTATION_PILLARS)
+  pages[0].interact {
+    branch(switches[:Finished_WLL], false) {
+      if hasReputationPillars
+        text "STAFF: Welcome to the GDC Central Building!"
+        text "You can check your reputation using the pillars in the lobby."
+        text "How may I help you?"
+      else
+        text "STAFF: Welcome to the GDC Central Building! How may I help you today?"
+      end
 
-        [:When, 0, "Password"],
-          [:ConditionalBranch, :Script, '$Unidata[:WLL]'],
-            [:ControlVariable, :PasswordVar, :[]=, :Constant, 489234],
-          :Done,
-          [:ShowText, 'Enter a password.'],
-          [:InputNumber, :PasswordVar, 6],
-          [:ConditionalBranch, :Variable, :PasswordVar, :Constant, 489234, :==],
-            [:ControlSwitch, :Finished_WLL, true],
-            [:Script,          'Kenneth=PokeBattle_Trainer.new("Kenneth",:LEADER_KETA)'],
-            [:ScriptContinued, 'Kenneth.id = 924'], # Kenesu goroawase
-            [:ScriptContinued, 'poke=PokeBattle_Pokemon.new(:RIOLU,5,Kenneth)'],
-            [:ScriptContinued, 'poke.iv = [20,20,20,20,20,20] if !$game_switches[:Full_IVs] && !$game_switches[:Empty_IVs_Password]'],
-            [:ScriptContinued, 'poke.setAbility(:PRANKSTER)'],
-            [:ScriptContinued, 'poke.setNature(:DOCILE)'],
-            [:ScriptContinued, 'poke.pbLearnMove(:AURASPHERE)'],
-            [:ScriptContinued, 'poke.pbLearnMove(:POISONJAB)'],
-            [:ScriptContinued, 'poke.pbLearnMove(:DETECT)'],
-            [:ScriptContinued, 'poke.pbLearnMove(:QUICKATTACK)'],
-            [:ScriptContinued, 'poke.makeShiny'],
-            [:ScriptContinued, 'poke.makeFemale'],
-            [:ScriptContinued, 'poke.item = :LUCARIONITE'],
+      show_choices {
+        choice("Password") {
+          branch("$Unidata[:WLL]") {
+            variables[:PasswordVar] = 489234
+          }
+          text "Enter a password."
 
-            # OT Properties
-            [:ScriptContinued, 'timediverge = $Settings.unrealTimeDiverge'],
-            [:ScriptContinued, '$Settings.unrealTimeDiverge = 0'],
-            [:ScriptContinued, 'timeNow = pbGetTimeNow'],
-            [:ScriptContinued, 'poke.timeReceived = Time.unrealTime_oldTimeNew(timeNow.year-36,6,8,timeNow.hour,timeNow.min,timeNow.sec)'], # 41 years ago, june 8th
-            # Justification - He got riolu when he turned 10.
+          input_number :PasswordVar, digits: 6
+
+          branch(variables[:PasswordVar], :==, 489234) {
+            switches[:Finished_WLL] = true
+            script 'Kenneth=PokeBattle_Trainer.new("Kenneth",:LEADER_KETA)
+                    Kenneth.id = 924
+                    poke=PokeBattle_Pokemon.new(:RIOLU,5,Kenneth)
+                    poke.iv = [20,20,20,20,20,20] if !$game_switches[:Full_IVs] && !$game_switches[:Empty_IVs_Password]
+                    poke.setAbility(:PRANKSTER)
+                    poke.setNature(:DOCILE)
+                    poke.pbLearnMove(:AURASPHERE)
+                    poke.pbLearnMove(:POISONJAB)
+                    poke.pbLearnMove(:DETECT)
+                    poke.pbLearnMove(:QUICKATTACK)
+                    poke.makeShiny
+                    poke.makeFemale
+                    poke.item = :LUCARIONITE
+                    timediverge = $Settings.unrealTimeDiverge
+                    $Settings.unrealTimeDiverge = 0
+                    timeNow = pbGetTimeNow
+                    poke.timeReceived = Time.unrealTime_oldTimeNew(timeNow.year-36,6,8,timeNow.hour,timeNow.min,timeNow.sec)
+                    $Settings.unrealTimeDiverge = timediverge
+                    poke.obtainText = _INTL("Four Island")
+                    poke.obtainMode = 0
+                    wllriolu_pbAddPokemonNoTimeSet(poke)'
+            # Justification for date received - He got riolu when he turned 10.
             # He left for Aevium at 18.
             # Chapter 3 occurs 10 years later.
             # Chapter 4 occurs 15 years later, when Aelita is 15.
             # Aelita is 17 going on 18 at start of story
             # 8 + 10 + 15 + 2 or 3 = 35 or 36
-            [:ScriptContinued, '$Settings.unrealTimeDiverge = timediverge'],
-            [:ScriptContinued, 'poke.obtainText = _INTL("Four Island")'],
-            [:ScriptContinued, 'poke.obtainMode = 0'], # Caught
-
-            [:ScriptContinued, 'wllriolu_pbAddPokemonNoTimeSet(poke)'],
-
-            [:ShowText, 'STAFF: Have a nice day!'],
-          :Else,
-            [:ShowText, 'STAFF: Sorry, but that input is incorrect...'],
-          :Done,
-        :Else,
-          [:ShowText, 'STAFF: Have a nice day!'],
-        :Done,
-      :Else,
-        [:ShowText, 'STAFF: Welcome to the GDC Central Building!'],
-        *(hasReputationPillars ? [[:ShowText, 'You can check your reputation using the pillars in the lobby.']] : []),
-      :Done)
-  next true
+            text "STAFF: Have a nice day!"
+          }.else {
+            text "STAFF: Sorry, but that input is incorrect..."
+          }
+        }
+        default_choice("Never mind") {
+          text "STAFF: Have a nice day!"
+        }
+      }
+    }.else {
+      text "STAFF: Welcome to the GDC Central Building!"
+      if hasReputationPillars
+        text "You can check your reputation using the pillars in the lobby."
+      end
+    }
+  }
 }

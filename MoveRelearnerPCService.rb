@@ -257,18 +257,18 @@ def relearnerService_relearnerConversation(evt, sister)
   end
 end
 
-InjectionHelper.defineMapPatch(425, 16) { |event| # Sheridan Interiors, Move Relearner
-  for page in event.pages # Move Relearner
+InjectionHelper.defineMapPatch(425, 16) { # Sheridan Interiors, Move Relearner
+  for page in self.pages # Move Relearner
     patchName = :VendorQuantityDisplay
     patchName = :PCServiceParity if page.patched?(:VendorQuantityDisplay)
     # this overrides vendor quantity display, so use same patch key to cut it off
     page.patch(patchName) {
-      page.insertAtStart(
-        [:ConditionalBranch, :Switch, :MoveRelearner, true],
-          [:Script, 'relearnerService_relearnerConversation(get_character(0), get_character(15))'],
-          :ExitEventProcessing,
-        :Done)
-      next true
+      insertAtStart {
+        branch(switches[:MoveRelearner], true) {
+          script 'relearnerService_relearnerConversation(get_character(0), get_character(15))'
+          exit_event_processing
+        }
+      }
     }
   end
 }

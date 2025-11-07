@@ -6,9 +6,9 @@ begin
   raise "Missing dependencies for mod #{__FILE__}, cannot load" unless missing.empty?
 end
 
-InjectionHelper.defineMapPatch(537, 85) { |event| # Zorrialyn Labyrinth Floor 3, Rock/Water checker
-  event.patch(:labyrinthfix) { |page|
-    matched = page.lookForAll([:ScriptContinued, 'poke.hasType?(:ROCK)'])
+InjectionHelper.defineMapPatch(537, 85) { # Zorrialyn Labyrinth Floor 3, Rock/Water checker
+  patch(:labyrinthfix) {
+    matched = lookForAll([:ScriptContinued, 'poke.hasType?(:ROCK)'])
 
     for insn in matched
       insn[0] += ' &&'

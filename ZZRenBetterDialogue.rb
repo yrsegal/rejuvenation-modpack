@@ -7,23 +7,23 @@ begin
 end
 
 def zzren_multiline_patch(event)
-  event.patch(:zzren_multiline_patch) { |page|
-    showTexts = page.lookForAll([:ShowText, nil])
+  event.patch(:zzren_multiline_patch) {
+    showTexts = lookForAll([:ShowText, nil])
     doneAny = false
     for insn in showTexts
       lines = [insn.parameters[0]]
       crushlines = lines.clone
       crushed = false
-      idx = page.idxOf(insn)
-      if page.size > idx + 1 && page[idx + 1].command == :ShowText
+      idx = idxOf(insn)
+      if self.size > idx + 1 && self[idx + 1].command == :ShowText
         idx += 1
-        crushlines.push(page[idx].parameters[0])
+        crushlines.push(self[idx].parameters[0])
         crushed = true
       end
-      while page.size > idx + 1 && page[idx + 1].command == :ShowTextContinued
+      while self.size > idx + 1 && self[idx + 1].command == :ShowTextContinued
         idx += 1
-        crushlines.push(page[idx].parameters[0])
-        lines.push(page[idx].parameters[0]) unless crushed
+        crushlines.push(self[idx].parameters[0])
+        lines.push(self[idx].parameters[0]) unless crushed
       end
 
 
@@ -38,15 +38,15 @@ def zzren_multiline_patch(event)
 
       if mapping
         if mapping.is_a?(Array) && mapping.length == usinglines.length - 1 && crushed
-          idx = page.idxOf(insn)
-          page.delete_at(idx)
+          idx = idxOf(insn)
+          delete_at(idx)
           for i in 0...mapping.length
-            page[idx + i][0] = mapping[i]
+            self[idx + i][0] = mapping[i]
           end
         elsif mapping.is_a?(Array) && mapping.length == usinglines.length
-          idx = page.idxOf(insn)
+          idx = idxOf(insn)
           for i in 0...mapping.length
-            page[idx + i][0] = mapping[i]
+            self[idx + i][0] = mapping[i]
           end
         elsif mapping.is_a?(Numeric)
           insn[0] = "\\l[#{mapping}]" + insn.parameters[0]

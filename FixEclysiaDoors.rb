@@ -8,9 +8,9 @@ end
 
 Variables[:LocationData] = 681
 
-InjectionHelper.defineMapPatch(581, 20) { |event| # Eclysia, door in hallway to Garufa Inc door
-  event.patch(:fixEclysiaDoors) { |page|
-    page.changeTrigger(:PlayerTouch)
+InjectionHelper.defineMapPatch(581, 20) { # Eclysia, door in hallway to Garufa Inc door
+  patch(:fixEclysiaDoors) {
+    changeTrigger(:PlayerTouch)
   }
 }
 
@@ -19,22 +19,22 @@ InjectionHelper.defineMapPatch(581, 20) { |event| # Eclysia, door in hallway to 
  22, 39, 40, # Big sealed door
  51 # Warp to skyview
 ].each { |i|
-  InjectionHelper.defineMapPatch(581, i) { |event| # Eclysia, 
-    event.patch(:fixEclysiaDoors) { |page|
-      if page.lookForSequence([:TransferPlayer, nil, nil, nil, nil, nil, nil])
-        if !page.lookForSequence([:ControlVariable, :LocationData, :[]=, :Constant, 3], 
-                                 [:ControlVariable, :LocationData, :[]=, :Constant, 0])
-          page.insertAtStart([:ControlVariable, :LocationData, :[]=, :Constant, 3])
-          page.insertBeforeEnd([:ControlVariable, :LocationData, :[]=, :Constant, 0])
+  InjectionHelper.defineMapPatch(581, i) { # Eclysia, 
+    patch(:fixEclysiaDoors) {
+      if lookForSequence([:TransferPlayer, nil, nil, nil, nil, nil, nil])
+        if !lookForSequence([:ControlVariable, :LocationData, :[]=, :Constant, 3], 
+                            [:ControlVariable, :LocationData, :[]=, :Constant, 0])
+          insertAtStart([:ControlVariable, :LocationData, :[]=, :Constant, 3])
+          insertBeforeEnd([:ControlVariable, :LocationData, :[]=, :Constant, 0])
         end
       end
     }
   }
 }
 
-InjectionHelper.defineMapPatch(584, 36) { |event| # Eclysia Garufa, door to hallway
-  event.patch(:fixEclysiaDoors) { |page|
-    matched = page.lookForAll([:TransferPlayer, :Constant, 581, 24, 57, nil, nil]) # Transfer player to (24,47)
+InjectionHelper.defineMapPatch(584, 36) { # Eclysia Garufa, door to hallway
+  patch(:fixEclysiaDoors) {
+    matched = lookForAll([:TransferPlayer, :Constant, 581, 24, 57, nil, nil]) # Transfer player to (24,47)
     for insn in matched
       insn[2..3] = [128, 22]
     end

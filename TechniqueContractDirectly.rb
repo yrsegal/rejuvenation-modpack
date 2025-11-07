@@ -137,53 +137,55 @@ def techniquecontract_choosemove(pokemon, tech)
 end
 
 
-InjectionHelper.defineMapPatch(434) { |map| # Luck's Tent
-  map.createNewEvent(16, 15, "Martel (Technique)", "techniquecontract_techniquemarshadow") { |event|
-    applicator = proc { |page|
-      page.setGraphic("pkmn_marshadow", hueShift: 120, direction: :Up)
-      page.walk_anime = true
-      page.step_anime = true
-      page.always_on_top = true
-      page.interact(
-        [:ShowText, "MARTEL: I am allergic to Shards. Please support my continued satiation."],
-        [:ConditionalBranch, :SelfSwitch, "A", false],
-          [:ShowText, "I can teach most of what's in the Technique Contract, so I'm useful."],
-          [:ShowText, "The Move Tutor app refuses to support my plight, so I don't support it."],
-          [:ControlSelfSwitch, "A", true],
-        :Done,
-        [:Script, "vendorquantity_show_item_window(:BLKPRISM) if defined?(vendorquantity_show_item_window)"],
-        [:ShowText, "Will you feed me?\\ch[1,2,Yes,No]"],
-        [:ConditionalBranch, :Variable, 1, :Constant, 0, :==],
-          [:ShowText, "MARTEL: My dietary requirement is three Black Prisms per move."],
-          [:ConditionalBranch, :Script, "$PokemonBag.pbQuantity(:BLKPRISM)>2"],
-            [:ConditionalBranch, :Script, "techniquecontract_choosetechnique"],
-              [:Script, "$PokemonBag.pbDeleteItem(:BLKPRISM,3)"],
-              [:ShowText, "MARTEL: Thank you. I will survive through the winter."],
-              [:Script, "vendorquantity_disposefully if defined?(vendorquantity_disposefully)"],
-              :ExitEventProcessing,
-            :Done,
-          :Else,
-            [:ShowText, "MARTEL: You offer food you don't have? How cruel."],
-            [:Script, "vendorquantity_disposefully if defined?(vendorquantity_disposefully)"],
-            :ExitEventProcessing,
-          :Done,
-        :Done,
-        [:ShowText, "MARTEL: Ok. I'll be here, starving."],
-        [:Script, "vendorquantity_disposefully if defined?(vendorquantity_disposefully)"])
+InjectionHelper.defineMapPatch(434) { # Luck's Tent
+  createNewEvent(16, 15, "Martel (Technique)", "techniquecontract_techniquemarshadow") {
+    applicator = proc {
+      setGraphic "pkmn_marshadow", hueShift: 120, direction: :Up
+      walk_anime = true
+      step_anime = true
+      always_on_top = true
+      interact {
+        text "MARTEL: I am allergic to Shards. Please support my continued satiation."
+        branch(self_switch["A"], false) {
+          text "I can teach most of what's in the Technique Contract, so I'm useful."
+          text "The Move Tutor app refuses to support my plight, so I don't support it."
+          self_switch["A"] = true
+        }
+
+        script "vendorquantity_show_item_window(:BLKPRISM) if defined?(vendorquantity_show_item_window)"
+        text "Will you feed me?\\ch[1,2,Yes,No]"
+        branch(variables[1], :==, 0) {
+          text "MARTEL: My dietary requirement is three Black Prisms per move."
+          branch("$PokemonBag.pbQuantity(:BLKPRISM)>2") {
+            branch("techniquecontract_choosetechnique") {
+              script "$PokemonBag.pbDeleteItem(:BLKPRISM,3)"
+              text "MARTEL: Thank you. I will survive through the winter."
+              script "vendorquantity_disposefully if defined?(vendorquantity_disposefully)"
+              exit_event_processing 
+            }
+          }.else {
+            text "MARTEL: You offer food you don't have? How cruel."
+            script "vendorquantity_disposefully if defined?(vendorquantity_disposefully)"
+            exit_event_processing 
+          }
+        }
+        text "MARTEL: Ok. I'll be here, starving."
+        script "vendorquantity_disposefully if defined?(vendorquantity_disposefully)"
+      }
     }
 
-    event.newPage { |page|
-      page.requiresVariable(:LuckQuest, 7) # Luck quest complete
-      applicator.call(page)
+    newPage {
+      requiresVariable(:LuckQuest, 7) # Luck quest complete
+      instance_exec(&applicator)
     }
 
-    event.newPage { |page|
-      page.requiresVariable(:ItsALuckyNumber, 2) # You fucked up
+    newPage {
+      requiresVariable(:ItsALuckyNumber, 2) # You fucked up
     }
 
-    event.newPage { |page|
-      page.requiresVariable(:ItsALuckyNumber, 4) # You resolved the fuckup
-      applicator.call(page)
+    newPage {
+      requiresVariable(:ItsALuckyNumber, 4) # You resolved the fuckup
+      instance_exec(&applicator)
     }
   }
 }

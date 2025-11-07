@@ -6,13 +6,13 @@ begin
   raise "Missing dependencies for mod #{__FILE__}, cannot load" unless missing.empty?
 end
 
-InjectionHelper.defineMapPatch(199) { |map| # Route 2
-  map.events.values.each { |ev|
+InjectionHelper.defineMapPatch(199) { # Route 2
+  self.events.values.each { |ev|
     if ev.name == "Aip1"
       ev.pages.each { |page|
         page.move_type = InjectionHelper::EVENT_MOVE_TYPES[:Random]
+        InjectionHelper.markPatched
       }
     end
   }
-  next true
 }

@@ -121,17 +121,6 @@ module StatusConditionItems
   end
 
   def self.createSomniamSeller(map)
-    # map.createSinglePageEvent(37, 24, "Status Item seller") { |page|
-    #   page.setGraphic("NPC 22")
-    #   page.interact(
-    #     [:ConditionalBranch, :Variable, :Stamps, :Constant, 1, :>=],
-    #       [:Script, "showmallstamps_show_window('Status Items',1) if defined?(ShowSomniamMallStamps)"],
-    #       [:Script, "pbPokemonMart(["],
-    #       *ITEMS.keys.map { |item| [:ScriptContinued, ":#{item},"] },
-    #       [:ScriptContinued, "])"],
-    #       [:Script, 'showmallstamps_disposefully if defined?(ShowSomniamMallStamps)'],
-    #     :Done)
-    # }
     map.createSinglePageEvent(37, 24, "Status Item seller") {
       setGraphic "NPC 22"
       interact {
@@ -145,16 +134,6 @@ module StatusConditionItems
   end
 
   def self.createGoldenleafSeller(map)
-    # map.createSinglePageEvent(60, 49, "Status Item seller") { |page|
-    #   page.setGraphic("trchar072Dark")
-    #   page.interact(
-    #     [:Script, "pbPokemonMart(["],
-    #     *ITEMS.keys.map { |item| [:ScriptContinued, ":#{item},"] },
-    #     [:ScriptContinued, "], $game_switches[:NewTownOrdinance] ?"],
-    #     [:ScriptContinued, "_INTL('Sorry about before. I\\'m still selling the items, though.') :"],
-    #     [:ScriptContinued, "_INTL('Hey, kid. You should use these on your Pokémon.'))"])
-    # }
-    # p map
     map.createSinglePageEvent(60, 49, "Status Item seller") {
       setGraphic "trchar072Dark"
       interact {

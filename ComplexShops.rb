@@ -1063,26 +1063,26 @@ InjectionHelper.defineMapPatch(-1) { |map, mapid|
       else
         patchTarget = map.events[evtid]
       end
-      patchTarget.patch(:complexmart) { |page|
+      patchTarget.patch(:complexmart) {
 
-        textMatches = !page.lookForAll([:ShowText, /\\ch\[/]).empty? || !page.lookForAll([:ShowTextContinued, /\\ch\[/]).empty?
+        textMatches = !lookForAll([:ShowText, /\\ch\[/]).empty? || !lookForAll([:ShowTextContinued, /\\ch\[/]).empty?
 
         unless textMatches
-          choiceMatches = page.lookForAll([:ShowChoices, nil, nil])
+          choiceMatches = lookForAll([:ShowChoices, nil, nil])
           for insn in choiceMatches
-            choiceIdx = page.idxOf(insn)
+            choiceIdx = idxOf(insn)
             insertIdx = choiceIdx - 1
-            while insertIdx > 0 && page[insertIdx].command == :ShowTextContinued
+            while insertIdx > 0 && self[insertIdx].command == :ShowTextContinued
               insertIdx -= 1
             end
-            if insertIdx >= 0 && page[insertIdx].command == :ShowText
+            if insertIdx >= 0 && self[insertIdx].command == :ShowText
               textMatches = true
               break
             end
           end
         end
 
-        page.insertAtStart(*script, :ExitEventProcessing) if textMatches
+        insertAtStart(*script, :ExitEventProcessing) if textMatches
       }
     end
   end
@@ -1090,42 +1090,47 @@ InjectionHelper.defineMapPatch(-1) { |map, mapid|
 
 
 [[85, 35], [230, 58], [260, 29]].each { |mapid, evtid| # Coin sellers in Nightmare Toy Box, Chrisola Hotel, and GDC Arcade
-  InjectionHelper.defineMapPatch(mapid, evtid) { |event|
-    event.patch(:coin_seller_interface) { |page|
-      matched = page.lookForSequence([:ShowText, /^Coins can be purchased at 50 for \$1000/])
+  InjectionHelper.defineMapPatch(mapid, evtid) {
+    patch(:coin_seller_interface) {
+      matched = lookForSequence([:ShowText, /^Coins can be purchased at 50 for \$1000/])
       if matched
-        page.insertBefore(matched,
-          [:Script, "ComplexMartSpecifiers.coins(#{mapid})"],
-          :ExitEventProcessing)
+        insertBefore(matched) {
+          script "ComplexMartSpecifiers.coins(#{mapid})"
+          exit_event_processing
+        }
       end
     }
   }
 }
 
-InjectionHelper.defineMapPatch(434, 28) { |event| # Doxie
-  event.patch(:cairo_shop_interface) { |page|
-    matched = page.lookForSequence([:ShowText, /^DOXIE: \(Give me your Black Prisms!\)/])
-    labelLoc = page.lookForSequence([:MovePicture, 5, 3, 0, :Constant, -150, 0, 100, 100, 0, 0])
+InjectionHelper.defineMapPatch(434, 28) { # Doxie
+  patch(:cairo_shop_interface) {
+    matched = lookForSequence([:ShowText, /^DOXIE: \(Give me your Black Prisms!\)/])
+    labelLoc = lookForSequence([:MovePicture, 5, 3, 0, :Constant, -150, 0, 100, 100, 0, 0])
 
     if matched && labelLoc
-      page.insertBefore(matched,
-        [:Script, 'ComplexMartSpecifiers.mart(:LUCK_TENT, :doxie, true)'],
-        [:JumpToLabel, 'Exit shop'])
-      page.insertBefore(labelLoc,
-        [:Label, 'Exit shop'])
+      insertBefore(matched) {
+        script 'ComplexMartSpecifiers.mart(:LUCK_TENT, :doxie, true)'
+        jump_label 'Exit shop'
+      }
+
+      insertBefore(labelLoc) {
+        label 'Exit shop'
+      }
     end
   }
 }
 
-InjectionHelper.defineMapPatch(168, 16) { |event| # Cairo
-  event.patch(:cairo_shop_interface) { |page|
-    if page.condition.self_switch_valid && page.condition.self_switch_ch == "A"
-      matched = page.lookForSequence([:ShowText, /^CAIRO: Well met\./])
+InjectionHelper.defineMapPatch(168, 16) { # Cairo
+  patch(:cairo_shop_interface) {
+    if condition.self_switch_valid && condition.self_switch_ch == "A"
+      matched = lookForSequence([:ShowText, /^CAIRO: Well met\./])
 
       if matched
-        page.insertBefore(matched,
-          [:Script, 'ComplexMartSpecifiers.pbCairoMart'],
-          [:JumpToLabel, 'Exit shop'])
+        insertBefore(matched) {
+          script 'ComplexMartSpecifiers.pbCairoMart'
+          jump_label 'Exit shop'
+        }
       end
     end
   }
