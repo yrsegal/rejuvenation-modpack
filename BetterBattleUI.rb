@@ -277,37 +277,37 @@ class BetterBattleUI_PokeballThrowButtonDisplay
     updateData(index)
   end
 
-  def x; @display.x; end
+  def x() = @display.x
   def x=(value)
     @display.x=value
   end
 
-  def y; @display.y; end
+  def y() = @display.y
   def y=(value)
     @display.y=value
   end
 
-  def z; @display.z; end
+  def z() = @display.z
   def z=(value)
     @display.z=value
   end
 
-  def ox; @display.ox; end
+  def ox() = @display.ox
   def ox=(value)
     @display.ox=value
   end
 
-  def oy; @display.oy; end
+  def oy() = @display.oy
   def oy=(value)
     @display.oy=value
   end
 
-  def visible; @display.visible; end
+  def visible() = @display.visible
   def visible=(value)
     @display.visible=value
   end
 
-  def color; @display.color; end
+  def color() = @display.color
   def color=(value)
     @display.color=value
   end

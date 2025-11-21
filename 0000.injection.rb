@@ -1592,91 +1592,91 @@ module InjectionDSL
         @insns.push *commands
       end
 
-      def input_number(variable, digits:); @insns << [:InputNumber, unwrap(variable), digits]; end
-      def change_text_options(position:, window:); @insns << [:ChangeTextOptions, position, window]; end
-      def button_input_processing(variable); @insns << [:ButtonInputProcessing, unwrap(variable)]; end
-      def wait(time); @insns << [:Wait, time]; end
-      def wait_for_move_completion; @insns << :WaitForMovement; end
-      def exit_event_processing; @insns << :ExitEventProcessing; end
-      def erase_event; @insns << :EraseEvent; end
-      def call_common_event(id); @insns << [:CallCommonEvent, id]; end
-      def label(name); @insns << [:Label, name]; end
-      def jump_label(name); @insns << [:JumpToLabel, name]; end
+      def input_number(variable, digits:) = command [:InputNumber, unwrap(variable), digits]
+      def change_text_options(position:, window:) = command [:ChangeTextOptions, position, window]
+      def button_input_processing(variable) = command [:ButtonInputProcessing, unwrap(variable)]
+      def wait(time) = command [:Wait, time]
+      def wait_for_move_completion() = command :WaitForMovement
+      def exit_event_processing() = command :ExitEventProcessing
+      def erase_event() = command :EraseEvent
+      def call_common_event(id) = command [:CallCommonEvent, id]
+      def label(name) = command [:Label, name]
+      def jump_label(name) = command [:JumpToLabel, name]
 
-      def battle_bgm(param,volume=nil,pitch=nil); @insns << [:ChangeBattleBackgroundMusic, pbResolveAudioFile(param,volume,pitch)]; end
-      def battle_me(param,volume=nil,pitch=nil); @insns << [:ChangeBattleEndME, pbResolveAudioFile(param,volume,pitch)]; end
-      def play_bgm(param,volume=nil,pitch=nil); @insns << [:PlayBackgroundMusic, pbResolveAudioFile(param,volume,pitch)]; end
-      def play_bgs(param,volume=nil,pitch=nil); @insns << [:PlayBackgroundSound, pbResolveAudioFile(param,volume,pitch)]; end
-      def play_me(param,volume=nil,pitch=nil); @insns << [:PlayMusicEvent, pbResolveAudioFile(param,volume,pitch)]; end
-      def play_se(param,volume=nil,pitch=nil); @insns << [:PlaySoundEvent, pbResolveAudioFile(param,volume,pitch)]; end
+      def battle_bgm(param,volume=nil,pitch=nil) = command [:ChangeBattleBackgroundMusic, pbResolveAudioFile(param,volume,pitch)]
+      def battle_me(param,volume=nil,pitch=nil) = command [:ChangeBattleEndME, pbResolveAudioFile(param,volume,pitch)]
+      def play_bgm(param,volume=nil,pitch=nil) = command [:PlayBackgroundMusic, pbResolveAudioFile(param,volume,pitch)]
+      def play_bgs(param,volume=nil,pitch=nil) = command [:PlayBackgroundSound, pbResolveAudioFile(param,volume,pitch)]
+      def play_me(param,volume=nil,pitch=nil) = command [:PlayMusicEvent, pbResolveAudioFile(param,volume,pitch)]
+      def play_se(param,volume=nil,pitch=nil) = command [:PlaySoundEvent, pbResolveAudioFile(param,volume,pitch)]
 
-      def stop_se; @insns << :StopSoundEvent; end
-      def fade_out_bgm(seconds:); @insns << [:FadeOutBackgroundMusic, seconds]; end
-      def fade_out_bgs(seconds:); @insns << [:FadeOutBackgroundSound, seconds]; end
-      def change_tone(red, green, blue, gray: 0, frames:); @insns << [:ChangeScreenColorTone, Tone.new(red, green, blue, gray), frames]; end
-      def change_fog_tone(red, green, blue, gray: 0, frames:); @insns << [:ChangeFogColorTone, Tone.new(red, green, blue, gray), frames]; end
-      def change_fog_opacity(opacity:, frames:); @insns << [:ChangeFogOpacity, opacity, frames]; end
-      def change_picture_tone(number:, red:, green:, blue:, gray: 0, frames:); @insns << [:ChangePictureColorTone, number, Tone.new(red, green, blue, gray), frames]; end
-      def screen_flash(red, green, blue, alpha: 0, frames:); @insns << [:ScreenFlash, Color.new(red, green, blue, alpha), frames]; end
-      def screen_shake(power:, speed:, frames:); @insns << [:ScreenShake, power, speed, frames]; end
+      def stop_se() = command :StopSoundEvent
+      def fade_out_bgm(seconds:) = command [:FadeOutBackgroundMusic, seconds]
+      def fade_out_bgs(seconds:) = command [:FadeOutBackgroundSound, seconds]
+      def change_tone(red, green, blue, gray: 0, frames:) = command [:ChangeScreenColorTone, Tone.new(red, green, blue, gray), frames]
+      def change_fog_tone(red, green, blue, gray: 0, frames:) = command [:ChangeFogColorTone, Tone.new(red, green, blue, gray), frames]
+      def change_fog_opacity(opacity:, frames:) = command [:ChangeFogOpacity, opacity, frames]
+      def change_picture_tone(number:, red:, green:, blue:, gray: 0, frames:) = command [:ChangePictureColorTone, number, Tone.new(red, green, blue, gray), frames]
+      def screen_flash(red, green, blue, alpha: 0, frames:) = command [:ScreenFlash, Color.new(red, green, blue, alpha), frames]
+      def screen_shake(power:, speed:, frames:) = command [:ScreenShake, power, speed, frames]
 
       def transfer_player(map:, x:, y:, direction:, fading:)
         isvar = any_variable?(map, x, y)
-        @insns << [:TransferPlayer, appoint(isvar), unwrap(map), unwrap(x), unwrap(y), direction, fading]
+        command [:TransferPlayer, appoint(isvar), unwrap(map), unwrap(x), unwrap(y), direction, fading]
       end
 
       def set_event_location(character, x:, y:, direction:)
         isvar = any_variable?(x, y)
-        @insns << [:SetEventLocation, unwrap(character), appoint(isvar), unwrap(x), unwrap(y), direction]
+        command [:SetEventLocation, unwrap(character), appoint(isvar), unwrap(x), unwrap(y), direction]
       end
 
-      def swap_event_locations(character, target:, direction:); @insns << [:SetEventLocation, unwrap(character), :ExchangeWithEvent, unwrap(target), direction]; end
+      def swap_event_locations(character, target:, direction:) = command [:SetEventLocation, unwrap(character), :ExchangeWithEvent, unwrap(target), direction]
 
       def branch(on, *args, &block)
         if on.is_a?(InjectionDSL::Wrappers::Switch)
-          @insns << [:ConditionalBranch, :Switch, unwrap(on), args.empty? ? true : args[0]]
+          command [:ConditionalBranch, :Switch, unwrap(on), args.empty? ? true : args[0]]
         elsif on.is_a?(InjectionDSL::Wrappers::SelfSwitch)
-          @insns << [:ConditionalBranch, :SelfSwitch, unwrap(on), args.empty? ? true : args[0]]
+          command [:ConditionalBranch, :SelfSwitch, unwrap(on), args.empty? ? true : args[0]]
         elsif on.is_a?(InjectionDSL::Wrappers::Variable)
           operation = args[0]
           state = args[1]
           isvar = any_variable?(state)
-          @insns << [:ConditionalBranch, :Variable, unwrap(on), appoint(isvar), unwrap(state), operation]
+          command [:ConditionalBranch, :Variable, unwrap(on), appoint(isvar), unwrap(state), operation]
         elsif on.is_a?(InjectionDSL::Wrappers::GoldValue)
-          @insns << [:ConditionalBranch, :Gold, args[1], args[0]]
+          command [:ConditionalBranch, :Gold, args[1], args[0]]
         elsif on.is_a?(String)
-          @insns << [:ConditionalBranch, :Script, on]
+          command [:ConditionalBranch, :Script, on]
         elsif on.is_a?(InjectionDSL::Wrappers::EventProxy)
-          @insns << [:ConditionalBranch, :Character, unwrap(on), args[0]]
+          command [:ConditionalBranch, :Character, unwrap(on), args[0]]
         elsif on.is_a?(Numeric)
-          @insns << [:ConditionalBranch, :Button, on]
+          command [:ConditionalBranch, :Button, on]
         end
 
         context = BranchExecutionContext.create(&block)
-        @insns << context
+        command context
         return context
       end
         
       def loop(&block)
-        @insns << :Loop
-        @insns << LoopExecutionContext.create(&block)
+        command :Loop
+        command LoopExecutionContext.create(&block)
       end
 
       def show_choices(text=nil, &block)
-        @insns << [:ShowText, text] if text
-        @insns << ChoiceContext.create(&block)
+        command [:ShowText, text] if text
+        command ChoiceContext.create(&block)
       end
 
       def set_move_route(character, &block)
-        @insns << [:SetMoveRoute, unwrap(character), MoveRouteContext.create(&block).compile]
+        command [:SetMoveRoute, unwrap(character), MoveRouteContext.create(&block).compile]
         return InjectionDSL::Wrappers::MoveRouteWaiter.new(self)
       end
 
-      def control_variables(start, done, operator = :[]=, *args); @insns << [:ControlVariables, unwrap(start), unwrap(done), operator, *args]; end
-      def control_variable(variable, operator = :[]=, *args); control_variables(variable, variable, operator, *args); end
-      def control_switches(start, done, value); @insns << [:ControlSwitches, unwrap(start), unwrap(done), value]; end
-      def control_switch(switch, value); control_switches(switch, switch, value); end
-      def control_self_switch(chr, value); @insns << [:ControlSelfSwitch, chr, value]; end
+      def control_variables(start, done, operator = :[]=, *args) = command [:ControlVariables, unwrap(start), unwrap(done), operator, *args]
+      def control_variable(variable, operator = :[]=, *args) = control_variables(variable, variable, operator, *args)
+      def control_switches(start, done, value) = command [:ControlSwitches, unwrap(start), unwrap(done), value]
+      def control_switch(switch, value) = control_switches(switch, switch, value)
+      def control_self_switch(chr, value) = command [:ControlSelfSwitch, chr, value]
 
       def change_gold(value, sign: 1)
         isvar = any_variable?(value)
@@ -1685,44 +1685,46 @@ module InjectionDSL
           value = value.abs
         end
 
-        @insns << [:ChangeGold, sign.negative? ? :- : :+, appoint(isvar), unwrap(value)]
+        command [:ChangeGold, sign.negative? ? :- : :+, appoint(isvar), unwrap(value)]
       end
 
-      def scroll_map(direction:, distance:, speed:); @insns << [:ScrollMap, direction, distance, speed]; end
-      def change_windowskin(name); @insns << [:ChangeWindowskin, name]; end
-      def show_animation(character, animation); @insns << [:ShowAnimation, unwrap(character), animation]; end
-      def heal_party(party = 0); @insns << [:HealParty, party]; end
-      def change_panorama(graphic:, hue: 0); @insns << [:ChangeMapSettings, :Panorama, graphic, hue]; end
-      def change_fog(graphic:, hue: 0, opacity: 0, blending:, zoom:, sx: 0, sy: 0); @insns << [:ChangeMapSettings, :Fog, graphic, hue, opacity, blending, zoom, sx, sy]; end
-      def change_battleback(graphic:); @insns << [:ChangeMapSettings, :BattleBack, graphic]; end
+      def scroll_map(direction:, distance:, speed:) = command [:ScrollMap, direction, distance, speed]
+      def change_windowskin(name) = command [:ChangeWindowskin, name]
+      def show_animation(character, animation) = command [:ShowAnimation, unwrap(character), animation]
+      def heal_party(party = 0) = command [:HealParty, party]
+      def change_panorama(graphic:, hue: 0) = command [:ChangeMapSettings, :Panorama, graphic, hue]
+      def change_fog(graphic:, hue: 0, opacity: 0, blending:, zoom:, sx: 0, sy: 0) = command [:ChangeMapSettings, :Fog, graphic, hue, opacity, blending, zoom, sx, sy]
+      def change_battleback(graphic:) = command [:ChangeMapSettings, :BattleBack, graphic]
 
       def show_picture(number:, graphic:, origin:, x:, y:, zoom_x:, zoom_y:, opacity: 255, blending:)
         isvar = any_variable?(x, y)
-        @insns << [:ShowPicture, number, graphic, origin, appoint(isvar), x, y, zoom_x, zoom_y, opacity, blending]
+        command [:ShowPicture, number, graphic, origin, appoint(isvar), x, y, zoom_x, zoom_y, opacity, blending]
       end
 
       def move_picture(number:, frames:, origin:, x:, y:, zoom_x:, zoom_y:, opacity: 255, blending:)
         isvar = any_variable?(x, y)
-        @insns << [:MovePicture, number, frames, origin, appoint(isvar), x, y, zoom_x, zoom_y, opacity, blending]
+        command [:MovePicture, number, frames, origin, appoint(isvar), x, y, zoom_x, zoom_y, opacity, blending]
       end
 
-      def rotate_picture(number:, speed:); @insns << [:RotatePicture, number, speed]; end
-      def erase_picture(number:); @insns << [:ErasePicture, number]; end
-      def weather_effect(weather:, power:, frames:); @insns << [:SetWeatherEffects, weather, power, frames]; end
-      def set_transparent_flag(flag); @insns << [:ChangeTransparentFlag, flag]; end
-      def disable_save_access(flag); @insns << [:ChangeSaveAccess, flag]; end
-      def disable_menu_access(flag); @insns << [:ChangeMenuAccess, flag]; end
-      def disable_encounters(flag); @insns << [:ChangeEncounter, flag]; end
-      def prepare_for_transition; @insns << :PrepareForTransition; end
-      def transition(graphic:); @insns << [:ExecuteTransition, graphic]; end
-      def call_menu_screen; @insns << :CallMenuScreen; end
-      def call_save_screen; @insns << :CallSaveScreen; end
-      def game_over; @insns << :GameOver; end
-      def title_screen; @insns << :ReturnToTitleScreen; end
-      def memorize_bgm_bgs; @insns << :MemorizeBackgroundSound; end
-      def restore_bgm_bgs; @insns << :RestoreBackgroundSound; end
-      def timer_on(time); @insns << [:ControlTimer, true, time]; end
-      def timer_off; @insns << [:ControlTimer, false]; end
+      def rotate_picture(number:, speed:) = command [:RotatePicture, number, speed]
+      def erase_picture(number:) = command [:ErasePicture, number]
+      def weather_effect(weather:, power:, frames:) = command [:SetWeatherEffects, weather, power, frames]
+      def set_transparent_flag(flag) = command [:ChangeTransparentFlag, flag]
+      def disable_save_access(flag) = command [:ChangeSaveAccess, flag]
+      def disable_menu_access(flag) = command [:ChangeMenuAccess, flag]
+      def disable_encounters(flag) = command [:ChangeEncounter, flag]
+      def prepare_for_transition() = command :PrepareForTransition
+      def transition(graphic:) = command [:ExecuteTransition, graphic]
+      def call_menu_screen() = command :CallMenuScreen
+      def call_save_screen() = command :CallSaveScreen
+      def game_over() = command :GameOver
+      def title_screen() = command :ReturnToTitleScreen
+      def memorize_bgm_bgs() = command :MemorizeBackgroundSound
+      def restore_bgm_bgs() = command :RestoreBackgroundSound
+      def timer_on(time) = command [:ControlTimer, true, time]
+      def timer_off() = command [:ControlTimer, false]
+
+      def command(insn) = @insns << insn
 
       ### ============================
       ###         END COMMANDS
@@ -1754,7 +1756,7 @@ module InjectionDSL
       ### ========================
       ###         COMMANDS
       ### ========================
-      def else(&block); @else = ExecutionContext.create(&block); end
+      def else(&block) = @else = ExecutionContext.create(&block)
       ### ============================
       ###         END COMMANDS
       ### ============================
@@ -1775,7 +1777,7 @@ module InjectionDSL
       ### ========================
       ###         COMMANDS
       ### ========================
-      def break_loop; @insns << :BreakLoop; end
+      def break_loop() = @insns << :BreakLoop
       ### ============================
       ###         END COMMANDS
       ### ============================
@@ -1866,54 +1868,54 @@ module InjectionDSL
       ###         COMMANDS
       ### ========================
 
-      def mark_as_repeat; @repeat = true; end
+      def mark_as_repeat() = @repeat = true
 
-      def mark_as_skippable; @skippable = true; end
+      def mark_as_skippable() = @skippable = true
 
 
-      def move_down; @insns << :MoveDown; end
-      def move_left; @insns << :MoveLeft; end
-      def move_right; @insns << :MoveRight; end
-      def move_up; @insns << :MoveUp; end
-      def move_down_left; @insns << :MoveDownLeft; end
-      def move_down_right; @insns << :MoveDownRight; end
-      def move_up_left; @insns << :MoveUpLeft; end
-      def move_up_right; @insns << :MoveUpRight; end
-      def move_random; @insns << :MoveRandomly; end
-      def move_toward_player; @insns << :MoveTowardPlayer; end
-      def move_away_from_player; @insns << :MoveAwayFromPlayer; end
-      def move_forward; @insns << :MoveForward; end
-      def move_backward; @insns << :MoveBackward; end
-      def jump_to(x:, y:); @insns << [:Jump, x, y]; end
-      def wait(frames); @insns << [:Wait, frames]; end
-      def face_down; @insns << :FaceDown; end
-      def face_left; @insns << :FaceLeft; end
-      def face_right; @insns << :FaceRight; end
-      def face_up; @insns << :FaceUp; end
-      def turn_right; @insns << :TurnRight; end
-      def turn_left; @insns << :TurnLeft; end
-      def turn_around; @insns << :TurnAround; end
-      def turn_randomly; @insns << :TurnRandomly; end
-      def face_randomly; @insns << :FaceRandomly; end
-      def face_toward_player; @insns << :FaceTowardsPlayer; end
-      def face_away_from_player; @insns << :FaceAwayFromPlayer; end
+      def move_down() = @insns << :MoveDown
+      def move_left() = @insns << :MoveLeft
+      def move_right() = @insns << :MoveRight
+      def move_up() = @insns << :MoveUp
+      def move_down_left() = @insns << :MoveDownLeft
+      def move_down_right() = @insns << :MoveDownRight
+      def move_up_left() = @insns << :MoveUpLeft
+      def move_up_right() = @insns << :MoveUpRight
+      def move_random() = @insns << :MoveRandomly
+      def move_toward_player() = @insns << :MoveTowardPlayer
+      def move_away_from_player() = @insns << :MoveAwayFromPlayer
+      def move_forward() = @insns << :MoveForward
+      def move_backward() = @insns << :MoveBackward
+      def jump_to(x:, y:) = @insns << [:Jump, x, y]
+      def wait(frames) = @insns << [:Wait, frames]
+      def face_down() = @insns << :FaceDown
+      def face_left() = @insns << :FaceLeft
+      def face_right() = @insns << :FaceRight
+      def face_up() = @insns << :FaceUp
+      def turn_right() = @insns << :TurnRight
+      def turn_left() = @insns << :TurnLeft
+      def turn_around() = @insns << :TurnAround
+      def turn_randomly() = @insns << :TurnRandomly
+      def face_randomly() = @insns << :FaceRandomly
+      def face_toward_player() = @insns << :FaceTowardsPlayer
+      def face_away_from_player() = @insns << :FaceAwayFromPlayer
 
-      def set_switch(switch, state:); @insns << [state ? :SetSwitch : :UnsetSwitch, unwrap(switch)]; end
-      def change_speed(speed); @insns << [:MoveSpeed, speed]; end
-      def change_frequency(freq); @insns << [:MoveFrequency, freq]; end
+      def set_switch(switch, state:) = @insns << [state ? :SetSwitch : :UnsetSwitch, unwrap(switch)]
+      def change_speed(speed) = @insns << [:MoveSpeed, speed]
+      def change_frequency(freq) = @insns << [:MoveFrequency, freq]
 
-      def animate_walking(state=true); @insns << (state ? :AnimateWalking : :DontAnimateWalking); end
-      def animate_steps(state=true); @insns << (state ? :AnimateSteps : :DontAnimateSteps); end
-      def lock_direction(state=true); @insns << (state ? :FixDirection : :DontFixDirection); end
-      def set_intangible(state=true); @insns << (state ? :SetIntangible : :SetTangible); end
-      def set_always_foreground(state=true); @insns << (state ? :SetAlwaysForeground : :UnsetAlwaysForeground); end
-      def set_character(name, hue: 0, direction: :Down, pattern: 0); @insns << [:SetCharacter, name, hue, direction, pattern]; end
-      def remove_graphic; set_character(""); end
-      def set_opacity(opacity); @insns << [:SetOpacity, opacity]; end
-      def set_blend_type(blend); @insns << [:BlendType, blend]; end
+      def animate_walking(state=true) = @insns << (state ? :AnimateWalking : :DontAnimateWalking)
+      def animate_steps(state=true) = @insns << (state ? :AnimateSteps : :DontAnimateSteps)
+      def lock_direction(state=true) = @insns << (state ? :FixDirection : :DontFixDirection)
+      def set_intangible(state=true) = @insns << (state ? :SetIntangible : :SetTangible)
+      def set_always_foreground(state=true) = @insns << (state ? :SetAlwaysForeground : :UnsetAlwaysForeground)
+      def set_character(name, hue: 0, direction: :Down, pattern: 0) = @insns << [:SetCharacter, name, hue, direction, pattern]
+      def remove_graphic = set_character("")
+      def set_opacity(opacity) = @insns << [:SetOpacity, opacity]
+      def set_blend_type(blend) = @insns << [:BlendType, blend]
 
-      def play_se(param,volume=nil,pitch=nil); @insns << [:PlaySound, pbResolveAudioFile(param,volume,pitch)]; end
-      def script(script); @insns << [:Script, script]; end
+      def play_se(param,volume=nil,pitch=nil) = @insns << [:PlaySound, pbResolveAudioFile(param,volume,pitch)]
+      def script(script) = @insns << [:Script, script]
 
       ### ============================
       ###         END COMMANDS
@@ -1957,20 +1959,20 @@ module InjectionDSL
         return holders.any? { |it| it.is_a?(InjectionDSL::Wrappers::HolderProxy) }
       end
 
-      def variables; InjectionDSL::Wrappers::Variables.new(self); end
-      def switches; InjectionDSL::Wrappers::Switches.new(self); end
-      def events; InjectionDSL::Wrappers::EventSourceProxy.new(self); end
-      def self_switch; InjectionDSL::Wrappers::OwnSelfSwitches.new(self); end
+      def variables() = InjectionDSL::Wrappers::Variables.new(self)
+      def switches() = InjectionDSL::Wrappers::Switches.new(self)
+      def events() = InjectionDSL::Wrappers::EventSourceProxy.new(self)
+      def self_switch() = InjectionDSL::Wrappers::OwnSelfSwitches.new(self)
 
-      def map_id; InjectionDSL::Wrappers::GlobalValue.new(:map_id); end
-      def party_size; InjectionDSL::Wrappers::GlobalValue.new(:party_size); end
-      def steps; InjectionDSL::Wrappers::GlobalValue.new(:steps); end
-      def play_time; InjectionDSL::Wrappers::GlobalValue.new(:play_time); end
-      def timer; InjectionDSL::Wrappers::GlobalValue.new(:timer); end
-      def save_count; InjectionDSL::Wrappers::GlobalValue.new(:save_count); end
+      def map_id() = InjectionDSL::Wrappers::GlobalValue.new(:map_id)
+      def party_size() = InjectionDSL::Wrappers::GlobalValue.new(:party_size)
+      def steps() = InjectionDSL::Wrappers::GlobalValue.new(:steps)
+      def play_time() = InjectionDSL::Wrappers::GlobalValue.new(:play_time)
+      def timer() = InjectionDSL::Wrappers::GlobalValue.new(:timer)
+      def save_count() = InjectionDSL::Wrappers::GlobalValue.new(:save_count)
 
-      def player; InjectionDSL::Wrappers::PlayerEventProxy.new(self); end
-      def this; InjectionDSL::Wrappers::OwnEventProxy.new(self); end
+      def player() = InjectionDSL::Wrappers::PlayerEventProxy.new(self)
+      def this() = InjectionDSL::Wrappers::OwnEventProxy.new(self)
     end
   end
 
@@ -2078,19 +2080,19 @@ module InjectionDSL
         @event = event
       end
 
-      def self_switch; SelfSwitches.new(event, dsl); end
+      def self_switch() = SelfSwitches.new(event, dsl)
 
-      def x; CharacterValue.new(event, :x); end
-      def y; CharacterValue.new(event, :y); end
-      def direction; CharacterValue.new(event, :direction); end
-      def screen_x; CharacterValue.new(event, :screen_x); end
-      def screen_y; CharacterValue.new(event, :screen_y); end
-      def terrain_tag; CharacterValue.new(event, :terrain_tag); end
+      def x() = CharacterValue.new(event, :x)
+      def y() = CharacterValue.new(event, :y)
+      def direction() = CharacterValue.new(event, :direction)
+      def screen_x() = CharacterValue.new(event, :screen_x)
+      def screen_y() = CharacterValue.new(event, :screen_y)
+      def terrain_tag() = CharacterValue.new(event, :terrain_tag)
 
-      def set_event_location(x:, y:, direction:); dsl.set_event_location(self, x: x, y: y, direction: direction); end
-      def swap_event_locations(target:, direction:); dsl.swap_event_locations(self, target: target, direction: direction); end
-      def set_move_route(&block); dsl.set_move_route(self, &block); end
-      def show_animation(animation); dsl.show_animation(self, animation); end
+      def set_event_location(x:, y:, direction:) = dsl.set_event_location(self, x: x, y: y, direction: direction)
+      def swap_event_locations(target:, direction:) = dsl.swap_event_locations(self, target: target, direction: direction)
+      def set_move_route(&block) = dsl.set_move_route(self, &block)
+      def show_animation(animation) = dsl.show_animation(self, animation)
     end
 
     class OwnEventProxy < EventProxy
@@ -2098,7 +2100,7 @@ module InjectionDSL
         super(dsl, :This)
       end
 
-      def self_switch; OwnSelfSwitches.new(dsl); end
+      def self_switch() = OwnSelfSwitches.new(dsl)
     end
 
     class PlayerEventProxy < EventProxy
@@ -2106,9 +2108,9 @@ module InjectionDSL
         super(dsl, :Player)
       end
 
-      def self_switch; OwnSelfSwitches.new(dsl); end
+      def self_switch() = OwnSelfSwitches.new(dsl)
 
-      def gold; GoldValue.new(:gold); end
+      def gold() = GoldValue.new(:gold)
 
       def gold=(operation)
         sign, value = operation
@@ -2144,18 +2146,18 @@ module InjectionDSL
     class GlobalValue < HolderProxy; end
     class CharacterValue < EventHolderProxy; end
     class Variable < HolderProxy
-      def +(value); [:+, value]; end
-      def -(value); [:-, value]; end
-      def *(value); [:*, value]; end
-      def /(value); [:/, value]; end
-      def %(value); [:%, value]; end
+      def +(value) = [:+, value]
+      def -(value) = [:-, value]
+      def *(value) = [:*, value]
+      def /(value) = [:/, value]
+      def %(value) = [:%, value]
     end
     class Switch < HolderProxy; end
     class SelfSwitch < EventHolderProxy; end
 
     class GoldValue < GlobalValue
-      def +(value); [1, value]; end
-      def -(value); [-1, value]; end
+      def +(value) = [1, value]
+      def -(value) = [-1, value]
     end
   end
 end

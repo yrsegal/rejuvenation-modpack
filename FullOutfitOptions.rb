@@ -34,7 +34,7 @@ def outfitoptions_replace_outfits_with_darchflag(event)
     matched = lookForAll([:Script, /^\$Trainer\.outfit=/])
 
     for insn in matched
-      replaceRange(insn, insn) {
+      replace(insn) {
         switches[:DarchOutfit] = true
         call_common_event 131 # Outfit Management
       }

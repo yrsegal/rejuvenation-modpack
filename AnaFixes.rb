@@ -102,16 +102,17 @@ def anafixes_addLegacyRedCarpet(event)
 
 
     if matched
-      replaceRange(matched, matched,
-        [:ConditionalBranch, :Variable, :Outfit, :Constant, 2, :>=],
-          [:ConditionalBranch, :Variable, :Outfit, :Constant, 5, :<],
-            [:SetMoveRoute, matched.parameters[0], anafixes_transmuteMoveRoute(matched.parameters[1], 'xgene_legacyana_redcarpet')],
-          :Else,
-            matched,
-          :Done,
-        :Else,
-          matched,
-        :Done)
+      replace(matched) {
+        branch(variables[:Outfit], :>=, 2) {
+          branch(variables[:Outfit], :<, 5) {
+            command [:SetMoveRoute, matched.parameters[0], anafixes_transmuteMoveRoute(matched.parameters[1], 'xgene_legacyana_redcarpet')]
+          }.else {
+            command matched
+          }
+        }.else {
+          command matched
+        }
+      }
     end
   }
 end
@@ -162,15 +163,16 @@ end
 
 def anafixes_fix_protagname(page)
   page.patch(:anafixes_fix_protagname) {
-    labelMatch = page.lookForSequence(
+    labelMatch = lookForSequence(
       [:Label, 'point1'])
 
-    textMatches = page.lookForAll([:ShowText, /\\v\[701\]/]) +
-                  page.lookForAll([:ShowTextContinued, /\\v\[701\]/])
+    textMatches = lookForAll([:ShowText, /\\v\[701\]/]) +
+                  lookForAll([:ShowTextContinued, /\\v\[701\]/])
 
     if labelMatch
-      page.insertBefore(labelMatch, 
-        [:Script, '$game_variables[5] = anafixes_provide_protagname'])
+      insertBefore(labelMatch) {
+        script '$game_variables[5] = anafixes_provide_protagname'
+      }
     end
 
     for matched in textMatches
@@ -219,17 +221,26 @@ InjectionHelper.defineMapPatch(53, 2) { # I Nightmare Realm, Aevis/Dupe
 InjectionHelper.defineMapPatch(231, 40, 1, &method(:anafixes_fix_protagname)) # Somniam Mall, Melia, Crescent Conversation
 InjectionHelper.defineMapPatch(291, 72, &method(:anafixes_addLegacyRedCarpet)) # Pokestar Studios, Red Carpet Event
 
-InjectionHelper.defineMapPatch(-1) { |map|
-  map.patch(:anafixes_gearen_news_sprite) { |page|
-    matched = page.lookForAll([:ShowPicture, nil, /GearenNewsAna(?:_1)?/, nil, nil, nil, nil, nil, nil, nil, nil])
+InjectionHelper.defineMapPatch(-1) {
+  patch(:anafixes_gearen_news_sprite) {
+    matched = lookForAll([:ShowPicture, nil, /GearenNewsAna(?:_1)?/, nil, nil, nil, nil, nil, nil, nil, nil])
 
     for insn in matched
-      page.replaceRange(insn, insn,
-        [:ConditionalBranch, :Script, "[2, 3, 4, 66].include?($game_variables[:Outfit])"],
-          [:ShowPicture, insn.parameters[0], 'GearenNewsLegacyAna', *insn.parameters[2..]],
-        :Else,
-          insn,
-        :Done)
+      replace(insn) {
+        branch("[2, 3, 4, 66].include?($game_variables[:Outfit])") {
+          show_picture graphic: 'GearenNewsLegacyAna',
+            number: insn.parameters[0],
+            origin: insn.parameters[2],
+            x: (insn.parameters[3] == 0 ? insn.parameters[4] : variables[insn.parameters[4]]),
+            y: (insn.parameters[3] == 0 ? insn.parameters[5] : variables[insn.parameters[5]]),
+            zoom_x: insn.parameters[6],
+            zoom_y: insn.parameters[7],
+            opacity: insn.parameters[8],
+            blending: insn.parameters[9]
+        }.else {
+          command insn
+        }
+      }
     end
   }
 }
