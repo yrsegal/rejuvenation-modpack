@@ -484,6 +484,7 @@ class PokeBattle_Move
     basedmg=pbBaseDamage(basedmg,attacker,opponent) # Some function codes alter base power
     ### MODDED/ add basedamage to return
     return 0, 0 if basedmg==0
+    return 1, 1 if basedmg==1
     ### /MODDED
     basedmg = basedmg*0.3 if attacker.crested == :CINCCINO && !pbIsMultiHit
     ### MODDED/ crits only calculate if crit chance is 100%

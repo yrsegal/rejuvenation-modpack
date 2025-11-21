@@ -28,8 +28,8 @@ InjectionHelper.defineMapPatch(203) { # Pokestar Studios Interiors
         text "It's warm..."
         play_se "255Cry", 80
         text "TORCHIC: Torchic Tor!"
-        player.show_animation(ANIM(3))
-        events[18].show_animation(ANIM(3))
+        player.show_animation(EXCLAMATION_ANIMATION_ID)
+        events[18].show_animation(EXCLAMATION_ANIMATION_ID)
         wait 20
         text "DYRE: Oh, yeah. That Torchic loves pretending to be a doll. Don't know why."
         text "I've been meaning to find a home for the fella anyway. Take it, I insist!"

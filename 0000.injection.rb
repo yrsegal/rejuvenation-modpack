@@ -1622,7 +1622,7 @@ module InjectionDSL
 
       def transfer_player(map:, x:, y:, direction:, fading:)
         isvar = any_variable?(map, x, y)
-        @insns << [:TransferPlayer, unwrap(character), appoint(isvar), unwrap(map), unwrap(x), unwrap(y), direction, fading]
+        @insns << [:TransferPlayer, appoint(isvar), unwrap(map), unwrap(x), unwrap(y), direction, fading]
       end
 
       def set_event_location(character, x:, y:, direction:)
@@ -1721,7 +1721,7 @@ module InjectionDSL
       def title_screen; @insns << :ReturnToTitleScreen; end
       def memorize_bgm_bgs; @insns << :MemorizeBackgroundSound; end
       def restore_bgm_bgs; @insns << :RestoreBackgroundSound; end
-      def timer_on; @insns << [:ControlTimer, true]; end
+      def timer_on(time); @insns << [:ControlTimer, true, time]; end
       def timer_off; @insns << [:ControlTimer, false]; end
 
       ### ============================
