@@ -3,6 +3,7 @@ module TextureOverrides
   MOD = MODBASE + 'TextureOverrides/'
   SERVICE = MODBASE + 'ServiceIcons/'
   SKINS = MODBASE + 'Windowskins/'
+  PICTURES = 'Graphics/Pictures/'
   NPCICONS = 'Graphics/Pictures/'
   MAP = 'Graphics/Pictures/RegionMap/'
   SUMMARY = 'Graphics/Pictures/Summary/'

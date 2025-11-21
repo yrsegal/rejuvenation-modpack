@@ -36,6 +36,7 @@ def outfitoptions_replace_outfits_with_darchflag(event)
     for insn in matched
       replaceRange(insn, insn) {
         switches[:DarchOutfit] = true
+        call_common_event 131 # Outfit Management
       }
     end
   }

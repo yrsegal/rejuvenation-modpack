@@ -2,6 +2,8 @@ Variables[:PuppetCoins] = 597
 
 module ComplexMartInterface
 
+  BASE_DIRECTORY = "#{__dir__[Dir.pwd.length+1..]}/ShopIcons"
+
   DEFAULT_MESSAGES_INTERACT = {
     speech: "Welcome!\nHow may I serve you?",
     come_again: "Please come again!",
@@ -13,6 +15,7 @@ module ComplexMartInterface
     no_puppet: "You don't have enough Puppet Coins.",
     no_coins: "You don't have enough Coins.",
     no_ap: "You don't have enough AP.",
+    no_bp: "You don't have enough BP.",
     no_re: "You don't have enough Red Essence.",
     no_items: "You don't have enough {1}.",
 
@@ -29,6 +32,7 @@ module ComplexMartInterface
     success_puppet: "Here you are!\nThank you!",
     success_ap: "Here you are!\nThank you!",
     success_re: "Here you are!\nThank you!",
+    success_bp: "Here you are!\nThank you!",
     success_items: "Here you are!\nThank you!",
 
     premier_one: "I'll throw in a Premier Ball, too.",
@@ -205,8 +209,9 @@ module ComplexMartInterface
       when :Money       then return _INTL(messages[:success_money]) unless messages[:success_money].empty?
       when :RedEssence  then return _INTL(messages[:success_re]) unless messages[:success_re].empty?
       when :Coins       then return _INTL(messages[:success_coins]) unless messages[:success_coins].empty?
-      when :PuppetCoins then return _INTL(messages[:success_coins]) unless messages[:success_coins].empty?
+      when :PuppetCoins then return _INTL(messages[:success_puppet]) unless messages[:success_puppet].empty?
       when :AP          then return _INTL(messages[:success_ap]) unless messages[:success_ap].empty?
+      when :BP          then return _INTL(messages[:success_bp]) unless messages[:success_bp].empty?
       when :Item        then return _INTL(messages[:success_items], getPriceItemName(item)) unless messages[:success_items].empty?
       end
       return ""
@@ -219,6 +224,7 @@ module ComplexMartInterface
       when :Coins       then return $PokemonGlobal.coins
       when :PuppetCoins then return $game_variables[:PuppetCoins]
       when :AP          then return $game_variables[:APPoints]
+      when :BP          then return $game_variables[:BPPoints]
       when :Item        then return $PokemonBag.pbQuantity(@inventory[item][:price][:item])
       end
       return 0
@@ -231,6 +237,7 @@ module ComplexMartInterface
       when :Coins       then $PokemonGlobal.coins = value
       when :PuppetCoins then $game_variables[:PuppetCoins] = value
       when :AP          then $game_variables[:APPoints] = value
+      when :BP          then $game_variables[:BPPoints] = value
       when :Item
         itemKey = @inventory[item][:price][:item]
         current = $PokemonBag.pbQuantity(itemKey)
@@ -250,11 +257,11 @@ module ComplexMartInterface
       return "Graphics/Icons/itemBack" if !item
       iconitem = nil
       case item[0]
-        when :puppet  then return "#{__dir__[Dir.pwd.length+1..]}/ShopIcons/puppetcoin"
+        when :puppet  then return "#{BASE_DIRECTORY}/puppetcoin"
         when :coins   then iconitem = :COINCASE
         when :move
           type = $cache.moves[item[1]].type
-          return sprintf("#{__dir__[Dir.pwd.length+1..]}/ShopIcons/%s",type.downcase)
+          return sprintf("#{BASE_DIRECTORY}/%s",type.downcase)
         when :item    then iconitem = item[1]
         when :pokemon 
           pkmn = PokeBattle_Pokemon.new(item[1],item[2],$Trainer,false,item[4])
@@ -337,6 +344,7 @@ module ComplexMartInterface
         when :Coins       then formatter,  fancyformatter,  fancyplural = "{1} C", "{1} Coin", "{1} Coins"
         when :PuppetCoins then formatter,  fancyformatter,  fancyplural = "{1} PC", "{1} Puppet Coin", "{1} Puppet Coins"
         when :AP          then formatter = fancyformatter = fancyplural = "{1} AP"
+        when :BP          then formatter = fancyformatter = fancyplural = "{1} BP"
         when :Item
           formatter = fancyformatter = "{1} #{getItemName(priceinfo[:item])}"
           fancyplural = fancyformatter + "s"
@@ -485,6 +493,7 @@ module ComplexMartInterface
           when :Coins       then pbDisplayPaused(_INTL(@messages[:no_coins])) unless @messages[:no_coins].empty?
           when :PuppetCoins then pbDisplayPaused(_INTL(@messages[:no_coins])) unless @messages[:no_puppet].empty?
           when :AP          then pbDisplayPaused(_INTL(@messages[:no_ap])) unless @messages[:no_ap].empty?
+          when :BP          then pbDisplayPaused(_INTL(@messages[:no_bp])) unless @messages[:no_bp].empty?
           when :Item        then pbDisplayPaused(_INTL(@messages[:no_items], @adapter.getPriceItemName(item))) unless @messages[:no_items].empty?
           end
           next
@@ -525,6 +534,7 @@ module ComplexMartInterface
           when :Coins       then pbDisplayPaused(_INTL(@messages[:no_coins])) unless @messages[:no_coins].empty?
           when :PuppetCoins then pbDisplayPaused(_INTL(@messages[:no_coins])) unless @messages[:no_puppet].empty?
           when :AP          then pbDisplayPaused(_INTL(@messages[:no_ap])) unless @messages[:no_ap].empty?
+          when :BP          then pbDisplayPaused(_INTL(@messages[:no_bp])) unless @messages[:no_bp].empty?
           when :Item        then pbDisplayPaused(_INTL(@messages[:no_items], @adapter.getPriceItemName(item))) unless @messages[:no_items].empty?
           end
           next
@@ -744,6 +754,11 @@ module ComplexMartInterface
         if priceTypes.include?(:AP)
           moneywindow.push(_INTL("AP:\n<r>{1}",$game_variables[:APPoints]))
           priceTypes.delete(:AP)
+        end
+
+        if priceTypes.include?(:BP)
+          moneywindow.push(_INTL("BP:\n<r>{1}",$game_variables[:BPPoints]))
+          priceTypes.delete(:BP)
         end
 
         if priceTypes.include?(:Shards)

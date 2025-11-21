@@ -49,14 +49,18 @@ module MovesetTweaks
     end
   end
 
-  def self.injectTMMoves(pokemon, *moves)
+  def self.getData(pokemon, sym)
     if pokemon.is_a?(MonData)
-      pokemon.compatiblemoves = [] unless pokemon.compatiblemoves
-      compatmoves = pokemon.compatiblemoves
+      pokemon.send("#{sym}=", []) unless pokemon.send(sym)
+      return pokemon.send(sym)
     else
-      pokemon[:compatiblemoves] = [] unless pokemon[:compatiblemoves]
-      compatmoves = pokemon[:compatiblemoves]
+      pokemon[sym] = [] unless pokemon[sym]
+      return pokemon[sym]
     end
+  end
+
+  def self.injectTMMoves(pokemon, *moves)
+    compatmoves = getData(pokemon, :compatiblemoves)
 
     moves.each {|move|
       compatmoves.push(move) unless compatmoves.include?(move)
@@ -64,13 +68,7 @@ module MovesetTweaks
   end
 
   def self.injectLevelUpMove(pokemon, level, move)
-    if pokemon.is_a?(MonData)
-      pokemon.Moveset = [] unless pokemon.Moveset
-      moves = pokemon.Moveset
-    else
-      pokemon[:Moveset] = [] unless pokemon[:Moveset]
-      moves = pokemon[:Moveset]
-    end
+    moves = getData(pokemon, :Moveset)
 
     insertion = [level, move]
 
@@ -85,13 +83,7 @@ module MovesetTweaks
   end
 
   def self.injectEggMoves(pokemon, *moves)
-    if pokemon.is_a?(MonData)
-      pokemon.EggMoves = [] unless pokemon.EggMoves
-      eggmoves = pokemon.EggMoves
-    else
-      pokemon[:EggMoves] = [] unless pokemon[:EggMoves]
-      eggmoves = pokemon[:EggMoves]
-    end
+    eggmoves = getData(pokemon, :EggMoves)
 
     moves.each {|move|
       eggmoves.push(move) unless eggmoves.include?(move)

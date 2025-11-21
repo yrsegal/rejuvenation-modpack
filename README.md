@@ -195,6 +195,8 @@ QoL mods:
 Other mods:
 - AevianLarvestaEgg.rb (depends on 0000.textures.rb, 0000.injection.rb, LarvestaEgg.png)  
   Adds an Aevian Larvesta egg to the Rose Theatre post Badge 13.
+- AnaAlts.rb (depends on 0000.textures.rb, TextureOverrides/)  
+  Changes some of Ana's sprites to focus on the Legacy Ana appearance instead.
 - AshGreninja.rb (depends on 0000.textures.rb, AshGreninja/)  
   Adds Battle Bond and Ash-Greninja.
   - AshGreninjaEvent.rb (depends on AshGreninja.rb, 0000.injection.rb)  
