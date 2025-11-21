@@ -199,6 +199,9 @@ TextureOverrides.registerTextureOverrides({
     TextureOverrides::MAP + 'mapPlayer007_2' => TextureOverrides::MOD + 'Ana/Legacy/MapHead',
     TextureOverrides::CHARS + 'Trainer007_2' => TextureOverrides::MOD + 'Ana/Legacy/Trainer',
     TextureOverrides::CHARS + 'xgene_legacyana_redcarpet' => TextureOverrides::MOD + 'Ana/Legacy/RedCarpet',
+
+    # Credit to ZUMI (!!!!) for doing the art for Legacy Ana's Gearen News sprite!
+    TextureOverrides::PICTURES + 'GearenNewsLegacyAna' => TextureOverrides::MOD + 'Ana/Legacy/GearenNews',
 })
 
 InjectionHelper.defineCommonPatch(23, &method(:anafixes_fix_darchsprite)) # Player Dupe (D)
@@ -220,3 +223,18 @@ InjectionHelper.defineMapPatch(53, 2) { |event| # I Nightmare Realm, Aevis/Dupe
 
 InjectionHelper.defineMapPatch(231, 40, 1, &method(:anafixes_fix_protagname)) # Somniam Mall, Melia, Crescent Conversation
 InjectionHelper.defineMapPatch(291, 72, &method(:anafixes_addLegacyRedCarpet)) # Pokestar Studios, Red Carpet Event
+
+InjectionHelper.defineMapPatch(-1) { |map|
+  map.patch(:anafixes_gearen_news_sprite) { |page|
+    matched = page.lookForAll([:ShowPicture, nil, /GearenNewsAna(?:_1)?/, nil, nil, nil, nil, nil, nil, nil, nil])
+
+    for insn in matched
+      page.replaceRange(insn, insn,
+        [:ConditionalBranch, :Script, "[2, 3, 4, 66].include?($game_variables[:Outfit])"],
+          [:ShowPicture, insn.parameters[0], 'GearenNewsLegacyAna', *insn.parameters[2..]],
+        :Else,
+          insn,
+        :Done)
+    end
+  }
+}
