@@ -33,6 +33,88 @@ class Game_Map
   attr_reader :map
 end
 
+def tlexport(width, height, original, changed)
+  palettechars = "ABCDEFGHIJKLMOPQRSTUVWXYZabcdefghjkmopqrstuvwxyz"
+
+  minx = $game_map.height
+  miny = $game_map.width
+  maxx = 0
+  maxy = 0
+
+  width.times do |x|
+    height.times do |y|
+      if original[x,y,0] != changed[x,y,0] || original[x,y,1] != changed[x,y,1] || original[x,y,2] != changed[x,y,2]
+        minx = x if x < minx
+        miny = y if y < miny
+        maxx = x if x > maxx
+        maxy = y if y > maxy
+      end
+    end
+  end
+
+  if minx <= maxx && miny <= maxy
+    palette = {}
+    paletteorder = []
+    startchar = " "
+    paletteidx = 0
+
+    canW = maxx - minx + 1
+    canH = maxy - miny + 1
+    canvas = Array.new(canH) {|i| " " * canW}
+
+    canH.times do |yp|
+      canW.times do |xp|
+        x = minx + xp
+        y = miny + yp
+        key = Array.new(3) {|i| original[x,y,i] == changed[x,y,i] ? nil : changed[x,y,i]}
+        if key != [nil,nil,nil]
+          unless palette[key]
+            if paletteidx < palettechars.length
+              palettechar = palettechars.chars[paletteidx]
+              paletteidx += 1
+            else
+              startchar = startchar.succ
+              while palette.values.include?(startchar) || '"\\#%,[]{}()=>'.chars.include?(startchar) || startchar[/\p{Cntrl}/]
+                startchar = (startchar.codepoints[0] + 1).chr(Encoding::UTF_8)
+              end
+              palettechar = startchar
+            end
+            paletteorder.push(palettechar)
+            palette[key] = palettechar
+          else
+            palettechar = palette[key]
+          end
+
+          canvas[yp][xp] = palettechar
+        end
+      end
+    end
+
+    File.open("tileoutput.txt","wb"){|f| 
+      f.write("map.fillArea(#{minx}, #{miny},\n")
+      firstline = true
+      f.write("  [")
+      for s in canvas
+        f.write(",\n   ") unless firstline
+        firstline = false
+        f.write(s.inspect)
+      end
+      f.write("],\n")
+      f.write("  {\n")
+      for key in paletteorder
+        value = palette.invert[key]
+        f.write("    ")
+        f.write(key.inspect)
+        f.write(" => ")
+        f.write(value.inspect)
+        f.write(",\n")
+      end
+      f.write("  })\n")
+    }
+    Kernel.pbMessage("Saved to tileoutput.txt")
+  end
+end
+
 # Left click - paint/select tile
 # Right click - copy target
 # Hold shift to paint/copy all layers
@@ -41,8 +123,6 @@ end
 # A to clear swatch layer
 # Currently no support for complex autotile painting
 def tleditor2
-
-  palettechars = "ABCDEFGHIJKLMOPQRSTUVWXYZabcdefghjkmopqrstuvwxyz"
 
   tilesetwrapper=pbTilesetWrapper
   tileset=tilesetwrapper.data[$game_map.map.tileset_id]
@@ -393,84 +473,7 @@ def tleditor2
     event.unlock
   end
 
-  changeminx = $game_map.height
-  changeminy = $game_map.width
-  changemaxx = 0
-  changemaxy = 0
-
-  $game_map.width.times do |x|
-    $game_map.height.times do |y|
-      if orig[x,y,0] != $game_map.data[x,y,0] || orig[x,y,1] != $game_map.data[x,y,1] || orig[x,y,2] != $game_map.data[x,y,2]
-        changeminx = x if x < changeminx
-        changeminy = y if y < changeminy
-        changemaxx = x if x > changemaxx
-        changemaxy = y if y > changemaxy
-      end
-    end
-  end
-
-  if changeminx <= changemaxx && changeminy <= changemaxy
-    palette = {}
-    paletteorder = []
-    startchar = " "
-    paletteidx = 0
-
-    canW = changemaxx - changeminx + 1
-    canH = changemaxy - changeminy + 1
-    canvas = Array.new(canH) {|i| " " * canW}
-
-    canH.times do |yp|
-      canW.times do |xp|
-        x = changeminx + xp
-        y = changeminy + yp
-        key = Array.new(3) {|i| orig[x,y,i] == $game_map.data[x,y,i] ? nil : $game_map.data[x,y,i]}
-        if key != [nil,nil,nil]
-          unless palette[key]
-            if paletteidx < palettechars.length
-              palettechar = palettechars.chars[paletteidx]
-              paletteidx += 1
-            else
-              startchar = startchar.succ
-              while palette.values.include?(startchar) || '"\\#%,[]{}()=>'.chars.include?(startchar)
-                startchar = startchar.succ
-              end
-              palettechar = startchar
-            end
-            paletteorder.push(palettechar)
-            palette[key] = palettechar
-          else
-            palettechar = palette[key]
-          end
-
-          canvas[yp][xp] = palettechar
-        end
-      end
-    end
-
-    File.open("tileoutput.txt","wb"){|f| 
-      f.write("map.fillArea(#{changeminx}, #{changeminy},\n")
-      firstline = true
-      f.write("  [")
-      for s in canvas
-        f.write(",\n   ") unless firstline
-        firstline = false
-        f.write(s.inspect)
-      end
-      f.write("],\n")
-      f.write("  {\n")
-      for key in paletteorder
-        value = palette.invert[key]
-        f.write("    ")
-        f.write(key.inspect)
-        f.write(" => ")
-        f.write(value.inspect)
-        f.write(",\n")
-      end
-      f.write("  })\n")
-    }
-
-    Kernel.pbMessage("Saved to tileoutput.txt")
-  end
+  tlexport($game_map.width, $game_map.height, orig, $game_map.data)
 end
 
 # hold D - paint
@@ -777,85 +780,24 @@ def tleditor
   for event in $game_map.events.values
     event.unlock
   end
+  
+  tlexport($game_map.width, $game_map.height, orig, $game_map.data)
+end
 
-  changeminx = $game_map.height
-  changeminy = $game_map.width
-  changemaxx = 0
-  changemaxy = 0
 
-  $game_map.width.times do |x|
-    $game_map.height.times do |y|
-      if orig[x,y,0] != $game_map.data[x,y,0] || orig[x,y,1] != $game_map.data[x,y,1] || orig[x,y,2] != $game_map.data[x,y,2]
-        changeminx = x if x < changeminx
-        changeminy = y if y < changeminy
-        changemaxx = x if x > changemaxx
-        changemaxy = y if y > changemaxy
+def tlcombine(map)
+  orig = Table.new(map.width, map.height, 3)
+  map.width.times do |x|
+    map.height.times do |y|
+      3.times do |l|
+        orig[x,y,l] = map.data[x,y,l]
       end
     end
   end
 
-  if changeminx <= changemaxx && changeminy <= changemaxy
-    palette = {}
-    paletteorder = []
-    startchar = " "
-    paletteidx = 0
+  yield
 
-    canW = changemaxx - changeminx + 1
-    canH = changemaxy - changeminy + 1
-    canvas = Array.new(canH) {|i| " " * canW}
-
-    canH.times do |yp|
-      canW.times do |xp|
-        x = changeminx + xp
-        y = changeminy + yp
-        key = Array.new(3) {|i| orig[x,y,i] == $game_map.data[x,y,i] ? nil : $game_map.data[x,y,i]}
-        if key != [nil,nil,nil]
-          unless palette[key]
-            if paletteidx < palettechars.length
-              palettechar = palettechars.chars[paletteidx]
-              paletteidx += 1
-            else
-              startchar = startchar.succ
-              while palette.values.include?(startchar) || '"\\#%,[]{}()=>'.chars.include?(startchar)
-                startchar = startchar.succ
-              end
-              palettechar = startchar
-            end
-            paletteorder.push(palettechar)
-            palette[key] = palettechar
-          else
-            palettechar = palette[key]
-          end
-
-          canvas[yp][xp] = palettechar
-        end
-      end
-    end
-
-    File.open("tileoutput.txt","wb"){|f| 
-      f.write("map.fillArea(#{changeminx}, #{changeminy},\n")
-      firstline = true
-      f.write("  [")
-      for s in canvas
-        f.write(",\n   ") unless firstline
-        firstline = false
-        f.write(s.inspect)
-      end
-      f.write("],\n")
-      f.write("  {\n")
-      for key in paletteorder
-        value = palette.invert[key]
-        f.write("    ")
-        f.write(key.inspect)
-        f.write(" => ")
-        f.write(value.inspect)
-        f.write(",\n")
-      end
-      f.write("  })\n")
-    }
-
-    Kernel.pbMessage("Saved to tileoutput.txt")
-  end
+  tlexport(map.width, map.height, orig, map.data)
 end
 
 class TileDrawingHelper

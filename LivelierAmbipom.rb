@@ -11,7 +11,7 @@ InjectionHelper.defineMapPatch(199) { # Route 2
     if ev.name == "Aip1"
       ev.pages.each { |page|
         page.move_type = InjectionHelper::EVENT_MOVE_TYPES[:Random]
-        InjectionHelper.markPatched
+        InjectionHelper.declarePatched
       }
     end
   }
