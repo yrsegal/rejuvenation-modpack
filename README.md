@@ -179,6 +179,8 @@ QoL mods:
   Holding shift overrides your spice scent with 0200.
 - ShowMallStamps.rb (depends on 0000.injection.rb)  
   Somniam Mall shops show their Stamp requirements.
+- SortMoveTutors.rb    
+  Adds bag-like sorting to the cybernav move tutor screen.
 - ThiefAndPickupEvenWithItem.rb  
   Thief/Covet, Pickup, Pickpocket, and Magician work even if the user is holding an item in wild battles, and items stolen by these effects are deposited directly into the bag at the end of those battles.
 - TrueTypesInSummary.rb  
