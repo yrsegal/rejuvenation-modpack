@@ -156,6 +156,8 @@ QoL mods:
   Turns Cairo, Doxie, Coin shops, AP shops, and Move Tutors into a shop interface, so you don't need to remember which crests or moves you've purchased.
 - DeleteEndWaits.rb (depends on 0000.injection.rb)  
   Generally remove end-of-message waits, whichcan cause you to accidentally select an option when you didn't mean to.
+- FavoriteItems.rb (depends on favorite.png)  
+  Allows you to favorite items, which will then sort at the top of the item list.
 - FLHUDStatus.rb  
   Makes the in-menu party HUD show if a Pokémon is statused.
 - FlyExpansion.rb (depends on 0000.formattedchoices.rb)  
