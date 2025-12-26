@@ -284,18 +284,6 @@ class Window_PokemonBag < Window_DrawableCommand
     textpos=[]
     rect=drawCursor(index,rect)
     ypos=rect.y+4
-    ### MODDED/
-    if index!=@bag.pockets[self.pocket].length
-      item=@bag.pockets[self.pocket][index]
-      if @bag.isFavorite?(item)
-        xshift = 38
-        xshift += 40 if @bag.pbIsRegistered?(item) || !pbIsImportantItem?(item)
-        pbDrawImagePositions(self.contents,[
-           ["#{__dir__[Dir.pwd.length+1..]}/favorite",rect.x+rect.width-xshift,ypos+6,0,0,-1,-1]
-        ])
-      end
-    end
-    ### /MODDED
     if index==@bag.pockets[self.pocket].length
       textpos.push([_INTL("CLOSE BAG"),rect.x,ypos,false,
          self.baseColor,self.shadowColor])
@@ -311,6 +299,16 @@ class Window_PokemonBag < Window_DrawableCommand
       if !pbIsImportantItem?(item) # Not a Key item or HM (or infinite TM)
         textpos.push([qty,xQty,ypos,false,baseColor,shadowColor])
       end
+      ### MODDED/
+      if @bag.isFavorite?(item)
+        xshift = 38
+        xshift += 40 if @bag.pbIsRegistered?(item)
+        xshift += sizeQty if !pbIsImportantItem?(item)
+        pbDrawImagePositions(self.contents,[
+           ["#{__dir__[Dir.pwd.length+1..]}/favorite",rect.x+rect.width-xshift,ypos+6,0,0,-1,-1]
+        ])
+      end
+      ### /MODDED
     end
     pbDrawTextPositions(self.contents,textpos)
     if index!=@bag.pockets[self.pocket].length
