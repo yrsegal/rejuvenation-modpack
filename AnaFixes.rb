@@ -218,6 +218,48 @@ InjectionHelper.defineMapPatch(53, 2) { # I Nightmare Realm, Aevis/Dupe
   end
 }
 
+InjectionHelper.defineMapPatch(99, 77) { |event| # Nightmare School, soul hotel reveal
+  event.patch(:anafixes_aelita_comment) { |page|
+    matched = page.lookForSequence(
+      [:ShowText, "AELITA: Um, \\PN has darkish pink hair,"],
+      [:ShowTextContinued, "with mostly black clothing on."],
+      [:ShowText, "She's a little shorter than me, and has"],
+      [:ShowText, "pinkish-red eyes."])
+
+    if matched
+      page.replaceRange(*matched,
+        [:ConditionalBranch, :Script, "[2, 3, 4, 66].include?($game_variables[:Outfit])"],
+          [:ShowText, "AELITA: Um, \\PN has dark turquoise hair,"],
+          [:ShowTextContinued, "and a cute black and purple dress."],
+          [:ShowText, "She's a little shorter than me, and has"],
+          [:ShowTextContinued, "eyes that look purple or blue depending on the light."],
+          [:ShowText, "She's got a neat glowing... bow?"],
+          [:ShowTextContinued, "Which doesn't look like fabric, actually..."],
+        :Else,
+          *matched,
+        :Done)
+    end
+  }
+}
+
+InjectionHelper.defineMapPatch(392, 36) { |event| # Chrysalis Mansion, Marianette nickname
+  event.patch(:anafixes_marianette_comment) { |page|
+    matched = page.lookForSequence(
+      [:ShowText, "Hm... I'm sorta blanking on names for you."],
+      [:ShowTextContinued, "Your black attire with your pink hair..."])
+
+    if matched
+      page.replaceRange(*matched,
+        [:ConditionalBranch, :Script, "[2, 3, 4, 66].include?($game_variables[:Outfit])"],
+          [:ShowText, "Hm... I'm sorta blanking on names for you."],
+          [:ShowTextContinued, "Your black attire with your blue hair and glowy bits..."],
+        :Else,
+          *matched,
+        :Done)
+    end
+  }
+}
+
 InjectionHelper.defineMapPatch(231, 40, 1, &method(:anafixes_fix_protagname)) # Somniam Mall, Melia, Crescent Conversation
 InjectionHelper.defineMapPatch(291, 72, &method(:anafixes_addLegacyRedCarpet)) # Pokestar Studios, Red Carpet Event
 

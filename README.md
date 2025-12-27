@@ -156,6 +156,8 @@ QoL mods:
   Turns Cairo, Doxie, Coin shops, AP shops, and Move Tutors into a shop interface, so you don't need to remember which crests or moves you've purchased.
 - DeleteEndWaits.rb (depends on 0000.injection.rb)  
   Generally remove end-of-message waits, whichcan cause you to accidentally select an option when you didn't mean to.
+- FavoriteItems.rb (depends on favorite.png)  
+  Allows you to favorite items, which will then sort at the top of the item list.
 - FLHUDStatus.rb  
   Makes the in-menu party HUD show if a Pokémon is statused.
 - FlyExpansion.rb (depends on 0000.formattedchoices.rb)  
@@ -179,6 +181,8 @@ QoL mods:
   Holding shift overrides your spice scent with 0200.
 - ShowMallStamps.rb (depends on 0000.injection.rb)  
   Somniam Mall shops show their Stamp requirements.
+- SortMoveTutors.rb    
+  Adds bag-like sorting to the cybernav move tutor screen.
 - ThiefAndPickupEvenWithItem.rb  
   Thief/Covet, Pickup, Pickpocket, and Magician work even if the user is holding an item in wild battles, and items stolen by these effects are deposited directly into the bag at the end of those battles.
 - TrueTypesInSummary.rb  
