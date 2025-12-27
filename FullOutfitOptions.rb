@@ -99,7 +99,7 @@ def outfitoptions_injectBeforeOutfit0(event, event_id, nums, running, direction=
                                     Aevia:  running ? 'girl_run'  : 'trchar001',
                                     Aevis:  running ? 'boy_run'   : 'trchar000', }
               branch(switches[switch], true) {
-                events[event_id].set_move_route { set_character sprite, direction: direction }.wait
+                events[event_id].set_move_route { set_character sprite + '_' + outfit.to_s, direction: direction }.wait
                 jump_label 'End'
               }
             end
