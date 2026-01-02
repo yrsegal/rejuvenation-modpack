@@ -565,7 +565,8 @@ module ComplexMartInterface
             success = true
           end
         else
-          success = pbMoveTutorChoose(item[1])
+          pbMoveTutorChoose(item[1])
+          success = true
         end
 
         if success
