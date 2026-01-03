@@ -42,7 +42,8 @@ InjectionHelper.defineMapPatch(13, 24) { # Akuwa town, warp to blacksteeple
                           $PokemonBag.pbStoreItem(:FOCUSSASH,1)'
                   variables[:BlacksteepleStory] = 84
                   script "$game_screen.blacksteepleskip_tookskip = true"
-                  transfer_player map: 89, x: 69, y: 39, direction: :Up, fading: false
+                  transfer_player map: 89, x: 69, y: 39, direction: :Down, fading: false
+                  change_tone 0, 0, 0, frames: 10
                   exit_event_processing
 
                 }
@@ -54,7 +55,7 @@ InjectionHelper.defineMapPatch(13, 24) { # Akuwa town, warp to blacksteeple
                   variables[:BlacksteepleStory] = 84
                   variables[:BattleshipStory] = 8
                   script "$game_screen.blacksteepleskip_tookskip = true"
-                  transfer_player map: 89, x: 69, y: 39, direction: :Up, fading: false
+                  transfer_player map: 207, x: 92, y: 66, direction: :Down, fading: false
                   exit_event_processing
 
                 }
