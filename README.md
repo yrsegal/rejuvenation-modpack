@@ -148,6 +148,8 @@ QoL mods:
     Improves the select-a-Pokémon menu.
   - MoveHelpDisplayBBUI.rb (depends on BetterBattleUI.rb)  
     Adds a move-info display controlled by the Inspect key (A).
+- BlacksteepleSkip.rb (depends on 0000.injection.rb)  
+  Adds an NG+ skip for Blacksteeple Castle.
 - BoxExtensions.rb (depends on 0001.boundedentry.rb, BoxExtensions/)  
   Expand the "Find" functionality of Pokémon boxes, and make Pokéballs visible from the box.
 - CleanerPrismPower.rb  
