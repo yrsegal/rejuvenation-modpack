@@ -14,6 +14,7 @@ InjectionHelper.registerScriptSwitch("$game_screen.blacksteepleskip_tookskip")
 
 Variables[:UnidataBadgeCount] = 759
 Variables[:BlacksteepleStory] = 232
+Variables[:BattleshipStory] = 87
 
 InjectionHelper.defineMapPatch(13, 24) { |event| # Akuwa town, warp to blacksteeple
   event.patch(:addskipforblacksteeple) { |page|
@@ -25,18 +26,21 @@ InjectionHelper.defineMapPatch(13, 24) { |event| # Akuwa town, warp to blackstee
           [:ShowText, "Skip through Blacksteeple Castle?"],
           [:ShowChoices, ["Yes", "No"], 2],
           [:When, 0, "Yes"],
-            [:Script, "$PokemonBag.pbStoreItem(:MININGKIT,1)"],
-            [:Script, "$PokemonBag.pbStoreItem(:BLASTPOWDER,1)"],
-            [:Script, "$PokemonBag.pbStoreItem(:FOCUSSASH,1)"],
             [:ShowText, "Skip to Madame X, the Battleship, or Terajuma?"],
             [:ShowChoices, ["Madame X", "Battleship", "Terajuma"], 5],
             [:When, 0, "Madame X"],
+              [:Script, "$PokemonBag.pbStoreItem(:MININGKIT,1)"],
+              [:Script, "$PokemonBag.pbStoreItem(:BLASTPOWDER,1)"],
+              [:Script, "$PokemonBag.pbStoreItem(:FOCUSSASH,1)"],
               [:ControlVariable, :BlacksteepleStory, :[]=, :Constant, 81],
               [:Script, "$game_screen.blacksteepleskip_tookskip = true"],
               [:TransferPlayer, :Constant, 440, 59, 70, :Up, false],
               :ExitEventProcessing,
             :Done,
             [:When, 1, "Battleship"],
+              [:Script, "$PokemonBag.pbStoreItem(:MININGKIT,1)"],
+              [:Script, "$PokemonBag.pbStoreItem(:BLASTPOWDER,1)"],
+              [:Script, "$PokemonBag.pbStoreItem(:FOCUSSASH,1)"],
               [:ControlVariable, :BlacksteepleStory, :[]=, :Constant, 84],
               [:Script, "$game_screen.blacksteepleskip_tookskip = true"],
               [:TransferPlayer, :Constant, 89, 69, 39, :Down, false], # Xen Battleship
@@ -44,7 +48,11 @@ InjectionHelper.defineMapPatch(13, 24) { |event| # Akuwa town, warp to blackstee
               :ExitEventProcessing,
             :Done,
             [:When, 2, "Terajuma"],
+              [:Script, "$PokemonBag.pbStoreItem(:MININGKIT,1)"],
+              [:Script, "$PokemonBag.pbStoreItem(:BLASTPOWDER,1)"],
+              [:Script, "$PokemonBag.pbStoreItem(:FOCUSSASH,1)"],
               [:ControlVariable, :BlacksteepleStory, :[]=, :Constant, 84],
+              [:ControlVariable, :BattleshipStory, :[]=, :Constant, 8],
               [:Script, "$game_screen.blacksteepleskip_tookskip = true"],
               [:TransferPlayer, :Constant, 207, 92, 66, :Left, false], # Terajuma Password point
               :ExitEventProcessing,
