@@ -14,97 +14,110 @@ InjectionHelper.registerScriptSwitch("$game_screen.blacksteepleskip_tookskip")
 
 Variables[:UnidataBadgeCount] = 759
 Variables[:BlacksteepleStory] = 232
+Variables[:BattleshipStory] = 8
 
-InjectionHelper.defineMapPatch(13, 24) { |event| # Akuwa town, warp to blacksteeple
-  event.patch(:addskipforblacksteeple) { |page|
-    matched = page.lookForSequence([:TransferPlayer, :Constant, 128, nil, nil, nil, nil])
+InjectionHelper.defineMapPatch(13, 24) { # Akuwa town, warp to blacksteeple
+  patch(:addskipforblacksteeple) {
+    matched = lookForSequence([:TransferPlayer, :Constant, 128, nil, nil, nil, nil])
     if matched
-      page.insertBefore(matched,
-        [:ConditionalBranch, :Variable, :UnidataBadgeCount, :Constant, 5, :>=],
-          [:Label, 'blacksteepleskipstart'],
-          [:ShowText, "Skip through Blacksteeple Castle?"],
-          [:ShowChoices, ["Yes", "No"], 2],
-          [:When, 0, "Yes"],
-            [:Script, "$PokemonBag.pbStoreItem(:MININGKIT,1)"],
-            [:Script, "$PokemonBag.pbStoreItem(:BLASTPOWDER,1)"],
-            [:Script, "$PokemonBag.pbStoreItem(:FOCUSSASH,1)"],
-            [:ShowText, "Skip to Madame X, the Battleship, or Terajuma?"],
-            [:ShowChoices, ["Madame X", "Battleship", "Terajuma"], 5],
-            [:When, 0, "Madame X"],
-              [:ControlVariable, :BlacksteepleStory, :[]=, :Constant, 81],
-              [:Script, "$game_screen.blacksteepleskip_tookskip = true"],
-              [:TransferPlayer, :Constant, 440, 59, 70, :Up, false],
-              :ExitEventProcessing,
-            :Done,
-            [:When, 1, "Battleship"],
-              [:ControlVariable, :BlacksteepleStory, :[]=, :Constant, 84],
-              [:Script, "$game_screen.blacksteepleskip_tookskip = true"],
-              [:TransferPlayer, :Constant, 89, 69, 39, :Down, false], # Xen Battleship
-              [:ChangeScreenColorTone, Tone.new(0,0,0,0), 10],
-              :ExitEventProcessing,
-            :Done,
-            [:When, 2, "Terajuma"],
-              [:ControlVariable, :BlacksteepleStory, :[]=, :Constant, 84],
-              [:Script, "$game_screen.blacksteepleskip_tookskip = true"],
-              [:TransferPlayer, :Constant, 207, 92, 66, :Left, false], # Terajuma Password point
-              :ExitEventProcessing,
-            :Done,
-            :WhenCancel,
-              [:JumpToLabel, 'blacksteepleskipstart'],
-            :Done,
-          :Done,
-          [:When, 1, "No"],
-          :Done,
-        :Done)
+      insertBefore(matched) {
+        branch(variables[:UnidataBadgeCount], :>=, 5) {
+          label 'blacksteepleskipstart'
+          show_choices("Skip through Blacksteeple Castle?") {
+            choice("Yes") {
+              show_choices("Skip to Madame X, the Battleship, or Terajuma?") {
+                choice("Madame X") {
+                  script '$PokemonBag.pbStoreItem(:MININGKIT,1)
+                          $PokemonBag.pbStoreItem(:BLASTPOWDER,1)
+                          $PokemonBag.pbStoreItem(:FOCUSSASH,1)'
+                  variables[:BlacksteepleStory] = 81
+                  script "$game_screen.blacksteepleskip_tookskip = true"
+                  transfer_player map: 440, x: 59, y: 70, direction: :Up, fading: false
+                  exit_event_processing
+                }
+
+                choice("Battleship") {
+                  script '$PokemonBag.pbStoreItem(:MININGKIT,1)
+                          $PokemonBag.pbStoreItem(:BLASTPOWDER,1)
+                          $PokemonBag.pbStoreItem(:FOCUSSASH,1)'
+                  variables[:BlacksteepleStory] = 84
+                  script "$game_screen.blacksteepleskip_tookskip = true"
+                  transfer_player map: 89, x: 69, y: 39, direction: :Up, fading: false
+                  exit_event_processing
+
+                }
+
+                choice("Terajuma") {
+                  script '$PokemonBag.pbStoreItem(:MININGKIT,1)
+                          $PokemonBag.pbStoreItem(:BLASTPOWDER,1)
+                          $PokemonBag.pbStoreItem(:FOCUSSASH,1)'
+                  variables[:BlacksteepleStory] = 84
+                  variables[:BattleshipStory] = 8
+                  script "$game_screen.blacksteepleskip_tookskip = true"
+                  transfer_player map: 89, x: 69, y: 39, direction: :Up, fading: false
+                  exit_event_processing
+
+                }
+
+                when_cancel {
+                  jump_label 'blacksteepleskipstart'
+                }
+              }
+            }
+            default_choice("No") {}
+          }
+        }
+      }
     end
   }
 }
 
-InjectionHelper.defineMapPatch(440) { |map| # Blacksteeple Castle Confrontation
-  map.createSinglePageEvent(60, 69, "pc_star") { |page| 
-    page.setGraphic("HealBell", hueShift: 100)
-    page.direction_fix = true
-    page.move_speed = 1
-    page.step_anime = true
-    page.requiresSwitch(InjectionHelper.getScriptSwitch("$game_screen.blacksteepleskip_tookskip"))
-    page.interact(
-      [:Script, 'Kernel.pbPokeCenterPC'])
+InjectionHelper.defineMapPatch(440) { # Blacksteeple Castle Confrontation
+  createSinglePageEvent(60, 69, "pc_star") { 
+    setGraphic "HealBell", hueShift: 100
+    self.direction_fix = true
+    self.move_speed = 1
+    self.step_anime = true
+    requiresSwitch InjectionHelper.getScriptSwitch("$game_screen.blacksteepleskip_tookskip")
+    interact {
+      script 'Kernel.pbPokeCenterPC'
+    }
   }
 }
 
-InjectionHelper.defineMapPatch(207) { |map| # Terajuma Shipyard
+InjectionHelper.defineMapPatch(207) { # Terajuma Shipyard
   for x, y, i in [[32, 14, 0],
                   [33, 14, 1],
                   [35, 14, 2],
                   [36, 14, 3],
                   [36, 13, 4]]
-    map.createNewEvent(x, y, "miningrock", "blacksteepleskip_miningrock#{i}") { |event|
-      event.newPage { |page|
-        page.setGraphic("Object Mineable Rock")
-        page.direction_fix = true
-        page.move_speed = 1
-        page.move_frequency = 1
-        page.step_anime = true
-        page.requiresSwitch(InjectionHelper.getScriptSwitch("$game_screen.blacksteepleskip_tookskip"))
-        page.interact(
-          [:ShowText, "It appears to have been moved here from the Blacksteeple Mines."],
-          [:ConditionalBranch, :Script, "$PokemonBag.pbQuantity(:MININGKIT)>0"],
-            [:ShowText, "Do you want to mine the rock?"],
-            [:ShowChoices, ["Yes", "No"], 2],
-            [:When, 0, "Yes"],
-              [:Script, "pbMiningGame"],
-              [:ControlSelfSwitch, 'A', true],
-              [:ShowText, "The rock crumbled away."],
-            :Done,
-            [:When, 1, "No"],
-            :Done,
-          :Else,
-            [:ShowText, "It seems too sturdy to break or move..."],
-          :Done)
+    createNewEvent(x, y, "miningrock", "blacksteepleskip_miningrock#{i}") {
+      newPage { |page|
+        setGraphic "Object Mineable Rock"
+        self.direction_fix = true
+        self.move_speed = 1
+        self.move_frequency = 1
+        self.step_anime = true
+        requiresSwitch InjectionHelper.getScriptSwitch("$game_screen.blacksteepleskip_tookskip")
+        page.interact {
+          text "It appears to have been moved here from the Blacksteeple Mines."
+          branch("$PokemonBag.pbQuantity(:MININGKIT)>0") {
+            show_choices("Do you want to mine the rock?") {
+              choice("Yes") {
+                script "pbMiningGame"
+                self_switch["A"] = true
+                text "The rock crumbled away."
+              }
+              default_choice("No") {}
+            }
+          }.else {
+            text "It seems too sturdy to break or move..."
+          }
+        }
       }
 
-      event.newPage { |page|
-        page.requiresSelfSwitch("A")
+      newPage {
+        requiresSelfSwitch "A"
       }
     }
   end
