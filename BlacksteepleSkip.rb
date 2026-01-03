@@ -45,7 +45,6 @@ InjectionHelper.defineMapPatch(13, 24) { # Akuwa town, warp to blacksteeple
                   transfer_player map: 89, x: 69, y: 39, direction: :Down, fading: false
                   change_tone 0, 0, 0, frames: 10
                   exit_event_processing
-
                 }
 
                 choice("Terajuma") {
@@ -57,7 +56,6 @@ InjectionHelper.defineMapPatch(13, 24) { # Akuwa town, warp to blacksteeple
                   script "$game_screen.blacksteepleskip_tookskip = true"
                   transfer_player map: 207, x: 92, y: 66, direction: :Down, fading: false
                   exit_event_processing
-
                 }
 
                 when_cancel {
