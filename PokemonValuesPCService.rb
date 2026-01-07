@@ -55,8 +55,7 @@ class PokemonValuesPCService
 
   EV_CARDS = [:HPCARD, :ATKCARD, :DEFCARD, :SPATKCARD, :SPDEFCARD, :SPEEDCARD]
   STAT_NAMES = ["HP", "Attack", "Defense", "Sp. Atk", "Sp. Def", "Speed"]
-  STAT_NAMES_COMPACT = ["HP", "Attack", "Def.", "Sp. Atk", "Sp. Def", "Speed"]
-  STAT_NAMES_SHORT = [nil, "ATK", "DEF", "SPATK", "SPDEF", "SPEED"]
+  STAT_NAMES_SHORT = [nil, "Atk", "Def", "SpA", "SpD", "Spe"]
   FLAVORS_TO_STATS = [nil, 'spicy', 'sour', 'dry', 'bitter', 'sweet']
 
   def color(num)
@@ -122,25 +121,20 @@ class PokemonValuesPCService
     return shadowc3tag(MessageConfig::DARKTEXTBASE, Color.new(27,79,114))
   end
 
-  def createStatText(pkmn, origstats, window, compact = false)
+  def createStatText(pkmn, origstats, window)
     pkmn.calcStats
     statvals = [pkmn.hp, pkmn.attack, pkmn.defense, pkmn.spatk, pkmn.spdef, pkmn.speed]
     nature = $cache.natures[pkmn.nature]
     natup=nature.incStat
     natdn=nature.decStat
 
-    statNames = STAT_NAMES
-    statvals.each_with_index { |value, i|
-      statNames = STAT_NAMES_COMPACT if value != origstats[i]
-    }
-
     darkWindow = isDarkWindowskin(window.windowskin)
     offsets = []
-    longest = statNames.map { |name| window.contents.text_size(name).width }.max
+    longest = STAT_NAMES.map { |name| window.contents.text_size(name).width }.max
     spaceWidth = window.contents.text_size(" ").width
-    offsets = statNames.map { |name| " " * ((longest - window.contents.text_size(name).width) / spaceWidth) }
+    offsets = STAT_NAMES.map { |name| " " * ((longest - window.contents.text_size(name).width) / spaceWidth) }
 
-    return statNames.each_with_index.map { |name,i|
+    return STAT_NAMES.each_with_index.map { |name,i|
       color = nil
       if natup != natdn
         color = lesserPositiveColor(darkWindow) if natup == i
@@ -354,7 +348,7 @@ class PokemonValuesPCService
       commands = isDarkWindowskin(msgwindow.windowskin) ? $builtCommandsDarkWindow : $builtCommandsLightWindow
 
       summarywindow = ServicePCList.createCornerWindow { |window|
-        window.text=createStatText(pkmn, origstats, window, true)
+        window.text=createStatText(pkmn, origstats, window)
       }
       command=Kernel.pbMessageDisplay(msgwindow,msg,true,
          proc {|msgwindow|
