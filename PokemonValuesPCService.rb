@@ -55,6 +55,7 @@ class PokemonValuesPCService
 
   EV_CARDS = [:HPCARD, :ATKCARD, :DEFCARD, :SPATKCARD, :SPDEFCARD, :SPEEDCARD]
   STAT_NAMES = ["HP", "Attack", "Defense", "Sp. Atk", "Sp. Def", "Speed"]
+  STAT_NAMES_COMPACT = ["HP", "Attack", "Def.", "Sp. Atk", "Sp. Def", "Speed"]
   STAT_NAMES_SHORT = [nil, "ATK", "DEF", "SPATK", "SPDEF", "SPEED"]
   FLAVORS_TO_STATS = [nil, 'spicy', 'sour', 'dry', 'bitter', 'sweet']
 
@@ -121,20 +122,25 @@ class PokemonValuesPCService
     return shadowc3tag(MessageConfig::DARKTEXTBASE, Color.new(27,79,114))
   end
 
-  def createStatText(pkmn, origstats, window)
+  def createStatText(pkmn, origstats, window, compact = false)
     pkmn.calcStats
     statvals = [pkmn.hp, pkmn.attack, pkmn.defense, pkmn.spatk, pkmn.spdef, pkmn.speed]
     nature = $cache.natures[pkmn.nature]
     natup=nature.incStat
     natdn=nature.decStat
 
+    statNames = STAT_NAMES
+    statvals.each_with_index { |value, i|
+      statNames = STAT_NAMES_COMPACT if value != origstats[i]
+    }
+
     darkWindow = isDarkWindowskin(window.windowskin)
     offsets = []
-    longest = STAT_NAMES.map { |name| window.contents.text_size(name).width }.max
+    longest = statNames.map { |name| window.contents.text_size(name).width }.max
     spaceWidth = window.contents.text_size(" ").width
-    offsets = STAT_NAMES.map { |name| " " * ((longest - window.contents.text_size(name).width) / spaceWidth) }
+    offsets = statNames.map { |name| " " * ((longest - window.contents.text_size(name).width) / spaceWidth) }
 
-    return STAT_NAMES.each_with_index.map { |name,i|
+    return statNames.each_with_index.map { |name,i|
       color = nil
       if natup != natdn
         color = lesserPositiveColor(darkWindow) if natup == i
@@ -188,7 +194,7 @@ class PokemonValuesPCService
           evs(pkmn, origstats) if $game_screen.pokemonvaluespc_unlocked_ev
           ServicePCList.buzzer if !$game_screen.pokemonvaluespc_unlocked_ev
         when 2
-          natures(pkmn) if $game_screen.pokemonvaluespc_unlocked_nature
+          natures(pkmn, origstats) if $game_screen.pokemonvaluespc_unlocked_nature
           ServicePCList.buzzer if !$game_screen.pokemonvaluespc_unlocked_nature
         when 3
           abilities(pkmn) if $game_screen.pokemonvaluespc_unlocked_ability
@@ -319,13 +325,13 @@ class PokemonValuesPCService
       $builtNatures = []
       $cache.natures.each_with_index { |(natureKey, nature), idx|
         if !nature.incStat && !nature.decStat
-          natureText = _INTL("{1}  <r><o=128>±{2}</o>", nature.name, STAT_NAMES_SHORT[FLAVORS_TO_STATS.index(nature.like)])
+          natureText = _INTL("{1}<r><o=128>±{2}</o>", nature.name, STAT_NAMES_SHORT[FLAVORS_TO_STATS.index(nature.like)])
           $builtCommandsLightWindow.push(natureText)
           $builtCommandsDarkWindow.push(natureText)
         else
-          $builtCommandsLightWindow.push(_INTL("{1}  <r>{4}+{2}</c3> {5}-{3}</c3>", nature.name, STAT_NAMES_SHORT[nature.incStat], STAT_NAMES_SHORT[nature.decStat],
+          $builtCommandsLightWindow.push(_INTL("{1}<r>{4}+{2}</c3> {5}-{3}</c3>", nature.name, STAT_NAMES_SHORT[nature.incStat], STAT_NAMES_SHORT[nature.decStat],
             lesserPositiveColor(false), lesserNegativeColor(false)))
-          $builtCommandsDarkWindow.push(_INTL("{1}  <r>{4}+{2}</c3> {5}-{3}</c3>", nature.name, STAT_NAMES_SHORT[nature.incStat], STAT_NAMES_SHORT[nature.decStat],
+          $builtCommandsDarkWindow.push(_INTL("{1}<r>{4}+{2}</c3> {5}-{3}</c3>", nature.name, STAT_NAMES_SHORT[nature.incStat], STAT_NAMES_SHORT[nature.decStat],
             lesserPositiveColor(true), lesserNegativeColor(true)))
         end
         $builtNatures.push(natureKey)
@@ -333,7 +339,7 @@ class PokemonValuesPCService
     end
   end
 
-  def natures(pkmn)
+  def natures(pkmn, origstats)
     command = 0
 
     buildNatures
@@ -347,10 +353,14 @@ class PokemonValuesPCService
       msgwindow=Kernel.pbCreateMessageWindow(nil,nil)
       commands = isDarkWindowskin(msgwindow.windowskin) ? $builtCommandsDarkWindow : $builtCommandsLightWindow
 
+      summarywindow = ServicePCList.createCornerWindow { |window|
+        window.text=createStatText(pkmn, origstats, window, true)
+      }
       command=Kernel.pbMessageDisplay(msgwindow,msg,true,
          proc {|msgwindow|
             next Kernel.advanced_pbShowCommands(msgwindow,commands,-1,command)
       })
+      summarywindow.dispose
       Kernel.pbDisposeMessageWindow(msgwindow)
       Input.update
 
