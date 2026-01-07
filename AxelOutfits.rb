@@ -40,11 +40,11 @@ def darchaxel_batty_section(outfit)
 end
 
 
-def darchaxel_special_sprite_section(special, outfit)
+def darchaxel_special_sprite_section(special, outfit, outfitname = outfit)
   return [
     [:ConditionalBranch, :Variable, :Outfit, :Constant, outfit, :==],
       [:ConditionalBranch, :Switch, :Axel, true],
-        [:SetMoveRoute, :This, darchaxel_makeMoveRoute(special + '_' + outfit.to_s, :Down)],
+        [:SetMoveRoute, :This, darchaxel_makeMoveRoute(special + '_' + outfitname.to_s, :Down)],
         [:JumpToLabel, 'End'],
       :Done,
     :Done
@@ -59,7 +59,7 @@ def darchaxel_inject_special_sprite(event, special)
 
     if matched
       event.insertBefore(matched,
-        *darchaxel_special_sprite_section(special, 'int'),
+        *darchaxel_special_sprite_section(special, 3, 'int'),
         *darchaxel_special_sprite_section(special, 4))
     end
   }
