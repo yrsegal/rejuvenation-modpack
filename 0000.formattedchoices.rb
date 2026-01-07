@@ -27,7 +27,7 @@ class Window_AdvancedCommandPokemon
       end
       dims[0]=0 if !dims[0]
       next dims[1]-dims[0]
-    }.max
+    }.max + 16
     @textCache = value.each_with_index.map { |cmd, idx|
       formattedText = getFormattedText(txtbmp,0,0,@txtwidth,@row_height,cmd,@row_height,true,true)
       
@@ -58,7 +58,7 @@ class Window_AdvancedCommandPokemon
       width=@txtwidth
       ### /MODDED
       # one 16 to allow cursor
-      width+=16+16+SpriteWindow_Base::TEXTPADDING
+      width+=16+SpriteWindow_Base::TEXTPADDING
     end
     # Store suggested width and height of window
     dims[0]=[self.borderX+1,(width*self.columns)+self.borderX+

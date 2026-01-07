@@ -83,8 +83,8 @@ class PokemonValuesPCService
   def makeStatOptions(needCards, mapper, maxValue)
     options = []
     for i in 0...6
-      options.push(_INTL(STAT_NAMES[i] + " {2}({1})", mapper[i], colorForStat(mapper[i], maxValue))) if !needCards || $PokemonBag.pbQuantity(EV_CARDS[i]) > 0
-      options.push(grayColor + _INTL(STAT_NAMES[i] + " ({1})", mapper[i])) if needCards && $PokemonBag.pbQuantity(EV_CARDS[i]) <= 0
+      options.push(_INTL(STAT_NAMES[i] + "<r>    {2}({1})", mapper[i], colorForStat(mapper[i], maxValue))) if !needCards || $PokemonBag.pbQuantity(EV_CARDS[i]) > 0
+      options.push(grayColor + _INTL(STAT_NAMES[i] + "<r>    ({1})", mapper[i])) if needCards && $PokemonBag.pbQuantity(EV_CARDS[i]) <= 0
     end
     return options
   end

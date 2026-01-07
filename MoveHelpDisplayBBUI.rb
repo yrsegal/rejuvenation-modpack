@@ -1645,6 +1645,7 @@ class PokeBattle_Scene
 
       acc = move.movehelpdisplay_calcAccuracy(battler, target)
       pri = move.priorityCheck(battler)
+      pri += 2 if move.move == :BLINDINGSPEED && move.zmove
       battler.turncount -= 1
 
       if move.move == :POLLENPUFF && (target.index & 2) == (battler.index & 2) && power != 0
