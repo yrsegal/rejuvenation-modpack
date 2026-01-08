@@ -23,6 +23,14 @@ def darchaxel_transmuteMoveRoute(prevRoute, replaceGraphic)
 end
 
 def darchaxel_batty_section(outfit)
+  return InjectionDSL.parse {
+    branch(variables[:Outfit], :==, outfit) {
+      this.set_move_route {
+        set_character 'BattyFriends_Axel_' + outfit.to_s
+      }
+      jump_label 'done'
+    }
+  }
 end
 
 
