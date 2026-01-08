@@ -14,7 +14,7 @@ InjectionHelper.registerScriptSwitch("$game_screen.blacksteepleskip_tookskip")
 
 Variables[:UnidataBadgeCount] = 759
 Variables[:BlacksteepleStory] = 232
-Variables[:BattleshipStory] = 8
+Variables[:BattleshipStory] = 87
 
 InjectionHelper.defineMapPatch(13, 24) { # Akuwa town, warp to blacksteeple
   patch(:addskipforblacksteeple) {

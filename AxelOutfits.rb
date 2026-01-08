@@ -23,23 +23,15 @@ def darchaxel_transmuteMoveRoute(prevRoute, replaceGraphic)
 end
 
 def darchaxel_batty_section(outfit)
-  return InjectionDSL.parse {
-    branch(variables[:Outfit], :==, outfit) {
-      this.set_move_route {
-        set_character 'BattyFriends_Axel_' + outfit.to_s
-      }
-      jump_label 'done'
-    }
-  }
 end
 
 
-def darchaxel_special_sprite_section(special, outfit)
+def darchaxel_special_sprite_section(special, outfit, outfitname = outfit)
   return InjectionDSL.parse {
     branch(variables[:Outfit], :==, outfit) {
       branch(switches[:Axel], true) {
         this.set_move_route {
-          set_character special + '_' + outfit.to_s
+          set_character special + '_' + outfitname.to_s
         }
         jump_label 'End'
       }
@@ -55,7 +47,7 @@ def darchaxel_inject_special_sprite(event, special)
 
     if matched
       insertBefore(matched,
-        *darchaxel_special_sprite_section(special, 'int'),
+        *darchaxel_special_sprite_section(special, 3, 'int'),
         *darchaxel_special_sprite_section(special, 4))
     end
   }

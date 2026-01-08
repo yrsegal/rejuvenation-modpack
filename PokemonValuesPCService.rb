@@ -55,7 +55,7 @@ class PokemonValuesPCService
 
   EV_CARDS = [:HPCARD, :ATKCARD, :DEFCARD, :SPATKCARD, :SPDEFCARD, :SPEEDCARD]
   STAT_NAMES = ["HP", "Attack", "Defense", "Sp. Atk", "Sp. Def", "Speed"]
-  STAT_NAMES_SHORT = [nil, "ATK", "DEF", "SPATK", "SPDEF", "SPEED"]
+  STAT_NAMES_SHORT = [nil, "Atk", "Def", "SpA", "SpD", "Spe"]
   FLAVORS_TO_STATS = [nil, 'spicy', 'sour', 'dry', 'bitter', 'sweet']
 
   def color(num)
@@ -83,8 +83,8 @@ class PokemonValuesPCService
   def makeStatOptions(needCards, mapper, maxValue)
     options = []
     for i in 0...6
-      options.push(_INTL(STAT_NAMES[i] + " {2}({1})", mapper[i], colorForStat(mapper[i], maxValue))) if !needCards || $PokemonBag.pbQuantity(EV_CARDS[i]) > 0
-      options.push(grayColor + _INTL(STAT_NAMES[i] + " ({1})", mapper[i])) if needCards && $PokemonBag.pbQuantity(EV_CARDS[i]) <= 0
+      options.push(_INTL(STAT_NAMES[i] + "<r>    {2}({1})", mapper[i], colorForStat(mapper[i], maxValue))) if !needCards || $PokemonBag.pbQuantity(EV_CARDS[i]) > 0
+      options.push(grayColor + _INTL(STAT_NAMES[i] + "<r>    ({1})", mapper[i])) if needCards && $PokemonBag.pbQuantity(EV_CARDS[i]) <= 0
     end
     return options
   end
@@ -188,7 +188,7 @@ class PokemonValuesPCService
           evs(pkmn, origstats) if $game_screen.pokemonvaluespc_unlocked_ev
           ServicePCList.buzzer if !$game_screen.pokemonvaluespc_unlocked_ev
         when 2
-          natures(pkmn) if $game_screen.pokemonvaluespc_unlocked_nature
+          natures(pkmn, origstats) if $game_screen.pokemonvaluespc_unlocked_nature
           ServicePCList.buzzer if !$game_screen.pokemonvaluespc_unlocked_nature
         when 3
           abilities(pkmn) if $game_screen.pokemonvaluespc_unlocked_ability
@@ -319,13 +319,13 @@ class PokemonValuesPCService
       $builtNatures = []
       $cache.natures.each_with_index { |(natureKey, nature), idx|
         if !nature.incStat && !nature.decStat
-          natureText = _INTL("{1}  <r><o=128>±{2}</o>", nature.name, STAT_NAMES_SHORT[FLAVORS_TO_STATS.index(nature.like)])
+          natureText = _INTL("{1}<r><o=128>±{2}</o>", nature.name, STAT_NAMES_SHORT[FLAVORS_TO_STATS.index(nature.like)])
           $builtCommandsLightWindow.push(natureText)
           $builtCommandsDarkWindow.push(natureText)
         else
-          $builtCommandsLightWindow.push(_INTL("{1}  <r>{4}+{2}</c3> {5}-{3}</c3>", nature.name, STAT_NAMES_SHORT[nature.incStat], STAT_NAMES_SHORT[nature.decStat],
+          $builtCommandsLightWindow.push(_INTL("{1}<r>{4}+{2}</c3> {5}-{3}</c3>", nature.name, STAT_NAMES_SHORT[nature.incStat], STAT_NAMES_SHORT[nature.decStat],
             lesserPositiveColor(false), lesserNegativeColor(false)))
-          $builtCommandsDarkWindow.push(_INTL("{1}  <r>{4}+{2}</c3> {5}-{3}</c3>", nature.name, STAT_NAMES_SHORT[nature.incStat], STAT_NAMES_SHORT[nature.decStat],
+          $builtCommandsDarkWindow.push(_INTL("{1}<r>{4}+{2}</c3> {5}-{3}</c3>", nature.name, STAT_NAMES_SHORT[nature.incStat], STAT_NAMES_SHORT[nature.decStat],
             lesserPositiveColor(true), lesserNegativeColor(true)))
         end
         $builtNatures.push(natureKey)
@@ -333,7 +333,7 @@ class PokemonValuesPCService
     end
   end
 
-  def natures(pkmn)
+  def natures(pkmn, origstats)
     command = 0
 
     buildNatures
@@ -347,10 +347,14 @@ class PokemonValuesPCService
       msgwindow=Kernel.pbCreateMessageWindow(nil,nil)
       commands = isDarkWindowskin(msgwindow.windowskin) ? $builtCommandsDarkWindow : $builtCommandsLightWindow
 
+      summarywindow = ServicePCList.createCornerWindow { |window|
+        window.text=createStatText(pkmn, origstats, window)
+      }
       command=Kernel.pbMessageDisplay(msgwindow,msg,true,
          proc {|msgwindow|
             next Kernel.advanced_pbShowCommands(msgwindow,commands,-1,command)
       })
+      summarywindow.dispose
       Kernel.pbDisposeMessageWindow(msgwindow)
       Input.update
 
