@@ -18,7 +18,7 @@ class Window_AdvancedCommandPokemon
     @textCache.each(&:dispose) if defined?(@textCache)
     txtbmp = Bitmap.new(1, 1)
     pbSetSystemFont(txtbmp)
-    @txtwidth = value.map ({ |cmd|
+    @txtwidth = (value.map { |cmd|
       dims=[nil,0]
       formattedTextNoR = getFormattedText(txtbmp,0,0,Graphics.width,@row_height,cmd.gsub("<r>", ""),@row_height,true,true)
       for ch in formattedTextNoR
