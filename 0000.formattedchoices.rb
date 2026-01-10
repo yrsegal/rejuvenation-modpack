@@ -18,7 +18,7 @@ class Window_AdvancedCommandPokemon
     @textCache.each(&:dispose) if defined?(@textCache)
     txtbmp = Bitmap.new(1, 1)
     pbSetSystemFont(txtbmp)
-    @txtwidth = value.map { |cmd|
+    @txtwidth = value.map ({ |cmd|
       dims=[nil,0]
       formattedTextNoR = getFormattedText(txtbmp,0,0,Graphics.width,@row_height,cmd.gsub("<r>", ""),@row_height,true,true)
       for ch in formattedTextNoR
@@ -27,7 +27,7 @@ class Window_AdvancedCommandPokemon
       end
       dims[0]=0 if !dims[0]
       next dims[1]-dims[0]
-    }.max + 16
+    }.max || 0) + 16
     @textCache = value.each_with_index.map { |cmd, idx|
       formattedText = getFormattedText(txtbmp,0,0,@txtwidth,@row_height,cmd,@row_height,true,true)
       
