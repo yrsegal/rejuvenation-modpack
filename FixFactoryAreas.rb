@@ -214,7 +214,7 @@ module FixFactoryAreas
 
   def self.killEvent(event)
     event.patch(:EventIsKill) { |page|
-      event.insertAtStart(:ExitEventProcessing)
+      page.insertAtStart(:ExitEventProcessing)
     }
   end
 
