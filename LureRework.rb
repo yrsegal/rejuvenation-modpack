@@ -94,6 +94,10 @@ class Pokedex
   def setOwned(pokemon)
     lurerework_old_setOwned(pokemon)
 
+    lurerework_setFormOwned(pokemon)
+  end
+
+  def lurerework_setFormOwned(pokemon)
     # Store encounter info for gender-differentiated pokemon and basculin-white
     return if !pokemon.is_a?(PokeBattle_Pokemon)
     if $game_switches
@@ -106,6 +110,16 @@ class Pokedex
       gender = "Female" if pokemon.gender == 1
       self.formList[pokemon.species][:gender][gender] = true
     end
+  end
+end
+
+module BallHandlers
+  class << self
+    alias :lurerework_old_onCatch :onCatch
+  end
+  def self.onCatch(ball, battle, pokemon)
+    lurerework_old_onCatch(ball, battle, pokemon)
+    $Trainer.pokedex.lurerework_setFormOwned(pokemon)
   end
 end
 

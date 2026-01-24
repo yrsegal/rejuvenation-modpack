@@ -68,8 +68,10 @@ class PokemonBag_Scene
               while index > 0
                 indexPrev = index - 1
                 if itemwindow.pocket==TMPOCKET
-                  firstName  = (((getItemName(pocket[indexPrev])).sub("TM","00")).sub("X","100")).to_i
+                  ### MODDED/
+                  firstName  = (((getItemName(pocket[indexPrev])).sub("TM","00")).sub("X","100")).to_s
                   secondName = (((getItemName(pocket[index])).sub("TM","00")).sub("X","100")).to_i
+                  ### /MODDED
                 else
                   firstName  = getItemName(pocket[indexPrev])
                   secondName = getItemName(pocket[index])
