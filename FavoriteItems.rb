@@ -78,14 +78,14 @@ class PokemonBag_Scene
                 end
                 ### MODDED/
                 if @bag.isFavorite?(pocket[indexPrev])
-                  firstName = "AAAAAAAAAAAAAAAAAAA" + firstName
+                  firstName = "AAAAAAAAAAAAAAAAAAA" + firstName.to_s
                 else
-                  firstName = "BBBBBBBBBBBBBBBBBBB" + firstName
+                  firstName = "BBBBBBBBBBBBBBBBBBB" + firstName.to_s
                 end
                 if @bag.isFavorite?(pocket[index])
-                  secondName = "AAAAAAAAAAAAAAAAAAA" + secondName
+                  secondName = "AAAAAAAAAAAAAAAAAAA" + secondName.to_s
                 else
-                  secondName = "BBBBBBBBBBBBBBBBBBB" + secondName
+                  secondName = "BBBBBBBBBBBBBBBBBBB" + secondName.to_s
                 end
                 ### /MODDED
                 if firstName > secondName

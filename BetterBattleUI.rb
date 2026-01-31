@@ -1605,7 +1605,7 @@ class PokeBattle_Move
       return 0
     end
 
-    if (@move == :FAKEOUT || @move == :FIRSTIMPRESSION) && attacker.turncount != 0
+    if (@move == :FAKEOUT || @move == :FIRSTIMPRESSION) && attacker.turncount != 1 # Shifted by 1 for feraligatr crest
       return 0
     end
 
