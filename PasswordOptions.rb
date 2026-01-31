@@ -199,7 +199,8 @@ module ModPasswordOptions
     passwords=pbGetKnownOrActivePasswords()
     password=password.downcase
     ids=pbGetPasswordIds(password)
-
+    return unless ids
+    
     for id,pw in ids
       alreadyKnown=alreadyKnown && passwords[id] ? true : false
       # Toggle the password

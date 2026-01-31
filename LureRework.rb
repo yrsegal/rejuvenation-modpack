@@ -40,7 +40,7 @@ class Pokedex
         @formList[monKey] = {} unless @formList[monKey]
         @formList[monKey][:forms] = newforms 
       end
-      if lurerework_has_genderform(monKey) && !@dexList[monKey][:gender]
+      if lurerework_has_genderform(monKey) && !@formList[monKey][:gender]
         @formList[monKey][:gender] = {
           "Male" => @dexList[monKey][:owned?] && @dexList[monKey][:gender]["Male"],
           "Female" => @dexList[monKey][:owned?] && @dexList[monKey][:gender]["Female"],
