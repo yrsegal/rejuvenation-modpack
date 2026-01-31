@@ -35,7 +35,7 @@ module ComplexMartSpecifiers
           come_again: '',
           anything_else: "\\se[222Cry]CORSOLA: Corsa! (Buy something.)",
 
-          purchase_important: "\\se[222Cry]CORSOLA: Corsa! ({2}s.)",
+          purchase_important: "\\se[222Cry]CORSOLA: Corsa! ({2}.)",
 
           no_items: "\\se[222Cry:100:125]CORSOLA: CORSA!!! (NOT ENOUGH!)",
           success_items: "\\se[222Cry]CORSOLA: C-Corsa! (Thank you!)"
@@ -50,7 +50,7 @@ module ComplexMartSpecifiers
           come_again: "Come again!",
           anything_else: "Anything else you need? Anything at all?",
 
-          purchase_important: "{1} will be {2}s.",
+          purchase_important: "{1} will be {2}.",
 
           no_items: "Sorry, but you don't have enough shards.",
           success_items: "Thank you for your patronage!"
@@ -73,7 +73,7 @@ module ComplexMartSpecifiers
           come_again: "",
           anything_else: "Please buy one, my family is dying.",
 
-          purchase_important: "{1} is very strong! {2}s!",
+          purchase_important: "{1} is very strong! {2}!",
 
           no_items: "I... can't go on like this...",
           success_items: "Thanks for the meal!"
@@ -101,13 +101,13 @@ module ComplexMartSpecifiers
           success_items: "Thank you!"
         },
         inventory: [{ move: :FIREPLEDGE,
-                      purchase_message: "{1}? Honorable. {2}s.",
+                      purchase_message: "{1}? Honorable. {2}.",
                       price: { type: :Item, item: :REDSHARD, amount: 3 }},
                     { move: :WATERPLEDGE,
-                      purchase_message: "{1}? How noble... {2}s.",
+                      purchase_message: "{1}? How noble... {2}.",
                       price: { type: :Item, item: :BLUESHARD, amount: 3 }},
                     { move: :GRASSPLEDGE,
-                      purchase_message: "{1}? How... eh. Anyway, {2}s.",
+                      purchase_message: "{1}? How... eh. Anyway, {2}.",
                       price: { type: :Item, item: :GREENSHARD, amount: 3 }}]
       },
       punch: {
@@ -116,7 +116,7 @@ module ComplexMartSpecifiers
           come_again: "Come again!",
           anything_else: "What'll it be, gamer??",
 
-          purchase_important: "{1}? That's a weird decision. {2}s.",
+          purchase_important: "{1}? That's a weird decision. {2}.",
 
           no_items: "Sorry, but you don't have enough shards.",
           success_items: "Obliged!"
@@ -138,7 +138,7 @@ module ComplexMartSpecifiers
           come_again: "Come again!",
           anything_else: "What'll it be?",
 
-          purchase_important: "{1}? That'll be {2}s!",
+          purchase_important: "{1}? That'll be {2}!",
 
           no_items: "Sorry, but you don't have enough shards.",
           success_items: "Thank you for your patronage!"
@@ -162,7 +162,7 @@ module ComplexMartSpecifiers
           come_again: "Come again!",
           anything_else: "Anything else?",
 
-          purchase_important: "{1}? That'll be {2}s.",
+          purchase_important: "{1}? That'll be {2}.",
 
           no_items: "Sorry, but you don't have enough shards.",
           success_items: "Thanks a million!"
@@ -218,13 +218,13 @@ module ComplexMartSpecifiers
           success_items: "Thank you!"
         },
         inventory: [{ move: :FIREPLEDGE,
-                      purchase_message: "{1}? Honorable. {2}s.",
+                      purchase_message: "{1}? Honorable. {2}.",
                       price: { type: :Item, item: :REDSHARD, amount: 3 }},
                     { move: :WATERPLEDGE,
-                      purchase_message: "{1}? How noble... {2}s.",
+                      purchase_message: "{1}? How noble... {2}.",
                       price: { type: :Item, item: :BLUESHARD, amount: 3 }},
                     { move: :GRASSPLEDGE,
-                      purchase_message: "{1}? Fascinating. {2}s.",
+                      purchase_message: "{1}? Fascinating. {2}.",
                       price: { type: :Item, item: :GREENSHARD, amount: 3 }}]
       },
       fossils: {
@@ -266,16 +266,16 @@ module ComplexMartSpecifiers
                       purchase_message: "{1}? Powerful stuff, but risky. That'll be {2}.",
                       price: { type: :Item, item: :REDSHARD, amount: 3 }},
                     { move: :SKILLSWAP,
-                      purchase_message: "If we're talking a game of skill, trainers with this are the top brass. We're talking {2}s for it.",
+                      purchase_message: "If we're talking a game of skill, trainers with this are the top brass. We're talking {2} for it.",
                       price: { type: :Item, item: :GREENSHARD, amount: 2 }},
                     { move: :MAGNETRISE,
-                      purchase_message: "A hop, skip and a magnet away from rising to the top! {2}s please!",
+                      purchase_message: "A hop, skip and a magnet away from rising to the top! {2} please!",
                       price: { type: :Item, item: :YELLOWSHARD, amount: 2 }},
                     { move: :GRAVITY,
-                      purchase_message: "Dire situations have gravitas, and with this move, so will the battle! {2}s!",
+                      purchase_message: "Dire situations have gravitas, and with this move, so will the battle! {2}!",
                       price: { type: :Item, item: :BLUESHARD, amount: 2 }},
                     { move: :RECYCLE,
-                      purchase_message: "The mayor's been on about the 3 R's a lot, but I'm all about Recycling in battle! Gotta keep those items, yeah? {2}s!",
+                      purchase_message: "The mayor's been on about the 3 R's a lot, but I'm all about Recycling in battle! Gotta keep those items, yeah? {2}!",
                       price: { type: :Item, item: :GREENSHARD, amount: 2 }}]
       }
     },
@@ -286,7 +286,7 @@ module ComplexMartSpecifiers
           come_again: "GOOMATORA: Get MOre sHROOOOoms!",
           anything_else: "GOOMATORA: bIiG? mUSHRoom?",
 
-          purchase_important: "Give GOOMATORA {2}s?",
+          purchase_important: "Give GOOMATORA {2}?",
 
           no_items: "GOOMATORA: NOOOO!",
           success_items: "GOOMATORA: GOOOOOM!"
@@ -414,31 +414,31 @@ module ComplexMartSpecifiers
           success_items: "MARNIE: Yay! I'm so happy! You can leave now.*"
         },
         inventory: [{ move: :BUGBITE,
-                      purchase_message: "MARNIE: 1 Geen Sahrd! {2}s!",
+                      purchase_message: "MARNIE: 1 Geen Sahrd! {2}!",
                       price: { type: :Item, item: :GREENSHARD, amount: 3 }},
                     { move: :BOUNCE,
-                      purchase_message: "MARNIE: 1 Blu Sahrd! {2}s!",
+                      purchase_message: "MARNIE: 1 Blu Sahrd! {2}!",
                       price: { type: :Item, item: :BLUESHARD, amount: 3 }},
                     { move: :DRILLRUN,
-                      purchase_message: "MARNIE: 1 Ylw Sahrd! {2}s!",
+                      purchase_message: "MARNIE: 1 Ylw Sahrd! {2}!",
                       price: { type: :Item, item: :YELLOWSHARD, amount: 3 }},
                     { move: :ELECTROWEB,
-                      purchase_message: "MARNIE: 1 Rad Sahrd! {2}s!",
+                      purchase_message: "MARNIE: 1 Rad Sahrd! {2}!",
                       price: { type: :Item, item: :REDSHARD, amount: 3 }},
                     { move: :GASTROACID,
-                      purchase_message: "MARNIE: 1 Ylw Sahrd! {2}s!",
+                      purchase_message: "MARNIE: 1 Ylw Sahrd! {2}!",
                       price: { type: :Item, item: :YELLOWSHARD, amount: 3 }},
                     { move: :FOCUSENERGY,
-                      purchase_message: "MARNIE: 1 Rad Sahrd! {2}s!",
+                      purchase_message: "MARNIE: 1 Rad Sahrd! {2}!",
                       price: { type: :Item, item: :REDSHARD, amount: 3 }},
                     { move: :SKILLSWAP,
-                      purchase_message: "MARNIE: 1 Blu Sahrd! {2}s!",
+                      purchase_message: "MARNIE: 1 Blu Sahrd! {2}!",
                       price: { type: :Item, item: :BLUESHARD, amount: 3 }},
                     { move: :SIGNALBEAM,
-                      purchase_message: "MARNIE: 1 Geen Sahrd! {2}s!",
+                      purchase_message: "MARNIE: 1 Geen Sahrd! {2}!",
                       price: { type: :Item, item: :GREENSHARD, amount: 3 }},
                     { move: :COACHING,
-                      purchase_message: "MARNIE: 1 Rad Sahrd! {2}s!",
+                      purchase_message: "MARNIE: 1 Rad Sahrd! {2}!",
                       price: { type: :Item, item: :REDSHARD, amount: 3 }}]
       },
       marlow: { 
@@ -484,7 +484,7 @@ module ComplexMartSpecifiers
           come_again: "MARLEY: See you later...",
           anything_else: "MARLEY: You buy something?",
 
-          purchase_important: "MARLEY: Remember to recycle... {2}s...",
+          purchase_important: "MARLEY: Remember to recycle... {2}...",
 
           no_items: "MARLEY: Not enough... Shards...",
           success_items: "MARLEY: Thank you for thy patronage."
@@ -589,7 +589,7 @@ module ComplexMartSpecifiers
           anything_else: "\\se[802Cry:80:100]DOXIE: (Give me your Black Prisms!)",
 
           choose_quantity: "\\se[802Cry:80:100]DOXIE: {1}? How many?",
-          purchase_quantity: "I will take {3} for {1} {2}s. Is ok?",
+          purchase_quantity: "I will take {3} for {1} {2}. Is ok?",
 
           no_items: "DOXIE: Not enough!",
           success_items: "DOXIE: Okie."
@@ -618,7 +618,7 @@ module ComplexMartSpecifiers
           anything_else: "DOXINE: Are you interested? It is rare!",
 
           choose_quantity: "\\se[802Cry:80:100]DOXIE: {1}? How many?",
-          purchase_quantity: "I will take {3} for {1} {2}s. Is ok?",
+          purchase_quantity: "I will take {3} for {1} {2}. Is ok?",
 
           no_items: "DOXINE: NOT ENOUGH! NOT ENOUGH!",
           success_items: "DOXINE: Wee! A deal has been made! Take it!"
