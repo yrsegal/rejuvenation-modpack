@@ -29,6 +29,7 @@ end
 Switches[:QuestAfterForest] = 248
 Switches[:Gym_5] = 8
 Switches[:ElevationSwitch] = 476
+Variables[:ZubatQuest] = 341
 Variables[:QuestRestoration] = 577
 Variables[:QuestRiftGyarados] = 401
 Variables[:KarmaFilesGood] = 731
@@ -86,6 +87,8 @@ class PokemonRegionMapScene
     elsif ret && ret[0] == 606 &&
       $game_variables[:V12Story] < 115
       ret[0] = 580 # Pyramid Grounds (unwatered)
+    elsif ret && ret[0] == 149 # Mirage Forest
+      return nil unless $game_self_switches[[149,135,'C']] || $game_variables[:ZubatQuest] >= 1
     end
 
     return ret
@@ -160,6 +163,7 @@ FlyExpansion.addPoint(209, 30, 37, "North Dream District", "Viennas Hill", [31, 
 FlyExpansion.addPoint(555, 52, 20, "GDC Tournament Stadium", "", [12, 18])
 FlyExpansion.addPoint(268, 28, 28, "Deep Terajuma Jungle", "Black Shard Excav.", [9, 37])
 FlyExpansion.addPoint(299, 26, 67, "Mynori Sea", "Luck's Tent", [11, 34])
+FlyExpansion.addPoint(149, 77, 43, "Mirage Town", "Mirage Cave", [28, 22]) # Mirage Town
 
 FlyExpansion.changeFlyPoint(258, 52, 25) # Botanical Garden
 FlyExpansion.changeFlyPoint(295, 87, 14) # Mt. Terajuma
