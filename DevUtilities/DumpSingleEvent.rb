@@ -1,6 +1,6 @@
 module EventExport
 
-  def self.writeSingleEvent(event)
+  def self.writeSingleEvent(event, map = nil)
     File.open("dump.txt", "wb") { |f|
       @@f = f
       @@index = 0
@@ -18,6 +18,8 @@ module EventExport
       @@animations = load_data("Data/Animations.rxdata")
       @@classes = load_data("Data/Classes.rxdata")
       @@tilesets = load_data("Data/Tilesets.rxdata")
+      @@events = {} unless defined?(@@events)
+      @@events = map.events if map
       @@update_timer = 0
       if event.respond_to?('list')
         @@list = event.list
