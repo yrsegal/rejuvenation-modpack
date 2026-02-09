@@ -266,6 +266,7 @@ InjectionHelper.defineMapPatch(425, 16) { |event| # Sheridan Interiors, Move Rel
       page.insertAtStart(
         [:ConditionalBranch, :Switch, :MoveRelearner, true],
           [:Script, 'relearnerService_relearnerConversation(get_character(0), get_character(15))'],
+          [:Script, 'ServicePCList.cleanupLeftoverSprites'],
           :ExitEventProcessing,
         :Done)
       next true
