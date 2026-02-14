@@ -6,6 +6,11 @@ class PokeBattle_Battler
       @form = @pokemon.form
     end
   end
+
+  # Fixes grassy interaction
+  def setField(*args, **kwargs)
+    @battle.setField(*args, **kwargs)
+  end
 end
 
 class PokemonScreen

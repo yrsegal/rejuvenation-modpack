@@ -149,7 +149,7 @@ InjectionHelper.defineMapPatch(294, 70) { |event| # GDC Central, clerk
             [:ScriptContinued, 'timediverge = $Settings.unrealTimeDiverge'],
             [:ScriptContinued, '$Settings.unrealTimeDiverge = 0'],
             [:ScriptContinued, 'timeNow = pbGetTimeNow'],
-            [:ScriptContinued, 'poke.timeReceived = Time.unrealTime_oldTimeNew(timeNow.year-36,6,8,timeNow.hour,timeNow.min,timeNow.sec)'], # 41 years ago, june 8th
+            [:ScriptContinued, 'poke.timeReceived = Time.unrealTime_oldTimeNew(timeNow.year-36,6,8,timeNow.hour,timeNow.min,timeNow.sec)'], # 36 years ago, june 8th
             # Justification - He got riolu when he turned 10.
             # He left for Aevium at 18.
             # Chapter 3 occurs 10 years later.
