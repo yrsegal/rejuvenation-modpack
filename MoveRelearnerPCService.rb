@@ -266,6 +266,7 @@ InjectionHelper.defineMapPatch(425, 16) { # Sheridan Interiors, Move Relearner
       insertAtStart {
         branch(switches[:MoveRelearner], true) {
           script 'relearnerService_relearnerConversation(get_character(0), get_character(15))'
+          script 'ServicePCList.cleanupLeftoverSprites'
           exit_event_processing
         }
       }
