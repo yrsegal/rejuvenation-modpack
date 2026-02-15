@@ -129,7 +129,7 @@ InjectionHelper.defineMapPatch(28, 9) { # Festival Plaza, Chatot Girl
       }.else {
         text "...?"
       }
-      condition("Kernel.pbItemBall(:CHATCREST)") {
+      branch("Kernel.pbItemBall(:CHATCREST)") {
         self_switch["A"] = true
       }
     }
