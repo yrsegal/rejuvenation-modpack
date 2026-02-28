@@ -160,7 +160,7 @@ $cache.trainers[:CHATOTGIRL] = {
       level: 80,
       moves: [:BOOMBURST,:CHATTER,:ROOST,:PARTINGSHOT],
       item: :CHATCREST,
-      obtainText: "Ass",
+      catchtext: "Ass",
       ability: :BIGPECKS,
       nature: :MODEST,
       happiness: 255,
@@ -172,7 +172,7 @@ $cache.trainers[:CHATOTGIRL] = {
       level: 80,
       moves: [:BOOMBURST,:CHATTER,:ROOST,:PARTINGSHOT],
       item: :CHATCREST,
-      obtainText: "Shit",
+      catchtext: "Shit",
       ability: :BIGPECKS,
       nature: :MODEST,
       happiness: 255,
@@ -184,7 +184,7 @@ $cache.trainers[:CHATOTGIRL] = {
       level: 80,
       moves: [:BOOMBURST,:CHATTER,:ROOST,:PARTINGSHOT],
       item: :CHATCREST,
-      obtainText: "Fuck",
+      catchtext: "Fuck",
       ability: :BIGPECKS,
       nature: :MODEST,
       happiness: 255,
@@ -196,7 +196,7 @@ $cache.trainers[:CHATOTGIRL] = {
       level: 80,
       moves: [:BOOMBURST,:CHATTER,:ROOST,:PARTINGSHOT],
       item: :CHATCREST,
-      obtainText: "Damn",
+      catchtext: "Damn",
       ability: :BIGPECKS,
       nature: :MODEST,
       happiness: 255,
@@ -208,7 +208,7 @@ $cache.trainers[:CHATOTGIRL] = {
       level: 80,
       moves: [:BOOMBURST,:CHATTER,:ROOST,:PARTINGSHOT],
       item: :CHATCREST,
-      obtainText: "Bitch",
+      catchtext: "Bitch",
       ability: :BIGPECKS,
       nature: :MODEST,
       happiness: 255,
@@ -231,6 +231,7 @@ class PokeBattle_Pokemon
       swearIDs = [:SHIT,:ASS,:FUCK,:DAMN,:BITCH]
 
       if @obtainText && swears.include?(@obtainText)
+        p @obtainText
         @chatotSwearType = swearIDs[swears.index(@obtainText)]
       else
         @chatotSwearType = swearIDs.sample 
