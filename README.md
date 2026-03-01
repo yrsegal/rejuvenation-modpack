@@ -262,6 +262,8 @@ Other mods:
   Expands the Password menu in the intro to give you much more info when enabling passwords.
 - ReplaceRepelInPickup.rb  
   Replaces Repel in Pickup tables, as it is effectively useless with the Spice Scent.
+- RockIncense.rb (depends on 0000.injection.rb)  
+  Adds a hidden Rock Incense to the Terajuma Black Shard Excavation site.
 - RouteZHQwil.rb  
   Qwilfish on Route Z are Hisuian.
 - SkipTitleSoftResets.rb  
