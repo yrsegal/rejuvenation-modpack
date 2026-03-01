@@ -6,17 +6,18 @@ begin
   raise "Missing dependencies for mod #{__FILE__}, cannot load" unless missing.empty?
 end
 
-InjectionHelper.defineMapPatch(183) { |map| # Black Shard Excavation Site
-  map.createNewEvent(31, 38, "HiddenItem", "hiddenrockincense") { |event|
-    event.newPage { |page|
-      page.interact(
-        [:ConditionalBranch, :Script, "Kernel.pbItemBall(:ROCKINCENSE)"],
-          [:ControlSelfSwitch, "A", true],
-        :Done)
+InjectionHelper.defineMapPatch(183) { # Black Shard Excavation Site
+  createNewEvent(31, 38, "HiddenItem", "hiddenrockincense") {
+    newPage {
+      interact {
+        branch("Kernel.pbItemBall(:ROCKINCENSE)") {
+          self_switch["A"] = true
+        }
+      }
     }
 
-    event.newPage { |page|
-      page.requiresSelfSwitch('A')
+    newPage {
+      requiresSelfSwitch 'A'
     }
   }
 }
