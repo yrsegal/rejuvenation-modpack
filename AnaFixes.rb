@@ -265,7 +265,7 @@ InjectionHelper.defineMapPatch(291, 72, &method(:anafixes_addLegacyRedCarpet)) #
 
 InjectionHelper.defineMapPatch(-1) {
   patch(:anafixes_gearen_news_sprite) {
-    matched = lookForAll([:ShowPicture, nil, /GearenNewsAna(?:_1)?/, nil, nil, nil, nil, nil, nil, nil, nil])
+    matched = lookForAll([:ShowPicture, nil, /^GearenNewsAna(?:_1)?$/, nil, nil, nil, nil, nil, nil, nil, nil])
 
     for insn in matched
       replace(insn) {
