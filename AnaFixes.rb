@@ -214,7 +214,7 @@ InjectionHelper.defineMapPatch(53, 2) { # I Nightmare Realm, Aevis/Dupe
     # Swap them so Ana always runs last, displaying properly
     self.pages[1] = alainpage
     self.pages[7] = anapage
-    InjectionHelper.markPatched
+    InjectionHelper.declarePatched
   end
 }
 

@@ -364,7 +364,7 @@ module ServicePCList
     if $cache.mapdata[$game_map.map_id].MapPosition.is_a?(Hash)
       region = pbUnpackMapHash[0]
     else
-      region=$cache.mapdata[$game_map.map_id].MapPosition[0]
+      region=$cache.mapdata[$game_map.map_id].MapPosition&.[](0)
     end
     return region == 5
   end
