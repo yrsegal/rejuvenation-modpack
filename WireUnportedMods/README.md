@@ -1,0 +1,276 @@
+Rejuvenation Modpack
+====================
+
+## Resolving name clashes
+
+If these mods clash with any other mod names you're using, move the entire contents of this modpack to a folder named `WireModpack`, then create `0000.wiremodpack.rb` in `Data/Mods` with the following contents:
+```ruby
+Dir["./Data/Mods/WireModpack/*.rb"].each {|file| load File.expand_path(file) }
+```
+
+## Contents
+
+(Disabled by default) Dev Utilities:
+- DumpSingleEvent.rb  
+  Allow for event-dump-style dumping of a single event.
+- PartialDebugMode.rb  
+  Enables Debug Mode without allowing for HMs out of sequence.
+- ShowPosition.rb  
+  When holding Ctrl, your current map id and position appear in the corner of your screen.  
+  When holding B, all events appear as a generic sprite, and info on the one the player is facing is shown.
+- TileInvestigator.rb  
+  Reworks the ingame tileset editor to be more robust and also adds functions `tleditor`, `tleditor2`, `tlget`, `tlset`, and `tlopen`.
+
+Libraries:
+- 0000.complexmart.rb  
+  Adds a framework for "complex" marts, which can sell multiple types of things for multiple currencies, and sell items in bulk.
+- 0000.formattedchoices.rb  
+  Fixes an issue with the unused "advanced-formatting" choices menu, and allows it to be used.
+- 0000.injection.rb  
+  Supports code injection mods.
+- 0000.music.rb  
+  A framework for music overrides.
+- 0000.textures.rb  
+  A framework for texture overrides.
+- 0001.boundedentry.rb (depends on 0000.textures.rb, Windowskins/)  
+  Adds "bounded" text entries, which allow you to choose from a preexisting set.
+- 0001.pcservices.rb (depends on 0000.textures.rb, ServiceIcons/)  
+  Adds a "service directory" to the PC, which lets you call NPCs for various services. Also makes the Rotom Phone a Remote PC.
+- 9999.lateloader.rb  
+  Adds a "late-loader" which executes code only once the modpack's dependencies have been loaded. This is for dependent mods in different packs to use.  
+  Syntax is:
+  ```ruby
+  $WIRE_LATE_LOAD = [] unless defined?($WIRE_LATE_LOAD)
+  $WIRE_LATE_LOAD << proc {
+    # code goes here
+  }
+  ```
+
+
+"Service" mods (0001.pcservices.rb)
+- DayCarePCService.rb (depends on 0000.formattedchoices.rb, 0001.pcservices.rb)  
+  Adds a service for accessing the Day-Care remotely.
+- FashionPCService.rb (depends on 0001.pcservices.rb)  
+  Adds a clothing-swapping service.
+- FriendshipPCService.rb (depends on 0001.pcservices.rb)  
+  Adds a Spa service, which lets you instantly max out or check a Pokémon's friendship. Unlocked by entering Teila Resort.
+- GenderPCService.rb (depends on 0000.formattedchoices.rb, 00001.pcservices.rb)  
+  Adds a Genderswapping service, for setting Pokémon (and player) gender. Unlocked through Tale of Two Hearts.
+- HealPCService.rb (depends on 0001.pcservices.rb)  
+  Adds a Field Healing service.
+- HiddenPowerPCService.rb (depends on 0001.pcservices.rb)  
+  Adds a Hidden Power Changer/checker service. Unlocked by speaking to the relevant NPC in Kristiline.
+- MoveRelearnerPCService.rb (depends on 0000.injection.rb, 0001.pcservices.rb)  
+  Adds a service which allows relearning, teaching egg moves, and move deletion (always free). Free after 10 Heart Scales.  
+- PokeballTransferPCService.rb (depends on 0001.pcservices.rb)  
+  Adds a Pokeball Transfer service, unlocked after The Inconsistency.
+- PokemonValuesPCService.rb (depends on 0000.formattedchoices.rb, 0001.pcservices.rb)  
+  Adds a Lab service for tweaking your Pokémon's IVs, EVs, Nature, and Ability. Each component has its own unlock requirements.
+- TimeSkipPCService.rb (depends on 0001.pcservices.rb)  
+  Adds a Celebi service for advancing to different times if Unreal Time is on.
+
+Fix/hotfix mods:
+- AddMissingEncounterAreas.rb (depends on 0000.injection.rb)  
+  Add the missing encounter types to the Scholar's District and Route Z.
+- AnaFixes.rb (depends on 0000.injection.rb, 0000.textures.rb, TextureOverrides/)  
+  Fixes some issues with the character Ana's sprites.
+- BagReclassification.rb  
+  Reclassifies some items that are improperly classified.
+- BlackBoxFix.rb (depends on 0000.injection.rb)  
+  Fixes some logic errors in a cutscene that leaves key items which are intended to be deleted.
+- ExcludeAnimationsFromCallable.rb  
+  Excludes all moves that are purely for animation purposes from being called by Metronome.
+- FixAxelMoment.rb (depends on 0000.injection.rb)  
+  Fixes Axel missing a sprite in a story-critical cutscene.
+- FixBasculegionForms.rb  
+  Fixes Basculegion's forms on evolution. (Currently, female basculegion does not recieve the proper icon or stats.)
+- FixBlueMIC.rb (depends on 0000.injection.rb)  
+  Fixes Blue Moon Ice Cream not being rarely available from certain shops as intended. (It was still possible to access, but not in the intended way.)
+- FixCdAName.rb  
+  Fixes an area name being displayed incorrectly.
+- FixEclysiaDoors.rb (depends on 0000.injection.rb)  
+  Fixes some doors in Eclysia Pyramid.
+- FixFactoryAreas.rb (depends on 0000.injection.rb)  
+  Adds a field effect message to entering Oceana Pier's field-effect tutorial warehouse, and fixes damage pads not applying the proper types of damage.
+- FixForeignGiftShinyChance.rb  
+  Fix non-trade gift Pokémon with foreign IDs not being boosted properly by the Shiny Charm or Shiny Contract.
+- FixMissingItemTextures.rb (depends on 0000.textures.rb)  
+  Fixes several missing item textures, and also includes a couple misc overrides. 
+- FixNWSilvally.rb  
+  Fixes a field interaction with Silvally.
+- FixProboCrest.rb  
+  Fixes the silly internal name of the followup attack of the Probopass Crest from displaying.
+- FixRayquazaCrash.rb  
+  Fixes Rayquaza crashing the game by simple existence.
+- FixSuperLuck.rb  
+  Super Luck increases held item chances on wild Pokémon, as it's supposed to.
+- FixUltraNecrozma.rb  
+  Fix Ultra Necrozma causing errors when it faints.
+- FixUnderpoweredZMoves.rb  
+  Z-upgraded attacks which should have higher base power now do. Moves such as Hidden Power can be upgraded into differently typed Z-Moves.
+- FixVivillonForms.rb  
+  Fixes Vivillon forms not being tracked separately.
+- FixVoidalSoftlock.rb (depends on 0000.injection.rb)  
+  Fix a softlock in the Voidal Chasm on the don't-expose route.
+- FixQuickClawMessage.rb  
+  Fix Quick Claw messages being inconsistent for Pokémon other than the player's first Pokémon.
+- LegendaryFormFixes.rb  
+  Fixes some issues with Legendary forms not being properly implemented.
+- PrimalReversionFix.rb  
+  Groudon and Kyogre don't constantly re-primal-revert each turn.
+- RelearnPreShadowMoves.rb  
+  Shadow Pokémon regain their old moves over time, as they're supposed to.
+- Route4GlobalChange.rb  
+  Makes Route 4's reset trigger work in all areas as intended.
+- LabyrinthPuzzleFix.rb (depends on 0000.injection.rb)  
+  A typo in a puzzle causes it to not select the proper type of Pokémon.
+- LivelierAmbipom.rb (depends on 0000.injection.rb)  
+  The Ambipom on Route 2 look around like the Aipom do.
+- MovesetTweaks.rb  
+  Fixes missing Egg Move pools, adds a few moves to movesets, and allows evolutions to learn preevo moves.
+- QuicksilverImplementation.rb  
+  Implements the move Quicksilver Spear's effect to do what it says it does.
+
+QoL mods:
+- AutoFish.rb  
+  Fishing requires no timing, and always succeeds if possible.
+- AutoSpeedUpBattles.rb  
+  The game will always speed up at the start of battles, then return to the state it was in prior to the battle.
+- BadgeCard.rb  
+  Using the Badge Card will tell you how many Virtual Badges you have.
+- BetterBattleUI.rb (depends on BetterBattleUI/)  
+  Show types and stat boosts visually in battle. In addition:  
+  Hitting the "back" button when selecting a command in battle will move your cursor over "Run". 
+  There's a keybind for Q (which is L) in wild battle to throw the last ball you've used.
+  - InspectMenuBBUI.rb (depends on BetterBattleUI.rb)  
+    Improves the inspect-a-Pokémon menu.
+  - SelectMenuBBUI.rb (depends on BetterBattleUI.rb)  
+    Improves the select-a-Pokémon menu.
+  - MoveHelpDisplayBBUI.rb (depends on BetterBattleUI.rb)  
+    Adds a move-info display controlled by the Inspect key (A).
+- BlacksteepleSkip.rb (depends on 0000.injection.rb)  
+  Adds an NG+ skip for Blacksteeple Castle.
+- BoxExtensions.rb (depends on 0001.boundedentry.rb, BoxExtensions/)  
+  Expand the "Find" functionality of Pokémon boxes, and make Pokéballs visible from the box.
+- CleanerPrismPower.rb  
+  Makes a Rejuvenation-exclusive ability cleaner.
+- ComplexShops.rb (depends on 0000.injection.rb, 0000.complexmart.rb)  
+  Turns Cairo, Doxie, Coin shops, AP shops, and Move Tutors into a shop interface, so you don't need to remember which crests or moves you've purchased.
+- DeleteEndWaits.rb (depends on 0000.injection.rb)  
+  Generally remove end-of-message waits, whichcan cause you to accidentally select an option when you didn't mean to.
+- FavoriteItems.rb (depends on favorite.png)  
+  Allows you to favorite items, which will then sort at the top of the item list.
+- FLHUDStatus.rb  
+  Makes the in-menu party HUD show if a Pokémon is statused.
+- FlyExpansion.rb (depends on 0000.formattedchoices.rb)  
+  Makes more fly points exist, makes you able to fly to Neo areas you've been to the old versions of, and you can fly from the penthouse.
+- ItemRadar.rb (depends on 0000.injection.rb)  
+  The Itemfinder becomes a toggleable overlay rather than an item you have to use repeatedly. Also pings you when entering a map with a Zygarde Cell you haven't collected.
+- ItemRestocking.rb  
+  If a consumable item is used up, at the end of the battle it will be restored from your Bag if you have another copy.
+- LRInBoxes.rb  
+  L and R (or rather, Q and W, with default mappings) will shift your position in the Box menu. This works even when holding a Pokémon.
+- LureRework.rb  
+  The Mirror Lure lets you run always, like it says it does. The Magnetic Lure becomes a toggleable key item.
+  The Mirror Lure and Magnetic Lure are made specific by form, so if you haven't caught a Blue-Striped Basculin but have caught a Red-Striped one, Blue-Striped will appear through the Magnetic Lure. This is somewhat inconsistent with saves prior to this change, and may not accurately reflect the forms you've caught.
+- MoreSpecificGatherCube.rb  
+  The Gather Cube tells you how many Cells you've picked up from each region of Aevium.
+- NoTMXAnimations.rb  
+  Pokémon don't appear in the splash screen when using an HM or similar move.
+- SelectFromBoxes.rb *(experimental)* (depends on 0000.injection.rb)  
+  Makes all instances of choosing a Pokémon from your party use your boxes and party instead.
+- ShiftToScent.rb  
+  Holding shift overrides your spice scent with 0200.
+- ShowMallStamps.rb (depends on 0000.injection.rb)  
+  Somniam Mall shops show their Stamp requirements.
+- SortMoveTutors.rb    
+  Adds bag-like sorting to the cybernav move tutor screen.
+- ThiefAndPickupEvenWithItem.rb  
+  Thief/Covet, Pickup, Pickpocket, and Magician work even if the user is holding an item in wild battles, and items stolen by these effects are deposited directly into the bag at the end of those battles.
+- TrueTypesInSummary.rb  
+  Hidden Power, Revelation Dance, and such all display their correct type in summaries and move listings. Abilities such as Galvanize and Aerilate are also applied.
+- VendorQuantityDisplay.rb (depends on 0000.injection.rb)  
+  Move Tutors and other vendors will show the resources they ask for.
+- VoltorbFlipHelper.rb (depends on VoltorbFlipExtras.png)  
+  Adds a hint button to Voltorb Flip.
+- ZygardeCaffeine.rb  
+  Zygarde Cells become indifferent to time of day.
+- ZZRenBetterDialogue.rb (depends on 0000.injection.rb)  
+  Fix some deliberately poorly formatted dialogue from being unintentionally poorly formatted.
+
+Other mods:
+- AevianLarvestaEgg.rb (depends on 0000.textures.rb, 0000.injection.rb, LarvestaEgg.png)  
+  Adds an Aevian Larvesta egg to the Rose Theatre post Badge 13.
+- AnaAlts.rb (depends on 0000.textures.rb, TextureOverrides/)  
+  Changes some of Ana's sprites to focus on the Legacy Ana appearance instead.
+- AshGreninja.rb (depends on 0000.textures.rb, AshGreninja/)  
+  Adds Battle Bond and Ash-Greninja.
+  - AshGreninjaEvent.rb (depends on AshGreninja.rb, 0000.injection.rb)  
+    Adds an Ash boss fight in Neo Gearen which rewards you with Battle Bond Greninja.
+- AxelOutfits.rb (depends on 0000.injection.rb, 0000.textures.rb, TextureOverrides/)  
+  Gives Axel's Darchlight Form and Interceptor Form full spriting.
+- BoostPickupOdds.rb  
+  Makes Pickup more likely (33%) to trigger after battle.
+- ChatotCrest.rb (depends on 0000.injection.rb, 0000.textures.rb, 0000.music.rb, TetoSwears/)  
+  Adds a Chatot Crest which grants additional effects on sound-based moves, adds Torment to Chatter, gives a 30% Speed boost, and sets its ability to Berserk.
+- ConditionItems.rb (depends on 0000.injection.rb, 0000.textures.rb, ConditionItems/)  
+  Adds items which cause status conditions.
+- DarchlightTrainerSprites.rb (depends on 0000.textures.rb, TextureOverrides/)  
+  Adds some relevant sprites to the Darchlight Caves segment.
+- DarkCutsceneAna.rb (depends on 0000.injection.rb, TextureOverrides/)  
+  Adds an Ana route to a specific cutscene.
+- EncounterablePikipek.rb (depends on 0000.injection.rb)  
+  Makes some Pikipek in certain maps encounterable. (It was a pet peeve, okay?)
+- FriendshipCheckers.rb (depends on 0000.injection.rb)  
+  Adds friendship checker NPCs to the two salons that don't have them.
+- FullOutfitOptions.rb (depends on 0000.injection.rb)  
+  You get full options for outfits, and they're supported a little more in cutscenes. This does not add sprites for them, and the only character given spritework currently for this is Ana.
+- FurfrouForms.rb (depends on 0000.injection.rb, 0000.textures.rb, Furfrou/)  
+  Furfrou trims! An NPC in each salon (East Gearen, GDC, Neo East Gearen mall) has been given the ability to trim your Furfrou as you'd like.
+- GDCCentralReputationPillars.rb (depends on 0000.injection.rb)  
+  Makes the GDC Central Pillars able to check your reputation (like the game tells you they can).
+- LastRespects.rb  
+  Add the move Last Respects, which Basculegion can get by Egg Move.
+- MeggChoices.rb (depends on 0000.injection.rb)  
+  Mystery Eggs give you a chance to choose what egg you get from them.
+- MiningOverhaul.rb (depends on MiningItems.png, MiningTiles.png)  
+  More items for mining! Nicer sprites, too. Also, you can keep mining after you've fully cracked the bar by spending money.
+- MoveTweak.rb  
+  A few tweaks to moves. Specifically:
+  - Splintered Stormshards destroys terrain, replacing it with temporary Rocky Field.
+  - Cut becomes a 65/100 Steel move with high crit rate.
+  - Flash becomes a 25/100 Electric special spread move that still lowers accuracy.
+  - Rock Smash becomes a 55 BP move that always lowers defense.
+  - Rock Climb becomes an 80/100 Rock move with a 10% chance to confuse.
+  - Strength becomes a Fighting move.
+  - Covet becomes a Fairy move.
+  - Play Rough becomes 100% accurate.
+  - Air Slash becomes 100% accurate.
+  - Fly becomes a 100/100 move.
+  - Quicksilver Spear becomes a sharp move.
+  - Aqua Cutter becomes a noncontact move, as in main series.
+  - Teleport acts as in Gen 8, as a switching move with -6 priority.
+- MrLuckIsBlind.rb  
+  Mr. Luck can no longer tell if you cheat.
+- MusicSignpost.rb (depends on 0000.textures.rb, MusicTypes/, Windowskins/)  
+  Show music near the map signpost.
+- OricorioHoldNectar.rb  
+  Oricorio hold their Nectar in the wild, as in gen 9, allowing you to get Pink and Yellow Nectars (otherwise unobtainable).
+- PasswordAPRefund.rb  
+  If a password gives you an item you've already spent AP for, the AP gets refunded.
+- PasswordOptions.rb (depends on 0000.injection.rb)  
+  Expands the Password menu in the intro to give you much more info when enabling passwords.
+- ReplaceRepelInPickup.rb  
+  Replaces Repel in Pickup tables, as it is effectively useless with the Spice Scent.
+- RouteZHQwil.rb  
+  Qwilfish on Route Z are Hisuian.
+- SkipTitleSoftResets.rb  
+  Skips the intro scene for soft resets, making it easier to get back into the game.
+- TechniqueContractDirectly.rb (depends on 0000.injection.rb)  
+  Adds a Marshadow tutor to avoid using the Technique Contract, costing 3 Black Prisms each time. Does not add the move to your CyberNav.
+- TorchicEvent.rb (depends on 0000.injection.rb)  
+  Makes Dyre's Torchic doll an actual Torchic event.
+- WLLRiolu.rb (depends on 0000.injection.rb)  
+  Adds the Where Love Lies password Riolu back into GDC Central.
+- Woop.rb (depends on 0000.textures.rb, Woop/)  
+  Woop.

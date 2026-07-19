@@ -1,0 +1,180 @@
+
+
+Variables[:PasswordVar] = 28
+
+# # Make NGP look in the correct folders; overrides NewGamePlus.rb
+# ### MODDED/ path begins above data directory
+# def findWLLSave(path=File.dirname(System.data_directory))
+#   ### /MODDED
+#   return true if $game_switches[:Finished_WLL] || $Unidata[:WLL]
+
+#   Dir.each_child(path) {|file|
+#     next if file === '.' || file == '..'
+#     next if !file.include?("Where Love Lies")
+#     newpath = path + "/" + file
+#     ### MODDED/
+#     next if !File.directory?(newpath)
+#     ### /MODDED
+#     Dir.each_child(newpath) {|wllFile|
+#       ### MODDED/
+#       if wllFile.end_with?(".rxdata")
+#         ### /MODDED
+#         return true if checkForCompletion(newpath + "/" + wllFile)
+#       end
+#     }
+#   }
+#   return false
+# end
+
+# def checkForCompletion(file)
+#     File.open("Scripts/ConversionClasses.rb"){|f| eval(f.read) }
+#     #file needed to check old classes
+#     trainer=nil
+#     framecount=nil
+#     game_system=nil
+#     pokemonSystem=nil
+#     mapid=nil
+#     switches = []
+#     variables = []
+#     File.open(file){|f|
+#         trainer         =Marshal.load(f)
+#         framecount      =Marshal.load(f)
+#         game_system     =Marshal.load(f)
+#         pokemonSystem   =Marshal.load(f)
+#         mapid           =Marshal.load(f)
+#         switches        =Marshal.load(f)
+#         variables       =Marshal.load(f)
+#     }
+#     return false if !trainer.is_a?(PokeBattle_Trainer)
+#     return false if !framecount.is_a?(Numeric)
+#     return false if !game_system.is_a?(Game_System)
+#     return false if !pokemonSystem.is_a?(PokemonSystem)
+#     return false if !mapid.is_a?(Numeric)
+#     if switches[88] || variables[7] >= 139
+#         ### MODDED/ do not set switch directly
+#         # $game_switches[:Finished_WLL] = true
+#         ### /MODDED
+#         return true
+#     end
+#     return false
+# end
+
+def wllriolu_pbAddPokemonNoTimeSet(species,level=nil,seeform=true,form=0)
+  return if !species || !$Trainer
+  if pbBoxesFull?
+    Kernel.pbMessage(_INTL("There's no more room for Pokémon!\1"))
+    Kernel.pbMessage(_INTL("The Pokémon Boxes are full and can't accept any more!"))
+    return false
+  end
+  ### MODDED/
+  if !species.is_a?(PokeBattle_Pokemon)
+    pokemon=PokeBattle_Pokemon.new(species,level,$Trainer,true,form)
+    speciesname = getMonName(pokemon.species)
+    owner=nil
+  else
+    pokemon=species
+    speciesname = getMonName(pokemon.species)
+    owner=[pokemon.trainerID, pokemon.ot]
+  end
+
+  if owner && owner[0] != $Trainer.id && owner[1] != ''
+    Kernel.pbMessage(_INTL("{1} obtained {2}'s {3}!\\se[itemlevel]\1",$Trainer.name, owner[1], speciesname))
+  else
+    Kernel.pbMessage(_INTL("{1} obtained {2}!\\se[itemlevel]\1",$Trainer.name,speciesname))
+  end
+  ### /MODDED
+
+  pbNicknameAndStore(pokemon)
+  $Trainer.pokedex.setFormSeen(pokemon) if seeform
+  return true
+end
+
+# Sheridan Village_2
+ModCacheInjection.hook(:RXtilesets) {
+  $cache.RXtilesets[126].passages[1264] = 0b1100 # ^> Allow walking up to the cherry tree
+  $cache.RXtilesets[126].passages[1266] = 0b1010 # <^
+}
+
+InjectionHelper.defineMapPatch(426) { # Sensei's Garden
+  # Cherry blossom tree
+  fillArea(12, 6,
+    ["ABC",
+     "DEF",
+     "GHI",
+     "JKL"],
+    {
+      "A" => [nil, nil, 1240], "B" => [nil, nil, 1241], "C" => [nil, nil, 1242],
+      "D" => [nil, 1248, 1248], "E" => [nil, 1249, 1249], "F" => [nil, 1250, 1250],
+      "G" => [nil, 1256, 1256], "H" => [nil, 1257, nil], "I" => [nil, 1258, 1258],
+      "J" => [nil, 491, 1264], "K" => [nil, 1265, nil], "L" => [nil, 491, 1266],
+    })
+
+}
+
+InjectionHelper.defineMapPatch(294, 70) { # GDC Central, clerk
+  hasReputationPillars = defined?($GDC_REPUTATION_PILLARS)
+  pages[0].interact {
+    branch(switches[:Finished_WLL], false) {
+      if hasReputationPillars
+        text "STAFF: Welcome to the GDC Central Building!"
+        text "You can check your reputation using the pillars in the lobby."
+        text "How may I help you?"
+      else
+        text "STAFF: Welcome to the GDC Central Building! How may I help you today?"
+      end
+
+      show_choices {
+        choice("Password") {
+          branch("$Unidata[:WLL]") {
+            variables[:PasswordVar] = 489234
+          }
+          text "Enter a password."
+
+          input_number :PasswordVar, digits: 6
+
+          branch(variables[:PasswordVar], :==, 489234) {
+            switches[:Finished_WLL] = true
+            script 'Kenneth=PokeBattle_Trainer.new("Kenneth",:LEADER_KETA)
+                    Kenneth.id = 924
+                    poke=PokeBattle_Pokemon.new(:RIOLU,5,Kenneth)
+                    poke.iv = [20,20,20,20,20,20] if !$game_switches[:Full_IVs] && !$game_switches[:Empty_IVs_Password]
+                    poke.setAbility(:PRANKSTER)
+                    poke.setNature(:DOCILE)
+                    poke.pbLearnMove(:AURASPHERE)
+                    poke.pbLearnMove(:POISONJAB)
+                    poke.pbLearnMove(:DETECT)
+                    poke.pbLearnMove(:QUICKATTACK)
+                    poke.makeShiny
+                    poke.makeFemale
+                    poke.item = :LUCARIONITE
+                    timediverge = $Settings.unrealTimeDiverge
+                    $Settings.unrealTimeDiverge = 0
+                    timeNow = pbGetTimeNow
+                    poke.timeReceived = Time.unrealTime_oldTimeNew(timeNow.year-36,6,8,timeNow.hour,timeNow.min,timeNow.sec)
+                    $Settings.unrealTimeDiverge = timediverge
+                    poke.obtainText = _INTL("Four Island")
+                    poke.obtainMode = 0
+                    wllriolu_pbAddPokemonNoTimeSet(poke)'
+            # Justification for date received - He got riolu when he turned 10.
+            # He left for Aevium at 18.
+            # Chapter 3 occurs 10 years later.
+            # Chapter 4 occurs 15 years later, when Aelita is 15.
+            # Aelita is 17 going on 18 at start of story
+            # 8 + 10 + 15 + 2 or 3 = 35 or 36
+            text "STAFF: Have a nice day!"
+          }.else {
+            text "STAFF: Sorry, but that input is incorrect..."
+          }
+        }
+        default_choice("Never mind") {
+          text "STAFF: Have a nice day!"
+        }
+      }
+    }.else {
+      text "STAFF: Welcome to the GDC Central Building!"
+      if hasReputationPillars
+        text "You can check your reputation using the pillars in the lobby."
+      end
+    }
+  }
+}

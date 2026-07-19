@@ -1,0 +1,106 @@
+
+
+class Game_Screen
+  attr_accessor :hiddenpowerpc_used
+end
+
+class HiddenPowerPCService
+  def shouldShow?
+    return $game_self_switches[[329,90,"A"]] # Talked to Hidden Power changer
+  end
+
+  def name
+    return _INTL("Hidden Potential")
+  end
+
+  def help
+    return _INTL("Check or change a Pokemon's Hidden Power type.")
+  end
+
+  def nerta(text, *args)
+    return _INTL("\\f[service_Nerta]" + text, *args)
+  end
+
+  def hpChange(mon)
+    pbHiddenPower(mon) if !mon.hptype
+    types = []
+    for type in $cache.types.keys
+      next if type == :NORMAL || type == :QMARKS || type == :SHADOW
+      types.push(type)
+    end
+    types.sort_by!(&method(:getTypeName))
+    commands = types.map(&method(:getTypeName))
+    cmdidx = types.index(mon.hptype)
+    cmdidx = 0 if cmdidx < 0
+    oldtype=mon.hptype
+    newtype = types[Kernel.pbMessage(nerta("Which type should its move become?"),commands,cmdidx+1,nil,cmdidx)]
+    if newtype == oldtype
+      Kernel.pbMessage(nerta("Changed your mind?"))
+      return false
+    end
+
+    mon.hptype=newtype
+    return true
+  end
+
+  def access
+    if ServicePCList.offMap? || ServicePCList.inRift? || inPast? || ServicePCList.darchlightCaves?
+      Kernel.pbMessage(_INTL("\\se[SFX - Dialtone:60]...\1"))
+      Kernel.pbMessage(_INTL("There's no response..."))
+      return
+    end
+
+    if !$game_screen.hiddenpowerpc_used
+      Kernel.pbMessage(nerta("NERTA: Oh hey, it's you, kid!\1"))
+      Kernel.pbMessage(nerta("If you send me a Pokemon and a Heart Scale over the PC system, I can unlock the Hidden Power of your pokemon remotely.\1"))
+      $game_screen.hiddenpowerpc_used = true
+    else
+      Kernel.pbMessage(nerta("NERTA: Hey, kid.\1"))
+    end
+
+
+    heartscalewindow = ServicePCList.quantityWindow(:HEARTSCALE)
+    if $PokemonBag.pbQuantity(:HEARTSCALE)<=0
+      Kernel.pbMessage(nerta("Don't got the goods? Then don't expect the looks. Those are the rules kid."))
+      return
+    end
+
+    if Kernel.pbMessage(nerta("Let's spiffen them up, shall we?"),[_INTL("Yes"),_INTL("No")], 2, nil, 0) != 0
+      Kernel.pbMessage(nerta("Well, call back when you're feeling more decisive."))
+    else
+      selected = false
+      while !selected
+        pbChoosePokemon(1,3)
+
+        result = pbGet(1)
+        if result < 0
+          Kernel.pbMessage(nerta("NERTA: Change your mind huh?\1"))
+          Kernel.pbMessage(nerta("Well, call back when you're feeling more decisive."))
+          selected = true
+        else
+          pkmn = $Trainer.party[result]
+          if pkmn.isEgg?
+            Kernel.pbMessage(nerta("All that's inside here is an uncooked omelette."))
+          else
+            Kernel.pbMessage(nerta("Okay, {1}\'s Hidden Power is {2}.",pkmn.name,getTypeName(pbHiddenPower(pkmn))))
+            if hpChange(pkmn)
+              Kernel.pbMessage(nerta("NERTA: Okay, send over that Heart Scale, and...\1"))
+              $PokemonBag.pbDeleteItem(:HEARTSCALE)
+              ServicePCList.updateWindowQuantity(heartscalewindow, :HEARTSCALE)
+              Kernel.pbMessage(nerta("Bada bing, bada boom.\1"))
+              pbSEPlay("itemlevel")
+              Kernel.pbMessage(nerta("Your \\v[3] should be feeling new power surging through them right about now!\1"))
+              Kernel.pbMessage(nerta("Thanks for the Heart Scale. Call again!"))
+              selected = true
+            else
+              Kernel.pbMessage(nerta("Well, come back when you're feeling more decisive."))
+              selected = true
+            end
+          end
+        end
+      end
+    end
+  end
+end
+
+ServicePCList.registerSubService(:Consultants, HiddenPowerPCService.new)
