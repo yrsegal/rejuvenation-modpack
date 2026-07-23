@@ -344,7 +344,7 @@ class PokemonValuesPCService
       }
       command=Kernel.pbMessageDisplay(msgwindow,msg,true,
          proc {|msgwindow|
-            next Kernel.advanced_pbShowCommands(msgwindow,commands,-1,command)
+            next Kernel.pbShowAdvancedCommands(msgwindow,commands,-1,command)
       })
       summarywindow.dispose
       Kernel.pbDisposeMessageWindow(msgwindow)
