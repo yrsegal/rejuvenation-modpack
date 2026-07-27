@@ -9,7 +9,7 @@ ModCacheInjection.hook(:abil) {
 }
 
 ModCacheInjection.hook(:pkmn) {
-  ModCacheInjection.createNewForm(:GRENINJA, "Battle Bond Form", 2, {
+  addFormDataAtRuntime(:GRENINJA, "Battle Bond Form", {
     :Abilities => [:BATTLEBOND],
     :HiddenAbility => nil,
   })
@@ -20,8 +20,8 @@ class PokemonLoad
     m.call
     allpokemon = findAllPokemon
     allpokemon.each { |mon|
-      # Battle Bond Greninja's form number was changed from 1 to 2 to accomodate Mega Greninja
-      mon.form = 2 if mon.species == :GRENINJA && mon.form == 1 && mon.ability == :BATTLEBOND
+      # Battle Bond Greninja's form number was changed from 1 to accomodate Mega Greninja
+      mon.form = $cache.pkmn[:GRENINJA].forms.invert["Battle Bond Form"] if mon.species == :GRENINJA && mon.form == 1 && mon.ability == :BATTLEBOND
     }
   end
 end

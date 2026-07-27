@@ -39,37 +39,13 @@ module ModCacheInjection
       end
     end
   end
+end
 
-  def self.createNewForm(mon, formname, idx, form)
-    cacheobj = $cache.pkmn[mon]
-    if form[:baseForm]
-      basedata = cacheobj[form[:baseForm]]
-    else
-      basedata = cacheobj[0]
-    end
-
-    [:species, :form, :name, :dexnum, :Type1, :Type2, :BaseStats, :EVs, :Abilities, 
-      :HiddenAbility, :GrowthRate, :GenderRatio, :BaseEXP, :CatchRate, :Happiness, 
-      :EggSteps, :EggMoves, :Moveset, :compatiblemoves, :moveexceptions, :shadowmoves, 
-      :Color, :EggGroups, :Height, :Weight, :kind, :dexentry, :BattlerPlayerX, 
-      :BattlerPlayerY, :BattlerEnemyX, :BattlerEnemyY, :BattlerShadowSize, :BattlerShadowX, 
-      :preevo, :evolutions, :MegaEvolutions, :RelearnerMoves, :baseForm, :reward, :shape, 
-      :genderDifferences].each do |defKey|
-      next if EXCLUSIVE_ATTRS.include?(defKey)
-      next if EXCLUSIVE_FLAGS.include?(defKey)
-      defValue = basedata.instance_variable_get("@#{defKey}")
-      form[defKey] = defValue unless form.has_key?(defKey)
-    end
-
-    basedata.flags.each do |defKey, defValue|
-      next if EXCLUSIVE_ATTRS.include?(defKey)
-      next if EXCLUSIVE_FLAGS.include?(defKey)
-      form[defKey] = defValue unless form.has_key?(defKey)
-    end
-
-    $cache.pkmn[mon].pokemonData[formname] = MonData.new(mon, formname, form, cacheobj)
-
-    $cache.pkmn[mon].forms[idx] = formname
+# Patch to allow form names to be used in trainer data
+class PokeBattle_Pokemon
+  wiremods_wrap_method(:form=) do |m, value|
+    value = $cache.pkmn[self.species].forms.invert[value] if value.is_a?(String)
+    m.call(value)
   end
 end
 

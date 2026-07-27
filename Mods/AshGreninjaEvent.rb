@@ -477,7 +477,7 @@ InjectionHelper.defineMapPatch(44) { # Neo East Gearen (east)
 
             script 'Ash=PokeBattle_Trainer.new("Ash",:ASHKETCHUM)
                     Ash.id = 7150
-                    poke=PokeBattle_Pokemon.new(:GRENINJA,85,Ash,false,1)
+                    poke=PokeBattle_Pokemon.new(:GRENINJA,85,Ash,false,1) # todo this needs fixing
                     poke.iv = [20,20,20,20,20,20] if !$game_switches[:Full_IVs] && !$game_switches[:Empty_IVs_Password]
                     poke.setNature(:MODEST)
                     poke.hptype = :GROUND
@@ -639,7 +639,7 @@ InjectionHelper.defineMapPatch(44) { # Neo East Gearen (east)
 
         script 'Ash=PokeBattle_Trainer.new("Ash",:ASHKETCHUM)
                 Ash.id = 7150
-                poke=PokeBattle_Pokemon.new(:GRENINJA,85,Ash,false,1)
+                poke=PokeBattle_Pokemon.new(:GRENINJA,85,Ash,false,1) # todo this needs fixing
                 poke.iv = [20,20,20,20,20,20] if !$game_switches[:Full_IVs] && !$game_switches[:Empty_IVs_Password]
                 poke.setNature(:MODEST)
                 poke.hptype = :GROUND
@@ -681,7 +681,7 @@ ModCacheInjection.hook(:trainers) {
     :mons => [
       {
         species: :PIKACHU,
-        form: 3,
+        form: "World Cap",
         level: 85,
         moves: [:THUNDERBOLT,:SURF,:GRASSKNOT,:FAKEOUT],
         item: :PIKASHUNIUMZ,
@@ -758,10 +758,10 @@ ModCacheInjection.hook(:trainers) {
       plotarmor: true,
       buffactivation: :Limited,
       3 => {
-        CustomMethod: "ashgreninja_saythelineash(battler)"
+        CustomMethod: "ashgreninja_saythelineash(pkmn)"
       },
       5 => {
-        CustomMethod: "ashgreninja_saythelineash(battler)"
+        CustomMethod: "ashgreninja_saythelineash(pkmn)"
       },
     }
   })
@@ -818,7 +818,7 @@ ItemHandlers::UseOnPokemon.copy(:NORMALIUMZ, :PIKASHUNIUMZ)
 
 
 ModCacheInjection.hook(:pkmn) {
-  ModCacheInjection.createNewForm(:PIKACHU, "World Cap", 3, {
+  addFormDataAtRuntime(:PIKACHU, "World Cap", {
     BaseStats: [55, 80, 50, 75, 60, 120],
     evolutions: [],
   })
