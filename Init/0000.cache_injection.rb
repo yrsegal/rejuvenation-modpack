@@ -41,19 +41,6 @@ module ModCacheInjection
   end
 end
 
-# Patch to allow form names to be used in trainer data
-class PokeBattle_Pokemon
-  wiremods_wrap_method(:form=) do |m, value|
-    value = $cache.pkmn[self.species].forms.invert[value] if value.is_a?(String)
-    m.call(value)
-  end
-end
-
-Cache_Game.wiremods_wrap_method(:mainFunction) do |m|
-  ModCacheInjection.cacheLoaded(:runtime)
-  m.call
-end
-
 {
   cacheDex: :pkmn,
   cacheMoves: :moves,
