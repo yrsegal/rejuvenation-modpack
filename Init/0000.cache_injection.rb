@@ -64,6 +64,13 @@ end
   cachePokedexes: :pokedexes,
   cacheCurrencies: :currencies,
   cachePasswords: :passwords,
+  # New cache methods
+  cacheDens: :dens,
+  cacheDenEncounters: :denencounters,
+  cacheWonderPool: :wonderpool,
+  cacheXTPool: :xtpool,
+  cacheBlessings: :blessings,
+  # New cache methods
   loadRuntimeData: [:RXanimations, :RXevents, :runtime],
   cacheTilesets: :RXtilesets,
   cacheAnims: [:move2anim, :animations],
